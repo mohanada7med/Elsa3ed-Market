@@ -507,7 +507,9 @@ export const PAGE_ROUTES: Record<ActivePage, string> = {
   'admin-discounts': '/admin-discounts',
   'admin-reports': '/admin-reports',
   'admin-audit-logs': '/admin-audit-logs',
+  'admin-shipping': '/admin-shipping',
   'admin-settings': '/admin-settings',
+
   'admin-media': '/admin-media',
   'admin-events': '/admin-events',
   'admin-events-manager': '/admin-events-manager',

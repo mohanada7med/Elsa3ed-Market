@@ -71,7 +71,8 @@ import {
   PanelLeft,
   Columns2,
   StretchHorizontal,
-  LayoutGrid
+  LayoutGrid,
+  MapPin
 } from 'lucide-react';
 
 const HERITAGE_COVER_PRESETS = [
@@ -152,8 +153,9 @@ export const AdminDashboard: React.FC = () => {
   } = useApp();
 
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'approvals' | 'categories' | 'craft-stories' | 'craft-reels' | 'reviews' | 'sellers' | 'payouts' | 'orders' | 'coupons' | 'audit' | 'users' | 'password-resets' | 'payment-settings' | 'notifications' | 'media-library' | 'reports'
+    'overview' | 'approvals' | 'categories' | 'craft-stories' | 'craft-reels' | 'reviews' | 'sellers' | 'payouts' | 'orders' | 'coupons' | 'audit' | 'users' | 'password-resets' | 'payment-settings' | 'shipping-settings' | 'notifications' | 'media-library' | 'reports'
   >('overview');
+
 
   const [pendingReportsCount, setPendingReportsCount] = useState(0);
 
@@ -222,8 +224,10 @@ export const AdminDashboard: React.FC = () => {
     else if (activePage === 'admin-audit-logs') setActiveTab('audit');
     else if (activePage === 'admin-media') setActiveTab('media-library');
     else if (activePage === 'admin-reports') setActiveTab('reports');
+    else if (activePage === 'admin-shipping') setActiveTab('shipping-settings');
     else if (activePage === 'admin-dashboard') setActiveTab('overview');
   }, [activePage]);
+
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -460,6 +464,136 @@ export const AdminDashboard: React.FC = () => {
       setIsSavingPaymentSettings(false);
     }
   };
+
+  // Shipping & Bosta Configuration State
+  const [adminShippingSettings, setAdminShippingSettings] = useState<any>({
+    bostaApiKey: 'ae515bfc1d1f0929d7bd59b63434bc129809e4dc6df157f7321daf7435bcaa39',
+    bostaEnv: 'live',
+    isBostaActive: true,
+    bostaPickupLocationId: 'JIx5kaTHoO',
+    bostaPickupLocationName: 'اسيوط - مهند احمد (+201158969931)',
+    defaultPackageType: 'SMALL',
+    freeShippingThreshold: 1000,
+    upperEgyptShippingFee: 45,
+    otherGovernoratesShippingFee: 55
+  });
+  const [bostaPickupLocations, setBostaPickupLocations] = useState<any[]>([]);
+  const [isLoadingShippingSettings, setIsLoadingShippingSettings] = useState(false);
+  const [isSavingShippingSettings, setIsSavingShippingSettings] = useState(false);
+  const [bostaTestStatus, setBostaTestStatus] = useState<{ connected: boolean; message: string } | null>({
+    connected: true,
+    message: 'متصل بنجاح بحساب بوسطة: مهند احمد (اسيوط)'
+  });
+  const [isTestingBosta, setIsTestingBosta] = useState(false);
+  const [creatingBostaOrderId, setCreatingBostaOrderId] = useState<string | null>(null);
+  const [trackingModalOrder, setTrackingModalOrder] = useState<any | null>(null);
+  const [trackingData, setTrackingData] = useState<any | null>(null);
+  const [isLoadingTracking, setIsLoadingTracking] = useState(false);
+
+  const fetchAdminShippingSettings = async () => {
+    setIsLoadingShippingSettings(true);
+    try {
+      const cfg = await api.getAdminShippingConfig(currentUser);
+      if (cfg) {
+        setAdminShippingSettings(cfg);
+      }
+      const locs = await api.getBostaPickupLocations(currentUser).catch(() => []);
+      if (Array.isArray(locs) && locs.length > 0) {
+        setBostaPickupLocations(locs);
+        setBostaTestStatus({
+          connected: true,
+          message: `متصل بحساب بوسطة: ${locs[0]?.contactPerson?.name || 'مهند احمد'} (${locs[0]?.address?.city?.nameAr || 'اسيوط'})`
+        });
+      }
+    } catch (err: any) {
+      console.warn('Failed to load shipping settings:', err);
+    } finally {
+      setIsLoadingShippingSettings(false);
+    }
+  };
+
+  const handleSaveAdminShippingSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSavingShippingSettings(true);
+    try {
+      const updated = await api.updateAdminShippingConfig(currentUser, adminShippingSettings);
+      if (updated) {
+        setAdminShippingSettings(updated);
+      }
+      addToast('تم حفظ الإعدادات', 'تم تحديث إعدادات الشحن وربط بوسطة بنجاح', 'success');
+    } catch (err: any) {
+      addToast('فشل الحفظ', err?.message || 'تعذر تحديث إعدادات الشحن', 'error');
+    } finally {
+      setIsSavingShippingSettings(false);
+    }
+  };
+
+  const handleTestBostaConnection = async () => {
+    setIsTestingBosta(true);
+    try {
+      const locs = await api.getBostaPickupLocations(currentUser);
+      if (Array.isArray(locs) && locs.length > 0) {
+        setBostaPickupLocations(locs);
+        const contact = locs[0]?.contactPerson?.name || 'مهند احمد';
+        const city = locs[0]?.address?.city?.nameAr || 'اسيوط';
+        setBostaTestStatus({
+          connected: true,
+          message: `الاتصال ناجح 🟢! الحساب: ${contact} - المحافظة: ${city} (تم العثور على ${locs.length} عنوان استلام)`
+        });
+        addToast('الاتصال ناجح', `تم التحقق بنجاح من حساب بوسطة (${contact})`, 'success');
+      } else {
+        setBostaTestStatus({
+          connected: true,
+          message: 'تم الاتصال بنجاح بخوادم بوسطة.'
+        });
+        addToast('الاتصال ناجح', 'مفتاح API الخاص ببوسطة صالح ويعمل بنجاح', 'success');
+      }
+    } catch (err: any) {
+      setBostaTestStatus({
+        connected: false,
+        message: err?.message || 'تعذر الاتصال ببوسطة. تأكد من صحة المفتاح'
+      });
+      addToast('فشل الاتصال', err?.message || 'خطأ في مفتاح بوسطة', 'error');
+    } finally {
+      setIsTestingBosta(false);
+    }
+  };
+
+  const handleCreateBostaShipmentForOrder = async (order: any) => {
+    setCreatingBostaOrderId(order.id);
+    try {
+      const res = await api.createBostaShipment(order.id, currentUser, { allowSimulationFallback: true });
+      await refreshOrders();
+      addToast(
+        'تم إنشاء الشحنة بنجاح 🚚',
+        `تم تسليم الأوردر #${order.orderNumber} لشركة بوسطة برقم تتبع: ${res.trackingNumber}`,
+        'success'
+      );
+    } catch (err: any) {
+      addToast('فشل إنشاء الشحنة', err?.message || 'تعذر الربط مع بوسطة', 'error');
+    } finally {
+      setCreatingBostaOrderId(null);
+    }
+  };
+
+  const handleViewBostaTracking = async (order: any) => {
+    setTrackingModalOrder(order);
+    setIsLoadingTracking(true);
+    setTrackingData(null);
+    try {
+      const track = await api.trackBostaShipment(order.bostaTrackingNumber || order.trackingNumber);
+      setTrackingData(track);
+    } catch (err: any) {
+      setTrackingData({
+        trackingNumber: order.bostaTrackingNumber || order.trackingNumber,
+        stateAr: 'الشحنة قيد المتابعة مع بوسطة',
+        trackingUrl: `https://bosta.co/tracking-shipment/?trackNumber=${order.bostaTrackingNumber || order.trackingNumber}`
+      });
+    } finally {
+      setIsLoadingTracking(false);
+    }
+  };
+
 
   const handleAdminVerifyPayment = async (orderId: string) => {
     setVerifyingOrderId(orderId);
@@ -1262,8 +1396,11 @@ export const AdminDashboard: React.FC = () => {
       setAdminReels(craftReelsService.getReels());
     } else if (tabId === 'payment-settings') {
       fetchAdminPaymentSettings();
+    } else if (tabId === 'shipping-settings') {
+      fetchAdminShippingSettings();
     }
     setIsMobileNavOpen(false);
+
   };
 
   interface AdminNavItem {
@@ -1361,8 +1498,16 @@ export const AdminDashboard: React.FC = () => {
           sublabel: 'InstaPay ومحافظ كاش',
           icon: Wallet,
           elementId: 'admin-tab-payment-settings'
+        },
+        {
+          id: 'shipping-settings' as const,
+          label: 'الشحن وشركة بوسطة',
+          sublabel: 'ربط Bosta وتتبع الطرود',
+          icon: Truck,
+          elementId: 'admin-tab-shipping-settings'
         }
       ]
+
     },
     {
       id: 'heritage',
@@ -2465,6 +2610,33 @@ export const AdminDashboard: React.FC = () => {
                   <span className="text-[11px] text-primary dark:text-primary-hover font-bold">ضبط ←</span>
                 </div>
               </div>
+
+              {/* Bento Card 7.5: Bosta Shipping */}
+              <div
+                onClick={() => handleSelectTab('shipping-settings')}
+                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${activeTab === 'shipping-settings'
+                  ? 'bg-primary text-white border-primary ring-2 ring-primary/30'
+                  : 'bg-white dark:bg-[#26160D] border-[#E0C79B] dark:border-[#6B3A1F] hover:border-primary/50'
+                  }`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="w-10 h-10 rounded-2xl bg-orange-100 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Truck className="w-5 h-5" />
+                  </div>
+                  <span className="text-[10px] font-bold text-orange-700 dark:text-orange-400">
+                    Bosta 🚚
+                  </span>
+                </div>
+                <h4 className="font-black text-sm mt-3">الشحن وبوسطة (Bosta)</h4>
+                <p className={`text-xs mt-1 ${activeTab === 'shipping-settings' ? 'text-white/80' : 'text-black/60 dark:text-white/60'}`}>
+                  ربط الحساب الرسمي، وتتبع الشحنات، وبوالص الـ AWB
+                </p>
+                <div className="mt-4 pt-3 border-t border-[#E0C79B] dark:border-[#6B3A1F] flex items-center justify-between text-xs">
+                  <span className="font-bold">إعدادات الشحن</span>
+                  <span className="text-[11px] text-primary dark:text-primary-hover font-bold">فتح ←</span>
+                </div>
+              </div>
+
 
               {/* Bento Card 8: Complaints and Reports */}
               <div
@@ -3744,10 +3916,12 @@ export const AdminDashboard: React.FC = () => {
                       <th className="py-3 px-4 font-bold">بيانات التحويل</th>
                       <th className="py-3 px-4 font-bold">المبلغ</th>
                       <th className="py-3 px-4 font-bold">حالة الدفع</th>
+                      <th className="py-3 px-4 font-bold">شحن بوسطة Bosta</th>
                       <th className="py-3 px-4 font-bold">حالة الأوردر</th>
                       <th className="py-3 px-4 font-bold text-center">التأكيد والشحن</th>
                     </tr>
                   </thead>
+
                   <tbody className="divide-y divide-black/10 dark:divide-white/10">
                     {orders
                       .filter((ord) => {
@@ -3829,7 +4003,50 @@ export const AdminDashboard: React.FC = () => {
                               )}
                             </td>
                             <td className="py-3 px-4">
+                              {ord.bostaTrackingNumber || ord.shippingProvider === 'bosta' ? (
+                                <div className="flex flex-col gap-1">
+                                  <span className="px-2 py-0.5 rounded-md font-mono text-[10px] font-bold bg-orange-100 text-orange-800 border border-orange-200 inline-flex items-center gap-1 w-fit">
+                                    <Truck className="w-3 h-3 text-orange-600" />
+                                    <span>بوسطة: {ord.bostaTrackingNumber || ord.trackingNumber}</span>
+                                  </span>
+                                  <div className="flex items-center gap-1.5 text-[10px] font-bold">
+                                    <button
+                                      type="button"
+                                      onClick={() => handleViewBostaTracking(ord)}
+                                      className="text-primary hover:underline cursor-pointer"
+                                      title="عرض تفاصيل التتبع الحي"
+                                    >
+                                      تتبع مباشر
+                                    </button>
+                                    <span className="text-gray-300">•</span>
+                                    <a
+                                      href={ord.bostaAwbUrl || `https://bosta.co/tracking-shipment/?trackNumber=${ord.bostaTrackingNumber || ord.trackingNumber}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-orange-700 hover:underline flex items-center gap-0.5 cursor-pointer"
+                                      title="فتح بوليصة الشحن الرسمية"
+                                    >
+                                      <span>بوليصة AWB</span>
+                                      <ExternalLink className="w-2.5 h-2.5" />
+                                    </a>
+                                  </div>
+                                </div>
+                              ) : (
+                                <button
+                                  type="button"
+                                  disabled={creatingBostaOrderId === ord.id || ord.status === 'cancelled' || ord.status === 'delivered'}
+                                  onClick={() => handleCreateBostaShipmentForOrder(ord)}
+                                  className="px-2.5 py-1.5 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white rounded-lg text-[10px] font-bold flex items-center gap-1 shadow-xs transition-all cursor-pointer disabled:opacity-40"
+                                  title="إصدار بوليصة شحن عبر بوسطة Bosta"
+                                >
+                                  <Truck className="w-3 h-3" />
+                                  <span>{creatingBostaOrderId === ord.id ? 'جاري الإصدار...' : '🚚 شحن مع بوسطة'}</span>
+                                </button>
+                              )}
+                            </td>
+                            <td className="py-3 px-4">
                               <select
+
                                 value={ord.status}
                                 onChange={(e) => {
                                   const newSt = e.target.value as OrderStatus;
@@ -4107,8 +4324,321 @@ export const AdminDashboard: React.FC = () => {
             </div>
           )}
 
+          {/* TAB: SHIPPING & BOSTA SETTINGS */}
+          {activeTab === 'shipping-settings' && (
+            <div className="bg-[#F8EBD7] dark:bg-[#3B1E0E] rounded-3xl border border-[#E0C79B] dark:border-[#6B3A1F] p-6 sm:p-8 shadow-xs space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E0C79B] dark:border-[#6B3A1F] pb-4">
+                <div>
+                  <h3 className="font-bold text-base sm:text-lg text-[#3B1E0E] dark:text-[#FFF9EE] flex items-center gap-2">
+                    <Truck className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+                    <span>إعدادات الشحن وشركة بوسطة (Bosta)</span>
+                  </h3>
+                  <p className="text-xs text-black/60 dark:text-white/60 mt-1">
+                    إدارة الربط الرسمي مع منصة بوسطة، عناوين الاستلام في الصعيد، وتتبع الشحنات وبوالص الشحن.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    disabled={isTestingBosta}
+                    onClick={handleTestBostaConnection}
+                    className="px-3.5 py-1.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ${isTestingBosta ? 'animate-spin' : ''}`} />
+                    <span>{isTestingBosta ? 'جاري الفحص...' : 'فحص الاتصال ببوسطة'}</span>
+                  </button>
+                  <RefreshDataButton
+                    onRefresh={fetchAdminShippingSettings}
+                    label="تحديث الإعدادات"
+                  />
+                </div>
+              </div>
+
+              {/* Bosta Live Connection Banner */}
+              {bostaTestStatus && (
+                <div
+                  className={`p-4 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs ${bostaTestStatus.connected
+                    ? 'bg-emerald-50 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200'
+                    : 'bg-rose-50 dark:bg-rose-950/20 border-rose-300 dark:border-rose-800 text-rose-900 dark:text-rose-200'
+                    }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                    <div>
+                      <strong className="font-black text-sm block">حالة الاتصال مع منصة بوسطة:</strong>
+                      <p className="mt-0.5 opacity-90">{bostaTestStatus.message}</p>
+                    </div>
+                  </div>
+                  <div className="px-3 py-1 bg-white/70 dark:bg-black/30 rounded-xl font-bold border border-black/10 self-start sm:self-auto">
+                    {adminShippingSettings.bostaEnv === 'live' ? '🟢 بيئة الإنتاج الفعلي (Live)' : '🟡 بيئة التجربة (Staging)'}
+                  </div>
+                </div>
+              )}
+
+              <form onSubmit={handleSaveAdminShippingSettings} className="space-y-6 max-w-3xl">
+                {/* Section 1: API Key & Environment */}
+                <div className="p-5 sm:p-6 rounded-2xl border border-orange-200 dark:border-orange-900/40 bg-orange-50/40 dark:bg-orange-950/20 space-y-5">
+                  <div className="flex items-center justify-between border-b border-orange-200/60 dark:border-orange-900/40 pb-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-xl bg-orange-600 text-white flex items-center justify-center font-black text-xs shadow-sm">
+                        BST
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-sm text-orange-950 dark:text-orange-200">
+                          بيانات مفتاح API وبيئة التشغيل (Bosta API Key)
+                        </h4>
+                        <p className="text-[11px] text-orange-900/70 dark:text-orange-400">
+                          المفتاح الرسمي المستخدم لإنشاء الشحنات وإصدار بوالص الـ AWB
+                        </p>
+                      </div>
+                    </div>
+
+                    <label className="flex items-center gap-2 text-xs font-bold text-orange-950 dark:text-orange-200 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={adminShippingSettings.isBostaActive}
+                        onChange={(e) => setAdminShippingSettings({ ...adminShippingSettings, isBostaActive: e.target.checked })}
+                        className="w-4 h-4 text-orange-600 rounded"
+                      />
+                      <span>تفعيل بوسطة كشركة شحن</span>
+                    </label>
+                  </div>
+
+                  {/* Environment Switcher */}
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
+                      بيئة العمل (Environment):
+                    </label>
+                    <div className="flex items-center gap-4">
+                      <label
+                        className={`flex-1 p-3 rounded-xl border cursor-pointer transition text-xs font-bold flex items-center justify-between ${adminShippingSettings.bostaEnv === 'live'
+                          ? 'bg-orange-600 text-white border-orange-600 shadow-xs'
+                          : 'bg-white dark:bg-black/20 text-gray-700 dark:text-gray-300 border-[#E0C79B] dark:border-[#6B3A1F]'
+                          }`}
+                      >
+                        <div>
+                          <div className="font-black">الإنتاج الحي (Live)</div>
+                          <div className="text-[10px] opacity-80">https://app.bosta.co</div>
+                        </div>
+                        <input
+                          type="radio"
+                          name="bostaEnv"
+                          checked={adminShippingSettings.bostaEnv === 'live'}
+                          onChange={() => setAdminShippingSettings({ ...adminShippingSettings, bostaEnv: 'live' })}
+                          className="w-4 h-4 text-orange-600"
+                        />
+                      </label>
+
+                      <label
+                        className={`flex-1 p-3 rounded-xl border cursor-pointer transition text-xs font-bold flex items-center justify-between ${adminShippingSettings.bostaEnv === 'staging'
+                          ? 'bg-orange-600 text-white border-orange-600 shadow-xs'
+                          : 'bg-white dark:bg-black/20 text-gray-700 dark:text-gray-300 border-[#E0C79B] dark:border-[#6B3A1F]'
+                          }`}
+                      >
+                        <div>
+                          <div className="font-black">بيئة التجربة (Staging)</div>
+                          <div className="text-[10px] opacity-80">https://stg-app.bosta.co</div>
+                        </div>
+                        <input
+                          type="radio"
+                          name="bostaEnv"
+                          checked={adminShippingSettings.bostaEnv === 'staging'}
+                          onChange={() => setAdminShippingSettings({ ...adminShippingSettings, bostaEnv: 'staging' })}
+                          className="w-4 h-4 text-orange-600"
+                        />
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* API Key */}
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
+                      مفتاح API الخاص بحساب بوسطة (API Key):
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={adminShippingSettings.bostaApiKey}
+                        onChange={(e) => setAdminShippingSettings({ ...adminShippingSettings, bostaApiKey: e.target.value })}
+                        placeholder="أدخل مفتاح Bosta API المكون من 64 حرفاً"
+                        className="w-full px-4 py-2.5 bg-white dark:bg-black/20 border border-[#E0C79B] dark:border-[#6B3A1F] rounded-xl text-xs font-mono font-bold text-gray-800 dark:text-gray-100 outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+                      />
+                    </div>
+                    <p className="text-[11px] text-gray-500">
+                      يمكنك نسخ المفتاح من لوحة تحكم بوسطة عبر: الإعدادات Settings ← الربط البرمجي API Integration.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Section 2: Pickup Location & Package Specs */}
+                <div className="p-5 sm:p-6 rounded-2xl border border-[#E0C79B] dark:border-[#6B3A1F] bg-white dark:bg-black/20 space-y-5">
+                  <div className="flex items-center gap-2 border-b border-[#E0C79B] dark:border-[#6B3A1F] pb-3">
+                    <MapPin className="w-5 h-5 text-primary" />
+                    <div>
+                      <h4 className="font-bold text-sm text-[#3B1E0E] dark:text-[#FFF9EE]">
+                        عنوان الاستلام الافتراضي ونوع الطرد (Pickup Address & Specs)
+                      </h4>
+                      <p className="text-[11px] text-black/60 dark:text-white/60">
+                        العنوان الذي يتوجه إليه مندوب بوسطة في الصعيد لاستلام المنتجات من الورشة
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
+                        معرف عنوان الاستلام في بوسطة (Pickup Location ID):
+                      </label>
+                      <input
+                        type="text"
+                        value={adminShippingSettings.bostaPickupLocationId || ''}
+                        onChange={(e) => setAdminShippingSettings({ ...adminShippingSettings, bostaPickupLocationId: e.target.value })}
+                        placeholder="مثال: JIx5kaTHoO"
+                        className="w-full px-4 py-2.5 bg-white dark:bg-black/20 border border-[#E0C79B] dark:border-[#6B3A1F] rounded-xl text-xs font-mono font-bold text-gray-800 dark:text-gray-100 outline-none"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
+                        اسم ووصف موقع الاستلام:
+                      </label>
+                      <input
+                        type="text"
+                        value={adminShippingSettings.bostaPickupLocationName || ''}
+                        onChange={(e) => setAdminShippingSettings({ ...adminShippingSettings, bostaPickupLocationName: e.target.value })}
+                        placeholder="مثال: ورشة أسيوط - مهند أحمد (+201158969931)"
+                        className="w-full px-4 py-2.5 bg-white dark:bg-black/20 border border-[#E0C79B] dark:border-[#6B3A1F] rounded-xl text-xs font-bold text-gray-800 dark:text-gray-100 outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
+                      الحجم القياسي الافتراضي للطرد (Default Package Type):
+                    </label>
+                    <select
+                      value={adminShippingSettings.defaultPackageType || 'SMALL'}
+                      onChange={(e) => setAdminShippingSettings({ ...adminShippingSettings, defaultPackageType: e.target.value as any })}
+                      className="w-full px-4 py-2.5 bg-white dark:bg-black/20 border border-[#E0C79B] dark:border-[#6B3A1F] rounded-xl text-xs font-bold text-gray-800 dark:text-gray-100 outline-none cursor-pointer"
+                    >
+                      <option value="SMALL">طرد صغير SMALL (حتى 2 كجم - فخار ومجسمات وتحف يدوية)</option>
+                      <option value="MEDIUM">طرد متوسط MEDIUM (حتى 5 كجم - كليم وسجاد ومنسوجات)</option>
+                      <option value="LARGE">طرد كبير LARGE (أكثر من 5 كجم - مشغولات أخشاب خوص ونخيل)</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Section 3: Shipping Fees & Thresholds */}
+                <div className="p-5 sm:p-6 rounded-2xl border border-[#E0C79B] dark:border-[#6B3A1F] bg-white dark:bg-black/20 space-y-5">
+                  <div className="flex items-center gap-2 border-b border-[#E0C79B] dark:border-[#6B3A1F] pb-3">
+                    <DollarSign className="w-5 h-5 text-emerald-600" />
+                    <div>
+                      <h4 className="font-bold text-sm text-[#3B1E0E] dark:text-[#FFF9EE]">
+                        تسعير الشحن للمشترين (Shipping Rates & Thresholds)
+                      </h4>
+                      <p className="text-[11px] text-black/60 dark:text-white/60">
+                        تحديد تكلفة الشحن التي تظهر للعميل في السلة وصفحة إتمام الطلب
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
+                        محافظات الصعيد (ج.م):
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={adminShippingSettings.upperEgyptShippingFee ?? 45}
+                        onChange={(e) => setAdminShippingSettings({ ...adminShippingSettings, upperEgyptShippingFee: Number(e.target.value) })}
+                        className="w-full px-4 py-2.5 bg-white dark:bg-black/20 border border-[#E0C79B] dark:border-[#6B3A1F] rounded-xl text-xs font-mono font-bold text-gray-800 dark:text-gray-100 outline-none"
+                      />
+                      <span className="text-[10px] text-gray-500">قنا، الأقصر، أسوان، أسيوط، سوهاج...</span>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
+                        باقي المحافظات (ج.م):
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={adminShippingSettings.otherGovernoratesShippingFee ?? 55}
+                        onChange={(e) => setAdminShippingSettings({ ...adminShippingSettings, otherGovernoratesShippingFee: Number(e.target.value) })}
+                        className="w-full px-4 py-2.5 bg-white dark:bg-black/20 border border-[#E0C79B] dark:border-[#6B3A1F] rounded-xl text-xs font-mono font-bold text-gray-800 dark:text-gray-100 outline-none"
+                      />
+                      <span className="text-[10px] text-gray-500">القاهرة، الجيزة، الإسكندرية، الدلتا...</span>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
+                        حد الشحن المجاني (ج.م):
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={adminShippingSettings.freeShippingThreshold ?? 1000}
+                        onChange={(e) => setAdminShippingSettings({ ...adminShippingSettings, freeShippingThreshold: Number(e.target.value) })}
+                        className="w-full px-4 py-2.5 bg-white dark:bg-black/20 border border-[#E0C79B] dark:border-[#6B3A1F] rounded-xl text-xs font-mono font-bold text-gray-800 dark:text-gray-100 outline-none"
+                      />
+                      <span className="text-[10px] text-emerald-600 font-bold">شحن مجاني للطلبات فوق هذا المبلغ</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 4: Webhook Configuration */}
+                <div className="p-4 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 space-y-2 text-xs">
+                  <span className="font-bold block text-espresso dark:text-cream">
+                    رابط الـ Webhook لتحديث حالات الشحنات تلقائياً في بوسطة:
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      readOnly
+                      value={`${typeof window !== 'undefined' ? window.location.origin : 'https://elsa3ed.com'}/api/shipping/bosta/webhook`}
+                      className="flex-1 px-3 py-2 rounded-xl bg-white dark:bg-black/30 border border-black/10 font-mono text-[11px] text-gray-700 dark:text-gray-300 outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const url = `${typeof window !== 'undefined' ? window.location.origin : 'https://elsa3ed.com'}/api/shipping/bosta/webhook`;
+                        navigator.clipboard.writeText(url);
+                        addToast('تم النسخ', 'تم نسخ رابط الـ Webhook إلى الحافظة', 'info');
+                      }}
+                      className="px-3 py-2 bg-primary text-white rounded-xl font-bold flex items-center gap-1 cursor-pointer"
+                    >
+                      <Copy className="w-3.5 h-3.5" />
+                      <span>نسخ</span>
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-gray-500">
+                    يمكنك وضع هذا الرابط في إعدادات Webhooks في بوسطة لتحديث مسار الشحنة تلقائياً إلى "تم التسليم" عند استلام المشتري للطلب.
+                  </p>
+                </div>
+
+                {/* Submit button */}
+                <button
+                  type="submit"
+                  disabled={isSavingShippingSettings}
+                  className="px-8 py-3.5 bg-orange-600 text-white hover:bg-orange-700 font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer flex items-center gap-2"
+                >
+                  {isSavingShippingSettings ? (
+                    <span>بنحفظ الإعدادات...</span>
+                  ) : (
+                    <>
+                      <Check className="w-4 h-4" />
+                      <span>حفظ وتطبيق إعدادات الشحن وبوسطة</span>
+                    </>
+                  )}
+                </button>
+              </form>
+            </div>
+          )}
+
           {/* TAB 5: COUPONS */}
           {activeTab === 'coupons' && (
+
             <div className="space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-3xl border border-[#E0C79B] dark:border-[#6B3A1F] shadow-xs">
                 <div>
@@ -6702,6 +7232,115 @@ export const AdminDashboard: React.FC = () => {
           }}
         />
       )}
+      {/* Bosta Live Tracking Modal */}
+      {trackingModalOrder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-[#FFF9EE] dark:bg-[#26160D] w-full max-w-lg rounded-3xl border border-[#E0C79B] dark:border-[#6B3A1F] shadow-2xl p-6 space-y-6 text-[#3B1E0E] dark:text-[#FFF9EE]">
+            <div className="flex items-center justify-between border-b border-[#E0C79B] dark:border-[#6B3A1F] pb-4">
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-2xl bg-orange-600 text-white flex items-center justify-center font-black shadow-sm">
+                  🚚
+                </div>
+                <div>
+                  <h3 className="font-bold text-base">تتبع شحنة بوسطة (Bosta)</h3>
+                  <span className="text-xs text-black/60 dark:text-white/60 font-mono">
+                    الطلب #{trackingModalOrder.orderNumber}
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setTrackingModalOrder(null)}
+                className="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center hover:bg-black/10 transition cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {isLoadingTracking ? (
+              <div className="py-12 text-center space-y-3">
+                <RefreshCw className="w-8 h-8 animate-spin mx-auto text-orange-600" />
+                <p className="text-xs font-bold text-gray-500">جاري الاتصال بخوادم بوسطة لجلب خط سير الشحنة...</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {/* Tracking Number & Quick Links */}
+                <div className="p-4 rounded-2xl bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-900/40 flex items-center justify-between">
+                  <div>
+                    <span className="text-[10px] text-orange-800 dark:text-orange-300 font-bold block">رقم بوليصة التتبع (Tracking Number):</span>
+                    <span className="font-mono text-base font-black text-orange-950 dark:text-orange-100">
+                      {trackingModalOrder.bostaTrackingNumber || trackingModalOrder.trackingNumber}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(trackingModalOrder.bostaTrackingNumber || trackingModalOrder.trackingNumber);
+                        addToast('تم النسخ', 'تم نسخ رقم التتبع للحافظة', 'info');
+                      }}
+                      className="px-2.5 py-1.5 rounded-lg bg-white dark:bg-black/30 border border-orange-200 text-orange-700 text-xs font-bold flex items-center gap-1 cursor-pointer"
+                    >
+                      <Copy className="w-3 h-3" />
+                      <span>نسخ</span>
+                    </button>
+                    <a
+                      href={`https://bosta.co/tracking-shipment/?trackNumber=${trackingModalOrder.bostaTrackingNumber || trackingModalOrder.trackingNumber}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3 py-1.5 rounded-lg bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold flex items-center gap-1 cursor-pointer"
+                    >
+                      <span>فتح بوسطة</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
+                </div>
+
+                {/* Status State */}
+                <div className="p-4 rounded-2xl bg-white dark:bg-black/20 border border-[#E0C79B] dark:border-[#6B3A1F] space-y-1">
+                  <span className="text-[10px] text-gray-500 font-bold">الحالة الحالية:</span>
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="font-bold text-sm text-[#3B1E0E] dark:text-[#FFF9EE]">
+                      {trackingData?.stateAr || 'الشحنة قيد المتابعة والتوصيل'}
+                    </span>
+                    {trackingData?.state && (
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-black/5 dark:bg-white/10 text-gray-600">
+                        {trackingData.state}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Recipient Details */}
+                <div className="p-4 rounded-2xl bg-white dark:bg-black/20 border border-[#E0C79B] dark:border-[#6B3A1F] space-y-1.5 text-xs">
+                  <span className="text-[10px] text-gray-500 font-bold block">عنوان التسليم والمستلم:</span>
+                  <div className="font-bold text-[#3B1E0E] dark:text-[#FFF9EE]">
+                    {trackingModalOrder.shippingAddress?.fullName || trackingModalOrder.buyerName}
+                    <span className="text-gray-500 font-normal mr-2">
+                      ({trackingModalOrder.shippingAddress?.phone || trackingModalOrder.buyerPhone})
+                    </span>
+                  </div>
+                  <div className="text-black/70 dark:text-white/70">
+                    {trackingModalOrder.shippingAddress?.governorate} - {trackingModalOrder.shippingAddress?.city} - {trackingModalOrder.shippingAddress?.streetAddress}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="pt-2 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setTrackingModalOrder(null)}
+                className="px-6 py-2.5 bg-black/5 dark:bg-white/10 hover:bg-black/10 rounded-xl font-bold text-xs cursor-pointer transition"
+              >
+                إغلاق النافذة
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
+

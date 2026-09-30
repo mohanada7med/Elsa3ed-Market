@@ -189,9 +189,30 @@ export interface Order {
   createdAt: string;
   updatedAt: string;
   trackingNumber: string;
+  bostaDeliveryId?: string;
+  bostaTrackingNumber?: string;
+  bostaAwbUrl?: string;
+  bostaState?: string;
+  shippingProvider?: 'bosta' | 'saed_express' | string;
   timeline: OrderTimelineItem[];
   sellerIds: string[];
 }
+
+export interface ShippingConfig {
+  id: string;
+  bostaApiKey: string;
+  bostaEnv: 'live' | 'staging';
+  isBostaActive: boolean;
+  bostaPickupLocationId?: string;
+  bostaPickupLocationName?: string;
+  defaultPackageType?: 'SMALL' | 'MEDIUM' | 'LARGE';
+  freeShippingThreshold: number;
+  upperEgyptShippingFee: number;
+  otherGovernoratesShippingFee: number;
+  updatedAt: string;
+  updatedBy: string;
+}
+
 
 export interface Review {
   id: string;
@@ -345,7 +366,9 @@ export type ActivePage =
   | 'admin-discounts'
   | 'admin-reports'
   | 'admin-audit-logs'
+  | 'admin-shipping'
   | 'market'
+
   | 'profile'
   | 'admin-settings'
   | 'quize'

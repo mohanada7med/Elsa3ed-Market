@@ -33,8 +33,10 @@ import {
   ReportTicket,
   ReportStatus,
   ReportPriority,
-  ReportCategory
+  ReportCategory,
+  ShippingConfig
 } from '../types.ts';
+
 
 
 const API_BASE = '/api';
@@ -1797,6 +1799,80 @@ export const api = {
     const json: ApiResponse<any> = await res.json();
     if (!json.success || !json.data) {
       throw new Error(json.error || 'تعذر بدء الدفع الإلكتروني عبر فاتورتك');
+    }
+    return json.data;
+  },
+
+  // ==================== BOSTA & SHIPPING INTEGRATION ====================
+  async getAdminShippingConfig(user: { id?: string; role?: string }): Promise<ShippingConfig> {
+    const res = await fetch(`${API_BASE}/shipping/config`, {
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<ShippingConfig> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في جلب إعدادات الشحن وبوسطة');
+    }
+    return json.data;
+  },
+
+  async updateAdminShippingConfig(
+    user: { id?: string; role?: string },
+    payload: Partial<ShippingConfig>
+  ): Promise<ShippingConfig> {
+    const res = await fetch(`${API_BASE}/shipping/config`, {
+      method: 'PUT',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(payload)
+    });
+    const json: ApiResponse<ShippingConfig> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في حفظ إعدادات الشحن');
+    }
+    return json.data;
+  },
+
+  async getBostaPickupLocations(user: { id?: string; role?: string }): Promise<any[]> {
+    const res = await fetch(`${API_BASE}/shipping/bosta/pickup-locations`, {
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<any[]> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في جلب عناوين الاستلام من بوسطة');
+    }
+    return json.data;
+  },
+
+  async createBostaShipment(
+    orderId: string,
+    user: { id?: string; role?: string },
+    options?: { notes?: string; allowSimulationFallback?: boolean }
+  ): Promise<{
+    trackingNumber: string;
+    bostaDeliveryId?: string;
+    awbUrl?: string;
+    isSimulated?: boolean;
+    order: any;
+  }> {
+    const res = await fetch(`${API_BASE}/shipping/bosta/create-shipment/${orderId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders(user)
+      },
+      body: JSON.stringify(options || {})
+    });
+    const json: ApiResponse<any> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'تعذر إصدار الشحنة عبر بوسطة');
+    }
+    return json.data;
+  },
+
+  async trackBostaShipment(trackingNumber: string): Promise<any> {
+    const res = await fetch(`${API_BASE}/shipping/bosta/track/${trackingNumber}`);
+    const json: ApiResponse<any> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل جلب تفاصيل التتبع من بوسطة');
     }
     return json.data;
   },

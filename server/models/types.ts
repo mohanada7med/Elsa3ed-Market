@@ -198,10 +198,31 @@ export interface OrderDocument {
   createdAt: string;
   updatedAt: string;
   trackingNumber: string;
+  bostaDeliveryId?: string;
+  bostaTrackingNumber?: string;
+  bostaAwbUrl?: string;
+  bostaState?: string;
+  shippingProvider?: 'bosta' | 'saed_express' | string;
   timeline: OrderTimelineDocument[];
   sellerIds: string[];
   cancellationReason?: string;
 }
+
+export interface ShippingConfigDocument {
+  id: string;
+  bostaApiKey: string;
+  bostaEnv: 'live' | 'staging';
+  isBostaActive: boolean;
+  bostaPickupLocationId?: string;
+  bostaPickupLocationName?: string;
+  defaultPackageType?: 'SMALL' | 'MEDIUM' | 'LARGE';
+  freeShippingThreshold: number;
+  upperEgyptShippingFee: number;
+  otherGovernoratesShippingFee: number;
+  updatedAt: string;
+  updatedBy: string;
+}
+
 
 export interface CategoryDocument {
   id: string;

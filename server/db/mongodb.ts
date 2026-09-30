@@ -99,6 +99,20 @@ class MemoryStore {
     updatedAt: new Date().toISOString(),
     updatedBy: 'النظام'
   };
+  shippingConfig: import('../models/types.ts').ShippingConfigDocument = {
+    id: 'platform_shipping_config',
+    bostaApiKey: process.env.BOSTA_API_KEY || '',
+    bostaEnv: (process.env.BOSTA_ENV as 'live' | 'staging') || 'live',
+    isBostaActive: true,
+    bostaPickupLocationId: process.env.BOSTA_PICKUP_LOCATION_ID || 'JIx5kaTHoO',
+    bostaPickupLocationName: 'اسيوط - مهند احمد',
+    defaultPackageType: 'SMALL',
+    freeShippingThreshold: 1000,
+    upperEgyptShippingFee: 45,
+    otherGovernoratesShippingFee: 55,
+    updatedAt: new Date().toISOString(),
+    updatedBy: 'النظام'
+  };
   craftReels: any;
 }
 export const memoryDb = new MemoryStore();
