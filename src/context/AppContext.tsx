@@ -142,6 +142,7 @@ interface AppContextType {
     specialty?: string;
   }) => Promise<void>;
   logout: () => void;
+  deleteMyAccount: (password?: string) => Promise<boolean>;
   uploadProfileImage: (imageDataUri: string, filename?: string) => Promise<void>;
   removeProfileImage: () => Promise<void>;
   isAuthModalOpen: boolean;
@@ -1884,6 +1885,29 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
+  const deleteMyAccount = async (password?: string): Promise<boolean> => {
+    try {
+      const res = await api.deleteAccount(password, { id: currentUser.id, role: currentRole });
+      setCurrentUser(GUEST_USER);
+      setCurrentRole('guest');
+      setAuthState('UNAUTHENTICATED');
+      setNotifications([]);
+      setUnreadNotificationsCount(0);
+      notificationService.clearMemory();
+      setChatUnreadCount(0);
+      setPostLoginRedirect(null);
+      setIsAuthModalOpen(false);
+      setIsCartDrawerOpen(false);
+      setActivePage('home');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      addToast('تم حذف الحساب نهائياً', res.message || 'تم حذف حسابك وكافة بياناته نهائياً من قاعدة بيانات منصة وه بنجاح', 'info');
+      return true;
+    } catch (err: any) {
+      addToast('خطأ في حذف الحساب', err?.message || 'تعذر حذف الحساب، يرجى التأكد من كلمة المرور والمحاولة مجدداً', 'error');
+      throw err;
+    }
+  };
+
   const changePersonalPassword = async (currentPassword: string, newPassword: string) => {
     await api.changePersonalPassword(
       { id: currentUser.id, role: currentRole },
@@ -3119,6 +3143,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         login,
         register,
         logout,
+        deleteMyAccount,
         isAuthModalOpen,
         setIsAuthModalOpen,
         authModalTab,

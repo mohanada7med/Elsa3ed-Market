@@ -4,7 +4,9 @@ import type { UserDocument, UserRole, UserAddress, SellerStatus } from '../model
 import { Logger } from '../utils/logger.ts';
 import { storageService } from './storage/storageProvider.ts';
 import { createAuditLog } from './auditService.ts';
+import { cacheService } from './cacheService.ts';
 import type { AuthenticatedUser } from '../middleware/auth.ts';
+import { invalidateAuthSession } from '../middleware/auth.ts';
 
 /**
  * Extract Cloudinary public_id from Cloudinary URL or namespace key
@@ -626,6 +628,207 @@ export async function deleteUserCascade(
   });
 
   return result;
+}
+
+/**
+ * Permanently delete own account (Buyer or Seller) from database and all related services.
+ * Implements strict GDPR right to erasure and complete asset cleanup.
+ */
+export async function deleteOwnAccount(
+  currentUser: AuthenticatedUser,
+  passwordConfirmation?: string
+): Promise<{ success: boolean; message: string }> {
+  if (!currentUser || !currentUser.id) {
+    throw new Error('يرجى تسجيل الدخول أولاً لتنفيذ هذه العملية');
+  }
+
+  // Prevent admin from deleting their account via this self-service route
+  if (currentUser.role === 'admin') {
+    throw new Error('حساب مدير المنصة محمي ضد الحذف الذاتي حفاظاً على استقرار النظام');
+  }
+
+  const { db, isMongo } = await getDatabase();
+  const userId = currentUser.id;
+
+  // 1. Fetch user doc
+  let userDoc: any = null;
+  if (isMongo && db) {
+    userDoc = await db.collection('users').findOne({ id: userId });
+  } else {
+    userDoc = memoryDb.users.find((u) => u.id === userId);
+  }
+
+  if (!userDoc) {
+    throw new Error('بيانات المستخدم غير موجودة أو تم حذفها مسبقاً');
+  }
+
+  // 2. If user has a passwordHash, verify passwordConfirmation
+  if (userDoc.passwordHash) {
+    if (!passwordConfirmation || typeof passwordConfirmation !== 'string') {
+      throw new Error('يرجى إدخال كلمة المرور لتأكيد حذف الحساب نهائياً');
+    }
+    const isMatch = await bcrypt.compare(passwordConfirmation, userDoc.passwordHash);
+    if (!isMatch) {
+      throw new Error('كلمة المرور غير صحيحة، يرجى كتابة كلمة المرور الصحيحة لتأكيد الحذف');
+    }
+  }
+
+  // 3. Clean up profile picture from Cloudinary
+  if (userDoc.profileImage?.publicId) {
+    try {
+      await storageService.delete(userDoc.profileImage.publicId, {
+        id: userId,
+        role: currentUser.role
+      });
+    } catch (err) {
+      Logger.warn('[UserService] Cloudinary profile image deletion error during self-delete:', err);
+    }
+  }
+
+  // 4. If Seller: cascade delete all workshop assets
+  if (userDoc.role === 'seller' || currentUser.role === 'seller' || userDoc.sellerId) {
+    let sellerDoc: any = null;
+    if (isMongo && db) {
+      sellerDoc = await db.collection('sellers').findOne({
+        $or: [{ id: userDoc.sellerId }, { userId: userId }]
+      });
+    } else {
+      sellerDoc = memoryDb.sellers.find(
+        (s: any) => s.userId === userId || s.id === userDoc.sellerId
+      );
+    }
+
+    const sellerId = sellerDoc?.id || userDoc.sellerId || userId;
+
+    if (sellerId) {
+      // Find all products owned by this seller
+      let sellerProducts: any[] = [];
+      if (isMongo && db) {
+        sellerProducts = await db.collection('products').find({
+          $or: [{ sellerId }, { sellerId: userId }]
+        }).toArray();
+      } else {
+        sellerProducts = memoryDb.products.filter(
+          (p) => p.sellerId === sellerId || p.sellerId === userId
+        );
+      }
+
+      // Clean up Cloudinary images belonging to this seller's products
+      for (const prod of sellerProducts) {
+        if (Array.isArray(prod.images)) {
+          for (const imgUrl of prod.images) {
+            const publicId = extractCloudinaryPublicId(imgUrl);
+            if (publicId && publicId.startsWith('WAH/products/')) {
+              try {
+                await storageService.delete(publicId, { id: userId, role: 'seller' });
+              } catch (err) {
+                Logger.warn(`[UserService] Failed deleting product image ${publicId}:`, err);
+              }
+            }
+          }
+        }
+      }
+
+      // Delete products, stock movements, and reels from MongoDB
+      if (isMongo && db) {
+        await db.collection('products').deleteMany({
+          $or: [{ sellerId }, { sellerId: userId }]
+        });
+        await db.collection('stock_movements').deleteMany({
+          $or: [{ sellerId }, { sellerId: userId }]
+        });
+        await db.collection('reels').deleteMany({
+          $or: [{ sellerId }, { sellerId: userId }]
+        });
+        try {
+          await db.collection('craft_reels').deleteMany({
+            $or: [{ sellerId }, { sellerId: userId }]
+          });
+        } catch { }
+        await db.collection('sellers').deleteMany({
+          $or: [{ id: sellerId }, { userId: userId }]
+        });
+      }
+
+      // Update memoryDb
+      memoryDb.products = memoryDb.products.filter(
+        (p) => p.sellerId !== sellerId && p.sellerId !== userId
+      );
+      memoryDb.stockMovements = memoryDb.stockMovements.filter(
+        (m) => m.sellerId !== sellerId && m.sellerId !== userId
+      );
+      if (memoryDb.craftReels) {
+        memoryDb.craftReels = memoryDb.craftReels.filter(
+          (r: any) => r.sellerId !== sellerId && r.sellerId !== userId
+        );
+      }
+      memoryDb.sellers = memoryDb.sellers.filter(
+        (s: any) => s.id !== sellerId && s.userId !== userId
+      );
+
+      cacheService.invalidateSellers(sellerId);
+      cacheService.invalidateProducts();
+    }
+  }
+
+  // 5. Common Buyer Cleanup (Carts, Favorites, Notifications, Orders Anonymization)
+  if (isMongo && db) {
+    await db.collection('carts').deleteMany({ buyerId: userId });
+    await db.collection('favorites').deleteMany({ buyerId: userId });
+    await db.collection('notifications').deleteMany({ userId });
+
+    // Anonymize orders for legal fulfillment integrity while wiping all personal identifiable data
+    await db.collection('orders').updateMany(
+      { buyerId: userId },
+      {
+        $set: {
+          buyerName: 'مستخدم محذوف',
+          buyerPhone: '---',
+          buyerEmail: 'deleted@user.local',
+          'shippingAddress.fullName': 'مستخدم محذوف',
+          'shippingAddress.phone': '---',
+          'shippingAddress.streetAddress': 'محذوف لحماية الخصوصية'
+        }
+      }
+    );
+
+    // Anonymize reviews
+    await db.collection('reviews').updateMany(
+      { userId },
+      { $set: { userName: 'مستخدم محذوف' } }
+    );
+
+    // Delete user doc completely from MongoDB
+    await db.collection('users').deleteOne({ id: userId });
+  }
+
+  // Sync memory store
+  memoryDb.carts = memoryDb.carts.filter((c) => c.buyerId !== userId);
+  memoryDb.users = memoryDb.users.filter((u) => u.id !== userId);
+
+  // Invalidate user sessions
+  invalidateAuthSession(userId);
+
+  // Audit trail
+  await createAuditLog({
+    actorId: userId,
+    userName: userDoc.name,
+    userRole: userDoc.role,
+    action: 'SELF_DELETE_ACCOUNT',
+    resource: 'users',
+    resourceId: userId,
+    status: 'نجاح',
+    details: `قام المستخدم (${userDoc.role}) "${userDoc.name}" بحذف حسابه الشخصي وكافة بياناته وورشته نهائياً من منصة وه`,
+    metadata: {
+      userId,
+      userRole: userDoc.role
+    }
+  });
+
+  return {
+    success: true,
+    message: 'تم حذف حسابك وكافة بياناتك نهائياً من قاعدة بيانات منصة وه بنجاح'
+  };
 }
 
 /**

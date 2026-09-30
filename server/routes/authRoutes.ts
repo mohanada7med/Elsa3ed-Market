@@ -1,7 +1,7 @@
 import express from 'express';
 import type { Request, Response } from 'express';
 import { register, login, verifyToken } from '../services/authService.ts';
-import { findUserById, updateUser, DEFAULT_USER_AVATAR, changeUserPersonalPassword } from '../services/userService.ts';
+import { findUserById, updateUser, DEFAULT_USER_AVATAR, changeUserPersonalPassword, deleteOwnAccount } from '../services/userService.ts';
 import {
   createPasswordResetRequest,
   requestAutomatedPasswordReset,
@@ -747,5 +747,26 @@ router.delete('/notifications/:id', requireAuth, async (req: AuthenticatedReques
     res.status(500).json({ success: false, error: error?.message || 'فشل في حذف الإشعار', code: 'SERVER_ERROR' });
   }
 });
+
+// DELETE /api/auth/account & POST /api/auth/delete-account
+// Permanently deletes own account (Buyer or Seller) from the database and storage
+const handleDeleteAccount = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const user = req.user!;
+    const password = req.body?.password;
+    const result = await deleteOwnAccount(user, password);
+    clearAuthCookie(res);
+    return res.json(result);
+  } catch (error: any) {
+    return res.status(400).json({
+      success: false,
+      error: error?.message || 'فشل في حذف الحساب',
+      code: 'DELETE_ACCOUNT_ERROR'
+    });
+  }
+};
+
+router.delete('/account', requireAuth, handleDeleteAccount);
+router.post('/delete-account', requireAuth, handleDeleteAccount);
 
 export default router;

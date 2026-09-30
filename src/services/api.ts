@@ -2552,6 +2552,24 @@ export const api = {
     }
   },
 
+  async deleteAccount(password?: string, user?: { id?: string; role?: string }): Promise<{ success: boolean; message: string }> {
+    const res = await fetch(`${API_BASE}/auth/account`, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders(user)
+      },
+      body: JSON.stringify({ password })
+    });
+    const json = await res.json();
+    if (!json.success) {
+      throw new Error(json.error || 'فشل حذف الحساب نهائياً');
+    }
+    clearStoredToken();
+    return json;
+  },
+
   async register(params: {
     username: string;
     name: string;

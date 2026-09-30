@@ -25,6 +25,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { Governorate } from '../../types';
+import { DeleteAccountModal } from '../common/DeleteAccountModal';
 
 export const BuyerAccountPage: React.FC = () => {
   const {
@@ -52,6 +53,7 @@ export const BuyerAccountPage: React.FC = () => {
   const [governorate, setGovernorate] = useState<Governorate>(
     (currentUser.governorate as Governorate) || 'قنا'
   );
+  const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] = useState(false);
 
   // Seller Application In-Place State
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
