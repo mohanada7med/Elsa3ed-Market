@@ -112,14 +112,12 @@ export const FavoritesPage: React.FC = () => {
 
               <h1
                 className="
-                  font-serif
                   text-5xl
-                  font-black
                   leading-[0.95]
                   tracking-tight
                   text-espresso
                   sm:text-7xl
-                  lg:text-8xl
+                  lg:text-7xl
                   xl:text-[7rem]
                   dark:text-cream
                 "
