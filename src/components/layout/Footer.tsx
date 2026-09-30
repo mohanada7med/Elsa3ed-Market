@@ -116,10 +116,13 @@ export const Footer: React.FC = () => {
 
   const clientServices = [
     { label: 'تابع شحنتك وطلباتك', page: 'orders' },
+    { label: 'مضايفة وه (المساعدة والتواصل)', page: 'help' },
     { label: 'سلة الشراء', page: 'cart' },
     { label: 'الحاجات المحفوظة', page: 'favorites' },
     { label: 'حسابك وعناوينك', page: 'buyer-account' },
     { label: 'عن وه وحكايتنا', page: 'about' },
+    { label: 'سياسة الخصوصية', page: 'privacy' },
+    { label: 'الشروط والأحكام', page: 'terms' },
   ];
 
   return (
@@ -355,16 +358,44 @@ export const Footer: React.FC = () => {
 
         {/* الشريط السفلي الحقوق والضمان */}
         <div className="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-5 text-center md:text-right">
-          <p className="text-xs text-white/60 font-medium tracking-wide">
-            كل الحقوق محفوظة © {new Date().getFullYear()} —{' '}
-            <span className="text-primary-hover hover:text-primary font-bold cursor-pointer transition-colors duration-200">
-              مهند أحمد
-            </span>{' '}
-            &nbsp;|&nbsp; منصة{' '}
-            <span className="font-heritage font-bold text-white hover:text-primary transition-colors duration-200 cursor-pointer">
-              «وه — WAH»
-            </span>
-          </p>
+          <div className="flex flex-col sm:flex-row items-center gap-3 text-xs text-white/60">
+            <p className="font-medium tracking-wide">
+              كل الحقوق محفوظة © {new Date().getFullYear()} —{' '}
+              <span className="text-primary-hover hover:text-primary font-bold cursor-pointer transition-colors duration-200">
+                مهند أحمد
+              </span>{' '}
+              &nbsp;|&nbsp; منصة{' '}
+              <span className="font-heritage font-bold text-white hover:text-primary transition-colors duration-200 cursor-pointer">
+                «وه — WAH»
+              </span>
+            </p>
+            <div className="flex items-center gap-2 text-[11px] text-[#D6C6B1]">
+              <span>•</span>
+              <button
+                type="button"
+                onClick={() => setActivePage('help')}
+                className="hover:text-primary-hover transition-colors cursor-pointer"
+              >
+                المساعدة والتواصل
+              </button>
+              <span>•</span>
+              <button
+                type="button"
+                onClick={() => setActivePage('privacy')}
+                className="hover:text-primary-hover transition-colors cursor-pointer"
+              >
+                سياسة الخصوصية
+              </button>
+              <span>•</span>
+              <button
+                type="button"
+                onClick={() => setActivePage('terms')}
+                className="hover:text-primary-hover transition-colors cursor-pointer"
+              >
+                الشروط والأحكام
+              </button>
+            </div>
+          </div>
 
           <div className="flex flex-wrap items-center justify-center gap-2">
             <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-white/10 bg-white/[0.03] text-[11px] font-bold backdrop-blur-md">

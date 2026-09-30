@@ -119,6 +119,15 @@ const DialectDictionaryPage = lazyWithRetry(() =>
 const OrdersTrackingPage = lazyWithRetry(() =>
   import('./components/pages/OrdersTrackingPage').then((m) => ({ default: m.OrdersTrackingPage }))
 );
+const HelpAndContactPage = lazyWithRetry(() =>
+  import('./components/pages/HelpAndContactPage').then((m) => ({ default: m.HelpAndContactPage }))
+);
+const PrivacyPolicyPage = lazyWithRetry(() =>
+  import('./components/pages/PrivacyPolicyPage').then((m) => ({ default: m.PrivacyPolicyPage }))
+);
+const TermsAndConditionsPage = lazyWithRetry(() =>
+  import('./components/pages/TermsAndConditionsPage').then((m) => ({ default: m.TermsAndConditionsPage }))
+);
 
 const SellerDashboard = lazyWithRetry(() =>
   import('./components/seller/SellerDashboard').then((m) => ({ default: m.SellerDashboard }))
@@ -307,6 +316,28 @@ const MainContent: React.FC = () => {
         updatePageSEO({
           title: 'تحدي اللهجة الصعيدية | وه',
           description: 'اختبر معرفتك بلهجة ومفردات أهل الصعيد في 10 أسئلة سريعة وممتعة.'
+        });
+        break;
+      case 'help':
+      case 'contact':
+        updatePageSEO({
+          title: 'مضايفة وه — المساعدة والتواصل | ديوان العون لأهل البلد',
+          description: 'ديوان العون والتواصل في منصة وه؛ في خدمتك على مدار الأسبوع لأي استفسار عن طلبياتك، الصنعة الصعيدية، أو الانضمام لشيوخ الكار.',
+          schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'المساعدة والتواصل' }])
+        });
+        break;
+      case 'privacy':
+        updatePageSEO({
+          title: 'سياسة الخصوصية وأمان أهل الدار | وه',
+          description: 'ميثاق سرية وأمان البيانات وحماية خصوصية مقتني الحرف وزوار منصة وه وفق أعلى المعايير.',
+          schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'سياسة الخصوصية' }])
+        });
+        break;
+      case 'terms':
+        updatePageSEO({
+          title: 'الشروط والأحكام وعهد الصنعة | وه',
+          description: 'ميثاق وعهد التعامل بين مقتني الحرف وشيوخ الورش ومنصة وه لضمان حقوق الجميع بالعدالة والإنصاف.',
+          schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'الشروط والأحكام' }])
         });
         break;
       default:
@@ -667,6 +698,23 @@ const MainContent: React.FC = () => {
               {(activePage === 'quize' || activePage === 'dialect-dictionary') && (
                 <React.Suspense fallback={<LazySectionFallback />}>
                   <DialectDictionaryPage />
+                </React.Suspense>
+              )}
+
+              {/* Help & Contact, Privacy Policy, Terms & Conditions */}
+              {(activePage === 'help' || activePage === 'contact') && (
+                <React.Suspense fallback={<LazySectionFallback />}>
+                  <HelpAndContactPage />
+                </React.Suspense>
+              )}
+              {activePage === 'privacy' && (
+                <React.Suspense fallback={<LazySectionFallback />}>
+                  <PrivacyPolicyPage />
+                </React.Suspense>
+              )}
+              {activePage === 'terms' && (
+                <React.Suspense fallback={<LazySectionFallback />}>
+                  <TermsAndConditionsPage />
                 </React.Suspense>
               )}
 

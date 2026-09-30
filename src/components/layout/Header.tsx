@@ -32,6 +32,7 @@ import {
   UtensilsCrossed,
   Compass,
   Layers,
+  Headphones,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -563,6 +564,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
       { id: 'categories', label: 'التصنيفات التراثية', shortLabel: 'التصنيفات', icon: Layers },
       { id: 'quize', label: 'انت صعيدى ؟ (لعبة اللهجة)', shortLabel: 'انت صعيدى؟', isNew: true, icon: Flame },
       { id: 'about', label: 'عن وه', shortLabel: 'عن وه', icon: Sparkles },
+      { id: 'help', label: 'مضايفة وه (المساعدة والتواصل)', shortLabel: 'المساعدة', icon: Headphones },
     ];
 
     if (isAuthenticated && currentRole === 'buyer') {

@@ -350,7 +350,11 @@ export type ActivePage =
   | 'profile'
   | 'admin-settings'
   | 'quize'
-  | 'reset-password';
+  | 'reset-password'
+  | 'help'
+  | 'contact'
+  | 'privacy'
+  | 'terms';
 
 export type CraftVerificationStatus = 'draft' | 'pending_review' | 'verified' | 'published' | 'rejected';
 

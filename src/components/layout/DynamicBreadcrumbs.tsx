@@ -360,6 +360,27 @@ export const DynamicBreadcrumbs: React.FC = () => {
         url: `${origin}/quiz`,
         isCurrent: true
       });
+    } else if (activePage === 'help' || activePage === 'contact') {
+      items.push({
+        id: 'help',
+        label: 'مضايفة وه — المساعدة والتواصل',
+        url: `${origin}/help`,
+        isCurrent: true
+      });
+    } else if (activePage === 'privacy') {
+      items.push({
+        id: 'privacy',
+        label: 'سياسة الخصوصية وأمان البيانات',
+        url: `${origin}/privacy`,
+        isCurrent: true
+      });
+    } else if (activePage === 'terms') {
+      items.push({
+        id: 'terms',
+        label: 'الشروط والأحكام وعهد الصنعة',
+        url: `${origin}/terms`,
+        isCurrent: true
+      });
     }
 
     // 2. Cultural & Heritage Ecosystem Flow
