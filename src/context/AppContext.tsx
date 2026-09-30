@@ -511,7 +511,6 @@ export const PAGE_ROUTES: Record<ActivePage, string> = {
   'admin-media': '/admin-media',
   'admin-events': '/admin-events',
   'admin-events-manager': '/admin-events-manager',
-  'dialect-dictionary': '/dialect-dictionary',
   'reset-password': '/reset-password',
   help: '/help',
   contact: '/contact',

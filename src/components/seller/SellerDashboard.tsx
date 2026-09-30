@@ -2020,7 +2020,7 @@ export const SellerDashboard: React.FC = () => {
             <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-lg backdrop-blur-xl space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <h3 className="font-black text-xl text-espresso dark:text-cream font-main">كتالوج قطع الورشة ومتابعة دورة الاعتماد</h3>
+                  <h3 className="font-bold text-xl text-espresso dark:text-cream font-cairo">كتالوج قطع الورشة ومتابعة دورة الاعتماد</h3>
                   <p className="text-xs text-black/60 dark:text-white/60 mt-1 font-medium">
                     جميع المنتجات تمر بدورة اعتماد: إنشاء مسودة أو تقديم للمراجعة ← فحص الإدارة ← نشر بالسوق العام
                   </p>
@@ -2184,7 +2184,7 @@ export const SellerDashboard: React.FC = () => {
               <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-lg backdrop-blur-xl space-y-5">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
-                    <h3 className="font-black text-xl text-espresso dark:text-cream font-main">إدارة المخزون والتوريدات اليدوية</h3>
+                    <h3 className="font-bold text-xl text-espresso dark:text-cream font-cairo">إدارة المخزون والتوريدات اليدوية</h3>
                     <p className="text-xs text-black/60 dark:text-white/60 mt-1 font-medium">
                       سجل حركة زيادة أو إنقاص القطع فور إتمام الصنعة بالورشة أو عند حرق دفعة جديدة
                     </p>
@@ -2274,7 +2274,7 @@ export const SellerDashboard: React.FC = () => {
             <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-lg backdrop-blur-xl space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-4">
                 <div>
-                  <h3 className="font-black text-xl text-espresso dark:text-cream font-main">إدارة وشحن طلبات العملاء</h3>
+                  <h3 className="font-bold text-xl text-espresso dark:text-cream font-cairo">إدارة وشحن طلبات العملاء</h3>
                   <p className="text-xs text-black/60 dark:text-white/60 mt-1 font-medium">قم بتحديث حالة الشحنة فور تجهيز الطرد بالورشة</p>
                 </div>
                 <RefreshDataButton
@@ -2386,7 +2386,7 @@ export const SellerDashboard: React.FC = () => {
                       <Sparkles className="w-3.5 h-3.5 text-primary" />
                       <span>واجهة عرض الورشة في قسم الورش والتعاونيات الحرفية المعتمدة</span>
                     </div>
-                    <h3 className="font-black text-xl text-espresso dark:text-cream font-main">
+                    <h3 className="font-bold text-xl text-espresso dark:text-cream font-cairo">
                       هوية وغلاف الورشة في منصة وه
                     </h3>
                     <p className="text-xs text-black/60 dark:text-white/60 mt-1 max-w-2xl leading-relaxed font-medium">
@@ -2743,7 +2743,7 @@ export const SellerDashboard: React.FC = () => {
                           </div>
                         </div>
                         <div className="p-5 pt-8 space-y-3">
-                          <h4 className="font-bold text-base font-main">{brandName}</h4>
+                          <h4 className="font-bold text-base font-cairo">{brandName}</h4>
                           <span className="inline-block text-[11px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md">
                             {sellerSpecialty || 'حرفة يدوية تراثية أصيلة'}
                           </span>
@@ -2795,7 +2795,7 @@ export const SellerDashboard: React.FC = () => {
             <div className="space-y-8 animate-in fade-in">
               <div className="relative rounded-[2rem] bg-gradient-to-r from-[#3B1E0E] via-[#4A2715] to-[#3B1E0E] text-white p-6 sm:p-8 overflow-hidden shadow-xl border border-black/10 dark:border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
                 <div>
-                  <h2 className="text-xl sm:text-3xl font-main">فيديوهات ورشة الصنعة القصيرة</h2>
+                  <h2 className="text-xl sm:text-3xl font-main font-black">فيديوهات ورشة الصنعة القصيرة</h2>
                   <p className="text-xs sm:text-sm text-white/80 mt-1">ارفع مقاطع فيديو عمودية (9:16) تبرز كواليس الصنع والتشكيل اليدوي لورشتك فقط</p>
                 </div>
                 <div className="flex items-center gap-3">
@@ -2918,7 +2918,7 @@ export const SellerDashboard: React.FC = () => {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-5">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="font-black text-xl text-espresso dark:text-cream font-main">
+                    <h3 className="font-bold text-xl text-espresso dark:text-cream font-cairo">
                       مركز الدعم وبلاغات الإدارة للورش الحرفية
                     </h3>
                     <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/20">
@@ -3053,7 +3053,7 @@ export const SellerDashboard: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
           <div className="bg-white/95 dark:bg-espresso-900/95 rounded-[2rem] border border-black/10 dark:border-white/10 max-w-md w-full p-6 space-y-4 shadow-2xl backdrop-blur-2xl">
             <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
-              <h3 className="font-black text-lg text-espresso dark:text-cream font-main">تعديل رصيد المخزون</h3>
+              <h3 className="font-bold text-lg text-espresso dark:text-cream font-cairo">تعديل رصيد المخزون</h3>
               <button
                 type="button"
                 onClick={() => setIsStockModalOpen(false)}
@@ -3118,9 +3118,9 @@ export const SellerDashboard: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
           <div className="bg-white/95 dark:bg-espresso-900/95 rounded-[2rem] border border-black/10 dark:border-white/10 max-w-2xl w-full p-6 sm:p-8 space-y-5 shadow-2xl max-h-[90vh] overflow-y-auto backdrop-blur-2xl">
             <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
-              <h3 className="font-black text-xl text-espresso dark:text-cream font-main">
+              <h2 className="font-black text-xl text-espresso dark:text-cream font-main">
                 {editingProduct ? 'تعديل بيانات القطعة التراثية' : 'إضافة قطعة يدوية جديدة للورشة'}
-              </h3>
+              </h2>
               <button
                 type="button"
                 onClick={() => setIsProductModalOpen(false)}
@@ -3365,7 +3365,7 @@ export const SellerDashboard: React.FC = () => {
       {isPayoutModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <div className="bg-white/95 dark:bg-espresso-900/95 rounded-[2rem] border border-black/10 dark:border-white/10 max-w-md w-full p-6 space-y-4 shadow-2xl backdrop-blur-2xl">
-            <h3 className="font-black text-xl text-espresso dark:text-cream font-main">طلب سحب أرباح الورشة</h3>
+            <h2 className="font-black text-xl text-espresso dark:text-cream font-main">طلب سحب أرباح الورشة</h2>
             <form onSubmit={handlePayoutSubmit} className="space-y-3">
               <div>
                 <label className="block text-xs font-bold text-espresso dark:text-cream mb-1">المبلغ المطلوب (ج.م)</label>

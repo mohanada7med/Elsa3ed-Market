@@ -319,7 +319,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <h2 className="text-base sm:text-xl font-black text-espresso dark:text-cream font-heritage">
+                <h2 className="text-base sm:text-xl font-black text-espresso dark:text-cream font-main">
                   إضافة حكاية أو فيديو جديد (وه Stories)
                 </h2>
                 <span className="px-2 py-0.5 rounded-full bg-primary text-white text-[9px] sm:text-[10px] font-black">
@@ -349,7 +349,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
             </div>
 
             <div className="max-w-lg space-y-2">
-              <h3 className="text-lg sm:text-2xl font-black text-[#3B1E0E] dark:text-[#FFF9EE] font-heritage">
+              <h3 className="text-lg sm:text-2xl font-bold text-[#3B1E0E] dark:text-[#FFF9EE] font-cairo">
                 رفع مقاطع الفيديو مخصص للحرفيين وأصحاب الورش فقط
               </h3>
               <p className="text-xs sm:text-sm text-black/60 dark:text-white/60 dark:text-[#D6C6B1] leading-relaxed">

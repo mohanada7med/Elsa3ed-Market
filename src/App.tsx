@@ -312,7 +312,6 @@ const MainContent: React.FC = () => {
         });
         break;
       case 'quize':
-      case 'dialect-dictionary':
         updatePageSEO({
           title: 'تحدي اللهجة الصعيدية | وه',
           description: 'اختبر معرفتك بلهجة ومفردات أهل الصعيد في 10 أسئلة سريعة وممتعة.'
@@ -694,8 +693,8 @@ const MainContent: React.FC = () => {
                 </React.Suspense>
               )}
 
-              {/* Dialect Dictionary & Quiz */}
-              {(activePage === 'quize' || activePage === 'dialect-dictionary') && (
+              {/* Quiz */}
+              {activePage === 'quize' && (
                 <React.Suspense fallback={<LazySectionFallback />}>
                   <DialectDictionaryPage />
                 </React.Suspense>

@@ -213,7 +213,7 @@ export const CheckoutPage: React.FC = () => {
             <form onSubmit={handlePlaceOrder}>
               <div className="bg-white dark:bg-espresso-900 rounded-[2rem] p-6 sm:p-8 border border-black/5 dark:border-white/10 shadow-sm space-y-6 animate-fadeIn">
                 <div className="border-b border-black/5 dark:border-white/10 pb-4">
-                  <h2 className="text-xl font-bold font-main text-espresso dark:text-cream">بيانات المستلم وعنوان التوصيل</h2>
+                  <h2 className="text-xl font-bold font-cairo text-espresso dark:text-cream">بيانات المستلم وعنوان التوصيل</h2>
                   <p className="text-xs text-espresso/50 dark:text-cream/50 mt-0.5">يرجى كتابة البيانات بدقة لضمان سرعة وصول الطرد من ورش الصعيد</p>
                 </div>
 

@@ -136,7 +136,7 @@ export const CartDrawer: React.FC = () => {
                     <ShoppingBag className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-main text-espresso dark:text-cream text-base">سلة الشراء بتاعتك</h3>
+                    <h3 className="font-cairo font-bold text-espresso dark:text-cream text-base">سلة الشراء بتاعتك</h3>
                     <p className="text-xs text-black/50 dark:text-white/50">{cart.length} منتجات مختارة</p>
                   </div>
                 </div>
@@ -161,7 +161,7 @@ export const CartDrawer: React.FC = () => {
                       alt="السلة فاضية يا بوي"
                       className="h-40 w-auto sm:h-48 object-contain drop-shadow-xl mb-3 animate-fade-in"
                     />
-                    <h4 className="font-main text-espresso dark:text-cream text-lg">سلتك فاضية يا بوي</h4>
+                    <h4 className="font-main font-bold text-espresso dark:text-cream text-lg">سلتك فاضية يا بوي</h4>
                     <p className="text-xs text-black/60 dark:text-white/60 mt-1 max-w-xs mx-auto leading-relaxed">
                       لسه ما حطتش أي حاجة في السلة من الفخار أو الكليم أو عسل الصعيد. لف في السوق واختار اللي يعجبك!
                     </p>

@@ -202,7 +202,7 @@ export const FoodDetailPage: React.FC = () => {
               )}
             </div>
 
-            <h1 className="mt-4 text-4xl font-black tracking-tight text-white drop-shadow-md sm:text-6xl lg:text-7xl">
+            <h1 className="mt-4 text-2xl font-black tracking-tight text-white drop-shadow-md sm:text-5xl lg:text-6xl">
               {food.title || food.name}
             </h1>
 
@@ -258,7 +258,7 @@ export const FoodDetailPage: React.FC = () => {
                       <span className="text-[9px] font-black uppercase tracking-[0.25em] text-primary dark:text-primary-hover">
                         CULINARY TRADITION
                       </span>
-                      <h3 className="text-xl font-black sm:text-2xl">سر الصنعة والتحضير البلدي</h3>
+                      <h2 className="text-xl font-black sm:text-2xl">سر الصنعة والتحضير البلدي</h2>
                     </div>
                   </div>
                 </div>
@@ -277,7 +277,7 @@ export const FoodDetailPage: React.FC = () => {
               <div className="mb-5 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                   <Utensils size={17} className="text-primary dark:text-primary-hover" />
-                  <h3 className="text-base font-black">المقادير الأصلية</h3>
+                  <h2 className="text-base font-black">المقادير الأصلية</h2>
                 </div>
                 <span className="rounded-full bg-primary/10 px-3 py-1 text-[11px] font-bold text-primary dark:bg-[#C99444]/15 dark:text-primary-hover">
                   {ingredientsList.length} مكوّنات
@@ -344,7 +344,7 @@ export const FoodDetailPage: React.FC = () => {
                   <Compass size={20} />
                 </div>
                 <div>
-                  <h4 className="text-sm font-black">أصل ونشأة الوصفة</h4>
+                  <h2 className="text-sm font-main">أصل ونشأة الوصفة</h2>
                   <span className="text-xs text-white/60">محافظة {food.governorateName}</span>
                 </div>
               </div>

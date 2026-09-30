@@ -21,6 +21,7 @@ import {
   Headphones,
   Award,
   ExternalLink,
+  Loader2,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
@@ -82,7 +83,37 @@ const FAQS: FaqItem[] = [
 ];
 
 export const HelpAndContactPage: React.FC = () => {
-  const { setActivePage, addToast, setIsAuthModalOpen } = useApp();
+  const {
+    setActivePage,
+    addToast,
+    setIsAuthModalOpen,
+    setAuthModalTab,
+    setPostLoginRedirect,
+    isAuthenticated,
+    currentRole,
+    openChatWithAdmin,
+  } = useApp();
+
+  const [isStartingChat, setIsStartingChat] = useState(false);
+
+  // Direct Technical Support / Admin live chat handler
+  const handleStartSupportChat = async (initialMessage?: string) => {
+    if (!isAuthenticated) {
+      setPostLoginRedirect('messages');
+      setActivePage('messages');
+      return;
+    }
+
+    try {
+      setIsStartingChat(true);
+      await openChatWithAdmin(initialMessage ? { initialMessage } : undefined);
+    } catch (err: any) {
+      console.error('Failed to open support chat:', err);
+      setActivePage(currentRole === 'seller' ? 'seller-messages' : 'messages');
+    } finally {
+      setIsStartingChat(false);
+    }
+  };
 
   // Contact form state
   const [formData, setFormData] = useState({
@@ -161,6 +192,32 @@ export const HelpAndContactPage: React.FC = () => {
             إحنا هنا عشان نخدمك كأهل دار. سواء عندك استفسار عن شحنة، بتدور على قطعة معمولة على مزاجك من الورش، أو عاوز تنضم لشيوخ الكار.. رسالتك في عينينا.
           </p>
 
+          {/* Quick CTA to Support Chat */}
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+            <button
+              type="button"
+              onClick={() => handleStartSupportChat()}
+              disabled={isStartingChat}
+              className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-primary to-[#E66A2E] hover:from-[#B37A2B] hover:to-[#D4591F] text-white font-cairo font-bold text-sm sm:text-base shadow-xl hover:shadow-2xl hover:scale-[1.02] active:scale-95 transition-all cursor-pointer border border-white/20"
+            >
+              {isStartingChat ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>جاري الدخول للمحادثة...</span>
+                </>
+              ) : (
+                <>
+                  <Headphones className="w-5 h-5 text-white" />
+                  <span>مراسلة إدارة المنصة (الدعم الفني)</span>
+                  <span className="flex h-2.5 w-2.5 relative mr-1">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                  </span>
+                </>
+              )}
+            </button>
+          </div>
+
           {/* Heritage Badges */}
           <div className="pt-2 flex flex-wrap items-center justify-center gap-3 text-xs">
             <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white/[0.06] border border-white/10 text-white/90">
@@ -182,6 +239,39 @@ export const HelpAndContactPage: React.FC = () => {
       {/* 2. DIRECT CONTACT CHANNELS CARDS */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* 1. Real Platform Support Chat */}
+          <button
+            type="button"
+            onClick={() => handleStartSupportChat()}
+            disabled={isStartingChat}
+            className="group relative p-5 rounded-2xl bg-gradient-to-br from-white via-white to-amber-50/50 dark:from-[#26160D] dark:via-[#26160D] dark:to-[#381e10] border-2 border-[#C99444] shadow-md hover:shadow-xl hover:border-primary transition-all duration-300 cursor-pointer flex flex-col justify-between text-right"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-12 h-12 rounded-xl bg-primary/15 text-primary dark:text-primary-hover flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Headphones className="w-6 h-6" />
+                </div>
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold">
+                  <span className="flex h-2 w-2 relative">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                  </span>
+                  <span>متاح أونلاين</span>
+                </div>
+              </div>
+              <h3 className="font-cairo font-bold text-lg text-[#3B1E0E] dark:text-[#FFF9EE] flex items-center gap-1.5">
+                <span>مراسلة إدارة المنصة</span>
+              </h3>
+              <p className="text-xs text-[#8C6F53] dark:text-[#D6C6B1] mt-1 leading-relaxed">
+                محادثة كتابية حية ومباشرة مع مسؤولي الدعم الفني لحل مشكلتك وتتبع طلبك فوراً داخل المنصة.
+              </p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-black/5 dark:border-white/10 flex items-center justify-between text-xs font-bold text-primary dark:text-primary-hover">
+              <span>{isStartingChat ? 'جاري فتح المحادثة...' : 'افتح شات الدعم الفني'}</span>
+              {isStartingChat ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <MessageSquare className="w-3.5 h-3.5" />}
+            </div>
+          </button>
+
           {/* WhatsApp Direct */}
           <a
             href="https://wa.me/201158969931?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%20%D9%8A%D8%A7%20%D8%AF%D9%8A%D9%88%D8%A7%D9%86%20%D9%88%D9%87%D8%8C%20%D8%B9%D9%86%D8%AF%D9%8A%20%D8%A7%D8%B3%D8%AA%D9%81%D8%B3%D8%A7%D8%B1%20%D8%A8%D8%AE%D8%B5%D9%88%D8%B5%20%D9%85%D9%86%D8%B5%D8%A9%20%D9%88%D9%87"
@@ -243,22 +333,20 @@ export const HelpAndContactPage: React.FC = () => {
               <Send className="w-3.5 h-3.5" />
             </div>
           </a>
+        </div>
 
-          {/* Upper Egypt Centers */}
-          <div className="group relative p-5 rounded-2xl bg-white dark:bg-[#26160D] border border-[#C99444]/30 shadow-md hover:shadow-xl hover:border-[#C99444] transition-all duration-300 flex flex-col justify-between">
-            <div>
-              <div className="w-12 h-12 rounded-xl bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                <MapPin className="w-6 h-6" />
-              </div>
-              <h3 className="font-cairo font-bold text-lg text-[#3B1E0E] dark:text-[#FFF9EE]">مراكز وه بالجنوب</h3>
-              <p className="text-xs text-[#8C6F53] dark:text-[#D6C6B1] mt-1 leading-relaxed">
-                الأقصر (الكورنيش) • أسوان (غرب سهيل) • قنا (نقادة وقوص) • القاهرة (ديوان التوزيع).
-              </p>
-            </div>
-            <div className="mt-4 pt-3 border-t border-black/5 dark:border-white/10 flex items-center justify-between text-xs font-bold text-amber-600 dark:text-amber-400">
-              <span>الصعيد كله بلدنا</span>
-              <Compass className="w-3.5 h-3.5" />
-            </div>
+        {/* Upper Egypt Centers Ribbon */}
+        <div className="mt-4 p-4 rounded-2xl bg-white/80 dark:bg-[#26160D]/80 backdrop-blur-sm border border-[#C99444]/25 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2.5 text-[#3B1E0E] dark:text-[#FFF9EE]">
+            <MapPin className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+            <span className="font-bold">مراكز ومقرات وَه في محافظات الصعيد:</span>
+            <span className="text-[#8C6F53] dark:text-[#D6C6B1]">
+              الأقصر (الكورنيش) • أسوان (غرب سهيل) • قنا (نقادة وقوص) • القاهرة (ديوان التوزيع)
+            </span>
+          </div>
+          <div className="inline-flex items-center gap-1 text-[11px] text-primary dark:text-primary-hover font-bold">
+            <Compass className="w-3.5 h-3.5" />
+            <span>الصعيد كله بلدنا</span>
           </div>
         </div>
       </section>
@@ -268,24 +356,63 @@ export const HelpAndContactPage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           {/* Contact Form Column (5 Cols) */}
           <div className="lg:col-span-5 space-y-6">
+            {/* Live Support Chat Banner above form */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-primary/10 to-transparent border border-[#C99444]/40 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center shrink-0">
+                  <Headphones className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="font-cairo font-bold text-xs sm:text-sm text-[#3B1E0E] dark:text-[#FFF9EE]">
+                    عايز حل أو رد فوري دلوقتي؟
+                  </h4>
+                  <p className="text-[11px] text-[#8C6F53] dark:text-[#D6C6B1]">
+                    راسل إدارة المنصة والدعم الفني مباشرة في شات حي ومباشر.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleStartSupportChat()}
+                disabled={isStartingChat}
+                className="px-3.5 py-2 rounded-xl bg-primary hover:bg-[#B37A2B] text-white text-xs font-bold transition-all shrink-0 cursor-pointer shadow-sm active:scale-95 flex items-center gap-1.5"
+              >
+                {isStartingChat ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <MessageSquare className="w-3.5 h-3.5" />}
+                <span>ابدأ الشات الآن</span>
+              </button>
+            </div>
             <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#26160D] border border-[#C99444]/35 shadow-lg relative overflow-hidden">
               <div className="relative z-10 space-y-2">
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary dark:text-primary-hover text-xs font-bold">
                   <Send className="w-3 h-3" />
                   <span>رسالة لديوان وه</span>
                 </div>
-                <h2 className="font-cairo font-bold text-2xl sm:text-3xl text-[#3B1E0E] dark:text-[#FFF9EE]">
+                <h3 className="font-cairo font-black text-2xl sm:text-3xl text-[#3B1E0E] dark:text-[#FFF9EE]">
                   اكتب رسالتك وطلبك
-                </h2>
+                </h3>
                 <p className="text-xs text-[#8C6F53] dark:text-[#D6C6B1] leading-relaxed">
                   سواء كنت زبون بتسأل عن شحنتك أو حرفي عاوز تعرض شغلك الأصيل، اكتب بياناتك وهنتواصل معاك.
                 </p>
               </div>
 
               {isSubmitted && (
-                <div className="mt-6 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-800 dark:text-emerald-300 text-xs font-bold flex items-center gap-2.5 animate-in fade-in">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-                  <span>وصلت رسالتك لديوان وه، وهيتصل بيك حد من شيوخ الدعم في أقرب وقت. نورتنا يا غالي!</span>
+                <div className="mt-6 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-800 dark:text-emerald-300 text-xs font-bold space-y-2.5 animate-in fade-in">
+                  <div className="flex items-center gap-2.5">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                    <span>وصلت رسالتك لديوان وه، وهيتصل بيك حد من شيوخ الدعم في أقرب وقت. نورتنا يا غالي!</span>
+                  </div>
+                  <div className="pt-2 border-t border-emerald-500/20 flex items-center justify-between">
+                    <span className="text-[11px] font-normal">محتاج رد فوري بدون انتظار اتصال هاتفي؟</span>
+                    <button
+                      type="button"
+                      onClick={() => handleStartSupportChat()}
+                      disabled={isStartingChat}
+                      className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm"
+                    >
+                      <MessageSquare className="w-3.5 h-3.5" />
+                      <span>افتح شات الدعم الفني الآن</span>
+                    </button>
+                  </div>
                 </div>
               )}
 
@@ -424,9 +551,9 @@ export const HelpAndContactPage: React.FC = () => {
                   <HelpCircle className="w-3.5 h-3.5" />
                   <span>إجابات سريعة وواضحة</span>
                 </div>
-                <h2 className="font-cairo font-bold text-2xl sm:text-3xl text-[#3B1E0E] dark:text-[#FFF9EE] mt-0.5">
+                <h3 className="font-cairo font-black text-2xl sm:text-3xl text-[#3B1E0E] dark:text-[#FFF9EE] mt-0.5">
                   الأسئلة الشائعة من أهل البلد
-                </h2>
+                </h3>
               </div>
 
               {/* FAQ Category Pills */}
@@ -509,6 +636,32 @@ export const HelpAndContactPage: React.FC = () => {
                   </div>
                 );
               })}
+            </div>
+
+            {/* Still have questions CTA */}
+            <div className="p-5 rounded-2xl bg-gradient-to-r from-primary/10 via-amber-500/10 to-transparent border border-primary/25 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center shrink-0">
+                  <Headphones className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="font-cairo font-bold text-sm text-[#3B1E0E] dark:text-[#FFF9EE]">
+                    ملقتش إجابة لسؤالك في الأسئلة الشائعة؟
+                  </h4>
+                  <p className="text-xs text-[#8C6F53] dark:text-[#D6C6B1] mt-0.5">
+                    فريق الدعم الفني وإدارة المنصة جاهز لمساعدتك مباشرة والرد على كل استفساراتك.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleStartSupportChat()}
+                disabled={isStartingChat}
+                className="px-4 py-2.5 rounded-xl bg-primary hover:bg-[#B37A2B] text-white text-xs font-bold transition-all shrink-0 cursor-pointer shadow-sm active:scale-95 flex items-center gap-2"
+              >
+                {isStartingChat ? <Loader2 className="w-4 h-4 animate-spin" /> : <MessageSquare className="w-4 h-4" />}
+                <span>مراسلة الدعم الفني الآن</span>
+              </button>
             </div>
 
             {/* Quick Policies Navigation */}

@@ -112,7 +112,7 @@ export const RefreshDataButton: React.FC<RefreshDataButtonProps> = ({
 
       {showLastUpdated && currentLastUpdated && (
         <span
-          className="hidden md:inline-flex items-center text-[11px] text-black/60 dark:text-white/60 font-medium bg-black/5 dark:bg-cream/5 px-2.5 py-1 rounded-lg border border-black/10 dark:border-white/10 whitespace-nowrap"
+          className="hidden md:inline-flex items-center text-[11px] text-black/60 dark:text-white/60 font-medium bg-cream dark:bg-cream/5 px-2.5 py-1 rounded-lg border border-black/10 dark:border-white/10 whitespace-nowrap"
           title="توقيت آخر جلب للبيانات"
         >
           آخر تحديث: {currentLastUpdated}

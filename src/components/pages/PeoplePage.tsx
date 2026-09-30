@@ -1592,6 +1592,7 @@ export const PeoplePage: React.FC = () => {
                 >
                   أيدٍ تنقش في الذاكرة...
                   <br />
+                  <br />
                   وعقول تحرس التراث.
                 </h2>
               </div>

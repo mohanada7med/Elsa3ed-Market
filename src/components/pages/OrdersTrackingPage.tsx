@@ -116,7 +116,7 @@ export const OrdersTrackingPage: React.FC = () => {
             <Truck className="w-3.5 h-3.5 text-[#C99444]" />
             <span>تتبع شحنتك خطوة بخطوة من الصعيد</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-main">
+          <h1 className="text-2xl sm:text-3xl font-main font-black">
             تابع طلباتك ورحلتها من الورشة لحد عندك
           </h1>
           <p className="text-xs text-cream/80">
@@ -148,7 +148,7 @@ export const OrdersTrackingPage: React.FC = () => {
           <div className="w-20 h-20 rounded-2xl bg-primary/10 text-primary dark:text-primary-hover flex items-center justify-center mx-auto">
             <ShoppingBag className="w-10 h-10" />
           </div>
-          <h3 className="text-xl font-main text-espresso dark:text-cream">لسه مفيش أي طلبات طلبتها لحد دلوقتي</h3>
+          <h3 className="text-xl font-cairo font-bold text-espresso dark:text-cream">لسه مفيش أي طلبات طلبتها لحد دلوقتي</h3>
           <p className="text-xs sm:text-sm text-espresso/70 dark:text-cream/70 max-w-sm mx-auto leading-relaxed">
             أول ما تطلب أي قطعة من الفخار أو الكليم أو العسل، مسار شحنتها وتفاصيلها هتظهرلك هنا أول بأول.
           </p>
@@ -164,7 +164,7 @@ export const OrdersTrackingPage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Orders List Column */}
           <div className="lg:col-span-5 space-y-4">
-            <h3 className="font-main text-sm text-espresso dark:text-cream px-1">
+            <h3 className="font-cairo font-bold text-sm text-espresso dark:text-cream px-1">
               كل طلباتك ({orders.length})
             </h3>
 

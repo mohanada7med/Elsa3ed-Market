@@ -593,7 +593,7 @@ export const PlaceDetailPage: React.FC = () => {
                 </div>
 
                 {/* Title */}
-                <h1
+                <h4
                   className="
                     font-main font-black
                     text-white
@@ -608,13 +608,13 @@ export const PlaceDetailPage: React.FC = () => {
 
                     md:text-7xl
 
-                    lg:text-[6.5rem]
+                    lg:text-[5rem]
 
-                    xl:text-[8rem]
+                    xl:text-[3rem]
                   "
                 >
                   {place.title}
-                </h1>
+                </h4>
 
                 {/* Description */}
                 <p
@@ -1330,7 +1330,7 @@ export const PlaceDetailPage: React.FC = () => {
                       <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center text-primary">
                         <Users className="w-4 h-4" />
                       </div>
-                      <h3 className="font-main font-bold text-base text-black/90 dark:text-white/90">
+                      <h3 className="font-cairo font-bold text-base text-black/90 dark:text-white/90">
                         {service.name}
                       </h3>
                     </div>
@@ -1371,7 +1371,7 @@ export const PlaceDetailPage: React.FC = () => {
                     <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
                       <div className="flex items-center gap-2">
                         <PartyPopper className="w-5 h-5 text-primary" />
-                        <h3 className="font-main font-bold text-lg text-black/90 dark:text-white/90">
+                        <h3 className="font-cairo font-bold text-lg text-black/90 dark:text-white/90">
                           {event.name}
                         </h3>
                       </div>

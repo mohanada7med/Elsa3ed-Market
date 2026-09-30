@@ -136,6 +136,7 @@ export const SellersDirectoryPage: React.FC = () => {
                 lg:text-6xl
                 xl:text-7xl
                 font-main
+                font-black
                 leading-[0.98]
                 tracking-tight
               "
@@ -318,7 +319,7 @@ export const SellersDirectoryPage: React.FC = () => {
         ========================================================= */}
         <div className="flex items-center justify-between mb-5 px-1">
           <div>
-            <h2 className="text-lg sm:text-xl font-main text-foreground">
+            <h2 className="text-lg sm:text-xl font-main font-black text-foreground">
               الحرفيين والورش
             </h2>
             <p className="text-[11px] sm:text-xs text-foreground-disabled mt-0.5">
@@ -366,7 +367,7 @@ export const SellersDirectoryPage: React.FC = () => {
               <Store className="w-7 h-7" />
             </div>
 
-            <h3 className="text-lg font-main text-foreground">
+            <h3 className="text-lg font-cairo font-bold text-foreground">
               مفيش صنعة مطابقة للبحث
             </h3>
 
@@ -596,8 +597,8 @@ export const SellersDirectoryPage: React.FC = () => {
                       className="
                         text-lg
                         sm:text-xl
-                        font-black
-                        font-main
+                        font-bold
+                        font-cairo
                         leading-tight
                         text-foreground
                         group-hover:text-primary

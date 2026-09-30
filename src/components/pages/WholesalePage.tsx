@@ -118,7 +118,7 @@ export const WholesalePage: React.FC = () => {
               <span>قطاع الأعمال، الفنادق، والبازارات السياحية</span>
             </div>
 
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-main leading-tight tracking-tight text-white">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-main font-black leading-tight tracking-tight text-white">
               توريدات الحرف الصعيدية الأصيلة <br />
               <span className="text-[#C99444]">بأسعار الورش المباشرة</span>
             </h1>
@@ -187,7 +187,7 @@ export const WholesalePage: React.FC = () => {
       {/* Wholesale Pricing Tiers */}
       <div className="space-y-6">
         <div className="text-center max-w-2xl mx-auto space-y-2">
-          <h2 className="text-2xl sm:text-3xl font-main text-espresso dark:text-cream">
+          <h2 className="text-2xl sm:text-3xl font-main font-black text-espresso dark:text-cream">
             شرائح وتخفيضات البيع بالجملة
           </h2>
           <p className="text-sm text-espresso/70 dark:text-cream/70">
@@ -201,7 +201,7 @@ export const WholesalePage: React.FC = () => {
             <div className="inline-block px-3 py-1 rounded-full bg-black/5 dark:bg-cream/5 text-espresso dark:text-cream text-xs font-bold border border-black/5 dark:border-white/5">
               الشريحة الأولى: كميات صغيرة
             </div>
-            <h3 className="text-xl font-main text-espresso dark:text-cream">من 5 إلى 15 قطعة</h3>
+            <h3 className="text-xl font-cairo font-bold text-espresso dark:text-cream">من 5 إلى 15 قطعة</h3>
             <p className="text-3xl font-black text-primary dark:text-primary-hover">خصم 15%</p>
             <p className="text-xs text-espresso/70 dark:text-cream/70 leading-relaxed">
               مثالية للمتاجر الناشئة، البازارات الصغيرة، وهدايا الفعاليات الخاصة.
@@ -230,7 +230,7 @@ export const WholesalePage: React.FC = () => {
             <div className="inline-block px-3 py-1 rounded-full bg-primary/15 text-primary dark:text-primary-hover text-xs font-bold mt-2">
               الشريحة الثانية: كميات متوسطة
             </div>
-            <h3 className="text-xl font-main text-espresso dark:text-cream">من 16 إلى 50 قطعة</h3>
+            <h3 className="text-xl font-cairo font-bold text-espresso dark:text-cream">من 16 إلى 50 قطعة</h3>
             <p className="text-3xl font-black text-primary dark:text-primary-hover">خصم 25%</p>
             <p className="text-xs text-espresso/70 dark:text-cream/70 leading-relaxed">
               تناسب تأثيث وتجهيز الفنادق التراثية، المطاعم، والمجموعات الديكورية.
@@ -256,7 +256,7 @@ export const WholesalePage: React.FC = () => {
             <div className="inline-block px-3 py-1 rounded-full bg-black/5 dark:bg-cream/5 text-espresso dark:text-cream text-xs font-bold border border-black/5 dark:border-white/5">
               الشريحة الكبرى: توريدات وتصدير
             </div>
-            <h3 className="text-xl font-main text-espresso dark:text-cream">أكثر من 50 قطعة</h3>
+            <h3 className="text-xl font-cairo font-bold text-espresso dark:text-cream">أكثر من 50 قطعة</h3>
             <p className="text-3xl font-black text-primary dark:text-primary-hover">تسعير ورش مخصص</p>
             <p className="text-xs text-espresso/70 dark:text-cream/70 leading-relaxed">
               لكبار المستوردين، الشركات الهندسية، وسلاسل القرى السياحية العالمية.
@@ -288,7 +288,7 @@ export const WholesalePage: React.FC = () => {
               <span>تسعير سريع وتواصل مباشر</span>
             </div>
 
-            <h2 className="text-2xl sm:text-3xl font-main text-espresso dark:text-cream leading-tight">
+            <h2 className="text-2xl sm:text-3xl font-main font-black text-espresso dark:text-cream leading-tight">
               اطلب عرض سعر لطلبية الجملة الآن
             </h2>
 
@@ -325,7 +325,7 @@ export const WholesalePage: React.FC = () => {
                 <div className="w-16 h-16 bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mx-auto">
                   <CheckCircle2 className="w-8 h-8" />
                 </div>
-                <h3 className="text-xl font-main text-emerald-900 dark:text-emerald-200">
+                <h3 className="text-xl font-cairo font-bold text-emerald-900 dark:text-emerald-200">
                   تم استلام طلبك بنجاح!
                 </h3>
                 <p className="text-xs sm:text-sm text-emerald-800 dark:text-emerald-300 max-w-md mx-auto">

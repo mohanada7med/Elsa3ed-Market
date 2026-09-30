@@ -59,7 +59,7 @@ export const WAHEmptyState: React.FC<WAHEmptyStateProps> = ({
         ) : null}
 
         <div className="space-y-1.5">
-          <h3 className="text-lg sm:text-xl font-main text-espresso dark:text-cream">
+          <h3 className="text-lg sm:text-xl font-cairo font-bold text-espresso dark:text-cream">
             {title}
           </h3>
           {description && (

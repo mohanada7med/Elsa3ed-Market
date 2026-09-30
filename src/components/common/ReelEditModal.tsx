@@ -251,7 +251,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
               <Film className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-lg font-black text-espresso dark:text-cream font-heritage">
+              <h2 className="text-lg font-black text-espresso dark:text-cream font-main">
                 تعديل بيانات مقطع الفيديو (Craft Reel)
               </h2>
               <p className="text-xs text-black/60 dark:text-white/60 dark:text-[#D6C6B1]">

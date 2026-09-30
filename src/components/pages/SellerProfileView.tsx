@@ -210,7 +210,7 @@ export const SellerProfileView: React.FC = () => {
               <Store className="w-9 h-9" />
             </div>
 
-            <h3 className="mt-6 text-2xl font-main text-foreground">
+            <h3 className="mt-6 text-2xl font-cairo font-bold text-foreground">
               الورشة دي مش معروضة دلوقتي
             </h3>
 
@@ -439,7 +439,7 @@ export const SellerProfileView: React.FC = () => {
                       ورشة من قلب صعيد مصر
                     </p>
 
-                    <h1 className="text-3xl sm:text-5xl lg:text-6xl font-main text-white leading-[1.05] tracking-tight">
+                    <h1 className="text-3xl sm:text-5xl lg:text-6xl font-main font-black text-white leading-[1.05] tracking-tight">
                       {brandTitle}
                     </h1>
 
@@ -593,7 +593,7 @@ export const SellerProfileView: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <h2 className="text-3xl sm:text-4xl font-main">
+                  <h2 className="text-3xl sm:text-4xl font-main font-black">
                     شغل إيدين {brandTitle}
                   </h2>
 
@@ -632,7 +632,7 @@ export const SellerProfileView: React.FC = () => {
                   <Store className="w-9 h-9 text-foreground-disabled opacity-50" />
                 </div>
 
-                <h4 className="mt-6 font-black text-lg font-main">
+                <h4 className="mt-6 font-bold text-lg font-cairo">
                   الصانع شغال على قطع جديدة
                 </h4>
 
@@ -685,14 +685,14 @@ export const SellerProfileView: React.FC = () => {
                   أصل الصنعة
                 </div>
 
-                <h3 className="text-2xl sm:text-3xl font-main">
+                <h2 className="text-2xl sm:text-3xl font-main font-black">
                   مش مجرد ورشة...
                   <br />
                   <br />
                   <span className="text-primary dark:text-primary-hover">
                     دي حكاية بتكمل.
                   </span>
-                </h3>
+                </h2>
 
                 <p className="mt-4 max-w-2xl text-xs sm:text-sm text-foreground-muted leading-7">
                   {seller.bio ||

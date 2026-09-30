@@ -111,7 +111,7 @@ export const WAHEditorialCard: React.FC<WAHEditorialCardProps> = ({
             </p>
           )}
 
-          <h3 className="text-base sm:text-lg font-main text-espresso dark:text-cream leading-snug group-hover:text-primary dark:group-hover:text-[#C99444] transition-colors">
+          <h3 className="text-base sm:text-lg font-cairo font-bold text-espresso dark:text-cream leading-snug group-hover:text-primary dark:group-hover:text-[#C99444] transition-colors">
             {title}
           </h3>
 

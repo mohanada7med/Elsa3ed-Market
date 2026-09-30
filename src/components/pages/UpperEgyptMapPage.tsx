@@ -460,7 +460,7 @@ export const UpperEgyptMapPage: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-8 lg:gap-16 items-end mb-8">
               <div>
                 <div className="mb-2 text-xs font-bold tracking-[0.3em] text-primary">حكايات على ضفاف النيل</div>
-                <h2 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-none">
+                <h2 className="text-4xl sm:text-6xl lg:text-7xl font-main font-black tracking-tight leading-none">
                   الصعيد <span className="text-primary">على أصوله.</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base text-black/60 dark:text-white/60 leading-relaxed">
@@ -651,7 +651,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                       )}
                     </div>
 
-                    <h1 className="text-5xl sm:text-7xl lg:text-8xl font-main text-white tracking-tight">
+                    <h1 className="text-5xl sm:text-7xl lg:text-8xl font-main font-black text-white tracking-tight">
                       {selectedGov?.name}
                     </h1>
                     <br />
@@ -733,9 +733,9 @@ export const UpperEgyptMapPage: React.FC = () => {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-6">
                 <div>
                   <div className="text-xs font-bold tracking-[0.3em] text-primary">تفاصيل من قلب البلد</div>
-                  <h3 className="text-2xl sm:text-3xl font-main mt-1">
+                  <h2 className="text-2xl sm:text-3xl font-main font-bold mt-1">
                     دفتر حكايات {selectedGov?.name}
-                  </h3>
+                  </h2>
                 </div>
 
                 {selectedGov?.slug && (
@@ -932,7 +932,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                 {activeTab === 'folklore' && (
                   <div className="space-y-6 text-center py-8">
                     <Scroll className="mx-auto h-12 w-12 text-primary" />
-                    <h4 className="text-xl font-main">حكايات وذكريات من {selectedGov?.name}</h4>
+                    <h4 className="text-xl font-cairo font-bold">حكايات وذكريات من {selectedGov?.name}</h4>
                     <p className="max-w-xl mx-auto text-sm text-black/70 dark:text-white/70 leading-relaxed">
                       {folkloreStory || 'لسه مفيش حكايات شعبية متسجلة للمحافظة دي في الداتابيز.'}
                     </p>

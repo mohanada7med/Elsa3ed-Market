@@ -128,7 +128,7 @@ export const PrivacyPolicyPage: React.FC = () => {
             <article id="intro" className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#26160D] border border-[#C99444]/20 shadow-xs space-y-3 scroll-mt-24">
               <div className="flex items-center gap-2 text-primary font-bold">
                 <ShieldCheck className="w-5 h-5 text-emerald-500" />
-                <h2 className="font-cairo font-bold text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
+                <h2 className="font-main font-black text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
                   1. ميثاق الأمانة والخصوصية
                 </h2>
               </div>
@@ -144,7 +144,7 @@ export const PrivacyPolicyPage: React.FC = () => {
             <article id="data-collected" className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#26160D] border border-[#C99444]/20 shadow-xs space-y-3 scroll-mt-24">
               <div className="flex items-center gap-2 text-primary font-bold">
                 <Database className="w-5 h-5 text-blue-500" />
-                <h2 className="font-cairo font-bold text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
+                <h2 className="font-main font-black text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
                   2. البيانات التي نجمعها عنك
                 </h2>
               </div>
@@ -163,7 +163,7 @@ export const PrivacyPolicyPage: React.FC = () => {
             <article id="how-we-use" className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#26160D] border border-[#C99444]/20 shadow-xs space-y-3 scroll-mt-24">
               <div className="flex items-center gap-2 text-primary font-bold">
                 <UserCheck className="w-5 h-5 text-purple-500" />
-                <h2 className="font-cairo font-bold text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
+                <h2 className="font-main font-black text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
                   3. كيف نوظف هذه البيانات؟
                 </h2>
               </div>
@@ -191,7 +191,7 @@ export const PrivacyPolicyPage: React.FC = () => {
             <article id="payments" className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#26160D] border border-[#C99444]/20 shadow-xs space-y-3 scroll-mt-24">
               <div className="flex items-center gap-2 text-primary font-bold">
                 <CreditCard className="w-5 h-5 text-emerald-500" />
-                <h2 className="font-cairo font-bold text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
+                <h2 className="font-main font-black text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
                   4. أمان وسرية المدفوعات والبطاقات
                 </h2>
               </div>
@@ -207,7 +207,7 @@ export const PrivacyPolicyPage: React.FC = () => {
             <article id="cookies" className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#26160D] border border-[#C99444]/20 shadow-xs space-y-3 scroll-mt-24">
               <div className="flex items-center gap-2 text-primary font-bold">
                 <EyeOff className="w-5 h-5 text-amber-500" />
-                <h2 className="font-cairo font-bold text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
+                <h2 className="font-main font-black text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
                   5. ملفات تعريف الارتباط (Cookies)
                 </h2>
               </div>
@@ -228,7 +228,7 @@ export const PrivacyPolicyPage: React.FC = () => {
             <article id="third-parties" className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#26160D] border border-[#C99444]/20 shadow-xs space-y-3 scroll-mt-24">
               <div className="flex items-center gap-2 text-primary font-bold">
                 <Lock className="w-5 h-5 text-rose-500" />
-                <h2 className="font-cairo font-bold text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
+                <h2 className="font-main font-black text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
                   6. مشاركة البيانات مع جهات التنفيذ فقط
                 </h2>
               </div>
@@ -246,7 +246,7 @@ export const PrivacyPolicyPage: React.FC = () => {
             <article id="your-rights" className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#26160D] border border-[#C99444]/20 shadow-xs space-y-3 scroll-mt-24">
               <div className="flex items-center gap-2 text-primary font-bold">
                 <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-                <h2 className="font-cairo font-bold text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
+                <h2 className="font-main font-black text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
                   7. حقوقك والتحكم الكامل في حسابك
                 </h2>
               </div>
@@ -273,7 +273,7 @@ export const PrivacyPolicyPage: React.FC = () => {
             <article id="contact-dpo" className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#C99444]/15 via-white dark:via-[#26160D] to-[#3B1E0E]/10 border border-[#C99444]/40 shadow-md space-y-4 scroll-mt-24">
               <div className="flex items-center gap-2 text-primary font-bold">
                 <Sparkles className="w-5 h-5 text-[#C99444]" />
-                <h2 className="font-cairo font-bold text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
+                <h2 className="font-main font-black text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
                   8. مسؤول حماية البيانات والتواصل
                 </h2>
               </div>

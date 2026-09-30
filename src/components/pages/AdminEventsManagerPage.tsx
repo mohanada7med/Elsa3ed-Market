@@ -239,7 +239,7 @@ export const AdminEventsManagerComponent: React.FC<AdminEventsManagerProps> = ({
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-300">
+    <div className="space-y-8 animate-in fade-in duration-300 font-cairo">
       {/* Top Banner / Hero */}
       <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-espresso-900 via-espresso-950 to-primary/30 p-6 sm:p-8 text-cream border border-primary/20 shadow-2xl">
         <div className="absolute top-0 left-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none -translate-x-1/2 -translate-y-1/2" />
@@ -249,7 +249,7 @@ export const AdminEventsManagerComponent: React.FC<AdminEventsManagerProps> = ({
               <Sparkles className="w-3.5 h-3.5 animate-spin" style={{ animationDuration: '6s' }} />
               <span>لوحة الإدارة الشاملة للمواسم والأعياد والموالد الصعيدية</span>
             </div>
-            <h1 className="text-2xl sm:text-4xl font-serif font-black tracking-tight text-cream">
+            <h1 className="text-2xl sm:text-4xl font-main font-black tracking-tight text-cream">
               إدارة احتفالات وليالي الصعيد التراثية
             </h1>
             <p className="text-cream/80 text-sm sm:text-base leading-relaxed">
@@ -301,27 +301,27 @@ export const AdminEventsManagerComponent: React.FC<AdminEventsManagerProps> = ({
         {/* Stats strip */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mt-8 pt-6 border-t border-white/10">
           <div className="bg-white/5 rounded-2xl p-3 text-center border border-white/5">
-            <span className="text-2xl font-main text-amber-300">{stats.total}</span>
+            <span className="text-2xl font-cairo font-black text-amber-300">{stats.total}</span>
             <p className="text-[11px] text-cream/70 mt-0.5">إجمالي الليالي والمواسم</p>
           </div>
           <div className="bg-white/5 rounded-2xl p-3 text-center border border-white/5">
-            <span className="text-2xl font-main text-emerald-400">{stats.moulids}</span>
+            <span className="text-2xl font-cairo font-black text-emerald-400">{stats.moulids}</span>
             <p className="text-[11px] text-cream/70 mt-0.5">موالد وليالي أولياء</p>
           </div>
           <div className="bg-white/5 rounded-2xl p-3 text-center border border-white/5">
-            <span className="text-2xl font-main text-amber-400">{stats.harvests}</span>
+            <span className="text-2xl font-cairo font-black text-amber-400">{stats.harvests}</span>
             <p className="text-[11px] text-cream/70 mt-0.5">مواسم زراعة وحصاد</p>
           </div>
           <div className="bg-white/5 rounded-2xl p-3 text-center border border-white/5">
-            <span className="text-2xl font-main text-blue-400">{stats.festivals}</span>
+            <span className="text-2xl font-cairo font-black text-blue-400">{stats.festivals}</span>
             <p className="text-[11px] text-cream/70 mt-0.5">مهرجانات كبرى</p>
           </div>
           <div className="bg-white/5 rounded-2xl p-3 text-center border border-white/5">
-            <span className="text-2xl font-main text-purple-400">{stats.culturalNights}</span>
+            <span className="text-2xl font-cairo font-black text-purple-400">{stats.culturalNights}</span>
             <p className="text-[11px] text-cream/70 mt-0.5">فروسية ومرماح</p>
           </div>
           <div className="bg-white/5 rounded-2xl p-3 text-center border border-white/5">
-            <span className="text-2xl font-main text-rose-400">{stats.withVideos}</span>
+            <span className="text-2xl font-cairo font-black text-rose-400">{stats.withVideos}</span>
             <p className="text-[11px] text-cream/70 mt-0.5">موثقة بفيديوهات 🎥</p>
           </div>
         </div>
@@ -443,12 +443,12 @@ export const AdminEventsManagerComponent: React.FC<AdminEventsManagerProps> = ({
       {isLoading ? (
         <div className="text-center py-24 space-y-4">
           <RefreshCw className="w-8 h-8 text-primary animate-spin mx-auto" />
-          <p className="text-sm text-black/60 dark:text-white/60 font-serif">جاري تحميل بيانات المواسم والموالد من قاعدة البيانات...</p>
+          <p className="text-sm text-black/60 dark:text-white/60 font-cairo">جاري تحميل بيانات المواسم والموالد من قاعدة البيانات...</p>
         </div>
       ) : filteredEvents.length === 0 ? (
         <div className="text-center py-20 bg-white dark:bg-espresso-900/50 rounded-3xl border border-dashed border-black/20 dark:border-white/20 p-8 space-y-4">
           <Calendar className="w-12 h-12 text-primary/40 mx-auto" />
-          <h3 className="text-lg font-bold font-serif">لا توجد احتفالات مطابقة للبحث</h3>
+          <h3 className="text-lg font-bold font-cairo">لا توجد احتفالات مطابقة للبحث</h3>
           <p className="text-xs text-black/60 dark:text-white/60 max-w-md mx-auto">
             لم نجد مواسم أو موالد تطابق معايير التصفية المحددة. يمكنك إضافة موسم جديد أو إعادة ضبط المرشحات.
           </p>
@@ -545,7 +545,7 @@ export const AdminEventsManagerComponent: React.FC<AdminEventsManagerProps> = ({
                 {/* Content Details */}
                 <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                   <div className="space-y-2.5">
-                    <h3 className="font-serif font-black text-lg text-black dark:text-cream group-hover:text-primary transition-colors line-clamp-2">
+                    <h3 className="font-cairo font-bold text-lg text-black dark:text-cream group-hover:text-primary transition-colors line-clamp-2">
                       {event.title}
                     </h3>
 
@@ -675,7 +675,7 @@ export const AdminEventsManagerComponent: React.FC<AdminEventsManagerProps> = ({
               <AlertCircle className="w-6 h-6" />
             </div>
             <div className="text-center space-y-2">
-              <h3 className="text-lg font-bold font-serif">هل أنت متأكد من حذف هذا الاحتفال؟</h3>
+              <h3 className="text-lg font-bold font-cairo">هل أنت متأكد من حذف هذا الاحتفال؟</h3>
               <p className="text-xs text-black/60 dark:text-white/60">
                 سيتم حذف احتفال «{deleteConfirmation.event.title}» نهائياً من قاعدة بيانات المنصة ومحتوى صعيد مصر.
               </p>
@@ -992,7 +992,7 @@ export const EventEditorModal: React.FC<EventEditorModalProps> = ({
   const primaryVideoEmbed = getVideoEmbedUrl(videoUrl);
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-5 bg-black/80 backdrop-blur-md animate-in fade-in overflow-y-auto">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-5 bg-black/80 backdrop-blur-md animate-in fade-in overflow-y-auto font-cairo">
       <div className="bg-white dark:bg-[#181411] rounded-3xl sm:rounded-[2.5rem] max-w-4xl w-full h-[90vh] max-h-[860px] flex flex-col border border-black/10 dark:border-white/10 shadow-2xl overflow-hidden my-auto">
         {/* Modal Header */}
         <div className="px-6 py-4 sm:py-5 border-b border-black/10 dark:border-white/10 flex items-center justify-between bg-black/[0.02] dark:bg-white/[0.02] shrink-0">
@@ -1001,7 +1001,7 @@ export const EventEditorModal: React.FC<EventEditorModalProps> = ({
               <Calendar className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base sm:text-lg font-serif font-black text-espresso dark:text-cream">
+              <h2 className="text-base sm:text-lg font-main font-black text-espresso dark:text-cream">
                 {event ? `تعديل احتفال: ${event.title}` : 'إضافة احتفال أو موسم صعيدي جديد'}
               </h2>
               <p className="text-xs text-black/60 dark:text-white/60">
@@ -1645,7 +1645,7 @@ export const EventEditorModal: React.FC<EventEditorModalProps> = ({
                           </span>
                         )}
                       </div>
-                      <h3 className="text-2xl font-serif font-black">{title || 'عنوان الاحتفال'}</h3>
+                      <h3 className="text-2xl font-cairo font-bold">{title || 'عنوان الاحتفال'}</h3>
                       <p className="text-xs text-cream/80 flex items-center gap-1">
                         <MapPin className="w-3.5 h-3.5 text-amber-300" />
                         <span>{locationName || cityName || governorateName}</span>

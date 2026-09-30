@@ -1375,13 +1375,7 @@ export const AdminDashboard: React.FC = () => {
           icon: Layers,
           elementId: 'admin-tab-categories'
         },
-        {
-          id: 'craft-stories' as const,
-          label: 'قصص الصنعة وأسرار الأجداد',
-          sublabel: `${craftStories.length} قصة موثقة`,
-          icon: Sparkles,
-          elementId: 'admin-tab-craft-stories'
-        },
+
         {
           id: 'craft-reels' as const,
           label: 'فيديوهات الحرفيين (Reels)',
@@ -1500,7 +1494,7 @@ export const AdminDashboard: React.FC = () => {
 
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-lg sm:text-2xl font-black font-heritage tracking-tight text-cream">
+                <h1 className="text-lg sm:text-2xl font-black font-main tracking-tight text-cream">
                   لوحة الإدارة المركزية
                 </h1>
                 <span className="bg-primary text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-xs">
@@ -1747,7 +1741,7 @@ export const AdminDashboard: React.FC = () => {
             {/* Drawer Header */}
             <div className="p-4 border-b border-[#E0C79B] dark:border-[#6B3A1F] flex items-center justify-between bg-black/[0.02] dark:bg-cream/[0.02]">
               <div>
-                <h3 className="font-heritage text-base font-black text-[#3B1E0E] dark:text-[#FFF9EE]">
+                <h3 className="font-cairo text-base font-bold text-[#3B1E0E] dark:text-[#FFF9EE]">
                   أقسام لوحة الإدارة
                 </h3>
                 <p className="text-[11px] text-black/60 dark:text-white/60">اختر الأداة أو القسم للانتقال الفوري</p>
@@ -2964,7 +2958,7 @@ export const AdminDashboard: React.FC = () => {
                       <Film className="w-4 h-4 text-primary-hover" />
                       <span>الإشراف على محتوى وه Stories وحكايات الصعيد</span>
                     </div>
-                    <h2 className="text-xl sm:text-2xl font-black font-heritage">
+                    <h2 className="text-xl sm:text-2xl font-black font-main">
                       إدارة الفيديوهات والحكايات المصورة والتفاعل المباشر
                     </h2>
                     <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
@@ -3386,7 +3380,7 @@ export const AdminDashboard: React.FC = () => {
               <div className="bg-[#F8EBD7] dark:bg-[#3B1E0E] rounded-3xl border border-[#E0C79B] dark:border-[#6B3A1F] p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="font-bold text-lg text-[#3B1E0E] dark:text-[#FFF9EE] font-heritage">إدارة الورش واعتماد الصنايعية</h3>
+                    <h3 className="font-bold text-lg text-[#3B1E0E] dark:text-[#FFF9EE] font-cairo">إدارة الورش واعتماد الصنايعية</h3>
                     {pendingSellersCount > 0 && (
                       <span className="bg-amber-100 text-amber-900 border border-amber-300 text-xs font-black px-2.5 py-0.5 rounded-full animate-pulse">
                         {pendingSellersCount} طلب مستني المراجعة
@@ -5030,28 +5024,7 @@ export const AdminDashboard: React.FC = () => {
         </div>
       )}
 
-      {/* Craft Story Add / Edit Modal (قصص الصنعة وأسرار الأجداد) */}
-      {isCraftStoryModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in overflow-y-auto">
-          <div className="bg-[#F8EBD7] dark:bg-[#3B1E0E] rounded-3xl border border-[#E0C79B] dark:border-[#6B3A1F] max-w-xl w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto">
-            <div className="flex items-center justify-between border-b border-[#E0C79B] dark:border-[#6B3A1F] pb-3">
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-amber-600" />
-                <h3 className="font-bold text-base text-[#3B1E0E] dark:text-[#FFF9EE]">
-                  {editingCraftStory ? 'تعديل حكاية الصنعة' : 'إضافة حكاية صنعة جديدة'}
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsCraftStoryModalOpen(false)}
-                className="p-1 rounded-lg text-gray-400 hover:text-gray-600"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+
 
       {/* Reject Product Modal with Reason Requirement */}
       {rejectingProductId && (

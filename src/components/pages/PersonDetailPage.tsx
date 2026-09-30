@@ -215,7 +215,7 @@ export const PersonDetailPage: React.FC = () => {
               )}
             </div>
 
-            <h1 className="text-6xl sm:text-8xl lg:text-9xl font-main font-black tracking-tight text-white leading-none drop-shadow-[0_15px_35px_rgba(0,0,0,0.95)]">
+            <h1 className="text-4xl sm:text-5xl lg:text-4xl font-main font-black tracking-tight text-white leading-none drop-shadow-[0_15px_35px_rgba(0,0,0,0.95)]">
               {person.name}
             </h1>
 
@@ -258,7 +258,7 @@ export const PersonDetailPage: React.FC = () => {
 
             <div className="space-y-2">
               <div className="text-[10px] font-mono tracking-[0.4em] text-amber-700 dark:text-amber-500 uppercase">CHAPTER 01</div>
-              <div className="text-lg font-main font-bold text-stone-900 dark:text-white/90">سيرة المكان والإنسان</div>
+              <h2 className="text-lg font-main font-bold text-stone-900 dark:text-white/90">سيرة المكان والإنسان</h2>
             </div>
 
             <div className="relative">
@@ -313,7 +313,7 @@ export const PersonDetailPage: React.FC = () => {
                             </div>
                           )}
 
-                          <h3 className="text-xl font-main font-bold text-stone-900 dark:text-white group-hover:text-amber-700 dark:group-hover:text-amber-200 transition-colors">
+                          <h3 className="text-xl font-cairo font-bold text-stone-900 dark:text-white group-hover:text-amber-700 dark:group-hover:text-amber-200 transition-colors">
                             {milestone.title}
                           </h3>
 
@@ -393,7 +393,7 @@ export const PersonDetailPage: React.FC = () => {
                 <div className="relative rounded-3xl border border-amber-600/20 dark:border-amber-500/20 bg-gradient-to-br from-amber-50/70 to-amber-100/30 dark:from-amber-950/20 dark:to-black/60 p-10 backdrop-blur-xl shadow-md dark:shadow-none">
                   <Scroll size={24} className="text-amber-700 dark:text-amber-400 mb-6" />
                   <div className="text-[10px] font-mono tracking-widest text-amber-800 dark:text-amber-400/60 uppercase mb-3">حكاية يتوارثها أهل البلد</div>
-                  <h3 className="text-2xl font-main font-bold text-stone-900 dark:text-white mb-4">موقف من الذاكرة</h3>
+                  <h3 className="text-2xl font-cairo font-bold text-stone-900 dark:text-white mb-4">موقف من الذاكرة</h3>
                   <p className="text-stone-700 dark:text-white/70 leading-loose text-base font-light">
                     {person.famousAnecdote}
                   </p>
@@ -404,7 +404,7 @@ export const PersonDetailPage: React.FC = () => {
                 <div className="relative rounded-3xl border border-stone-200 dark:border-white/10 bg-white dark:bg-white/[0.02] p-10 backdrop-blur-xl shadow-md dark:shadow-none">
                   <Sparkles size={24} className="text-amber-700 dark:text-amber-400 mb-6" />
                   <div className="text-[10px] font-mono tracking-widest text-stone-400 dark:text-white/40 uppercase mb-3">البصمة الحقيقية</div>
-                  <h3 className="text-2xl font-main font-bold text-stone-900 dark:text-white mb-4">الأثر الباقي</h3>
+                  <h3 className="text-2xl font-cairo font-bold text-stone-900 dark:text-white mb-4">الأثر الباقي</h3>
                   <p className="text-stone-700 dark:text-white/70 leading-loose text-base font-light">
                     {person.localImpact}
                   </p>

@@ -353,10 +353,10 @@ export const DynamicBreadcrumbs: React.FC = () => {
         url: `${origin}/wholesale`,
         isCurrent: true
       });
-    } else if (activePage === 'quize' || activePage === 'dialect-dictionary') {
+    } else if (activePage === 'quize') {
       items.push({
         id: 'quize',
-        label: 'قاموس اللهجة الصعيدية وتحدي الأمثال',
+        label: 'تحدى اللهجة الصعيدية',
         url: `${origin}/quiz`,
         isCurrent: true
       });

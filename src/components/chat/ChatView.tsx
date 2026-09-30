@@ -553,7 +553,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                   </div>
                 </div>
                 <div>
-                  <h2 className="text-sm font-black text-stone-900 dark:text-amber-100">مراسلات وَه</h2>
+                  <h3 className="text-sm font-black text-stone-900 dark:text-amber-100">مراسلات وَه</h3>
                   <p className="text-[10px] text-amber-800/60 dark:text-amber-200/50 font-medium">تواصل مباشر ومحمي</p>
                 </div>
               </div>

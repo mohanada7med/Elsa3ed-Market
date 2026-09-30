@@ -96,7 +96,7 @@ export const CategoriesPage: React.FC = () => {
             <Compass className="w-3.5 h-3.5 text-[#C99444]" />
             <span>حرف وفنون صعيد مصر</span>
           </div>
-          <h1 className="text-2xl sm:text-5xl font-main leading-tight">
+          <h1 className="text-2xl sm:text-5xl font-main font-black leading-tight">
             أصل الصعيد.. بخامته وبلده
           </h1>
           <p className="text-xs sm:text-sm text-cream/80 leading-relaxed max-w-2xl font-light">
@@ -135,7 +135,7 @@ export const CategoriesPage: React.FC = () => {
 
                       <div>
                         <h3
-                          className={`text-lg font-main transition-colors ${isSelected
+                          className={`text-lg font-cairo font-bold transition-colors ${isSelected
                             ? 'text-primary dark:text-primary-hover'
                             : 'text-espresso dark:text-cream'
                             }`}
@@ -200,7 +200,7 @@ export const CategoriesPage: React.FC = () => {
                   </div>
 
                   <div className="relative z-10 space-y-4 max-w-xl text-right">
-                    <h2 className="text-4xl lg:text-5xl font-main leading-tight text-white drop-shadow-md">
+                    <h2 className="text-4xl lg:text-5xl font-main font-black leading-tight text-white drop-shadow-md">
                       {selectedCategory.name}
                     </h2>
 
@@ -266,7 +266,7 @@ export const CategoriesPage: React.FC = () => {
                         0{idx + 1}
                       </span>
                       <div>
-                        <h3 className="text-base font-main text-espresso dark:text-cream">
+                        <h3 className="text-base font-cairo font-bold text-espresso dark:text-cream">
                           {cat.name}
                         </h3>
                         <span className="text-[10px] text-espresso/50 dark:text-cream/50 uppercase tracking-wider block">
@@ -405,7 +405,7 @@ export const CategoriesPage: React.FC = () => {
                 <span className="text-[10px] uppercase tracking-widest text-[#C99444] font-bold block">
                   {cat.nameEn}
                 </span>
-                <h3 className="text-2xl font-main text-white">{cat.name}</h3>
+                <h3 className="text-2xl font-cairo font-bold text-white">{cat.name}</h3>
                 <p className="text-xs text-white/80 line-clamp-2 leading-relaxed">
                   {cat.description}
                 </p>

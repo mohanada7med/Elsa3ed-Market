@@ -300,7 +300,6 @@ export type ActivePage =
   | 'event-details'
   | 'global-search'
   | 'cultural-cms'
-  | 'dialect-dictionary'
   | 'wah-market'
   | 'products'
   | 'product-details'

@@ -247,7 +247,7 @@ export const Footer: React.FC = () => {
 
           {/* 2. خريطة بوابات المنصة */}
           <div className="lg:col-span-5 space-y-4">
-            <h4 className="text-xs font-main tracking-wider text-primary-hover uppercase  pb-2 border-b border-white/10 flex items-center gap-2">
+            <h4 className="text-xs font-cairo font-bold tracking-wider text-primary-hover uppercase pb-2 border-b border-white/10 flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-white" />
               <span className="text-white">أبواب ودليل منصة وه</span>
             </h4>
@@ -271,7 +271,7 @@ export const Footer: React.FC = () => {
 
             {/* خدمات المقتني */}
             <div className="space-y-3">
-              <h4 className="text-xs tracking-wider text-white uppercase font-main pb-2 border-b border-white/10">
+              <h4 className="text-xs tracking-wider text-white uppercase font-cairo font-bold pb-2 border-b border-white/10">
                 خدماتك وحسابك
               </h4>
               <div className="flex flex-wrap gap-2">
@@ -310,7 +310,7 @@ export const Footer: React.FC = () => {
 
             {/* نشرة بريد الجنوب */}
             <div className="space-y-3 pt-2">
-              <h4 className="text-xs font-main tracking-wider text-white uppercase">
+              <h4 className="text-xs font-cairo font-bold tracking-wider text-white uppercase">
                 جوابات وحكاوي الجنوب
               </h4>
               <p className="text-xs text-white/70">

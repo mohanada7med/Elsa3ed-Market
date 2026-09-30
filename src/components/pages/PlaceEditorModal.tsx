@@ -431,7 +431,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-base sm:text-lg font-main">
+                <h2 className="text-base sm:text-lg font-main font-black">
                   تعديل محتوى وميديا المعلم التراثي
                 </h2>
                 <span className="px-2 py-0.5 rounded-full bg-primary/20 text-primary text-[10px] font-bold">
@@ -1380,7 +1380,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                     <span className="inline-block px-3 py-1 rounded-full bg-primary text-xs font-black w-max mb-2">
                       {CATEGORIES.find((c) => c.id === category)?.label || category}
                     </span>
-                    <h3 className="text-2xl font-main">{title || 'اسم المعلم'}</h3>
+                    <h3 className="text-2xl font-cairo font-bold">{title || 'اسم المعلم'}</h3>
                     <div className="flex items-center gap-3 text-xs mt-1 font-bold text-white/80">
                       <span>محافظة {currentGov.name}</span>
                       <span>•</span>

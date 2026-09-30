@@ -910,13 +910,14 @@ export const EventDetailPage: React.FC = () => {
                     max-w-5xl
                     text-4xl
                     font-black
+                    font-main
                     leading-[1.05]
                     tracking-[-0.06em]
                     text-white
 
-                    sm:text-6xl
+                    sm:text-3xl
 
-                    lg:text-8xl
+                    lg:text-4xl
                   "
                 >
                   {event.title}
@@ -1263,6 +1264,7 @@ export const EventDetailPage: React.FC = () => {
                   className="
                     text-2xl
                     font-black
+                    font-main
                     tracking-[-0.04em]
 
                     sm:text-3xl
@@ -1314,7 +1316,7 @@ export const EventDetailPage: React.FC = () => {
                     <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/20 text-primary">
                       <CheckCircle2 size={18} />
                     </span>
-                    <h3 className="text-xl font-black sm:text-2xl">أبرز طقوس وعادات الليلة</h3>
+                    <h2 className="text-xl font-black sm:text-2xl">أبرز طقوس وعادات الليلة</h2>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                     {event.rituals.map((ritual, rIdx) => (
@@ -1342,7 +1344,7 @@ export const EventDetailPage: React.FC = () => {
                       <Utensils size={18} />
                     </span>
                     <div>
-                      <h3 className="text-xl font-black sm:text-2xl">أكلات ومشروبات النفحة والليلة</h3>
+                      <h2 className="text-xl font-black sm:text-2xl">أكلات ومشروبات النفحة والليلة</h2>
                       <p className="text-xs text-black/50 dark:text-white/50 mt-1">الخير الممدود في ساحات وضيافة الصعايدة</p>
                     </div>
                   </div>
@@ -1371,7 +1373,7 @@ export const EventDetailPage: React.FC = () => {
                     <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/20 text-primary">
                       <Flame size={18} />
                     </span>
-                    <h3 className="text-xl font-black sm:text-2xl">أبرز المشاهد والفعاليات الحية</h3>
+                    <h2 className="text-xl font-black sm:text-2xl">أبرز المشاهد والفعاليات الحية</h2>
                   </div>
                   <div className="flex flex-wrap gap-2.5">
                     {event.activities.map((act, aIdx) => (
@@ -1423,9 +1425,17 @@ export const EventDetailPage: React.FC = () => {
                         <ImageIcon size={20} />
                       </span>
                       <div>
-                        <h3 className="text-xl sm:text-2xl font-main">
+                        <h2 className="
+                    text-2xl
+                    font-black
+                    font-main
+                    tracking-[-0.04em]
+
+                    sm:text-1xl
+                  "
+                        >
                           معرض لقطات من قلب الليلة والموسم
-                        </h3>
+                        </h2>
                         <p className="text-xs text-black/60 dark:text-white/60 mt-0.5">
                           يشمل صورة الغلاف التراثية الرئيسية وصور وتوثيقات الميدان ({allGalleryImages.length} صور)
                         </p>
@@ -1566,11 +1576,11 @@ export const EventDetailPage: React.FC = () => {
                 mx-auto
                 max-w-2xl
                 text-xl
-                font-black
+                font-main
                 leading-9
                 tracking-[-0.03em]
 
-                sm:text-3xl
+                sm:text-5xl
                 sm:leading-[1.7]
               "
             >
@@ -1826,6 +1836,7 @@ export const EventDetailPage: React.FC = () => {
                     max-w-4xl
                     text-4xl
                     font-black
+                    font-main
                     leading-[1.05]
                     tracking-[-0.06em]
 
