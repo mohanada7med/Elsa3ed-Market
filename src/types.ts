@@ -153,6 +153,8 @@ export interface OrderAddress {
   phone: string;
   governorate: Governorate;
   city: string;
+  district?: string;
+  area?: string;
   streetAddress: string;
   buildingNo?: string;
   notes?: string;
@@ -205,7 +207,7 @@ export interface ShippingConfig {
   isBostaActive: boolean;
   bostaPickupLocationId?: string;
   bostaPickupLocationName?: string;
-  defaultPackageType?: 'SMALL' | 'MEDIUM' | 'LARGE';
+  defaultPackageType?: 'Small' | 'Medium' | 'Large';
   freeShippingThreshold: number;
   upperEgyptShippingFee: number;
   otherGovernoratesShippingFee: number;

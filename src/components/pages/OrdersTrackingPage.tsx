@@ -253,7 +253,7 @@ export const OrdersTrackingPage: React.FC = () => {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-black/10 dark:border-white/10 pb-4">
                   <div>
                     <span className="text-xs text-espresso/60 dark:text-cream/60 block">تفاصيل الطلب النشط:</span>
-                    <h2 className="text-lg font-black font-mono text-espresso dark:text-cream">
+                    <h2 className="text-lg font-black text-cairo text-espresso dark:text-cream">
                       {currentSelected.orderNumber || currentSelected.id}
                     </h2>
                     {currentSelected.trackingNumber && (

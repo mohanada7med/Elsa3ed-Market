@@ -106,7 +106,7 @@ class MemoryStore {
     isBostaActive: true,
     bostaPickupLocationId: process.env.BOSTA_PICKUP_LOCATION_ID || 'JIx5kaTHoO',
     bostaPickupLocationName: 'اسيوط - مهند احمد',
-    defaultPackageType: 'SMALL',
+    defaultPackageType: 'Small',
     freeShippingThreshold: 1000,
     upperEgyptShippingFee: 45,
     otherGovernoratesShippingFee: 55,

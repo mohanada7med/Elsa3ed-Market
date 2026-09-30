@@ -9,6 +9,7 @@ import {
   getBostaPickupLocations,
   createBostaShipment,
   trackBostaShipment,
+  getBostaAwbPdf,
   handleBostaWebhook
 } from '../services/bostaService.ts';
 
@@ -166,6 +167,29 @@ router.get('/bosta/track/:trackingNumber', async (req: express.Request, res: Res
       error: (error as Error).message || 'فشل جلب تفاصيل التتبع',
       code: 'TRACKING_ERROR'
     });
+  }
+});
+
+/**
+ * GET /api/shipping/bosta/awb/:identifier - Download or view AWB PDF for delivery/tracking
+ */
+router.get('/bosta/awb/:identifier', async (req: express.Request, res: Response) => {
+  try {
+    const { identifier } = req.params;
+    const result = await getBostaAwbPdf(identifier);
+
+    if (result.success && result.data) {
+      const pdfBuffer = Buffer.from(result.data, 'base64');
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `inline; filename="bosta-awb-${identifier}.pdf"`);
+      return res.send(pdfBuffer);
+    }
+
+    // Fallback: redirect to public Bosta tracking portal if PDF is unavailable or simulated
+    return res.redirect(`https://bosta.co/tracking-shipment/?trackNumber=${encodeURIComponent(identifier)}`);
+  } catch (error) {
+    console.error('[ShippingRoutes] Error fetching Bosta AWB:', error);
+    res.redirect(`https://bosta.co/tracking-shipment/?trackNumber=${encodeURIComponent(req.params.identifier)}`);
   }
 });
 

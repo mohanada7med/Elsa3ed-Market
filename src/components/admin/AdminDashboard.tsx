@@ -472,7 +472,7 @@ export const AdminDashboard: React.FC = () => {
     isBostaActive: true,
     bostaPickupLocationId: 'JIx5kaTHoO',
     bostaPickupLocationName: 'اسيوط - مهند احمد (+201158969931)',
-    defaultPackageType: 'SMALL',
+    defaultPackageType: 'Small',
     freeShippingThreshold: 1000,
     upperEgyptShippingFee: 45,
     otherGovernoratesShippingFee: 55
@@ -564,11 +564,19 @@ export const AdminDashboard: React.FC = () => {
     try {
       const res = await api.createBostaShipment(order.id, currentUser, { allowSimulationFallback: true });
       await refreshOrders();
-      addToast(
-        'تم إنشاء الشحنة بنجاح 🚚',
-        `تم تسليم الأوردر #${order.orderNumber} لشركة بوسطة برقم تتبع: ${res.trackingNumber}`,
-        'success'
-      );
+      if (res.isSimulated) {
+        addToast(
+          'تم إصدار الشحنة بنمط التجربة ℹ️',
+          `تم تسجيل شحنة الأوردر #${order.orderNumber} برقم تتبع: ${res.trackingNumber}. (تنبيه: يتطلب شحن باقة أو رصيد في حساب بوسطة لإرسال المندوب الفعلي)`,
+          'info'
+        );
+      } else {
+        addToast(
+          'تم إنشاء الشحنة بنجاح 🚚',
+          `تم تسليم الأوردر #${order.orderNumber} لشركة بوسطة برقم تتبع: ${res.trackingNumber}`,
+          'success'
+        );
+      }
     } catch (err: any) {
       addToast('فشل إنشاء الشحنة', err?.message || 'تعذر الربط مع بوسطة', 'error');
     } finally {
@@ -4517,13 +4525,13 @@ export const AdminDashboard: React.FC = () => {
                       الحجم القياسي الافتراضي للطرد (Default Package Type):
                     </label>
                     <select
-                      value={adminShippingSettings.defaultPackageType || 'SMALL'}
+                      value={adminShippingSettings.defaultPackageType || 'Small'}
                       onChange={(e) => setAdminShippingSettings({ ...adminShippingSettings, defaultPackageType: e.target.value as any })}
                       className="w-full px-4 py-2.5 bg-white dark:bg-black/20 border border-[#E0C79B] dark:border-[#6B3A1F] rounded-xl text-xs font-bold text-gray-800 dark:text-gray-100 outline-none cursor-pointer"
                     >
-                      <option value="SMALL">طرد صغير SMALL (حتى 2 كجم - فخار ومجسمات وتحف يدوية)</option>
-                      <option value="MEDIUM">طرد متوسط MEDIUM (حتى 5 كجم - كليم وسجاد ومنسوجات)</option>
-                      <option value="LARGE">طرد كبير LARGE (أكثر من 5 كجم - مشغولات أخشاب خوص ونخيل)</option>
+                      <option value="Small">طرد صغير Small (حتى 2 كجم - فخار ومجسمات وتحف يدوية)</option>
+                      <option value="Medium">طرد متوسط Medium (حتى 5 كجم - كليم وسجاد ومنسوجات)</option>
+                      <option value="Large">طرد كبير Large (أكثر من 5 كجم - مشغولات أخشاب خوص ونخيل)</option>
                     </select>
                   </div>
                 </div>

@@ -162,6 +162,8 @@ export interface OrderAddressDocument {
   phone: string;
   governorate: string;
   city: string;
+  district?: string;
+  area?: string;
   streetAddress: string;
   buildingNo?: string;
   notes?: string;
@@ -215,7 +217,7 @@ export interface ShippingConfigDocument {
   isBostaActive: boolean;
   bostaPickupLocationId?: string;
   bostaPickupLocationName?: string;
-  defaultPackageType?: 'SMALL' | 'MEDIUM' | 'LARGE';
+  defaultPackageType?: 'Small' | 'Medium' | 'Large';
   freeShippingThreshold: number;
   upperEgyptShippingFee: number;
   otherGovernoratesShippingFee: number;
@@ -352,23 +354,23 @@ export interface NotificationDocument {
   title: string;
   message: string;
   type:
-    | 'seller_request'
-    | 'seller_approved'
-    | 'seller_rejected'
-    | 'new_order'
-    | 'order_status'
-    | 'payment_status'
-    | 'payout_request'
-    | 'payout_response'
-    | 'password_request'
-    | 'password_response'
-    | 'account'
-    | 'system'
-    | 'order'
-    | 'product'
-    | 'promotion'
-    | 'chat_message'
-    | 'system_alert';
+  | 'seller_request'
+  | 'seller_approved'
+  | 'seller_rejected'
+  | 'new_order'
+  | 'order_status'
+  | 'payment_status'
+  | 'payout_request'
+  | 'payout_response'
+  | 'password_request'
+  | 'password_response'
+  | 'account'
+  | 'system'
+  | 'order'
+  | 'product'
+  | 'promotion'
+  | 'chat_message'
+  | 'system_alert';
   isRead: boolean;
   link?: string;
   actionPage?: string;
