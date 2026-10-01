@@ -758,7 +758,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
       },
       {
         id: 'messages',
-        label: ' الرعم الفنى',
+        label: ' الدعم الفنى',
         icon: MessageCircle,
         badge: chatUnreadCount > 0 ? (chatUnreadCount > 99 ? '99+' : chatUnreadCount) : null,
       },

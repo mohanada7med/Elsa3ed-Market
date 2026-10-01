@@ -97,9 +97,10 @@ export async function updatePaymentConfig(
   const { db, isMongo } = await getDatabase();
   if (isMongo && db) {
     try {
+      const { _id, ...safeUpdated } = updated as any;
       await db.collection('payment_configs').updateOne(
         { id: 'platform_payment_config' },
-        { $set: updated },
+        { $set: safeUpdated },
         { upsert: true }
       );
     } catch (e) {

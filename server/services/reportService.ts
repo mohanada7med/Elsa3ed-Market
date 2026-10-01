@@ -226,9 +226,10 @@ export async function updateAdminReport(
   };
 
   if (isMongo && db) {
+    const { _id, ...safeUpdated } = updated as any;
     await db.collection<ReportTicketDocument>('reports').updateOne(
       { id: reportId },
-      { $set: updated }
+      { $set: safeUpdated }
     );
   } else {
     const idx = memoryDb.reports.findIndex((r) => r.id === reportId);

@@ -440,9 +440,13 @@ export async function getShippingConfig(): Promise<ShippingConfigDocument> {
 
   if (isMongo && db) {
     try {
-      config = (await db
+      const doc = (await db
         .collection('platform_shipping_config')
-        .findOne({ id: 'platform_shipping_config' })) as unknown as ShippingConfigDocument | null;
+        .findOne({ id: 'platform_shipping_config' })) as any;
+      if (doc) {
+        const { _id, ...cleanDoc } = doc;
+        config = cleanDoc as ShippingConfigDocument;
+      }
     } catch (e) {
       Logger.error('[BostaService] Error reading config from Mongo:', e);
     }
@@ -459,9 +463,10 @@ export async function getShippingConfig(): Promise<ShippingConfigDocument> {
     config = { ...DEFAULT_SHIPPING_CONFIG };
     if (isMongo && db) {
       try {
+        const { _id, ...safeConfig } = config as any;
         await db.collection('platform_shipping_config').updateOne(
           { id: 'platform_shipping_config' },
-          { $set: config },
+          { $set: safeConfig },
           { upsert: true }
         );
       } catch (e) {
@@ -492,18 +497,23 @@ export async function updateShippingConfig(
   updates: Partial<ShippingConfigDocument>
 ): Promise<ShippingConfigDocument> {
   const current = await getShippingConfig();
+  const { _id: _currId, ...cleanCurrent } = (current || {}) as any;
+  const { _id: _updId, ...cleanUpdates } = (updates || {}) as any;
+
   const updated: ShippingConfigDocument = {
-    ...current,
-    ...updates,
+    ...cleanCurrent,
+    ...cleanUpdates,
+    id: 'platform_shipping_config',
     updatedAt: new Date().toISOString(),
     updatedBy: user.name || user.email || 'المدير'
   };
 
   const { db, isMongo } = await getDatabase();
   if (isMongo && db) {
+    const { _id, ...safeDoc } = updated as any;
     await db.collection('platform_shipping_config').updateOne(
       { id: 'platform_shipping_config' },
-      { $set: updated },
+      { $set: safeDoc },
       { upsert: true }
     );
   }
