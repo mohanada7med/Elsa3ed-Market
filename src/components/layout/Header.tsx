@@ -462,6 +462,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
     theme,
     toggleTheme,
     chatUnreadCount,
+    unreadNotificationsCount,
     openReportModal,
   } = useApp();
 
@@ -471,6 +472,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
   const [hoveredPortalId, setHoveredPortalId] = useState<string | null>(null);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const isAdmin = currentRole === 'admin' || currentUser?.role === 'admin';
@@ -481,6 +483,9 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
     const handleClickOutside = (event: PointerEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setUserDropdownOpen(false);
+      }
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
+        setIsProfileMenuOpen(false);
       }
     };
 
@@ -514,6 +519,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
       setMobileMenuOpen(false);
       setSearchOverlayOpen(false);
       setUserDropdownOpen(false);
+      setIsProfileMenuOpen(false);
     };
 
     document.addEventListener('keydown', handleKeyDown);
@@ -596,6 +602,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
       setActivePage(cleanPage as ActivePage);
       setMobileMenuOpen(false);
       setUserDropdownOpen(false);
+      setIsProfileMenuOpen(false);
     },
     [setActivePage]
   );
@@ -609,6 +616,169 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
     if (isAdmin) return 'admin-dashboard';
     return 'buyer-account';
   }, [isSeller, isAdmin]);
+
+  const profileMenuItems = useMemo(() => {
+    if (isAdmin) {
+      return [
+        {
+          id: 'admin-dashboard',
+          label: 'لوحة التحكم العامة',
+          icon: LayoutDashboard,
+          badge: null,
+        },
+        {
+          id: 'admin-products',
+          label: 'إدارة المنتجات',
+          icon: Package,
+          badge: null,
+        },
+        {
+          id: 'admin-sellers',
+          label: 'إدارة الورش والبائعين',
+          icon: Store,
+          badge: null,
+        },
+        {
+          id: 'admin-buyers',
+          label: 'إدارة المستخدمين',
+          icon: Users,
+          badge: null,
+        },
+        {
+          id: 'admin-orders',
+          label: 'إدارة الطلبات',
+          icon: ClipboardList,
+          badge: null,
+        },
+        {
+          id: 'admin-categories',
+          label: 'التصنيفات التراثية',
+          icon: Layers,
+          badge: null,
+        },
+        {
+          id: 'admin-reports',
+          label: 'البلاغات والشكاوى',
+          icon: AlertTriangle,
+          badge: null,
+        },
+        {
+          id: 'admin-audit-logs',
+          label: 'سجل النشاط',
+          icon: ShieldCheck,
+          badge: null,
+        },
+        {
+          id: 'notifications',
+          label: 'مركز الإشعارات',
+          icon: Bell,
+          badge: unreadNotificationsCount > 0 ? (unreadNotificationsCount > 99 ? '99+' : unreadNotificationsCount) : null,
+        },
+        {
+          id: 'buyer-account',
+          label: 'الملف الشخصي',
+          icon: UserCircle,
+          badge: null,
+        },
+      ];
+    }
+
+    if (isSeller) {
+      return [
+        {
+          id: 'seller-dashboard',
+          label: 'لوحة تحكم الورشة',
+          icon: LayoutDashboard,
+          badge: null,
+        },
+        {
+          id: 'seller-products',
+          label: 'منتجات الورشة',
+          icon: Package,
+          badge: null,
+        },
+        {
+          id: 'seller-orders',
+          label: 'طلبات الورشة',
+          icon: ClipboardList,
+          badge: null,
+        },
+        {
+          id: 'seller-inventory',
+          label: 'المخزون',
+          icon: Store,
+          badge: null,
+        },
+        {
+          id: 'seller-analytics',
+          label: 'الأرباح والإحصائيات',
+          icon: Sparkles,
+          badge: null,
+        },
+        {
+          id: 'messages',
+          label: 'الدعم الفنى',
+          icon: MessageCircle,
+          badge: chatUnreadCount > 0 ? (chatUnreadCount > 99 ? '99+' : chatUnreadCount) : null,
+        },
+        {
+          id: 'notifications',
+          label: 'الإشعارات',
+          icon: Bell,
+          badge: unreadNotificationsCount > 0 ? (unreadNotificationsCount > 99 ? '99+' : unreadNotificationsCount) : null,
+        },
+        {
+          id: 'seller-account',
+          label: 'إعدادات الورشة والحساب',
+          icon: UserCircle,
+          badge: null,
+        },
+      ];
+    }
+
+    // Buyer / Regular User
+    return [
+      {
+        id: 'buyer-account',
+        label: 'حسابي',
+        icon: UserCircle,
+        badge: null,
+      },
+      {
+        id: 'orders',
+        label: 'طلباتي',
+        icon: ClipboardList,
+        badge: null,
+      },
+      {
+        id: 'favorites',
+        label: 'المفضلة',
+        icon: Heart,
+        badge: favorites.length > 0 ? (favorites.length > 99 ? '99+' : favorites.length) : null,
+      },
+      {
+        id: 'messages',
+        label: ' الرعم الفنى',
+        icon: MessageCircle,
+        badge: chatUnreadCount > 0 ? (chatUnreadCount > 99 ? '99+' : chatUnreadCount) : null,
+      },
+      {
+        id: 'notifications',
+        label: 'الإشعارات',
+        icon: Bell,
+        badge: unreadNotificationsCount > 0 ? (unreadNotificationsCount > 99 ? '99+' : unreadNotificationsCount) : null,
+      },
+    ];
+  }, [isAdmin, isSeller, unreadNotificationsCount, chatUnreadCount, favorites.length]);
+
+  const handleProfileItemClick = useCallback(
+    (pageId: string) => {
+      setIsProfileMenuOpen(false);
+      setUserDropdownOpen(false);
+      navigate(pageId);
+    },
+    [navigate]
+  );
 
   const displayName = currentUser?.name || currentUser?.username || 'حسابي';
   const profileImage =
@@ -1059,29 +1229,56 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         </div>
                       </div>
 
-                      <div className="space-y-0.5 pt-2">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setUserDropdownOpen(false);
-                            navigate(getAccountPage());
-                          }}
-                          className="flex w-full items-center gap-3 px-3.5 py-2 text-sm font-bold rounded-xl cursor-pointer hover:bg-primary/10 hover:text-primary"
-                        >
-                          <UserCircle size={18} className="text-primary" />
-                          <span>حسابي</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setUserDropdownOpen(false);
-                            logout();
-                          }}
-                          className="flex w-full items-center gap-3 px-3.5 py-2 text-sm font-bold text-rose-500 rounded-xl cursor-pointer hover:bg-rose-500/10"
-                        >
-                          <LogOut size={18} />
-                          <span>اخرج من الحساب</span>
-                        </button>
+                      <div className="space-y-0.5 pt-2 max-h-[60vh] overflow-y-auto">
+                        {profileMenuItems.map((item) => {
+                          const Icon = item.icon;
+                          const isActive = activePage === item.id;
+                          return (
+                            <button
+                              key={item.id}
+                              type="button"
+                              onClick={() => handleProfileItemClick(item.id)}
+                              className="flex w-full items-center justify-between px-3.5 py-2 text-sm font-bold rounded-xl cursor-pointer transition-colors"
+                              style={{
+                                backgroundColor: isActive
+                                  ? (isDark ? 'rgba(201,148,68,0.2)' : 'rgba(201,148,68,0.1)')
+                                  : 'transparent',
+                                color: isActive ? (isDark ? '#C99444' : '#6B3A1F') : mainText,
+                              }}
+                              onMouseEnter={(e) => {
+                                if (!isActive) e.currentTarget.style.backgroundColor = hoverBg;
+                              }}
+                              onMouseLeave={(e) => {
+                                if (!isActive) e.currentTarget.style.backgroundColor = 'transparent';
+                              }}
+                            >
+                              <div className="flex items-center gap-3">
+                                <Icon size={18} className={isActive ? 'text-primary' : ''} />
+                                <span>{item.label}</span>
+                              </div>
+                              {item.badge && (
+                                <span className="flex h-4.5 min-w-4.5 items-center justify-center rounded-full px-1.5 text-[10px] font-bold bg-[#E66A2E] text-white">
+                                  {item.badge}
+                                </span>
+                              )}
+                            </button>
+                          );
+                        })}
+
+                        <div className="pt-1 mt-1 border-t" style={{ borderColor }}>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setUserDropdownOpen(false);
+                              setIsProfileMenuOpen(false);
+                              logout();
+                            }}
+                            className="flex w-full items-center gap-3 px-3.5 py-2 text-sm font-bold text-rose-500 rounded-xl cursor-pointer hover:bg-rose-500/10 transition-colors"
+                          >
+                            <LogOut size={18} />
+                            <span>اخرج من الحساب</span>
+                          </button>
+                        </div>
                       </div>
                     </motion.div>
                   )}
@@ -1236,7 +1433,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 />
 
                 {/* صورة الحساب + القائمة */}
-                <div className="relative">
+                <div ref={profileMenuRef} className="relative">
                   <button
                     type="button"
                     onClick={() => setIsProfileMenuOpen((prev) => !prev)}
@@ -1253,7 +1450,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
 
                   {isProfileMenuOpen && (
                     <div
-                      className="absolute ltr:right-0 rtl:left-0 top-full mt-2 w-52 overflow-hidden rounded-2xl border shadow-2xl backdrop-blur-md z-[999] animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200"
+                      className="absolute ltr:right-0 rtl:left-0 top-full mt-2 w-60 sm:w-64 max-h-[75vh] flex flex-col overflow-hidden rounded-2xl border shadow-2xl backdrop-blur-md z-[999] animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200"
                       style={{
                         backgroundColor: isDark ? 'rgba(36, 26, 21, 0.96)' : 'rgba(255, 249, 240, 0.96)',
                         borderColor: borderColor,
@@ -1281,63 +1478,65 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         </p>
                       </div>
 
-                      {/* حسابي */}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsProfileMenuOpen(false);
-                          navigate(getAccountPage());
-                        }}
-                        className="flex w-full items-center gap-3 px-4 py-3 text-sm font-semibold transition-colors"
-                        style={{ color: mainText }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = hoverBg;
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                        }}
-                      >
-                        <User size={17} />
-                        <span>حسابي</span>
-                      </button>
+                      {/* قائمة الصفحات المخصصة للصلاحيات */}
+                      <div className="space-y-0.5 py-1.5 overflow-y-auto max-h-[55vh]">
+                        {profileMenuItems.map((item) => {
+                          const Icon = item.icon;
+                          const isActive = activePage === item.id;
+                          return (
+                            <button
+                              key={item.id}
+                              type="button"
+                              onClick={() => handleProfileItemClick(item.id)}
+                              className="flex w-full items-center justify-between px-4 py-2.5 text-sm font-semibold transition-colors cursor-pointer"
+                              style={{
+                                backgroundColor: isActive
+                                  ? (isDark ? 'rgba(201,148,68,0.2)' : 'rgba(201,148,68,0.1)')
+                                  : 'transparent',
+                                color: isActive ? (isDark ? '#C99444' : '#6B3A1F') : mainText,
+                              }}
+                              onMouseEnter={(e) => {
+                                if (!isActive) e.currentTarget.style.backgroundColor = hoverBg;
+                              }}
+                              onMouseLeave={(e) => {
+                                if (!isActive) e.currentTarget.style.backgroundColor = 'transparent';
+                              }}
+                            >
+                              <div className="flex items-center gap-3">
+                                <Icon size={17} className={isActive ? 'text-primary' : ''} />
+                                <span>{item.label}</span>
+                              </div>
+                              {item.badge && (
+                                <span className="flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold bg-[#E66A2E] text-white">
+                                  {item.badge}
+                                </span>
+                              )}
+                            </button>
+                          );
+                        })}
 
-                      {/* الإشعارات */}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsProfileMenuOpen(false);
-                        }}
-                        className="flex w-full items-center gap-3 px-4 py-3 text-sm font-semibold transition-colors"
-                        style={{ color: mainText }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = hoverBg;
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                        }}
-                      >
-                        <Bell size={17} />
-                        <span>الإشعارات</span>
-                      </button>
-
-                      {/* تسجيل الخروج */}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsProfileMenuOpen(false);
-                          logout();
-                        }}
-                        className="flex w-full items-center gap-3 px-4 py-3 text-sm font-semibold text-red-500 transition-colors"
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = hoverBg;
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                        }}
-                      >
-                        <LogOut size={17} />
-                        <span>تسجيل الخروج</span>
-                      </button>
+                        {/* تسجيل الخروج */}
+                        <div className="pt-1 mt-1 border-t" style={{ borderColor: borderColor }}>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setIsProfileMenuOpen(false);
+                              setUserDropdownOpen(false);
+                              logout();
+                            }}
+                            className="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-semibold text-red-500 transition-colors cursor-pointer hover:bg-rose-500/10"
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.backgroundColor = hoverBg;
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.backgroundColor = 'transparent';
+                            }}
+                          >
+                            <LogOut size={17} />
+                            <span>تسجيل الخروج</span>
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>

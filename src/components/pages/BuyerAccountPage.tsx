@@ -47,11 +47,11 @@ export const BuyerAccountPage: React.FC = () => {
 
   const isAdmin = currentRole === 'admin' || currentUser?.role === 'admin';
 
-  const [name, setName] = useState(currentUser.name || '');
-  const [email, setEmail] = useState(currentUser.email || '');
-  const [phone, setPhone] = useState(currentUser.phone || '');
+  const [name, setName] = useState(currentUser?.name || '');
+  const [email, setEmail] = useState(currentUser?.email || '');
+  const [phone, setPhone] = useState(currentUser?.phone || '');
   const [governorate, setGovernorate] = useState<Governorate>(
-    (currentUser.governorate as Governorate) || 'قنا'
+    (currentUser?.governorate as Governorate) || 'قنا'
   );
   const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] = useState(false);
 
@@ -59,17 +59,17 @@ export const BuyerAccountPage: React.FC = () => {
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
   const [isSubmittingApply, setIsSubmittingApply] = useState(false);
   const [isCheckingStatus, setIsCheckingStatus] = useState(false);
-  const [workshopName, setWorkshopName] = useState(currentUser.seller?.brandName || '');
-  const [specialty, setSpecialty] = useState(currentUser.seller?.specialty || 'مشغولات وفخار صعيدي');
+  const [workshopName, setWorkshopName] = useState(currentUser?.seller?.brandName || '');
+  const [specialty, setSpecialty] = useState(currentUser?.seller?.specialty || 'مشغولات وفخار صعيدي');
   const [applyGovernorate, setApplyGovernorate] = useState<Governorate>(
-    (currentUser.governorate as Governorate) || 'قنا'
+    (currentUser?.governorate as Governorate) || 'قنا'
   );
-  const [applyPhone, setApplyPhone] = useState(currentUser.phone || '');
-  const [applyEmail, setApplyEmail] = useState(currentUser.email || '');
-  const [bio, setBio] = useState(currentUser.seller?.bio || '');
-  const [story, setStory] = useState(currentUser.seller?.story || '');
+  const [applyPhone, setApplyPhone] = useState(currentUser?.phone || '');
+  const [applyEmail, setApplyEmail] = useState(currentUser?.email || '');
+  const [bio, setBio] = useState(currentUser?.seller?.bio || '');
+  const [story, setStory] = useState(currentUser?.seller?.story || '');
   const [payoutMethod, setPayoutMethod] = useState<'vodafone_cash' | 'instapay'>('vodafone_cash');
-  const [payoutAccount, setPayoutAccount] = useState(currentUser.phone || '');
+  const [payoutAccount, setPayoutAccount] = useState(currentUser?.phone || '');
 
   useEffect(() => {
     if (currentUser?.id) {
@@ -254,8 +254,8 @@ export const BuyerAccountPage: React.FC = () => {
 
   const DEFAULT_USER_AVATAR = 'https://res.cloudinary.com/kuana1nl/image/upload/v1788710904/user.jpg';
   const hasCustomImage = Boolean(
-    currentUser.profileImage?.secureUrl ||
-    (currentUser.avatar &&
+    currentUser?.profileImage?.secureUrl ||
+    (currentUser?.avatar &&
       currentUser.avatar !== DEFAULT_USER_AVATAR &&
       !currentUser.avatar.includes('default-user-avatar') &&
       !currentUser.avatar.includes('v1787924812/user.jpg') &&
@@ -310,14 +310,14 @@ export const BuyerAccountPage: React.FC = () => {
                   </div>
                 ) : previewImage ? (
                   <img src={previewImage} alt="معاينة" className="w-full h-full object-cover" />
-                ) : currentUser.avatar ? (
+                ) : currentUser?.avatar ? (
                   <img
                     src={currentUser.profileImage?.secureUrl || currentUser.avatar}
-                    alt={currentUser.name}
+                    alt={currentUser?.name || ''}
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  currentUser.name.charAt(0)
+                  currentUser?.name?.charAt(0) || '👤'
                 )}
               </div>
 
@@ -335,16 +335,16 @@ export const BuyerAccountPage: React.FC = () => {
 
             <div>
               <div className="flex items-center justify-center sm:justify-start gap-2">
-                <h1 className="text-xl sm:text-2xl font-black">{currentUser.name}</h1>
+                <h1 className="text-xl sm:text-2xl font-black">{currentUser?.name || 'حسابي'}</h1>
                 <span className="bg-primary/10 border border-primary/30 text-primary text-[11px] font-bold px-2.5 py-0.5 rounded-full">
-                  {currentUser.role === 'admin'
+                  {currentUser?.role === 'admin'
                     ? 'مدير المنصة'
-                    : currentUser.role === 'seller'
+                    : currentUser?.role === 'seller'
                       ? 'ورشة معتمدة'
                       : 'متسوق موثق'}
                 </span>
               </div>
-              <p className="text-xs text-black/60 dark:text-white/60 mt-1">{currentUser.email}</p>
+              <p className="text-xs text-black/60 dark:text-white/60 mt-1">{currentUser?.email || ''}</p>
 
               {/* Profile Image Management Controls */}
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mt-3">
@@ -555,7 +555,7 @@ export const BuyerAccountPage: React.FC = () => {
             </div>
           ) : (
             <div className="bg-white/75 dark:bg-espresso-900/90 p-6 rounded-[2rem] border border-black/10 dark:border-white/10 space-y-3 text-right shadow-lg backdrop-blur-xl">
-              {currentUser.sellerStatus === 'approved' || currentRole === 'seller' ? (
+              {currentUser?.sellerStatus === 'approved' || currentRole === 'seller' ? (
                 <>
                   <div className="flex items-center justify-between">
                     <h4 className="font-bold text-xs">ورشتك الحرفية المعتمدة</h4>
@@ -577,7 +577,7 @@ export const BuyerAccountPage: React.FC = () => {
                     <span>ادخل للوحة البائع الحرفي</span>
                   </button>
                 </>
-              ) : currentUser.sellerStatus === 'pending' ? (
+              ) : currentUser?.sellerStatus === 'pending' ? (
                 <>
                   <div className="flex items-center justify-between">
                     <h4 className="font-bold text-xs">طلب انضمام ورشة حرفية</h4>
@@ -606,7 +606,7 @@ export const BuyerAccountPage: React.FC = () => {
                     <span>{isCheckingStatus ? 'بنراجع...' : 'حدّث حالة الطلب'}</span>
                   </button>
                 </>
-              ) : currentUser.sellerStatus === 'rejected' ? (
+              ) : currentUser?.sellerStatus === 'rejected' ? (
                 <>
                   <div className="flex items-center justify-between">
                     <h4 className="font-bold text-xs">طلب انضمام ورشة حرفية</h4>
@@ -918,7 +918,7 @@ export const BuyerAccountPage: React.FC = () => {
       <DeleteAccountModal
         isOpen={isDeleteAccountModalOpen}
         onClose={() => setIsDeleteAccountModalOpen(false)}
-        isSellerMode={currentRole === 'seller' || currentUser.role === 'seller'}
+        isSellerMode={currentRole === 'seller' || currentUser?.role === 'seller'}
       />
     </div>
   );
