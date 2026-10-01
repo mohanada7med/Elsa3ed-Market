@@ -26,7 +26,17 @@ const GOVERNORATES: (Governorate | 'all')[] = [
 ];
 
 export const SellersDirectoryPage: React.FC = () => {
-  const { sellers, navigateToSeller, setActivePage } = useApp();
+  const { sellers, products, navigateToSeller, setActivePage } = useApp();
+
+  const getSellerProductsCount = (seller: any) => {
+    const fromProducts = products.filter(
+      (p) =>
+        p.sellerId === seller.id ||
+        (seller.userId && p.sellerId === seller.userId) ||
+        (seller.brandName && p.sellerName === seller.brandName)
+    ).length;
+    return fromProducts > 0 ? fromProducts : (seller.productsCount || 0);
+  };
 
   const [selectedGov, setSelectedGov] =
     useState<Governorate | 'all'>('all');
@@ -671,7 +681,7 @@ export const SellersDirectoryPage: React.FC = () => {
                         "
                       >
                         <Package className="w-3.5 h-3.5 text-primary" />
-                        <span>{seller.productsCount} قطعة</span>
+                        <span>{getSellerProductsCount(seller)} قطعة</span>
                       </span>
                     </div>
                   </div>

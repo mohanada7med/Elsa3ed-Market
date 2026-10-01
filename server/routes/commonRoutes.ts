@@ -27,7 +27,23 @@ router.get('/sellers', async (req: Request, res: Response) => {
     try {
       sellers = await db.collection('sellers').find({ status: { $ne: 'suspended' } }).toArray();
       if (sellers.length > 0) {
-        cacheService.set(cacheKey, sellers, 300, ['sellers']);
+        // Count approved products for each seller
+        const productCounts = await db.collection('products').aggregate([
+          { $match: { approvalStatus: { $in: ['approved', undefined, null] } } },
+          { $group: { _id: '$sellerId', count: { $sum: 1 } } }
+        ]).toArray();
+
+        const countMap = new Map<string, number>();
+        productCounts.forEach((pc: any) => {
+          if (pc._id) countMap.set(String(pc._id), pc.count);
+        });
+
+        sellers = sellers.map((s) => ({
+          ...s,
+          productsCount: countMap.get(String(s.id)) ?? countMap.get(String(s.userId)) ?? s.productsCount ?? 0
+        }));
+
+        cacheService.set(cacheKey, sellers, 120, ['sellers', 'products']);
         return res.json({ success: true, count: sellers.length, data: sellers });
       }
     } catch (e) {
@@ -35,8 +51,15 @@ router.get('/sellers', async (req: Request, res: Response) => {
     }
   }
 
-  sellers = memoryDb.sellers.filter((s) => s.status !== 'suspended');
-  cacheService.set(cacheKey, sellers, 300, ['sellers']);
+  sellers = memoryDb.sellers.filter((s) => s.status !== 'suspended').map((s) => {
+    const pCount = memoryDb.products.filter(
+      (p) => (p.sellerId === s.id || (p as any).userId === s.userId) &&
+             (!p.approvalStatus || p.approvalStatus === 'approved')
+    ).length;
+    return { ...s, productsCount: pCount || s.productsCount || 0 };
+  });
+
+  cacheService.set(cacheKey, sellers, 120, ['sellers', 'products']);
   res.json({ success: true, count: sellers.length, data: sellers });
 });
 
@@ -56,7 +79,12 @@ router.get('/sellers/:id', async (req: Request, res: Response) => {
     try {
       seller = await db.collection('sellers').findOne({ id: sellerId });
       if (seller) {
-        cacheService.set(cacheKey, seller, 300, ['sellers']);
+        const pCount = await db.collection('products').countDocuments({
+          sellerId: { $in: [seller.id, seller.userId].filter(Boolean) },
+          approvalStatus: { $in: ['approved', undefined, null] }
+        });
+        seller.productsCount = pCount;
+        cacheService.set(cacheKey, seller, 120, ['sellers', 'products']);
         return res.json({ success: true, data: seller });
       }
       return res.status(404).json({ success: false, error: 'الورشة غير موجودة' });
@@ -67,6 +95,13 @@ router.get('/sellers/:id', async (req: Request, res: Response) => {
 
   if (!seller) {
     seller = memoryDb.sellers.find((s) => s.id === sellerId);
+    if (seller) {
+      const pCount = memoryDb.products.filter(
+        (p) => (p.sellerId === seller.id || (p as any).userId === seller.userId) &&
+               (!p.approvalStatus || p.approvalStatus === 'approved')
+      ).length;
+      seller = { ...seller, productsCount: pCount || seller.productsCount || 0 };
+    }
   }
 
   if (!seller) {
