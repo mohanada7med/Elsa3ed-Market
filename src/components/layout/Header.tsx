@@ -34,6 +34,7 @@ import {
   Compass,
   Layers,
   Headphones,
+  User,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -127,39 +128,38 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
   };
 
   return (
-    <div className="relative shrink-0">
-      <button
-        id="header-notifications-btn"
-        type="button"
-        aria-label="الإشعارات"
-        onClick={() => {
-          if (isGuest) {
-            setPostLoginRedirect('notifications');
-            setAuthModalTab('login');
-            setIsAuthModalOpen(true);
-            return;
-          }
-          setOpen((prev) => !prev);
-        }}
-        className="relative flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11 cursor-pointer"
-        style={{
-          backgroundColor: open ? '#E66A2E' : hoverBg,
-          color: open ? '#fff' : mainText,
-        }}
-      >
-        <Bell size={17} className="sm:size-[18px]" />
-        {displayCount > 0 && (
-          <span
-            className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold"
-            style={{
-              backgroundColor: '#E66A2E',
-              color: '#fff',
-            }}
-          >
-            {displayCount > 99 ? '99+' : displayCount}
-          </span>
-        )}
-      </button>
+    <div className="relative z-[600] shrink-0">      <button
+      id="header-notifications-btn"
+      type="button"
+      aria-label="الإشعارات"
+      onClick={() => {
+        if (isGuest) {
+          setPostLoginRedirect('notifications');
+          setAuthModalTab('login');
+          setIsAuthModalOpen(true);
+          return;
+        }
+        setOpen((prev) => !prev);
+      }}
+      className="relative flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11 cursor-pointer"
+      style={{
+        backgroundColor: open ? '#E66A2E' : hoverBg,
+        color: open ? '#fff' : mainText,
+      }}
+    >
+      <Bell size={17} className="sm:size-[18px]" />
+      {displayCount > 0 && (
+        <span
+          className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold"
+          style={{
+            backgroundColor: '#E66A2E',
+            color: '#fff',
+          }}
+        >
+          {displayCount > 99 ? '99+' : displayCount}
+        </span>
+      )}
+    </button>
 
       <AnimatePresence>
         {open && (
@@ -177,8 +177,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.95 }}
               transition={{ duration: 0.18 }}
-              className="absolute left-0 top-[calc(100%+8px)] z-[500] w-[300px] sm:w-[380px] max-w-[calc(100vw-24px)] overflow-hidden rounded-[1.75rem] border shadow-2xl backdrop-blur-3xl"
-              style={{
+              className="absolute left-0 top-[calc(100%+8px)] z-[700] w-[300px] sm:w-[380px] max-w-[calc(100vw-24px)] overflow-hidden rounded-[1.75rem] border shadow-2xl backdrop-blur-3xl" style={{
                 backgroundColor: isDark
                   ? 'rgba(21, 21, 19, 0.98)'
                   : 'rgba(255, 255, 255, 0.98)',
@@ -728,20 +727,19 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               }}
             >
               <div className="flex items-center gap-3">
-                <div className="relative shrink-0">
-                  <div
-                    className="h-14 w-14 rounded-full overflow-hidden border-2 p-0.5 shadow-md flex items-center justify-center"
-                    style={{
-                      borderColor: preview.accentColor,
-                      backgroundColor: isDark ? '#1a1816' : '#f5f0e7',
-                    }}
-                  >
-                    <img
-                      src={preview.avatar}
-                      alt={preview.title}
-                      className="h-full w-full object-cover rounded-full"
-                    />
-                  </div>
+                <div className="relative z-[600] shrink-0">                  <div
+                  className="h-14 w-14 rounded-full overflow-hidden border-2 p-0.5 shadow-md flex items-center justify-center"
+                  style={{
+                    borderColor: preview.accentColor,
+                    backgroundColor: isDark ? '#1a1816' : '#f5f0e7',
+                  }}
+                >
+                  <img
+                    src={preview.avatar}
+                    alt={preview.title}
+                    className="h-full w-full object-cover rounded-full"
+                  />
+                </div>
                   <span
                     className="absolute -bottom-1 -right-1 h-3 w-3 rounded-full border-2"
                     style={{
@@ -839,7 +837,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
       </button>
     );
   };
-
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   return (
     <>
       <header
@@ -1147,17 +1145,16 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
           </div>
 
           {/* اللوجو المتدلي الواصل للـ Sub Bar في الموبايل */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-40 pointer-events-auto select-none">
-            <button
-              type="button"
-              onClick={() => navigate('home')}
-              className="group flex flex-col items-center justify-center focus:outline-none cursor-pointer transition-transform active:scale-95"
-            >
-              <img
-                src="https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png"
-                alt="وه"
-                draggable={false}
-                className="
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-auto select-none">            <button
+            type="button"
+            onClick={() => navigate('home')}
+            className="group flex flex-col items-center justify-center focus:outline-none cursor-pointer transition-transform active:scale-95"
+          >
+            <img
+              src="https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png"
+              alt="وه"
+              draggable={false}
+              className="
     block
     h-28 w-auto max-w-[180px] translate-y-6
     xs:h-24 xs:max-w-[210px] xs:translate-y-7
@@ -1167,22 +1164,23 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
     group-hover:scale-105
     drop-shadow-md
   "
-              />
-            </button>
+            />
+          </button>
           </div>
 
           {/* الجانب الأيسر */}
-          <div className="flex items-center gap-1 sm:gap-1.5 z-20">
+          <div className="relative flex items-center gap-1 sm:gap-1.5 z-50">
             {!isStaff && (
               <button
                 type="button"
                 onClick={handleFavoritesClick}
                 aria-label="المفضلة"
                 title="المفضلة"
-                className="relative flex h-8.5 w-8.5 items-center justify-center rounded-full cursor-pointer active:scale-95"
+                className="relative flex h-8.5 w-8.5 items-center justify-center rounded-full cursor-pointer transition-transform active:scale-95"
                 style={{ backgroundColor: hoverBg, color: mainText }}
               >
                 <Heart size={16} />
+
                 {favorites.length > 0 && (
                   <span className="absolute -right-0.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full px-1 text-[8px] font-bold bg-[#E66A2E] text-white">
                     {favorites.length > 99 ? '99+' : favorites.length}
@@ -1194,20 +1192,29 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             <button
               type="button"
               onClick={toggleTheme}
-              className="hidden xs:flex h-8.5 w-8.5 items-center justify-center rounded-full cursor-pointer active:scale-95"
+              aria-label="تغيير المظهر"
+              title="تغيير المظهر"
+              className="hidden xs:flex h-8.5 w-8.5 items-center justify-center rounded-full cursor-pointer transition-transform active:scale-95"
               style={{ backgroundColor: hoverBg, color: mainText }}
             >
-              {isDark ? <Sun size={16} className="text-primary-hover" /> : <Moon size={16} />}
+              {isDark ? (
+                <Sun size={16} className="text-primary-hover" />
+              ) : (
+                <Moon size={16} />
+              )}
             </button>
 
             {!isStaff && (
               <button
                 type="button"
                 onClick={() => setIsCartDrawerOpen(true)}
-                className="relative flex h-8.5 w-8.5 items-center justify-center rounded-full cursor-pointer active:scale-95"
+                aria-label="السلة"
+                title="السلة"
+                className="relative flex h-8.5 w-8.5 items-center justify-center rounded-full cursor-pointer transition-transform active:scale-95"
                 style={{ backgroundColor: hoverBg, color: mainText }}
               >
                 <ShoppingBag size={16} />
+
                 {cartCount > 0 && (
                   <span className="absolute -right-0.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full px-1 text-[8px] font-bold bg-[#E66A2E] text-white">
                     {cartCount > 99 ? '99+' : cartCount}
@@ -1216,15 +1223,127 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               </button>
             )}
 
+            {/* المستخدم المسجل */}
             {isAuthenticated ? (
-              <button
-                type="button"
-                onClick={() => navigate(getAccountPage())}
-                className="flex h-8.5 w-8.5 items-center justify-center rounded-full border border-primary/40 overflow-hidden cursor-pointer active:scale-95"
-              >
-                <img src={profileImage} alt={displayName} className="h-full w-full object-cover" />
-              </button>
+              <>
+                {/* الإشعارات */}
+                <NotificationCenter
+                  isDark={isDark}
+                  mainText={mainText}
+                  secondaryText={secondaryText}
+                  borderColor={borderColor}
+                  hoverBg={hoverBg}
+                />
+
+                {/* صورة الحساب + القائمة */}
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setIsProfileMenuOpen((prev) => !prev)}
+                    aria-label="قائمة الحساب"
+                    title="قائمة الحساب"
+                    className="flex h-8.5 w-8.5 items-center justify-center rounded-full border border-primary/40 overflow-hidden cursor-pointer transition-transform active:scale-95"
+                  >
+                    <img
+                      src={profileImage}
+                      alt={displayName}
+                      className="h-full w-full object-cover"
+                    />
+                  </button>
+
+                  {isProfileMenuOpen && (
+                    <div
+                      className="absolute ltr:right-0 rtl:left-0 top-full mt-2 w-52 overflow-hidden rounded-2xl border shadow-2xl backdrop-blur-md z-[999] animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200"
+                      style={{
+                        backgroundColor: isDark ? 'rgba(36, 26, 21, 0.96)' : 'rgba(255, 249, 240, 0.96)',
+                        borderColor: borderColor,
+                        color: mainText,
+                      }}
+                    >
+                      {/* بيانات المستخدم */}
+                      <div
+                        className="px-4 py-3 border-b"
+                        style={{ borderColor: borderColor }}
+                      >
+                        <p className="text-sm font-bold truncate">
+                          {displayName}
+                        </p>
+
+                        <p
+                          className="mt-0.5 text-[11px] truncate"
+                          style={{ color: secondaryText }}
+                        >
+                          {isAdmin
+                            ? 'مدير النظام'
+                            : isSeller
+                              ? 'بائع'
+                              : 'مشتري'}
+                        </p>
+                      </div>
+
+                      {/* حسابي */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsProfileMenuOpen(false);
+                          navigate(getAccountPage());
+                        }}
+                        className="flex w-full items-center gap-3 px-4 py-3 text-sm font-semibold transition-colors"
+                        style={{ color: mainText }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = hoverBg;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                        }}
+                      >
+                        <User size={17} />
+                        <span>حسابي</span>
+                      </button>
+
+                      {/* الإشعارات */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsProfileMenuOpen(false);
+                        }}
+                        className="flex w-full items-center gap-3 px-4 py-3 text-sm font-semibold transition-colors"
+                        style={{ color: mainText }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = hoverBg;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                        }}
+                      >
+                        <Bell size={17} />
+                        <span>الإشعارات</span>
+                      </button>
+
+                      {/* تسجيل الخروج */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsProfileMenuOpen(false);
+                          logout();
+                        }}
+                        className="flex w-full items-center gap-3 px-4 py-3 text-sm font-semibold text-red-500 transition-colors"
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = hoverBg;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                        }}
+                      >
+                        <LogOut size={17} />
+                        <span>تسجيل الخروج</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </>
             ) : (
+              /* الزائر */
               <button
                 type="button"
                 onClick={() => {
@@ -1232,7 +1351,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   setAuthModalTab('login');
                   setIsAuthModalOpen(true);
                 }}
-                className="flex h-8 items-center justify-center rounded-full px-3 text-xs font-bold text-white bg-primary cursor-pointer active:scale-95"
+                aria-label="دخول"
+                className="flex h-8 items-center justify-center rounded-full px-3 text-xs font-bold text-white bg-primary cursor-pointer transition-transform active:scale-95"
               >
                 دخول
               </button>

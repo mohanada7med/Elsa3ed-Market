@@ -5387,7 +5387,7 @@ export const AdminDashboard: React.FC = () => {
 
       {/* Mobile Floating Bottom Rail for compact-rail mode */}
       {layoutMode === 'compact-rail' && (
-        <div className="lg:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-40 flex items-center bg-[#1c1917]/95 dark:bg-[#1B1009]/95 backdrop-blur-md border border-primary/40 rounded-full px-3 py-2 shadow-2xl gap-1 text-white">
+        <div className="lg:hidden fixed bottom-25 left-1/2 -translate-x-1/2 z-40 flex items-center bg-[#1c1917]/95 dark:bg-[#1B1009]/95 backdrop-blur-md border border-primary/40 rounded-full px-3 py-2 shadow-2xl gap-1 text-white">
           <button
             type="button"
             onClick={() => handleSelectTab('overview')}
