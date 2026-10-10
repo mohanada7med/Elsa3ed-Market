@@ -80,7 +80,6 @@ export const ReelItem: React.FC<ReelItemProps> = ({
   const [isDeleting, setIsDeleting] = useState(false);
 
   const [showControls, setShowControls] = useState(true);
-  const [showMuteHint, setShowMuteHint] = useState(true);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
@@ -88,7 +87,6 @@ export const ReelItem: React.FC<ReelItemProps> = ({
   const controlsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const viewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const seoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const muteHintTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const isMobileScreen =
     typeof window !== 'undefined'
@@ -245,9 +243,6 @@ export const ReelItem: React.FC<ReelItemProps> = ({
       if (viewTimerRef.current) {
         clearTimeout(viewTimerRef.current);
       }
-      if (muteHintTimerRef.current) {
-        clearTimeout(muteHintTimerRef.current);
-      }
       if (seoTimerRef.current) {
         clearTimeout(seoTimerRef.current);
       }
@@ -276,14 +271,6 @@ export const ReelItem: React.FC<ReelItemProps> = ({
       setHasVideoError(false);
       setIsVideoLoading(true);
       setShowControls(true);
-
-      if (muteHintTimerRef.current) {
-        clearTimeout(muteHintTimerRef.current);
-      }
-      setShowMuteHint(true);
-      muteHintTimerRef.current = setTimeout(() => {
-        setShowMuteHint(false);
-      }, 9000);
 
       if (viewTimerRef.current) {
         clearTimeout(viewTimerRef.current);
@@ -343,9 +330,6 @@ export const ReelItem: React.FC<ReelItemProps> = ({
       if (viewTimerRef.current) {
         clearTimeout(viewTimerRef.current);
       }
-      if (muteHintTimerRef.current) {
-        clearTimeout(muteHintTimerRef.current);
-      }
 
       try {
         video.pause();
@@ -368,9 +352,6 @@ export const ReelItem: React.FC<ReelItemProps> = ({
       isCancelled = true;
       if (viewTimerRef.current) {
         clearTimeout(viewTimerRef.current);
-      }
-      if (muteHintTimerRef.current) {
-        clearTimeout(muteHintTimerRef.current);
       }
       try {
         video.pause();
@@ -1327,98 +1308,28 @@ export const ReelItem: React.FC<ReelItemProps> = ({
             onClick={(e) => {
               e.stopPropagation();
               onToggleMute();
-              setShowMuteHint(false);
             }}
-            className={`
-              h-10
-              flex
-              items-center
-              justify-center
-              gap-2
-              sm:backdrop-blur-xl
-              border
-              shadow-xl
+            className="
+              w-10 h-10
+              flex items-center justify-center
+              rounded-full
+              bg-black/65 hover:bg-black/85
+              border border-white/20
+              text-white
+              shadow-xl shadow-black/40
               transition-all
               cursor-pointer
-              ${isMuted
-                ? 'px-3.5 rounded-full bg-black/85 hover:bg-black/95 border-amber-400 text-amber-300 shadow-amber-900/40 ring-2 ring-amber-400/40 animate-pulse'
-                : 'w-10 rounded-full bg-black/65 hover:bg-black/80 border-white/20 text-white shadow-black/40'
-              }
-            `}
-            title={isMuted ? 'دوس على الزرار علشان تشغل الصوت' : 'كتم الصوت'}
-            aria-label={isMuted ? 'دوس على الزرار علشان تشغل الصوت' : 'كتم الصوت'}
+            "
+            title={isMuted ? 'تشغيل الصوت' : 'كتم الصوت'}
+            aria-label={isMuted ? 'تشغيل الصوت' : 'كتم الصوت'}
           >
             {isMuted ? (
-              <>
-                <VolumeX className="w-5 h-5 text-amber-400 shrink-0" />
-                <span className="text-[11px] font-bold tracking-tight whitespace-nowrap">
-                  دوس على الزرار علشان تشغل الصوت
-                </span>
-              </>
+              <VolumeX className="w-5 h-5 text-amber-400" />
             ) : (
               <Volume2 className="w-5 h-5 text-white" />
             )}
           </motion.button>
         </motion.div>
-
-        {/* ===================================================
-            FLOATING UNMUTE HINT BANNER (CENTER TOP)
-        =================================================== */}
-
-        <AnimatePresence>
-          {isMuted && showMuteHint && isActive && (
-            <motion.div
-              initial={{ opacity: 0, y: -15, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -15, scale: 0.95 }}
-              transition={{ duration: 0.3 }}
-              onClick={(e) => {
-                e.stopPropagation();
-                onToggleMute();
-                setShowMuteHint(false);
-              }}
-              className="
-                absolute
-                top-[calc(max(calc(env(safe-area-inset-top,0px)+14px),2.75rem)+3.5rem)]
-                sm:top-24
-                left-1/2
-                -translate-x-1/2
-                z-50
-                flex
-                items-center
-                gap-2.5
-                px-4
-                py-2
-                rounded-2xl
-                bg-black/90
-                hover:bg-black
-                border-2
-                border-amber-400
-                text-amber-300
-                shadow-2xl
-                shadow-amber-950/80
-                backdrop-blur-md
-                cursor-pointer
-                pointer-events-auto
-                group
-                animate-bounce
-              "
-              title="دوس على الزرار علشان تشغل الصوت"
-            >
-              <div className="w-7 h-7 rounded-full bg-amber-400/20 border border-amber-400/50 flex items-center justify-center shrink-0">
-                <VolumeX className="w-4 h-4 text-amber-400" />
-              </div>
-              <div className="flex flex-col text-right">
-                <span className="text-xs font-black text-amber-300 group-hover:text-amber-200">
-                  دوس على الزرار علشان تشغل الصوت 🔊
-                </span>
-                <span className="text-[10px] text-white/80 font-medium">
-                  الصوت مقفول تلقائياً • اضغط هنا لتشغيله
-                </span>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
 
         {/* ===================================================
             BOTTOM CONTENT

@@ -28,8 +28,8 @@ export const ReelFeed: React.FC<ReelFeedProps> = ({
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeReelId, setActiveReelId] = useState<string | null>(null);
 
-  // المتصفحات تبدأ التشغيل التلقائي فوراً وبدون أي تأخير عندما يكون الصوت مكتوماً في البداية
-  const [isMuted, setIsMuted] = useState(true);
+  // تشغيل الصوت افتراضياً بدون كتم
+  const [isMuted, setIsMuted] = useState(false);
   const [reelsList, setReelsList] = useState<CraftReel[]>(reels);
 
   const containerRef = useRef<HTMLDivElement>(null);

@@ -304,9 +304,9 @@ export const FavoritesPage: React.FC = () => {
                   drop-shadow-[0_25px_35px_rgba(36,26,20,0.16)]
                   transition-transform
                   duration-500
-                  scale-200
+                  scale-150
                   hover:-translate-y-3
-                  hover:scale-230
+                  hover:scale-200
                   sm:w-[310px]
                   lg:w-[370px]
                 "
