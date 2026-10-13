@@ -740,20 +740,17 @@ export const CraftReelsSection: React.FC = () => {
                 </span>
               </div>
 
-              <h2 className="
-                text-4xl xs:text-5xl sm:text-6xl lg:text-7xl
-                font-black tracking-tight leading-[1.05]
-                text-[#2D180C] dark:text-[#FFF9EE] font-main
-              ">
-                ريلز{' '}
-                <span className="text-[#C99444] inline-block">
-                  وَه
+              <h1 className="max-w-6xl text-5xl sm:text-7xl lg:text-[8rem] font-black leading-[0.95] tracking-tight">
+                ريلز
+                <br />
+
+                <span className="ps-18 mr-3 sm:mr-8 lg:mr-20 text-primary dark:text-primary-hover">
+                  وه
                 </span>
-              </h2>
+              </h1>
 
               <p className="mt-4 max-w-2xl text-xs sm:text-sm text-[#6B4B35] dark:text-stone-300 leading-relaxed font-medium">
-                حكايات وثائقية مصورة تسجّل عظمة اليد اللي بتبني وتغزل وتنحت. تعرّف على الصانع الحقيقي، وشاهد سر الصنعة، واقتنِ القطعة مباشرة من ورشتها بضمان منصة «وَه».
-              </p>
+                اكتشف الصعيد من أماكنه وحكاياته، لورش صنايعيته وحرفه وأكلاته، واتعرّف على تراثه وأهله بكل تفاصيله.              </p>
 
               {/* Accurate Category Filter Pills */}
               {availableCategories.length > 0 && (
