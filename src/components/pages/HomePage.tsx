@@ -40,7 +40,7 @@ export const HomePage: React.FC = () => {
         <HeritageSectionDivider variant="flanked" label="فيديوهات الصعيد" />
 
         {/* 3. Craft Reels (وه بيحكي) */}
-        <div style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 550px' }}>
+        <div>
           <CraftReelsSection />
         </div>
 
