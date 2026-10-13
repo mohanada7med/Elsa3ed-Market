@@ -118,6 +118,48 @@ class MemoryStore {
 export const memoryDb = new MemoryStore();
 
 /**
+ * Safely resolves and validates a MongoDB database name.
+ * Prevents errors if a connection URI or invalid characters are passed in MONGODB_DB.
+ */
+export function resolveValidDatabaseName(rawDbName?: string, uri?: string): string {
+  let candidate = (rawDbName || '').trim();
+
+  // If rawDbName is a full connection URI or contains a protocol scheme
+  if (candidate.startsWith('mongodb://') || candidate.startsWith('mongodb+srv://') || candidate.includes('://')) {
+    try {
+      const parsed = new URL(candidate);
+      const fromPath = parsed.pathname.replace(/^\/+/, '').split('?')[0].trim();
+      candidate = fromPath;
+    } catch {
+      candidate = '';
+    }
+  }
+
+  // If candidate is empty, try extracting database name from URI pathname
+  if (!candidate && uri) {
+    try {
+      const parsed = new URL(uri);
+      const fromPath = parsed.pathname.replace(/^\/+/, '').split('?')[0].trim();
+      if (fromPath) candidate = fromPath;
+    } catch {
+      // ignore URI parse errors
+    }
+  }
+
+  // MongoDB database names cannot contain: /\. "$*<>:|? or null character
+  if (candidate) {
+    if (candidate.includes('.')) {
+      // If it contains dots (e.g. hostname like cluster0.mongodb.net), discard and fallback
+      candidate = '';
+    } else {
+      candidate = candidate.replace(/[\\\/\. \"\$\*\<\>\:\|\?]/g, '_').trim();
+    }
+  }
+
+  return candidate || 'Elsa3ed_market';
+}
+
+/**
  * Connect to MongoDB with serverless connection pooling and non-blocking background initialization.
  * Optimized for Vercel Serverless Functions and container environments.
  */
@@ -129,7 +171,7 @@ export async function getDatabase(): Promise<{ db: Db | null; isMongo: boolean }
     process.env.MONGO_URI ||
     process.env.DATABASE_URL
   )?.trim();
-  const dbName = process.env.MONGODB_DB?.trim() || 'Elsa3ed_market';
+  const dbName = resolveValidDatabaseName(process.env.MONGODB_DB, uri);
 
   if (!uri) {
     Logger.info('[Database] Operating with in-memory store (MONGODB_URI not provided)');
@@ -177,8 +219,13 @@ export async function getDatabase(): Promise<{ db: Db | null; isMongo: boolean }
       }
 
       await globalCache.client.connect();
-      globalCache.db = globalCache.client.db(dbName);
-      Logger.info(`[MongoDB] Connected successfully to database: ${dbName}`);
+      try {
+        globalCache.db = globalCache.client.db(dbName);
+      } catch (err) {
+        Logger.warn(`[MongoDB] Failed to select database "${dbName}", falling back to "Elsa3ed_market":`, err);
+        globalCache.db = globalCache.client.db('Elsa3ed_market');
+      }
+      Logger.info(`[MongoDB] Connected successfully to database: ${globalCache.db.databaseName}`);
 
       // Seed indexes and categories in background with slight delay so incoming user requests aren't queued behind index builds
       if (!globalCache.indexesSeeded) {

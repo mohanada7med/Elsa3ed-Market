@@ -1,4 +1,6 @@
 import dotenv from 'dotenv';
+import { resolveValidDatabaseName } from '../db/mongodb.ts';
+
 dotenv.config();
 
 /**
@@ -35,7 +37,7 @@ export function validateAndGetEnv(): EnvConfig {
     process.env.MONGO_URI ||
     process.env.DATABASE_URL
   )?.trim();
-  const MONGODB_DB = process.env.MONGODB_DB?.trim() || 'Elsa3ed_market';
+  const MONGODB_DB = resolveValidDatabaseName(process.env.MONGODB_DB, MONGODB_URI);
   const AUTH_SECRET = process.env.AUTH_SECRET?.trim() || (NODE_ENV !== 'production' ? 'elsa3ed-dev-session-key-not-for-prod' : 'elsa3ed-prod-session-fallback-secret-2026');
   const ENABLE_RATE_LIMITING = process.env.ENABLE_RATE_LIMITING !== 'false';
   const CACHE_TTL_SECONDS = Number(process.env.CACHE_TTL_SECONDS) || 300;

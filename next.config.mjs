@@ -16,6 +16,10 @@ const nextConfig = {
     'localhost:*',
     '127.0.0.1:*',
     '0.0.0.0:*',
+    '*.run.app',
+    '*.run.app:*',
+    '*.google.com',
+    '*.google.com:*',
   ],
   images: {
     remotePatterns: [

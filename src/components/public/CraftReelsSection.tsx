@@ -66,14 +66,11 @@ export const CraftReelsSection: React.FC = () => {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setIsInView(
-          entry.isIntersecting &&
-          entry.intersectionRatio >= 0.25
-        );
+        setIsInView(entry.isIntersecting);
       },
       {
-        rootMargin: '0px',
-        threshold: 0.25,
+        rootMargin: '250px 0px',
+        threshold: 0
       }
     );
 
