@@ -23,16 +23,51 @@ import {
   Compass,
   Heart,
   Check,
-  Sparkles,
   Share2,
-  BadgeCheck,
-  Eye
+  BadgeCheck
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   getOptimizedVideoPoster,
   getOptimizedVideoUrl
 } from '../../utils/cloudinaryMedia';
+
+/**
+ * دالة لتصنيف الفيديوهات بدقة وأصالة تراثية حسب المحتوى والعنوان
+ */
+export function getReelCategory(reel: CraftReel): string {
+  const title = (reel.title || '').trim();
+  const rawCraft = (reel.craftType || (reel as any).category || (reel as any).contentType || '').trim();
+
+  if (title.includes('قناطر') || title.includes('مير') || rawCraft.includes('معالم') || rawCraft.includes('آثار')) {
+    return 'معالم وآثار';
+  }
+  if (title.includes('كليم') || title.includes('سجاد') || rawCraft.includes('كليم') || rawCraft.includes('نسيج')) {
+    return 'كليم ومنسوجات';
+  }
+  if (title.includes('قصر') || title.includes('الكسان') || rawCraft.includes('قصور')) {
+    return 'قصور تاريخية';
+  }
+  if (title.includes('معبد') || title.includes('أبيدوس') || title.includes('أوزيريون') || title.includes('تذكرة')) {
+    return 'معابد فرعونية';
+  }
+  if (title.includes('مسجد') || title.includes('المجاهدين') || rawCraft.includes('مساجد') || rawCraft.includes('إسلامي')) {
+    return 'عمارة ومساجد';
+  }
+  if (title.includes('اسوان') || title.includes('أسوان') || title.includes('النوبة') || rawCraft.includes('نوبة')) {
+    return 'أسوان والنوبة';
+  }
+  if (title.includes('الصعيد الحقيقى') || title.includes('قرية') || rawCraft.includes('فلكلور') || rawCraft.includes('تراث')) {
+    return 'حياة القرية وتراث';
+  }
+  if (title.includes('الله الحسنى') || title.includes('ميدان')) {
+    return 'ميادين وتراث';
+  }
+  if (rawCraft && rawCraft !== 'حرف وصناعات') {
+    return rawCraft;
+  }
+  return 'تراث صعيدي';
+}
 
 export const CraftReelsSection: React.FC = () => {
   const {
@@ -58,11 +93,11 @@ export const CraftReelsSection: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
 
-  // Responsiveness & In-view
+  // Responsiveness & Viewport
   const [isMobile, setIsMobile] = useState(false);
   const [isInView, setIsInView] = useState(true);
 
-  // Animations & User Interaction
+  // User Interaction Animations
   const [showPlaybackFeedback, setShowPlaybackFeedback] = useState(false);
   const [showHeartAnim, setShowHeartAnim] = useState(false);
   const [likedReels, setLikedReels] = useState<Set<string>>(new Set());
@@ -128,14 +163,14 @@ export const CraftReelsSection: React.FC = () => {
     }
   }, []);
 
-  /* ================= CATEGORIES FILTER ================= */
+  /* ================= ACCURATE CATEGORIES FILTER ================= */
 
   const availableCategories = useMemo(() => {
     const categoriesSet = new Set<string>();
     reels.forEach((r) => {
-      const craft = r.craftType || (r as any).contentType;
-      if (craft && typeof craft === 'string' && craft.trim().length > 0) {
-        categoriesSet.add(craft.trim());
+      const cat = getReelCategory(r);
+      if (cat) {
+        categoriesSet.add(cat);
       }
     });
     return Array.from(categoriesSet);
@@ -143,11 +178,7 @@ export const CraftReelsSection: React.FC = () => {
 
   const filteredReels = useMemo(() => {
     if (activeCategory === 'all') return reels;
-    return reels.filter(
-      (r) =>
-        (r.craftType && r.craftType.trim() === activeCategory) ||
-        ((r as any).contentType && (r as any).contentType.trim() === activeCategory)
-    );
+    return reels.filter((r) => getReelCategory(r) === activeCategory);
   }, [reels, activeCategory]);
 
   const currentReel: CraftReel | undefined = filteredReels[activeIndex] || reels[0];
@@ -167,7 +198,7 @@ export const CraftReelsSection: React.FC = () => {
     );
   }, []);
 
-  const getPoster = useCallback((reel: CraftReel, width = 800) => {
+  const getPoster = useCallback((reel: CraftReel, width = 900) => {
     return getOptimizedVideoPoster(
       reel.videoUrl,
       reel.posterUrl || reel.productImage,
@@ -175,7 +206,7 @@ export const CraftReelsSection: React.FC = () => {
     );
   }, []);
 
-  /* ================= VIDEO PROGRESS & TIME TRACKER ================= */
+  /* ================= PROGRESS & TIME TRACKING ================= */
 
   const handleTimeUpdate = () => {
     const v = videoRef.current;
@@ -239,7 +270,7 @@ export const CraftReelsSection: React.FC = () => {
             setVideoLoaded(true);
           }
         } catch {
-          // Video will play when ready
+          // Video will play when loaded
         }
       }
     };
@@ -247,7 +278,6 @@ export const CraftReelsSection: React.FC = () => {
     if (!isInView || isModalOpen || selectedReelId || isUserPaused) {
       video.pause();
     } else {
-      // Trigger playback immediately
       void executePlay();
       const onReady = () => {
         if (isCurrent()) {
@@ -507,13 +537,13 @@ export const CraftReelsSection: React.FC = () => {
         inStock: reel.inStock ?? true,
         stockCount: 10,
         categoryId: 'crafts',
-        categoryName: reel.craftType || 'حرفة يدوية',
+        categoryName: getReelCategory(reel),
         sellerId: reel.sellerId || '',
         sellerName: reel.workshopName || reel.artisanName || 'حرفي أصيل',
         sellerGovernorate: reel.governorate,
         description: reel.description || '',
         specifications: {
-          material: reel.craftType || 'يدوي أصيل',
+          material: getReelCategory(reel),
           originGovernorate: reel.governorate,
           craftsmanship: 'صناعة يدوية فاخرة'
         },
@@ -551,7 +581,7 @@ export const CraftReelsSection: React.FC = () => {
       try {
         await navigator.share({
           title: `وه | ${reel.title}`,
-          text: `شاهد حرفة ${reel.craftType || ''} في صعيد مصر: ${reel.title}`,
+          text: `شاهد ${getReelCategory(reel)} في صعيد مصر: ${reel.title}`,
           url: shareUrl
         });
         return;
@@ -653,9 +683,11 @@ export const CraftReelsSection: React.FC = () => {
       dir="rtl"
       className="
         relative overflow-hidden py-12 sm:py-20
-        bg-[#110B07] text-[#FFF9EE]
+        bg-[#FBF6ED] dark:bg-[#110B07]
+        text-[#2D180C] dark:text-[#FFF9EE]
         select-none touch-pan-y
-        border-y border-[#3B1E0E]/50
+        border-y border-[#E0C79B]/80 dark:border-[#3B1E0E]/60
+        transition-colors duration-300
       "
     >
       {/* BACKGROUND DECORATIONS */}
@@ -665,7 +697,7 @@ export const CraftReelsSection: React.FC = () => {
             absolute top-1/4 left-1/2 -translate-x-1/2
             w-[400px] sm:w-[800px]
             h-[350px] sm:h-[450px]
-            bg-[#C99444]/12 rounded-full
+            bg-[#C99444]/15 dark:bg-[#C99444]/12 rounded-full
             blur-[130px] sm:blur-[180px]
           "
         />
@@ -674,12 +706,12 @@ export const CraftReelsSection: React.FC = () => {
             absolute -bottom-20 right-10
             w-[250px] sm:w-[450px]
             h-[250px] sm:h-[450px]
-            bg-[#E66A2E]/8 rounded-full
+            bg-[#E66A2E]/10 dark:bg-[#E66A2E]/8 rounded-full
             blur-[120px]
           "
         />
         <div
-          className="absolute inset-0 opacity-[0.035] mix-blend-screen"
+          className="absolute inset-0 opacity-[0.035] dark:opacity-[0.035] mix-blend-multiply dark:mix-blend-screen"
           style={{
             backgroundImage: "url('/pattern/pat2.png')",
             backgroundRepeat: 'repeat',
@@ -698,12 +730,12 @@ export const CraftReelsSection: React.FC = () => {
           <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
             <div>
               {/* Pulsing Live Badge */}
-              <div className="mb-4 inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[#C99444]/15 border border-[#C99444]/30 backdrop-blur-md">
+              <div className="mb-4 inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[#C99444]/15 border border-[#C99444]/35 dark:border-[#C99444]/30 backdrop-blur-md">
                 <span className="relative flex h-2.5 w-2.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E66A2E] opacity-75" />
                   <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#E66A2E]" />
                 </span>
-                <span className="text-[11px] font-black tracking-wider text-[#C99444]">
+                <span className="text-[11px] font-black tracking-wider text-[#7A4B1A] dark:text-[#C99444]">
                   استوديو الصعيد | وثائقيات حية من قلب الورش
                 </span>
               </div>
@@ -711,7 +743,7 @@ export const CraftReelsSection: React.FC = () => {
               <h2 className="
                 text-4xl xs:text-5xl sm:text-6xl lg:text-7xl
                 font-black tracking-tight leading-[1.05]
-                text-[#FFF9EE] font-main
+                text-[#2D180C] dark:text-[#FFF9EE] font-main
               ">
                 ريلز{' '}
                 <span className="text-[#C99444] inline-block">
@@ -719,11 +751,11 @@ export const CraftReelsSection: React.FC = () => {
                 </span>
               </h2>
 
-              <p className="mt-4 max-w-2xl text-xs sm:text-sm text-stone-300 leading-relaxed font-medium">
+              <p className="mt-4 max-w-2xl text-xs sm:text-sm text-[#6B4B35] dark:text-stone-300 leading-relaxed font-medium">
                 حكايات وثائقية مصورة تسجّل عظمة اليد اللي بتبني وتغزل وتنحت. تعرّف على الصانع الحقيقي، وشاهد سر الصنعة، واقتنِ القطعة مباشرة من ورشتها بضمان منصة «وَه».
               </p>
 
-              {/* Category Filter Pills */}
+              {/* Accurate Category Filter Pills */}
               {availableCategories.length > 0 && (
                 <div className="mt-6 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
                   <button
@@ -735,8 +767,8 @@ export const CraftReelsSection: React.FC = () => {
                     className={`
                       px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer
                       ${activeCategory === 'all'
-                        ? 'bg-[#C99444] text-[#1B1009] shadow-md shadow-[#C99444]/25'
-                        : 'bg-white/5 hover:bg-white/10 text-stone-300 border border-white/10'
+                        ? 'bg-[#C99444] text-[#1B1009] shadow-md shadow-[#C99444]/30'
+                        : 'bg-white/90 hover:bg-white text-[#5C3A21] border border-[#E0C79B] shadow-sm dark:bg-white/5 dark:hover:bg-white/10 dark:text-stone-300 dark:border-white/10 dark:shadow-none'
                       }
                     `}
                   >
@@ -744,9 +776,7 @@ export const CraftReelsSection: React.FC = () => {
                   </button>
 
                   {availableCategories.map((cat) => {
-                    const count = reels.filter(
-                      (r) => (r.craftType && r.craftType.trim() === cat) || ((r as any).contentType && (r as any).contentType.trim() === cat)
-                    ).length;
+                    const count = reels.filter((r) => getReelCategory(r) === cat).length;
                     return (
                       <button
                         key={cat}
@@ -758,8 +788,8 @@ export const CraftReelsSection: React.FC = () => {
                         className={`
                           px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer
                           ${activeCategory === cat
-                            ? 'bg-[#C99444] text-[#1B1009] shadow-md shadow-[#C99444]/25'
-                            : 'bg-white/5 hover:bg-white/10 text-stone-300 border border-white/10'
+                            ? 'bg-[#C99444] text-[#1B1009] shadow-md shadow-[#C99444]/30'
+                            : 'bg-white/90 hover:bg-white text-[#5C3A21] border border-[#E0C79B] shadow-sm dark:bg-white/5 dark:hover:bg-white/10 dark:text-stone-300 dark:border-white/10 dark:shadow-none'
                           }
                         `}
                       >
@@ -780,11 +810,10 @@ export const CraftReelsSection: React.FC = () => {
                   onClick={goPrev}
                   className="
                     w-11 h-11 rounded-full
-                    bg-white/10 hover:bg-[#C99444]
-                    border border-white/15 hover:border-[#C99444]
-                    text-white hover:text-[#1B1009]
+                    bg-white hover:bg-[#C99444] text-[#2D180C] hover:text-[#1B1009] border border-[#E0C79B] shadow-sm hover:border-[#C99444]
+                    dark:bg-white/10 dark:hover:bg-[#C99444] dark:text-white dark:hover:text-[#1B1009] dark:border-white/15 dark:hover:border-[#C99444]
                     transition-all active:scale-90 flex items-center justify-center
-                    cursor-pointer shadow-md
+                    cursor-pointer
                   "
                   title="السابق (السهم الأيمن)"
                 >
@@ -797,11 +826,10 @@ export const CraftReelsSection: React.FC = () => {
                   onClick={goNext}
                   className="
                     w-11 h-11 rounded-full
-                    bg-white/10 hover:bg-[#C99444]
-                    border border-white/15 hover:border-[#C99444]
-                    text-white hover:text-[#1B1009]
+                    bg-white hover:bg-[#C99444] text-[#2D180C] hover:text-[#1B1009] border border-[#E0C79B] shadow-sm hover:border-[#C99444]
+                    dark:bg-white/10 dark:hover:bg-[#C99444] dark:text-white dark:hover:text-[#1B1009] dark:border-white/15 dark:hover:border-[#C99444]
                     transition-all active:scale-90 flex items-center justify-center
-                    cursor-pointer shadow-md
+                    cursor-pointer
                   "
                   title="التالي (السهم الأيسر)"
                 >
@@ -815,7 +843,7 @@ export const CraftReelsSection: React.FC = () => {
                 className="
                   group inline-flex items-center gap-2
                   text-xs font-black
-                  text-[#C99444] hover:text-[#E0C79B]
+                  text-[#C99444] hover:text-[#A66E24] dark:hover:text-[#E0C79B]
                   transition-colors cursor-pointer
                 "
               >
@@ -845,6 +873,7 @@ export const CraftReelsSection: React.FC = () => {
               const diff = getPositionOffset(index);
               const isCurrent = diff === 0;
               const cardAnim = getCardStyle(diff);
+              const reelCat = getReelCategory(reel);
 
               return (
                 <motion.div
@@ -870,8 +899,8 @@ export const CraftReelsSection: React.FC = () => {
                     overflow-hidden select-none
                     border transition-[border-color,box-shadow] duration-300
                     ${isCurrent
-                      ? 'border-[#C99444]/40 shadow-[0_25px_60px_-10px_rgba(0,0,0,0.9),0_0_35px_rgba(201,148,68,0.22)] ring-1 ring-[#C99444]/30'
-                      : 'border-white/10 shadow-2xl cursor-pointer hover:border-white/25'
+                      ? 'border-[#C99444]/40 shadow-[0_20px_50px_-10px_rgba(107,58,31,0.3),0_0_35px_rgba(201,148,68,0.22)] dark:shadow-[0_25px_60px_-10px_rgba(0,0,0,0.9),0_0_35px_rgba(201,148,68,0.22)] ring-1 ring-[#C99444]/30'
+                      : 'border-[#E0C79B]/80 dark:border-white/10 shadow-xl cursor-pointer hover:border-[#C99444]/40 dark:hover:border-white/25'
                     }
                   `}
                   onClick={() => {
@@ -896,7 +925,7 @@ export const CraftReelsSection: React.FC = () => {
                           "
                         />
 
-                        {/* Video Element */}
+                        {/* Video Element with guaranteed autoPlay */}
                         <video
                           ref={(node) => {
                             (videoRef as any).current = node;
@@ -1014,7 +1043,7 @@ export const CraftReelsSection: React.FC = () => {
                             pointer-events-none
                           "
                         >
-                          {/* Location & Workshop Badge */}
+                          {/* Location & Governorate Badge */}
                           <div className="
                             flex items-center gap-1.5
                             px-3 py-1.5 rounded-full
@@ -1098,10 +1127,10 @@ export const CraftReelsSection: React.FC = () => {
                           "
                           onClick={(e) => e.stopPropagation()}
                         >
-                          {/* Craft Type & Like Action */}
+                          {/* Accurate Category Badge & Like Action */}
                           <div className="flex items-center justify-between text-xs font-bold mb-1.5">
-                            <span className="text-[#C99444] bg-[#C99444]/15 px-2.5 py-0.5 rounded-full border border-[#C99444]/25">
-                              {reel.craftType || 'حرفة أصيلة'}
+                            <span className="text-[#C99444] bg-[#C99444]/20 px-2.5 py-0.5 rounded-full border border-[#C99444]/35 font-bold">
+                              {reelCat}
                             </span>
 
                             <div className="flex items-center gap-2">
@@ -1165,7 +1194,7 @@ export const CraftReelsSection: React.FC = () => {
                               animate={{ opacity: 1, y: 0 }}
                               className="
                                 mt-3 p-2 rounded-2xl
-                                bg-stone-900/80 backdrop-blur-xl
+                                bg-stone-900/85 backdrop-blur-xl
                                 border border-white/15
                                 flex items-center justify-between gap-2.5
                                 shadow-xl
@@ -1236,7 +1265,7 @@ export const CraftReelsSection: React.FC = () => {
                       </div>
                     ) : (
                       /* SIDE PREVIEW CARDS (3D DEPTH) */
-                      <div className="relative w-full h-full bg-[#110B07] group">
+                      <div className="relative w-full h-full bg-[#180E09] group">
                         <img
                           src={getPoster(reel, 600)}
                           alt={reel.title}
@@ -1259,10 +1288,10 @@ export const CraftReelsSection: React.FC = () => {
                           </div>
                         </div>
 
-                        {/* Card Meta Preview */}
+                        {/* Card Meta Preview with accurate category */}
                         <div className="absolute bottom-0 inset-x-0 p-4">
                           <span className="text-[#C99444] text-[10px] font-bold mb-1 block">
-                            {reel.craftType || 'حكاية صعيدية'}
+                            {reelCat}
                           </span>
                           <h4 className="text-white text-xs sm:text-sm font-bold line-clamp-2">
                             {reel.title}
@@ -1285,9 +1314,10 @@ export const CraftReelsSection: React.FC = () => {
         {/* ================= BOTTOM THUMBNAIL SELECTOR & CONTROLS ================= */}
         <div className="
           mt-6 sm:mt-10 pt-5 sm:pt-6
-          border-t border-[#3B1E0E]/60
+          border-t border-[#E0C79B]/80 dark:border-[#3B1E0E]/60
           flex flex-col sm:flex-row
           items-center justify-between gap-4
+          transition-colors duration-300
         ">
           {/* Active Reel Counter */}
           <div className="flex items-center justify-between w-full sm:w-auto px-1 sm:px-0">
@@ -1295,13 +1325,13 @@ export const CraftReelsSection: React.FC = () => {
               <span className="text-xl sm:text-2xl font-black text-[#C99444]">
                 {String(activeIndex + 1).padStart(2, '0')}
               </span>
-              <span className="text-xs text-stone-500">/</span>
-              <span className="text-xs font-bold text-stone-400">
+              <span className="text-xs text-[#8C6F53] dark:text-stone-500">/</span>
+              <span className="text-xs font-bold text-[#6B4B35] dark:text-stone-400">
                 {String(filteredReels.length).padStart(2, '0')} حكاية موثقة
               </span>
             </div>
 
-            <span className="sm:hidden text-[11px] text-stone-400 font-medium">
+            <span className="sm:hidden text-[11px] text-[#6B4B35] dark:text-stone-400 font-medium">
               اسحب للتنقل
             </span>
           </div>
@@ -1323,7 +1353,7 @@ export const CraftReelsSection: React.FC = () => {
                   border transition-all duration-200
                   ${i === activeIndex
                     ? 'border-[#C99444] ring-2 ring-[#C99444]/40 scale-105 opacity-100 shadow-md shadow-[#C99444]/25'
-                    : 'border-white/15 opacity-50 hover:opacity-90 hover:border-white/30'
+                    : 'border-[#E0C79B]/80 opacity-75 hover:opacity-100 shadow-sm dark:border-white/15 dark:opacity-50 dark:hover:opacity-90 dark:shadow-none'
                   }
                 `}
               >
@@ -1344,11 +1374,11 @@ export const CraftReelsSection: React.FC = () => {
           </div>
 
           {/* Keyboard & Swipe Hint on Desktop */}
-          <div className="hidden lg:flex items-center gap-2 text-[11px] text-stone-400 font-medium">
-            <span className="px-1.5 py-0.5 rounded bg-white/10 border border-white/10 text-stone-300 font-mono text-[10px]">
+          <div className="hidden lg:flex items-center gap-2 text-[11px] text-[#6B4B35] dark:text-stone-400 font-medium">
+            <span className="px-1.5 py-0.5 rounded bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/10 text-[#3B1E0E] dark:text-stone-300 font-mono text-[10px]">
               ←
             </span>
-            <span className="px-1.5 py-0.5 rounded bg-white/10 border border-white/10 text-stone-300 font-mono text-[10px]">
+            <span className="px-1.5 py-0.5 rounded bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/10 text-[#3B1E0E] dark:text-stone-300 font-mono text-[10px]">
               →
             </span>
             <span>للتنقل بالأسهم • اضغط مسافة للإيقاف</span>
