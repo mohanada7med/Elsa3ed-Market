@@ -157,7 +157,7 @@ export const CraftReelsSection: React.FC = () => {
             setReels(fresh);
           }
         })
-        .catch(() => {});
+        .catch(() => { });
     } catch (err) {
       console.warn('Failed to load reels:', err);
     }
@@ -321,7 +321,7 @@ export const CraftReelsSection: React.FC = () => {
       if (v) {
         try {
           v.pause();
-        } catch {}
+        } catch { }
       }
     };
   }, []);
@@ -356,7 +356,7 @@ export const CraftReelsSection: React.FC = () => {
         } catch {
           video.muted = true;
           setIsMuted(true);
-          await video.play().catch(() => {});
+          await video.play().catch(() => { });
           setIsPaused(false);
         }
       } else {
@@ -424,7 +424,7 @@ export const CraftReelsSection: React.FC = () => {
         return next;
       });
 
-      craftReelsService.toggleLikeReel(reelId, currentUser).catch(() => {});
+      craftReelsService.toggleLikeReel(reelId, currentUser).catch(() => { });
     },
     [currentReel, isAuthenticated, currentUser, setIsAuthModalOpen, addToast]
   );
@@ -585,7 +585,7 @@ export const CraftReelsSection: React.FC = () => {
           url: shareUrl
         });
         return;
-      } catch {}
+      } catch { }
     }
     if (navigator.clipboard) {
       navigator.clipboard.writeText(shareUrl);
@@ -937,7 +937,7 @@ export const CraftReelsSection: React.FC = () => {
                                 node.play().catch(() => {
                                   node.muted = true;
                                   setIsMuted(true);
-                                  node.play().catch(() => {});
+                                  node.play().catch(() => { });
                                 });
                               }
                             }
@@ -957,7 +957,7 @@ export const CraftReelsSection: React.FC = () => {
                               e.currentTarget.play().catch(() => {
                                 e.currentTarget.muted = true;
                                 setIsMuted(true);
-                                e.currentTarget.play().catch(() => {});
+                                e.currentTarget.play().catch(() => { });
                               });
                             }
                           }}
@@ -967,7 +967,7 @@ export const CraftReelsSection: React.FC = () => {
                               e.currentTarget.play().catch(() => {
                                 e.currentTarget.muted = true;
                                 setIsMuted(true);
-                                e.currentTarget.play().catch(() => {});
+                                e.currentTarget.play().catch(() => { });
                               });
                             }
                           }}
@@ -1182,7 +1182,7 @@ export const CraftReelsSection: React.FC = () => {
                             <div className="flex items-center gap-1.5 mt-1 text-[11px] text-stone-300">
                               <BadgeCheck className="w-3.5 h-3.5 text-[#C99444] shrink-0" />
                               <span className="truncate">
-                                بأنامل: {reel.artisanName || reel.workshopName}
+                                بواسطة: {reel.artisanName || reel.workshopName}
                               </span>
                             </div>
                           )}
@@ -1298,7 +1298,7 @@ export const CraftReelsSection: React.FC = () => {
                           </h4>
                           {(reel.artisanName || reel.workshopName) && (
                             <p className="text-[10px] text-stone-400 mt-1 truncate">
-                              بأنامل: {reel.artisanName || reel.workshopName}
+                              بواسطة: {reel.artisanName || reel.workshopName}
                             </p>
                           )}
                         </div>

@@ -1055,7 +1055,7 @@ export const ProductDetailsView: React.FC = () => {
 
                 <div>
                   <div className="text-[9px] text-black/40 dark:text-white/40">
-                    صُنعت بأنامل
+                    صُنعت بواسطة
                   </div>
 
                   <div className="mt-1 text-sm font-black">
