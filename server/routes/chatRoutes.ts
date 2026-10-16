@@ -35,17 +35,19 @@ router.get('/stream', requireAuth, (req: AuthenticatedRequest, res: Response) =>
  */
 router.get('/unread-count', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const unreadCount = await ChatService.getUnreadCount(req.user!);
+    if (!req.user) {
+      return res.json({ success: true, unreadCount: 0 });
+    }
+    const unreadCount = await ChatService.getUnreadCount(req.user);
     return res.json({
       success: true,
       unreadCount
     });
   } catch (error: any) {
-    Logger.error('[ChatAPI] Error getting unread count:', error);
-    return res.status(500).json({
-      success: false,
-      error: 'SERVER_ERROR',
-      message: 'فشل استرجاع عدد الرسائل غير المقروءة'
+    Logger.warn('[ChatAPI] Non-fatal error getting unread count:', error?.message || error);
+    return res.json({
+      success: true,
+      unreadCount: 0
     });
   }
 });

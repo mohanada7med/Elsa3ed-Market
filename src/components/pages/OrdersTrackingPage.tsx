@@ -269,35 +269,27 @@ export const OrdersTrackingPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Bosta Live Shipping Badge & Tracking Link */}
-                {(currentSelected.shippingProvider === 'bosta' || currentSelected.bostaTrackingNumber) && (
-                  <div className="p-4 rounded-2xl bg-gradient-to-r from-[#ED4F32]/10 via-[#ED4F32]/5 to-transparent border border-[#ED4F32]/25 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                {/* Live Shipping & Tracking Information */}
+                {Boolean(currentSelected.trackingNumber) && (
+                  <div className="p-4 rounded-2xl bg-primary/10 border border-primary/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-[#ED4F32] text-white flex items-center justify-center font-black text-sm shadow-sm shrink-0">
-                        🚚
+                      <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center font-black text-sm shadow-sm shrink-0">
+                        <Truck className="w-5 h-5" />
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="font-bold text-xs text-[#ED4F32] dark:text-[#FF7A63]">الشحن عبر شركة بوسطة (Bosta)</span>
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-[#ED4F32]/15 text-[#ED4F32] dark:text-[#FF7A63]">
-                            توصيل سريع
+                          <span className="font-bold text-xs text-primary dark:text-primary-hover">
+                            {currentSelected.shippingProvider ? `الشحن عبر: ${currentSelected.shippingProvider}` : 'الشحن قيد المتابعة مع شركة الشحن المعتمدة'}
+                          </span>
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/15 text-emerald-700 dark:text-emerald-300">
+                            بوليصة مسجلة
                           </span>
                         </div>
                         <p className="text-[11px] text-espresso/70 dark:text-cream/70 font-mono mt-0.5">
-                          رقم بوليصة التتبع: <strong className="text-espresso dark:text-cream font-bold">{currentSelected.bostaTrackingNumber || currentSelected.trackingNumber}</strong>
+                          رقم بوليصة التتبع: <strong className="text-espresso dark:text-cream font-bold">{currentSelected.trackingNumber}</strong>
                         </p>
                       </div>
                     </div>
-
-                    <a
-                      href={`https://bosta.co/tracking-shipment/?trackNumber=${currentSelected.bostaTrackingNumber || currentSelected.trackingNumber}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-4 py-2 bg-[#ED4F32] hover:bg-[#D93D22] text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 shadow-sm transition-all cursor-pointer self-start sm:self-auto"
-                    >
-                      <span>تتبع الشحنة على موقع بوسطة</span>
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
                   </div>
                 )}
 

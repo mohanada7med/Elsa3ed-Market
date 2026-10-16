@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext.tsx';
-import { Product, OrderStatus, ProductStatus, Category, Review, CraftStory, Seller, Governorate, CraftReel } from '../../types.ts';
+import { Product, OrderStatus, ProductStatus, Category, Review, CraftStory, Seller, Governorate, CraftReel, ShippingCompany, Shipment } from '../../types.ts';
 import { api } from '../../services/api.ts';
 import { craftReelsService } from '../../services/craftReelsService.ts';
 import { AdminPayouts } from './AdminPayouts.tsx';
@@ -72,7 +72,8 @@ import {
   Columns2,
   StretchHorizontal,
   LayoutGrid,
-  MapPin
+  MapPin,
+  Phone
 } from 'lucide-react';
 
 const HERITAGE_COVER_PRESETS = [
@@ -398,32 +399,28 @@ export const AdminDashboard: React.FC = () => {
   const [verifyingOrderId, setVerifyingOrderId] = useState<string | null>(null);
   const [rejectingOrderId, setRejectingOrderId] = useState<string | null>(null);
 
-  // Payment Accounts Configuration State
-  // Payment Gateway (Fawaterak) & Payment Methods Configuration State
+  // Payment Accounts & Methods Configuration State
   const [adminPaymentSettings, setAdminPaymentSettings] = useState<{
-    fawaterakApiKey: string;
-    fawaterakVendorKey: string;
-    fawaterakEnv: 'staging' | 'live';
-    isFawaterakActive: boolean;
+    isOnlinePaymentActive: boolean;
     isCashOnDeliveryActive: boolean;
     instaPayAccount?: string;
     vodafoneCashNumber?: string;
     instaPayInstructions?: string;
     vodafoneCashInstructions?: string;
+    isInstaPayActive?: boolean;
+    isVodafoneCashActive?: boolean;
   }>({
-    fawaterakApiKey: '',
-    fawaterakVendorKey: '',
-    fawaterakEnv: 'staging',
-    isFawaterakActive: true,
+    isOnlinePaymentActive: true,
     isCashOnDeliveryActive: true,
     instaPayAccount: 'elsa3ed@instapay',
     vodafoneCashNumber: '01158969931',
     instaPayInstructions: '',
-    vodafoneCashInstructions: ''
+    vodafoneCashInstructions: '',
+    isInstaPayActive: false,
+    isVodafoneCashActive: false
   });
   const [isLoadingPaymentSettings, setIsLoadingPaymentSettings] = useState(false);
   const [isSavingPaymentSettings, setIsSavingPaymentSettings] = useState(false);
-  const [copiedWebhook, setCopiedWebhook] = useState(false);
 
   const fetchAdminPaymentSettings = async () => {
     setIsLoadingPaymentSettings(true);
@@ -431,15 +428,14 @@ export const AdminDashboard: React.FC = () => {
       const cfg = await api.getAdminPaymentConfig(currentUser);
       if (cfg) {
         setAdminPaymentSettings({
-          fawaterakApiKey: cfg.fawaterakApiKey || '',
-          fawaterakVendorKey: cfg.fawaterakVendorKey || '',
-          fawaterakEnv: cfg.fawaterakEnv || 'staging',
-          isFawaterakActive: cfg.isFawaterakActive !== false,
+          isOnlinePaymentActive: cfg.isOnlinePaymentActive !== false,
           isCashOnDeliveryActive: cfg.isCashOnDeliveryActive !== false,
           instaPayAccount: cfg.instaPayAccount || '',
           vodafoneCashNumber: cfg.vodafoneCashNumber || '',
           instaPayInstructions: cfg.instaPayInstructions || '',
-          vodafoneCashInstructions: cfg.vodafoneCashInstructions || ''
+          vodafoneCashInstructions: cfg.vodafoneCashInstructions || '',
+          isInstaPayActive: Boolean(cfg.isInstaPayActive),
+          isVodafoneCashActive: Boolean(cfg.isVodafoneCashActive)
         });
       }
     } catch (err: any) {
@@ -457,7 +453,7 @@ export const AdminDashboard: React.FC = () => {
       if (updated) {
         setAdminPaymentSettings(updated);
       }
-      addToast('تم الحفظ بنجاح', 'تم تحديث حسابات وتعليمات الدفع الرسمية للمنصة بنجاح', 'success');
+      addToast('تم الحفظ بنجاح', 'تم تحديث إعدادات طرق الدفع والتحصيل بنجاح', 'success');
     } catch (err: any) {
       addToast('فشل حفظ الإعدادات', err?.message || 'تعذر تحديث إعدادات الدفع', 'error');
     } finally {
@@ -465,30 +461,16 @@ export const AdminDashboard: React.FC = () => {
     }
   };
 
-  // Shipping & Bosta Configuration State
+  // Shipping Rates & Logistics Configuration State
   const [adminShippingSettings, setAdminShippingSettings] = useState<any>({
-    bostaApiKey: 'ae515bfc1d1f0929d7bd59b63434bc129809e4dc6df157f7321daf7435bcaa39',
-    bostaEnv: 'live',
-    isBostaActive: true,
-    bostaPickupLocationId: 'JIx5kaTHoO',
-    bostaPickupLocationName: 'اسيوط - مهند احمد (+201158969931)',
     defaultPackageType: 'Small',
     freeShippingThreshold: 1000,
     upperEgyptShippingFee: 45,
     otherGovernoratesShippingFee: 55
   });
-  const [bostaPickupLocations, setBostaPickupLocations] = useState<any[]>([]);
   const [isLoadingShippingSettings, setIsLoadingShippingSettings] = useState(false);
   const [isSavingShippingSettings, setIsSavingShippingSettings] = useState(false);
-  const [bostaTestStatus, setBostaTestStatus] = useState<{ connected: boolean; message: string } | null>({
-    connected: true,
-    message: 'متصل بنجاح بحساب بوسطة: مهند احمد (اسيوط)'
-  });
-  const [isTestingBosta, setIsTestingBosta] = useState(false);
-  const [creatingBostaOrderId, setCreatingBostaOrderId] = useState<string | null>(null);
   const [trackingModalOrder, setTrackingModalOrder] = useState<any | null>(null);
-  const [trackingData, setTrackingData] = useState<any | null>(null);
-  const [isLoadingTracking, setIsLoadingTracking] = useState(false);
 
   const fetchAdminShippingSettings = async () => {
     setIsLoadingShippingSettings(true);
@@ -497,18 +479,97 @@ export const AdminDashboard: React.FC = () => {
       if (cfg) {
         setAdminShippingSettings(cfg);
       }
-      const locs = await api.getBostaPickupLocations(currentUser).catch(() => []);
-      if (Array.isArray(locs) && locs.length > 0) {
-        setBostaPickupLocations(locs);
-        setBostaTestStatus({
-          connected: true,
-          message: `متصل بحساب بوسطة: ${locs[0]?.contactPerson?.name || 'مهند احمد'} (${locs[0]?.address?.city?.nameAr || 'اسيوط'})`
-        });
-      }
+      fetchAdminCompanies();
     } catch (err: any) {
       console.warn('Failed to load shipping settings:', err);
     } finally {
       setIsLoadingShippingSettings(false);
+    }
+  };
+
+  // Approved Shipping Companies State
+  const [adminCompanies, setAdminCompanies] = useState<ShippingCompany[]>([]);
+  const [isLoadingCompanies, setIsLoadingCompanies] = useState(false);
+  const [isAddingCompany, setIsAddingCompany] = useState(false);
+  const [newCompanyForm, setNewCompanyForm] = useState<{
+    name: string;
+    nameEn: string;
+    code: string;
+    bookingMethod: 'external_booking' | 'carrier_api' | 'manual_dispatch';
+    websiteUrl: string;
+    contactPhone: string;
+    supportEmail: string;
+    trackingUrlTemplate: string;
+    pickupTerms: string;
+    notes: string;
+  }>({
+    name: '',
+    nameEn: '',
+    code: '',
+    bookingMethod: 'external_booking',
+    websiteUrl: '',
+    contactPhone: '',
+    supportEmail: '',
+    trackingUrlTemplate: '',
+    pickupTerms: '',
+    notes: ''
+  });
+
+  const fetchAdminCompanies = async () => {
+    setIsLoadingCompanies(true);
+    try {
+      const comps = await api.getAdminShippingCompanies(currentUser);
+      if (Array.isArray(comps)) {
+        setAdminCompanies(comps);
+      }
+    } catch (err: any) {
+      console.warn('Failed to load admin shipping companies:', err);
+    } finally {
+      setIsLoadingCompanies(false);
+    }
+  };
+
+  const handleToggleCompany = async (company: ShippingCompany) => {
+    try {
+      const updated = await api.updateAdminShippingCompany(currentUser, company.id, {
+        isActive: !company.isActive
+      });
+      setAdminCompanies((prev) => prev.map((c) => (c.id === company.id ? updated : c)));
+      addToast(
+        company.isActive ? 'تم تعطيل الشركة' : 'تم تفعيل الشركة',
+        `تم تحديث حالة تفعيل "${company.name}"`,
+        'info'
+      );
+    } catch (err: any) {
+      addToast('خطأ في التحديث', err.message || 'تعذر تحديث حالة الشركة', 'error');
+    }
+  };
+
+  const handleCreateCompanySubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newCompanyForm.name.trim() || !newCompanyForm.code.trim()) {
+      addToast('بيانات ناقصة', 'اسم ورمز شركة الشحن مطلوبان', 'error');
+      return;
+    }
+    try {
+      const created = await api.createAdminShippingCompany(currentUser, newCompanyForm);
+      setAdminCompanies((prev) => [created, ...prev]);
+      setIsAddingCompany(false);
+      setNewCompanyForm({
+        name: '',
+        nameEn: '',
+        code: '',
+        bookingMethod: 'external_booking',
+        websiteUrl: '',
+        contactPhone: '',
+        supportEmail: '',
+        trackingUrlTemplate: '',
+        pickupTerms: '',
+        notes: ''
+      });
+      addToast('تمت إضافة شركة الشحن', `تم اعتماد "${created.name}" بنجاح`, 'success');
+    } catch (err: any) {
+      addToast('تعذر إضافة الشركة', err.message || 'حدث خطأ أثناء الإضافة', 'error');
     }
   };
 
@@ -520,7 +581,7 @@ export const AdminDashboard: React.FC = () => {
       if (updated) {
         setAdminShippingSettings(updated);
       }
-      addToast('تم حفظ الإعدادات', 'تم تحديث إعدادات الشحن وربط بوسطة بنجاح', 'success');
+      addToast('تم حفظ الإعدادات', 'تم تحديث أسعار وإعدادات الشحن بنجاح', 'success');
     } catch (err: any) {
       addToast('فشل الحفظ', err?.message || 'تعذر تحديث إعدادات الشحن', 'error');
     } finally {
@@ -528,78 +589,8 @@ export const AdminDashboard: React.FC = () => {
     }
   };
 
-  const handleTestBostaConnection = async () => {
-    setIsTestingBosta(true);
-    try {
-      const locs = await api.getBostaPickupLocations(currentUser);
-      if (Array.isArray(locs) && locs.length > 0) {
-        setBostaPickupLocations(locs);
-        const contact = locs[0]?.contactPerson?.name || 'مهند احمد';
-        const city = locs[0]?.address?.city?.nameAr || 'اسيوط';
-        setBostaTestStatus({
-          connected: true,
-          message: `الاتصال ناجح 🟢! الحساب: ${contact} - المحافظة: ${city} (تم العثور على ${locs.length} عنوان استلام)`
-        });
-        addToast('الاتصال ناجح', `تم التحقق بنجاح من حساب بوسطة (${contact})`, 'success');
-      } else {
-        setBostaTestStatus({
-          connected: true,
-          message: 'تم الاتصال بنجاح بخوادم بوسطة.'
-        });
-        addToast('الاتصال ناجح', 'مفتاح API الخاص ببوسطة صالح ويعمل بنجاح', 'success');
-      }
-    } catch (err: any) {
-      setBostaTestStatus({
-        connected: false,
-        message: err?.message || 'تعذر الاتصال ببوسطة. تأكد من صحة المفتاح'
-      });
-      addToast('فشل الاتصال', err?.message || 'خطأ في مفتاح بوسطة', 'error');
-    } finally {
-      setIsTestingBosta(false);
-    }
-  };
-
-  const handleCreateBostaShipmentForOrder = async (order: any) => {
-    setCreatingBostaOrderId(order.id);
-    try {
-      const res = await api.createBostaShipment(order.id, currentUser, { allowSimulationFallback: true });
-      await refreshOrders();
-      if (res.isSimulated) {
-        addToast(
-          'تم إصدار الشحنة بنمط التجربة ℹ️',
-          `تم تسجيل شحنة الأوردر #${order.orderNumber} برقم تتبع: ${res.trackingNumber}. (تنبيه: يتطلب شحن باقة أو رصيد في حساب بوسطة لإرسال المندوب الفعلي)`,
-          'info'
-        );
-      } else {
-        addToast(
-          'تم إنشاء الشحنة بنجاح 🚚',
-          `تم تسليم الأوردر #${order.orderNumber} لشركة بوسطة برقم تتبع: ${res.trackingNumber}`,
-          'success'
-        );
-      }
-    } catch (err: any) {
-      addToast('فشل إنشاء الشحنة', err?.message || 'تعذر الربط مع بوسطة', 'error');
-    } finally {
-      setCreatingBostaOrderId(null);
-    }
-  };
-
-  const handleViewBostaTracking = async (order: any) => {
+  const handleViewOrderTracking = (order: any) => {
     setTrackingModalOrder(order);
-    setIsLoadingTracking(true);
-    setTrackingData(null);
-    try {
-      const track = await api.trackBostaShipment(order.bostaTrackingNumber || order.trackingNumber);
-      setTrackingData(track);
-    } catch (err: any) {
-      setTrackingData({
-        trackingNumber: order.bostaTrackingNumber || order.trackingNumber,
-        stateAr: 'الشحنة قيد المتابعة مع بوسطة',
-        trackingUrl: `https://bosta.co/tracking-shipment/?trackNumber=${order.bostaTrackingNumber || order.trackingNumber}`
-      });
-    } finally {
-      setIsLoadingTracking(false);
-    }
   };
 
 
@@ -1509,8 +1500,8 @@ export const AdminDashboard: React.FC = () => {
         },
         {
           id: 'shipping-settings' as const,
-          label: 'الشحن وشركة بوسطة',
-          sublabel: 'ربط Bosta وتتبع الطرود',
+          label: 'إعدادات الشحن وشركات التوصيل',
+          sublabel: 'إدارة شركات الشحن المعتمدة والأسعار',
           icon: Truck,
           elementId: 'admin-tab-shipping-settings'
         }
@@ -2619,7 +2610,7 @@ export const AdminDashboard: React.FC = () => {
                 </div>
               </div>
 
-              {/* Bento Card 7.5: Bosta Shipping */}
+              {/* Bento Card 7.5: Shipping & Logistics */}
               <div
                 onClick={() => handleSelectTab('shipping-settings')}
                 className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${activeTab === 'shipping-settings'
@@ -2632,12 +2623,12 @@ export const AdminDashboard: React.FC = () => {
                     <Truck className="w-5 h-5" />
                   </div>
                   <span className="text-[10px] font-bold text-orange-700 dark:text-orange-400">
-                    Bosta 🚚
+                    شركات الشحن 🚚
                   </span>
                 </div>
-                <h4 className="font-black text-sm mt-3">الشحن وبوسطة (Bosta)</h4>
+                <h4 className="font-black text-sm mt-3">إدارة الشحن واللوجستيات</h4>
                 <p className={`text-xs mt-1 ${activeTab === 'shipping-settings' ? 'text-white/80' : 'text-black/60 dark:text-white/60'}`}>
-                  ربط الحساب الرسمي، وتتبع الشحنات، وبوالص الـ AWB
+                  إدارة شركات الشحن المعتمدة للحرفيين وأسعار التوصيل
                 </p>
                 <div className="mt-4 pt-3 border-t border-[#E0C79B] dark:border-[#6B3A1F] flex items-center justify-between text-xs">
                   <span className="font-bold">إعدادات الشحن</span>
@@ -3894,7 +3885,7 @@ export const AdminDashboard: React.FC = () => {
                 <span className="text-gray-500 font-bold ml-1">فلترة حسب طريقة الدفع:</span>
                 {[
                   { id: 'all', label: 'كل الأوردرات' },
-                  { id: 'online', label: '💳 بوابة الدفع (فاتورتك)' },
+                  { id: 'online', label: '💳 دفع إلكتروني (بطاقة/محفظة)' },
                   { id: 'pending_verification', label: '⚠️ مستنيين تأكيد التحويل' },
                   { id: 'paid', label: '✅ الدفع اتأكد' },
                   { id: 'payment_rejected', label: '❌ تحويلات اترفضت' },
@@ -3924,7 +3915,7 @@ export const AdminDashboard: React.FC = () => {
                       <th className="py-3 px-4 font-bold">بيانات التحويل</th>
                       <th className="py-3 px-4 font-bold">المبلغ</th>
                       <th className="py-3 px-4 font-bold">حالة الدفع</th>
-                      <th className="py-3 px-4 font-bold">شحن بوسطة Bosta</th>
+                      <th className="py-3 px-4 font-bold">بوليصة الشحن</th>
                       <th className="py-3 px-4 font-bold">حالة الأوردر</th>
                       <th className="py-3 px-4 font-bold text-center">التأكيد والشحن</th>
                     </tr>
@@ -3958,7 +3949,7 @@ export const AdminDashboard: React.FC = () => {
                               {ord.paymentMethod === 'online_gateway' || ord.paymentMethod === 'credit_card' ? (
                                 <span className="text-sky-700 dark:text-sky-400 flex items-center gap-1 font-bold">
                                   <CreditCard className="w-3.5 h-3.5 text-sky-600" />
-                                  فاتورتك (إلكتروني)
+                                  دفع إلكتروني
                                 </span>
                               ) : ord.paymentMethod === 'vodafone_cash' ? (
                                 <span className="text-red-700 flex items-center gap-1">
@@ -4011,45 +4002,25 @@ export const AdminDashboard: React.FC = () => {
                               )}
                             </td>
                             <td className="py-3 px-4">
-                              {ord.bostaTrackingNumber || ord.shippingProvider === 'bosta' ? (
+                              {ord.trackingNumber ? (
                                 <div className="flex flex-col gap-1">
-                                  <span className="px-2 py-0.5 rounded-md font-mono text-[10px] font-bold bg-orange-100 text-orange-800 border border-orange-200 inline-flex items-center gap-1 w-fit">
-                                    <Truck className="w-3 h-3 text-orange-600" />
-                                    <span>بوسطة: {ord.bostaTrackingNumber || ord.trackingNumber}</span>
+                                  <span className="px-2 py-0.5 rounded-md font-mono text-[10px] font-bold bg-black/5 dark:bg-white/5 text-gray-800 dark:text-gray-200 border border-black/10 dark:border-white/10 inline-flex items-center gap-1 w-fit">
+                                    <Truck className="w-3 h-3 text-primary" />
+                                    <span>{ord.shippingProvider ? `${ord.shippingProvider}: ` : ''}{ord.trackingNumber}</span>
                                   </span>
                                   <div className="flex items-center gap-1.5 text-[10px] font-bold">
                                     <button
                                       type="button"
-                                      onClick={() => handleViewBostaTracking(ord)}
+                                      onClick={() => handleViewOrderTracking(ord)}
                                       className="text-primary hover:underline cursor-pointer"
-                                      title="عرض تفاصيل التتبع الحي"
+                                      title="عرض تفاصيل الشحنة"
                                     >
-                                      تتبع مباشر
+                                      تفاصيل الشحنة
                                     </button>
-                                    <span className="text-gray-300">•</span>
-                                    <a
-                                      href={ord.bostaAwbUrl || `https://bosta.co/tracking-shipment/?trackNumber=${ord.bostaTrackingNumber || ord.trackingNumber}`}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="text-orange-700 hover:underline flex items-center gap-0.5 cursor-pointer"
-                                      title="فتح بوليصة الشحن الرسمية"
-                                    >
-                                      <span>بوليصة AWB</span>
-                                      <ExternalLink className="w-2.5 h-2.5" />
-                                    </a>
                                   </div>
                                 </div>
                               ) : (
-                                <button
-                                  type="button"
-                                  disabled={creatingBostaOrderId === ord.id || ord.status === 'cancelled' || ord.status === 'delivered'}
-                                  onClick={() => handleCreateBostaShipmentForOrder(ord)}
-                                  className="px-2.5 py-1.5 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white rounded-lg text-[10px] font-bold flex items-center gap-1 shadow-xs transition-all cursor-pointer disabled:opacity-40"
-                                  title="إصدار بوليصة شحن عبر بوسطة Bosta"
-                                >
-                                  <Truck className="w-3 h-3" />
-                                  <span>{creatingBostaOrderId === ord.id ? 'جاري الإصدار...' : '🚚 شحن مع بوسطة'}</span>
-                                </button>
+                                <span className="text-[10px] text-gray-400 font-medium">لم تُحجز بوليصة</span>
                               )}
                             </td>
                             <td className="py-3 px-4">
@@ -4146,10 +4117,10 @@ export const AdminDashboard: React.FC = () => {
                 <div>
                   <h3 className="font-bold text-base sm:text-lg text-[#3B1E0E] dark:text-[#FFF9EE] flex items-center gap-2">
                     <CreditCard className="w-5 h-5 text-primary dark:text-primary-hover" />
-                    <span>إعدادات بوابة الدفع (فاتورتك Fawaterak) وطرق الدفع</span>
+                    <span>إعدادات طرق الدفع والتحصيل</span>
                   </h3>
                   <p className="text-xs text-black/60 dark:text-white/60 mt-1">
-                    إدارة الربط المباشر مع بوابة فاتورتك الإلكترونية وتفعيل الدفع عند الاستلام للعملاء.
+                    إدارة خيارات الدفع المتاحة للعملاء، وتفعيل الدفع عند الاستلام، والدفع الإلكتروني، وحسابات إنستاباي والمحافظ الإلكترونية.
                   </p>
                 </div>
                 <RefreshDataButton
@@ -4159,19 +4130,19 @@ export const AdminDashboard: React.FC = () => {
               </div>
 
               <form onSubmit={handleSaveAdminPaymentSettings} className="space-y-6 max-w-2xl">
-                {/* Fawaterak Gateway Section */}
-                <div className="p-5 sm:p-6 rounded-2xl border border-sky-200 dark:border-sky-800/40 bg-sky-50/40 dark:bg-sky-950/20 space-y-5">
-                  <div className="flex items-center justify-between border-b border-sky-100 dark:border-sky-900/40 pb-3">
-                    <div className="flex items-center gap-2">
+                {/* Online Card / Wallet Payment Section */}
+                <div className="p-5 sm:p-6 rounded-2xl border border-sky-200 dark:border-sky-800/40 bg-sky-50/40 dark:bg-sky-950/20 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
                       <div className="w-8 h-8 rounded-xl bg-sky-600 text-white flex items-center justify-center font-black text-xs shadow-sm">
-                        FW
+                        <CreditCard className="w-4 h-4" />
                       </div>
                       <div>
                         <h4 className="font-bold text-sm text-sky-950 dark:text-sky-200">
-                          بوابة دفع فاتورتك (Fawaterak Gateway)
+                          الدفع الإلكتروني (Online Payment)
                         </h4>
                         <p className="text-[11px] text-sky-800/70 dark:text-sky-400">
-                          فيزا، ماستركارد، ميزة، محافظ الهاتف، إنستاباي، فوري كود
+                          البطاقات الائتمانية والبنكية (فيزا، ماستركارد، ميزة) والمحافظ الرقمية
                         </p>
                       </div>
                     </div>
@@ -4179,126 +4150,32 @@ export const AdminDashboard: React.FC = () => {
                     <label className="flex items-center gap-2 text-xs font-bold text-sky-900 dark:text-sky-200 cursor-pointer">
                       <input
                         type="checkbox"
-                        checked={adminPaymentSettings.isFawaterakActive}
-                        onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, isFawaterakActive: e.target.checked })}
+                        checked={adminPaymentSettings.isOnlinePaymentActive}
+                        onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, isOnlinePaymentActive: e.target.checked })}
                         className="w-4 h-4 text-sky-600 rounded"
                       />
-                      <span>مفعلة للزبائن</span>
+                      <span>مفعل للعملاء</span>
                     </label>
-                  </div>
-
-                  {/* Environment Switcher */}
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
-                      بيئة التشغيل (Environment):
-                    </label>
-                    <div className="flex items-center gap-3">
-                      <label className={`flex-1 p-3 rounded-xl border cursor-pointer transition text-xs font-bold flex items-center justify-between ${adminPaymentSettings.fawaterakEnv === 'staging'
-                        ? 'border-amber-400 bg-amber-50 dark:bg-amber-950/30 text-amber-900 dark:text-amber-200'
-                        : 'border-[#E0C79B] dark:border-[#6B3A1F] hover:bg-black/[0.02]'
-                        }`}>
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="radio"
-                            name="fawaterakEnv"
-                            value="staging"
-                            checked={adminPaymentSettings.fawaterakEnv === 'staging'}
-                            onChange={() => setAdminPaymentSettings({ ...adminPaymentSettings, fawaterakEnv: 'staging' })}
-                          />
-                          <span>تجريبي (Staging / Sandbox)</span>
-                        </div>
-                        <span className="text-[10px] text-amber-600 font-mono">staging.fawaterk.com</span>
-                      </label>
-
-                      <label className={`flex-1 p-3 rounded-xl border cursor-pointer transition text-xs font-bold flex items-center justify-between ${adminPaymentSettings.fawaterakEnv === 'live'
-                        ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-900 dark:text-emerald-200'
-                        : 'border-[#E0C79B] dark:border-[#6B3A1F] hover:bg-black/[0.02]'
-                        }`}>
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="radio"
-                            name="fawaterakEnv"
-                            value="live"
-                            checked={adminPaymentSettings.fawaterakEnv === 'live'}
-                            onChange={() => setAdminPaymentSettings({ ...adminPaymentSettings, fawaterakEnv: 'live' })}
-                          />
-                          <span>حي / إنتاجي (Production Live)</span>
-                        </div>
-                        <span className="text-[10px] text-emerald-600 font-mono">app.fawaterk.com</span>
-                      </label>
-                    </div>
-                  </div>
-
-                  {/* API Key */}
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
-                      مفتاح الـ API الخاص بفاتورتك (API Key / Bearer Token):
-                    </label>
-                    <input
-                      type="password"
-                      value={adminPaymentSettings.fawaterakApiKey}
-                      onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, fawaterakApiKey: e.target.value })}
-                      placeholder="الصق هنا الـ API Key من لوحة تحكم فاتورتك"
-                      className="w-full px-3.5 py-2.5 bg-white dark:bg-[#26160D] border border-sky-200 dark:border-sky-800 rounded-xl text-xs font-mono text-gray-900 dark:text-[#FFF9EE] outline-none focus:border-sky-500"
-                      dir="ltr"
-                    />
-                    <p className="text-[10px] text-gray-500">
-                      تحصل عليه من لوحة فاتورتك: Integrations &gt; API Keys.
-                    </p>
-                  </div>
-
-                  {/* Vendor Key */}
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
-                      مفتاح التاجر السري للـ Webhook (Vendor Key):
-                    </label>
-                    <input
-                      type="password"
-                      value={adminPaymentSettings.fawaterakVendorKey}
-                      onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, fawaterakVendorKey: e.target.value })}
-                      placeholder="Vendor Key للتحقق الأمني من الـ HashKey"
-                      className="w-full px-3.5 py-2.5 bg-white dark:bg-[#26160D] border border-sky-200 dark:border-sky-800 rounded-xl text-xs font-mono text-gray-900 dark:text-[#FFF9EE] outline-none focus:border-sky-500"
-                      dir="ltr"
-                    />
-                  </div>
-
-                  {/* Webhook URL Box */}
-                  <div className="p-3.5 bg-white dark:bg-[#26160D] rounded-xl border border-sky-200 dark:border-sky-800/60 space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold text-sky-900 dark:text-sky-300">
-                        رابط الـ Webhook المعتمد لمنصتك:
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const url = `${window.location.origin}/api/payments/fawaterak/webhook`;
-                          navigator.clipboard.writeText(url);
-                          setCopiedWebhook(true);
-                          addToast('تم النسخ', 'تم نسخ رابط الـ Webhook بنجاح', 'success');
-                          setTimeout(() => setCopiedWebhook(false), 2500);
-                        }}
-                        className="px-2.5 py-1 bg-sky-100 hover:bg-sky-200 dark:bg-sky-900/50 text-sky-800 dark:text-sky-200 rounded-lg text-[10px] font-bold flex items-center gap-1 transition"
-                      >
-                        {copiedWebhook ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
-                        <span>{copiedWebhook ? 'تم النسخ' : 'نسخ الرابط'}</span>
-                      </button>
-                    </div>
-                    <code className="block text-[11px] font-mono text-gray-600 dark:text-gray-300 select-all break-all" dir="ltr">
-                      {typeof window !== 'undefined' ? `${window.location.origin}/api/payments/fawaterak/webhook` : '/api/payments/fawaterak/webhook'}
-                    </code>
-                    <p className="text-[10px] text-gray-500">
-                      الصق هذا الرابط في لوحة تحكم فاتورتك (Fawaterk Dashboard &gt; Webhook URL) لتحديث حالة الطلبات إلى "مدفوع" فوراً وبشكل تلقائي.
-                    </p>
                   </div>
                 </div>
 
                 {/* Cash on Delivery Section */}
                 <div className="p-5 sm:p-6 rounded-2xl border border-emerald-200 dark:border-emerald-800/40 bg-emerald-50/30 dark:bg-emerald-950/20 space-y-3">
                   <div className="flex items-center justify-between">
-                    <h4 className="font-bold text-sm text-emerald-950 dark:text-emerald-200 flex items-center gap-2">
-                      <Truck className="w-4 h-4 text-emerald-600" />
-                      <span>الدفع نقداً عند الاستلام (COD)</span>
-                    </h4>
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-black text-xs shadow-sm">
+                        <Truck className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-sm text-emerald-950 dark:text-emerald-200">
+                          الدفع نقداً عند الاستلام (Cash on Delivery - COD)
+                        </h4>
+                        <p className="text-[11px] text-emerald-800/70 dark:text-emerald-300">
+                          إتاحة خيار دفع ثمن الأوردر نقداً لمندوب الشحن عند استلام الطرد وفحصه
+                        </p>
+                      </div>
+                    </div>
+
                     <label className="flex items-center gap-2 text-xs font-bold text-emerald-900 dark:text-emerald-200 cursor-pointer">
                       <input
                         type="checkbox"
@@ -4309,9 +4186,90 @@ export const AdminDashboard: React.FC = () => {
                       <span>مفعل للزبائن</span>
                     </label>
                   </div>
-                  <p className="text-xs text-emerald-800 dark:text-emerald-300">
-                    إتاحة خيار دفع ثمن الأوردر نقداً لمندوب الشحن عند استلام الطرد وفحصه.
-                  </p>
+                </div>
+
+                {/* Vodafone Cash & Wallets Section */}
+                <div className="p-5 sm:p-6 rounded-2xl border border-[#E0C79B] dark:border-[#6B3A1F] bg-white dark:bg-black/20 space-y-4">
+                  <div className="flex items-center justify-between border-b border-[#E0C79B] dark:border-[#6B3A1F] pb-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-red-600 text-white flex items-center justify-center font-black text-xs shadow-sm">
+                        <Wallet className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-sm text-[#3B1E0E] dark:text-[#FFF9EE]">
+                          فودافون كاش والمحافظ الإلكترونية
+                        </h4>
+                        <p className="text-[11px] text-black/60 dark:text-white/60">
+                          التحويل المباشر لمحفظة المنصة مع إرفاق رقم العملية لتأكيد الدفع
+                        </p>
+                      </div>
+                    </div>
+
+                    <label className="flex items-center gap-2 text-xs font-bold cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={Boolean(adminPaymentSettings.isVodafoneCashActive)}
+                        onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, isVodafoneCashActive: e.target.checked })}
+                        className="w-4 h-4 rounded text-red-600"
+                      />
+                      <span>تفعيل المحفظة</span>
+                    </label>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
+                      رقم محفظة الكاش الرسمي:
+                    </label>
+                    <input
+                      type="text"
+                      value={adminPaymentSettings.vodafoneCashNumber || ''}
+                      onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, vodafoneCashNumber: e.target.value })}
+                      placeholder="01158969931"
+                      className="w-full px-3.5 py-2.5 bg-white dark:bg-black/20 border border-[#E0C79B] dark:border-[#6B3A1F] rounded-xl text-xs font-mono font-bold text-gray-900 dark:text-[#FFF9EE] outline-none"
+                    />
+                  </div>
+                </div>
+
+                {/* InstaPay Section */}
+                <div className="p-5 sm:p-6 rounded-2xl border border-[#E0C79B] dark:border-[#6B3A1F] bg-white dark:bg-black/20 space-y-4">
+                  <div className="flex items-center justify-between border-b border-[#E0C79B] dark:border-[#6B3A1F] pb-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-xs shadow-sm">
+                        <CreditCard className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-sm text-[#3B1E0E] dark:text-[#FFF9EE]">
+                          حساب إنستاباي (InstaPay)
+                        </h4>
+                        <p className="text-[11px] text-black/60 dark:text-white/60">
+                          التحويل اللحظي عبر شبكة المدفوعات اللحظية IPN
+                        </p>
+                      </div>
+                    </div>
+
+                    <label className="flex items-center gap-2 text-xs font-bold cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={Boolean(adminPaymentSettings.isInstaPayActive)}
+                        onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, isInstaPayActive: e.target.checked })}
+                        className="w-4 h-4 rounded text-blue-600"
+                      />
+                      <span>تفعيل إنستاباي</span>
+                    </label>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
+                      معرف إنستاباي (IPA Address):
+                    </label>
+                    <input
+                      type="text"
+                      value={adminPaymentSettings.instaPayAccount || ''}
+                      onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, instaPayAccount: e.target.value })}
+                      placeholder="username@instapay"
+                      className="w-full px-3.5 py-2.5 bg-white dark:bg-black/20 border border-[#E0C79B] dark:border-[#6B3A1F] rounded-xl text-xs font-mono font-bold text-gray-900 dark:text-[#FFF9EE] outline-none"
+                    />
+                  </div>
                 </div>
 
                 <button
@@ -4324,7 +4282,7 @@ export const AdminDashboard: React.FC = () => {
                   ) : (
                     <>
                       <Check className="w-4 h-4" />
-                      <span>حفظ وتطبيق إعدادات بوابة الدفع</span>
+                      <span>حفظ وتطبيق إعدادات طرق الدفع</span>
                     </>
                   )}
                 </button>
@@ -4332,29 +4290,20 @@ export const AdminDashboard: React.FC = () => {
             </div>
           )}
 
-          {/* TAB: SHIPPING & BOSTA SETTINGS */}
+          {/* TAB: SHIPPING SETTINGS */}
           {activeTab === 'shipping-settings' && (
             <div className="bg-[#F8EBD7] dark:bg-[#3B1E0E] rounded-3xl border border-[#E0C79B] dark:border-[#6B3A1F] p-6 sm:p-8 shadow-xs space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E0C79B] dark:border-[#6B3A1F] pb-4">
                 <div>
                   <h3 className="font-bold text-base sm:text-lg text-[#3B1E0E] dark:text-[#FFF9EE] flex items-center gap-2">
                     <Truck className="w-5 h-5 text-orange-600 dark:text-orange-400" />
-                    <span>إعدادات الشحن وشركة بوسطة (Bosta)</span>
+                    <span>إعدادات الشحن والتوصيل</span>
                   </h3>
                   <p className="text-xs text-black/60 dark:text-white/60 mt-1">
-                    إدارة الربط الرسمي مع منصة بوسطة، عناوين الاستلام في الصعيد، وتتبع الشحنات وبوالص الشحن.
+                    إدارة أسعار وتكاليف الشحن للعملاء، حد الشحن المجاني، وشركات الشحن المعتمدة للورش الحرفية.
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    disabled={isTestingBosta}
-                    onClick={handleTestBostaConnection}
-                    className="px-3.5 py-1.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
-                  >
-                    <RefreshCw className={`w-3.5 h-3.5 ${isTestingBosta ? 'animate-spin' : ''}`} />
-                    <span>{isTestingBosta ? 'جاري الفحص...' : 'فحص الاتصال ببوسطة'}</span>
-                  </button>
                   <RefreshDataButton
                     onRefresh={fetchAdminShippingSettings}
                     label="تحديث الإعدادات"
@@ -4362,181 +4311,8 @@ export const AdminDashboard: React.FC = () => {
                 </div>
               </div>
 
-              {/* Bosta Live Connection Banner */}
-              {bostaTestStatus && (
-                <div
-                  className={`p-4 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs ${bostaTestStatus.connected
-                    ? 'bg-emerald-50 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200'
-                    : 'bg-rose-50 dark:bg-rose-950/20 border-rose-300 dark:border-rose-800 text-rose-900 dark:text-rose-200'
-                    }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-                    <div>
-                      <strong className="font-black text-sm block">حالة الاتصال مع منصة بوسطة:</strong>
-                      <p className="mt-0.5 opacity-90">{bostaTestStatus.message}</p>
-                    </div>
-                  </div>
-                  <div className="px-3 py-1 bg-white/70 dark:bg-black/30 rounded-xl font-bold border border-black/10 self-start sm:self-auto">
-                    {adminShippingSettings.bostaEnv === 'live' ? '🟢 بيئة الإنتاج الفعلي (Live)' : '🟡 بيئة التجربة (Staging)'}
-                  </div>
-                </div>
-              )}
-
               <form onSubmit={handleSaveAdminShippingSettings} className="space-y-6 max-w-3xl">
-                {/* Section 1: API Key & Environment */}
-                <div className="p-5 sm:p-6 rounded-2xl border border-orange-200 dark:border-orange-900/40 bg-orange-50/40 dark:bg-orange-950/20 space-y-5">
-                  <div className="flex items-center justify-between border-b border-orange-200/60 dark:border-orange-900/40 pb-3">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-9 h-9 rounded-xl bg-orange-600 text-white flex items-center justify-center font-black text-xs shadow-sm">
-                        BST
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-sm text-orange-950 dark:text-orange-200">
-                          بيانات مفتاح API وبيئة التشغيل (Bosta API Key)
-                        </h4>
-                        <p className="text-[11px] text-orange-900/70 dark:text-orange-400">
-                          المفتاح الرسمي المستخدم لإنشاء الشحنات وإصدار بوالص الـ AWB
-                        </p>
-                      </div>
-                    </div>
-
-                    <label className="flex items-center gap-2 text-xs font-bold text-orange-950 dark:text-orange-200 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={adminShippingSettings.isBostaActive}
-                        onChange={(e) => setAdminShippingSettings({ ...adminShippingSettings, isBostaActive: e.target.checked })}
-                        className="w-4 h-4 text-orange-600 rounded"
-                      />
-                      <span>تفعيل بوسطة كشركة شحن</span>
-                    </label>
-                  </div>
-
-                  {/* Environment Switcher */}
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
-                      بيئة العمل (Environment):
-                    </label>
-                    <div className="flex items-center gap-4">
-                      <label
-                        className={`flex-1 p-3 rounded-xl border cursor-pointer transition text-xs font-bold flex items-center justify-between ${adminShippingSettings.bostaEnv === 'live'
-                          ? 'bg-orange-600 text-white border-orange-600 shadow-xs'
-                          : 'bg-white dark:bg-black/20 text-gray-700 dark:text-gray-300 border-[#E0C79B] dark:border-[#6B3A1F]'
-                          }`}
-                      >
-                        <div>
-                          <div className="font-black">الإنتاج الحي (Live)</div>
-                          <div className="text-[10px] opacity-80">https://app.bosta.co</div>
-                        </div>
-                        <input
-                          type="radio"
-                          name="bostaEnv"
-                          checked={adminShippingSettings.bostaEnv === 'live'}
-                          onChange={() => setAdminShippingSettings({ ...adminShippingSettings, bostaEnv: 'live' })}
-                          className="w-4 h-4 text-orange-600"
-                        />
-                      </label>
-
-                      <label
-                        className={`flex-1 p-3 rounded-xl border cursor-pointer transition text-xs font-bold flex items-center justify-between ${adminShippingSettings.bostaEnv === 'staging'
-                          ? 'bg-orange-600 text-white border-orange-600 shadow-xs'
-                          : 'bg-white dark:bg-black/20 text-gray-700 dark:text-gray-300 border-[#E0C79B] dark:border-[#6B3A1F]'
-                          }`}
-                      >
-                        <div>
-                          <div className="font-black">بيئة التجربة (Staging)</div>
-                          <div className="text-[10px] opacity-80">https://stg-app.bosta.co</div>
-                        </div>
-                        <input
-                          type="radio"
-                          name="bostaEnv"
-                          checked={adminShippingSettings.bostaEnv === 'staging'}
-                          onChange={() => setAdminShippingSettings({ ...adminShippingSettings, bostaEnv: 'staging' })}
-                          className="w-4 h-4 text-orange-600"
-                        />
-                      </label>
-                    </div>
-                  </div>
-
-                  {/* API Key */}
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
-                      مفتاح API الخاص بحساب بوسطة (API Key):
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        value={adminShippingSettings.bostaApiKey}
-                        onChange={(e) => setAdminShippingSettings({ ...adminShippingSettings, bostaApiKey: e.target.value })}
-                        placeholder="أدخل مفتاح Bosta API المكون من 64 حرفاً"
-                        className="w-full px-4 py-2.5 bg-white dark:bg-black/20 border border-[#E0C79B] dark:border-[#6B3A1F] rounded-xl text-xs font-mono font-bold text-gray-800 dark:text-gray-100 outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
-                      />
-                    </div>
-                    <p className="text-[11px] text-gray-500">
-                      يمكنك نسخ المفتاح من لوحة تحكم بوسطة عبر: الإعدادات Settings ← الربط البرمجي API Integration.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Section 2: Pickup Location & Package Specs */}
-                <div className="p-5 sm:p-6 rounded-2xl border border-[#E0C79B] dark:border-[#6B3A1F] bg-white dark:bg-black/20 space-y-5">
-                  <div className="flex items-center gap-2 border-b border-[#E0C79B] dark:border-[#6B3A1F] pb-3">
-                    <MapPin className="w-5 h-5 text-primary" />
-                    <div>
-                      <h4 className="font-bold text-sm text-[#3B1E0E] dark:text-[#FFF9EE]">
-                        عنوان الاستلام الافتراضي ونوع الطرد (Pickup Address & Specs)
-                      </h4>
-                      <p className="text-[11px] text-black/60 dark:text-white/60">
-                        العنوان الذي يتوجه إليه مندوب بوسطة في الصعيد لاستلام المنتجات من الورشة
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
-                        معرف عنوان الاستلام في بوسطة (Pickup Location ID):
-                      </label>
-                      <input
-                        type="text"
-                        value={adminShippingSettings.bostaPickupLocationId || ''}
-                        onChange={(e) => setAdminShippingSettings({ ...adminShippingSettings, bostaPickupLocationId: e.target.value })}
-                        placeholder="مثال: JIx5kaTHoO"
-                        className="w-full px-4 py-2.5 bg-white dark:bg-black/20 border border-[#E0C79B] dark:border-[#6B3A1F] rounded-xl text-xs font-mono font-bold text-gray-800 dark:text-gray-100 outline-none"
-                      />
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
-                        اسم ووصف موقع الاستلام:
-                      </label>
-                      <input
-                        type="text"
-                        value={adminShippingSettings.bostaPickupLocationName || ''}
-                        onChange={(e) => setAdminShippingSettings({ ...adminShippingSettings, bostaPickupLocationName: e.target.value })}
-                        placeholder="مثال: ورشة أسيوط - مهند أحمد (+201158969931)"
-                        className="w-full px-4 py-2.5 bg-white dark:bg-black/20 border border-[#E0C79B] dark:border-[#6B3A1F] rounded-xl text-xs font-bold text-gray-800 dark:text-gray-100 outline-none"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
-                      الحجم القياسي الافتراضي للطرد (Default Package Type):
-                    </label>
-                    <select
-                      value={adminShippingSettings.defaultPackageType || 'Small'}
-                      onChange={(e) => setAdminShippingSettings({ ...adminShippingSettings, defaultPackageType: e.target.value as any })}
-                      className="w-full px-4 py-2.5 bg-white dark:bg-black/20 border border-[#E0C79B] dark:border-[#6B3A1F] rounded-xl text-xs font-bold text-gray-800 dark:text-gray-100 outline-none cursor-pointer"
-                    >
-                      <option value="Small">طرد صغير Small (حتى 2 كجم - فخار ومجسمات وتحف يدوية)</option>
-                      <option value="Medium">طرد متوسط Medium (حتى 5 كجم - كليم وسجاد ومنسوجات)</option>
-                      <option value="Large">طرد كبير Large (أكثر من 5 كجم - مشغولات أخشاب خوص ونخيل)</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* Section 3: Shipping Fees & Thresholds */}
+                {/* Shipping Rates & Thresholds */}
                 <div className="p-5 sm:p-6 rounded-2xl border border-[#E0C79B] dark:border-[#6B3A1F] bg-white dark:bg-black/20 space-y-5">
                   <div className="flex items-center gap-2 border-b border-[#E0C79B] dark:border-[#6B3A1F] pb-3">
                     <DollarSign className="w-5 h-5 text-emerald-600" />
@@ -4593,54 +4369,226 @@ export const AdminDashboard: React.FC = () => {
                       <span className="text-[10px] text-emerald-600 font-bold">شحن مجاني للطلبات فوق هذا المبلغ</span>
                     </div>
                   </div>
-                </div>
 
-                {/* Section 4: Webhook Configuration */}
-                <div className="p-4 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 space-y-2 text-xs">
-                  <span className="font-bold block text-espresso dark:text-cream">
-                    رابط الـ Webhook لتحديث حالات الشحنات تلقائياً في بوسطة:
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      readOnly
-                      value={`${typeof window !== 'undefined' ? window.location.origin : 'https://elsa3ed.com'}/api/shipping/bosta/webhook`}
-                      className="flex-1 px-3 py-2 rounded-xl bg-white dark:bg-black/30 border border-black/10 font-mono text-[11px] text-gray-700 dark:text-gray-300 outline-none"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const url = `${typeof window !== 'undefined' ? window.location.origin : 'https://elsa3ed.com'}/api/shipping/bosta/webhook`;
-                        navigator.clipboard.writeText(url);
-                        addToast('تم النسخ', 'تم نسخ رابط الـ Webhook إلى الحافظة', 'info');
-                      }}
-                      className="px-3 py-2 bg-primary text-white rounded-xl font-bold flex items-center gap-1 cursor-pointer"
+                  <div className="space-y-1.5 pt-3 border-t border-[#E0C79B] dark:border-[#6B3A1F]">
+                    <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
+                      الحجم القياسي الافتراضي للطرد (Default Package Type):
+                    </label>
+                    <select
+                      value={adminShippingSettings.defaultPackageType || 'Small'}
+                      onChange={(e) => setAdminShippingSettings({ ...adminShippingSettings, defaultPackageType: e.target.value as any })}
+                      className="w-full px-4 py-2.5 bg-white dark:bg-black/20 border border-[#E0C79B] dark:border-[#6B3A1F] rounded-xl text-xs font-bold text-gray-800 dark:text-gray-100 outline-none cursor-pointer"
                     >
-                      <Copy className="w-3.5 h-3.5" />
-                      <span>نسخ</span>
-                    </button>
+                      <option value="Small">طرد صغير Small (حتى 2 كجم - فخار ومجسمات وتحف يدوية)</option>
+                      <option value="Medium">طرد متوسط Medium (حتى 5 كجم - كليم وسجاد ومنسوجات)</option>
+                      <option value="Large">طرد كبير Large (أكثر من 5 كجم - مشغولات أخشاب خوص ونخيل)</option>
+                    </select>
                   </div>
-                  <p className="text-[11px] text-gray-500">
-                    يمكنك وضع هذا الرابط في إعدادات Webhooks في بوسطة لتحديث مسار الشحنة تلقائياً إلى "تم التسليم" عند استلام المشتري للطلب.
-                  </p>
                 </div>
 
                 {/* Submit button */}
                 <button
                   type="submit"
                   disabled={isSavingShippingSettings}
-                  className="px-8 py-3.5 bg-orange-600 text-white hover:bg-orange-700 font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer flex items-center gap-2"
+                  className="px-8 py-3.5 bg-primary text-white hover:bg-primary-hover font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer flex items-center gap-2"
                 >
                   {isSavingShippingSettings ? (
                     <span>بنحفظ الإعدادات...</span>
                   ) : (
                     <>
                       <Check className="w-4 h-4" />
-                      <span>حفظ وتطبيق إعدادات الشحن وبوسطة</span>
+                      <span>حفظ وتطبيق إعدادات تسعير الشحن</span>
                     </>
                   )}
                 </button>
               </form>
+
+              {/* SECTION: APPROVED SHIPPING COMPANIES MANAGEMENT */}
+              <div className="pt-8 border-t border-[#E0C79B] dark:border-[#6B3A1F] space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <h4 className="font-bold text-base sm:text-lg text-[#3B1E0E] dark:text-[#FFF9EE] flex items-center gap-2">
+                      <ShieldCheck className="w-5 h-5 text-emerald-600" />
+                      <span>شركات الشحن المعتمدة للورش الحرفية (Approved Shipping Companies)</span>
+                    </h4>
+                    <p className="text-xs text-black/60 dark:text-white/60 mt-1">
+                      إدارة شركات الشحن المتاحة في لوحة تحكم الحرفيين، تفعيل وتعطيل الشركات، وتحديد آليات الحجز والتتبع.
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsAddingCompany(!isAddingCompany)}
+                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer self-start sm:self-auto"
+                  >
+                    {isAddingCompany ? <X className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
+                    <span>{isAddingCompany ? 'إلغاء' : 'إضافة شركة شحن معتمدة'}</span>
+                  </button>
+                </div>
+
+                {/* Add Company Form */}
+                {isAddingCompany && (
+                  <form
+                    onSubmit={handleCreateCompanySubmit}
+                    className="p-5 rounded-2xl bg-white dark:bg-black/20 border border-[#E0C79B] dark:border-[#6B3A1F] space-y-4 animate-in fade-in duration-200"
+                  >
+                    <h5 className="font-bold text-sm text-espresso dark:text-cream">
+                      إضافة شركة شحن جديدة لمنظومة وَه
+                    </h5>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
+                          اسم شركة الشحن (بالعربية) *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={newCompanyForm.name}
+                          onChange={(e) => setNewCompanyForm({ ...newCompanyForm, name: e.target.value })}
+                          placeholder="مثال: أرامكس مصر أو البريد السريع"
+                          className="w-full px-3.5 py-2 bg-black/[0.02] dark:bg-white/[0.05] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
+                          الرمز التعريفي (Code) *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={newCompanyForm.code}
+                          onChange={(e) => setNewCompanyForm({ ...newCompanyForm, code: e.target.value })}
+                          placeholder="مثال: aramex أو egypt_post"
+                          className="w-full px-3.5 py-2 bg-black/[0.02] dark:bg-white/[0.05] border border-black/10 dark:border-white/10 rounded-xl text-xs font-mono outline-none"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
+                          آلية الحجز والتسجيل
+                        </label>
+                        <select
+                          value={newCompanyForm.bookingMethod}
+                          onChange={(e) => setNewCompanyForm({ ...newCompanyForm, bookingMethod: e.target.value as any })}
+                          className="w-full px-3.5 py-2 bg-black/[0.02] dark:bg-white/[0.05] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none cursor-pointer"
+                        >
+                          <option value="external_booking">حجز خارجي مسجل (External Booking via Carrier)</option>
+                          <option value="carrier_api">ربط إلكتروني مباشر عبر API</option>
+                          <option value="manual_dispatch">توصيل يدوي / تنسيق مباشر</option>
+                        </select>
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
+                          هاتف خدمة العملاء / المندوب
+                        </label>
+                        <input
+                          type="text"
+                          value={newCompanyForm.contactPhone}
+                          onChange={(e) => setNewCompanyForm({ ...newCompanyForm, contactPhone: e.target.value })}
+                          placeholder="مثال: 16996 أو 01012345678"
+                          className="w-full px-3.5 py-2 bg-black/[0.02] dark:bg-white/[0.05] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none font-mono"
+                        />
+                      </div>
+
+                      <div className="space-y-1 sm:col-span-2">
+                        <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
+                          قالب رابط التتبع (Tracking URL Template)
+                        </label>
+                        <input
+                          type="text"
+                          value={newCompanyForm.trackingUrlTemplate}
+                          onChange={(e) => setNewCompanyForm({ ...newCompanyForm, trackingUrlTemplate: e.target.value })}
+                          placeholder="مثال: https://carrier.com/track?num={trackingNumber}"
+                          className="w-full px-3.5 py-2 bg-black/[0.02] dark:bg-white/[0.05] border border-black/10 dark:border-white/10 rounded-xl text-xs font-mono outline-none"
+                        />
+                      </div>
+
+                      <div className="space-y-1 sm:col-span-2">
+                        <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
+                          شروط الاستلام وملاحظات التشغيل للورش
+                        </label>
+                        <textarea
+                          rows={2}
+                          value={newCompanyForm.pickupTerms}
+                          onChange={(e) => setNewCompanyForm({ ...newCompanyForm, pickupTerms: e.target.value })}
+                          placeholder="تعليمات الاستلام، مواعيد التسليم للمندوب، وتغطية محافظات الصعيد..."
+                          className="w-full px-3.5 py-2 bg-black/[0.02] dark:bg-white/[0.05] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none resize-none"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end gap-2 pt-2">
+                      <button
+                        type="button"
+                        onClick={() => setIsAddingCompany(false)}
+                        className="px-4 py-2 border rounded-xl text-xs font-bold cursor-pointer"
+                      >
+                        إلغاء
+                      </button>
+                      <button
+                        type="submit"
+                        className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold cursor-pointer shadow-xs"
+                      >
+                        حفظ واعتماد الشركة
+                      </button>
+                    </div>
+                  </form>
+                )}
+
+                {/* Companies Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {adminCompanies.map((comp) => (
+                    <div
+                      key={comp.id}
+                      className="p-5 rounded-2xl bg-white dark:bg-black/20 border border-[#E0C79B] dark:border-[#6B3A1F] space-y-3 shadow-xs"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <h5 className="font-bold text-sm text-[#3B1E0E] dark:text-[#FFF9EE]">
+                            {comp.name}
+                          </h5>
+                          <span className="text-[10px] font-mono text-gray-500 block">
+                            رمز: {comp.code} • {comp.bookingMethod}
+                          </span>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleToggleCompany(comp)}
+                          className={`px-2.5 py-1 rounded-full text-[10px] font-bold border transition-colors cursor-pointer ${
+                            comp.isActive
+                              ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20'
+                              : 'bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20'
+                          }`}
+                        >
+                          {comp.isActive ? 'مفعلة للحرفيين ✓' : 'معطلة ✕'}
+                        </button>
+                      </div>
+
+                      {comp.contactPhone && (
+                        <div className="text-xs text-black/60 dark:text-white/60 flex items-center gap-1.5">
+                          <Phone className="w-3.5 h-3.5 text-primary" />
+                          <span className="font-mono">{comp.contactPhone}</span>
+                        </div>
+                      )}
+
+                      {comp.pickupTerms && (
+                        <p className="text-[11px] text-black/60 dark:text-white/60 line-clamp-2 bg-black/[0.02] dark:bg-white/[0.02] p-2 rounded-lg">
+                          {comp.pickupTerms}
+                        </p>
+                      )}
+
+                      <div className="text-[10px] text-gray-400 flex items-center justify-between border-t border-black/5 dark:border-white/5 pt-2">
+                        <span>معتمدة من: {comp.approvedBy || 'النظام'}</span>
+                        <span>{comp.hasApiIntegration ? 'ربط API متوفر' : 'حجز خارجي'}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
 
@@ -7240,17 +7188,17 @@ export const AdminDashboard: React.FC = () => {
           }}
         />
       )}
-      {/* Bosta Live Tracking Modal */}
+      {/* Shipment Tracking Modal */}
       {trackingModalOrder && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
           <div className="bg-[#FFF9EE] dark:bg-[#26160D] w-full max-w-lg rounded-3xl border border-[#E0C79B] dark:border-[#6B3A1F] shadow-2xl p-6 space-y-6 text-[#3B1E0E] dark:text-[#FFF9EE]">
             <div className="flex items-center justify-between border-b border-[#E0C79B] dark:border-[#6B3A1F] pb-4">
               <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-2xl bg-orange-600 text-white flex items-center justify-center font-black shadow-sm">
+                <div className="w-10 h-10 rounded-2xl bg-primary text-white flex items-center justify-center font-black shadow-sm">
                   🚚
                 </div>
                 <div>
-                  <h3 className="font-bold text-base">تتبع شحنة بوسطة (Bosta)</h3>
+                  <h3 className="font-bold text-base">تتبع مسار الشحنة</h3>
                   <span className="text-xs text-black/60 dark:text-white/60 font-mono">
                     الطلب #{trackingModalOrder.orderNumber}
                   </span>
@@ -7265,42 +7213,46 @@ export const AdminDashboard: React.FC = () => {
               </button>
             </div>
 
-            {isLoadingTracking ? (
-              <div className="py-12 text-center space-y-3">
-                <RefreshCw className="w-8 h-8 animate-spin mx-auto text-orange-600" />
-                <p className="text-xs font-bold text-gray-500">جاري الاتصال بخوادم بوسطة لجلب خط سير الشحنة...</p>
-              </div>
-            ) : (
               <div className="space-y-4">
                 {/* Tracking Number & Quick Links */}
-                <div className="p-4 rounded-2xl bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-900/40 flex items-center justify-between">
+                <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/40 flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] text-orange-800 dark:text-orange-300 font-bold block">رقم بوليصة التتبع (Tracking Number):</span>
-                    <span className="font-mono text-base font-black text-orange-950 dark:text-orange-100">
-                      {trackingModalOrder.bostaTrackingNumber || trackingModalOrder.trackingNumber}
+                    <span className="text-[10px] text-amber-800 dark:text-amber-300 font-bold block">رقم بوليصة التتبع (Tracking Number):</span>
+                    <span className="font-mono text-base font-black text-amber-950 dark:text-amber-100">
+                      {trackingModalOrder.trackingNumber || 'غير متوفر'}
                     </span>
+                    {trackingModalOrder.shippingCompanyName && (
+                      <span className="text-[11px] font-bold text-gray-500 block mt-0.5">
+                        شركة الشحن: {trackingModalOrder.shippingCompanyName}
+                      </span>
+                    )}
                   </div>
                   <div className="flex items-center gap-1.5">
                     <button
                       type="button"
                       onClick={() => {
-                        navigator.clipboard.writeText(trackingModalOrder.bostaTrackingNumber || trackingModalOrder.trackingNumber);
-                        addToast('تم النسخ', 'تم نسخ رقم التتبع للحافظة', 'info');
+                        const trk = trackingModalOrder.trackingNumber || '';
+                        if (trk) {
+                          navigator.clipboard.writeText(trk);
+                          addToast('تم النسخ', 'تم نسخ رقم التتبع للحافظة', 'info');
+                        }
                       }}
-                      className="px-2.5 py-1.5 rounded-lg bg-white dark:bg-black/30 border border-orange-200 text-orange-700 text-xs font-bold flex items-center gap-1 cursor-pointer"
+                      className="px-2.5 py-1.5 rounded-lg bg-white dark:bg-black/30 border border-amber-200 text-amber-800 text-xs font-bold flex items-center gap-1 cursor-pointer"
                     >
                       <Copy className="w-3 h-3" />
                       <span>نسخ</span>
                     </button>
-                    <a
-                      href={`https://bosta.co/tracking-shipment/?trackNumber=${trackingModalOrder.bostaTrackingNumber || trackingModalOrder.trackingNumber}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-3 py-1.5 rounded-lg bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold flex items-center gap-1 cursor-pointer"
-                    >
-                      <span>فتح بوسطة</span>
-                      <ExternalLink className="w-3 h-3" />
-                    </a>
+                    {trackingModalOrder.trackingUrl && (
+                      <a
+                        href={trackingModalOrder.trackingUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-hover text-white text-xs font-bold flex items-center gap-1 cursor-pointer"
+                      >
+                        <span>رابط التتبع</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
                   </div>
                 </div>
 
@@ -7310,13 +7262,8 @@ export const AdminDashboard: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
                     <span className="font-bold text-sm text-[#3B1E0E] dark:text-[#FFF9EE]">
-                      {trackingData?.stateAr || 'الشحنة قيد المتابعة والتوصيل'}
+                      {trackingModalOrder.status || 'قيد المتابعة والتوصيل'}
                     </span>
-                    {trackingData?.state && (
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-black/5 dark:bg-white/10 text-gray-600">
-                        {trackingData.state}
-                      </span>
-                    )}
                   </div>
                 </div>
 
@@ -7334,7 +7281,6 @@ export const AdminDashboard: React.FC = () => {
                   </div>
                 </div>
               </div>
-            )}
 
             <div className="pt-2 flex justify-end">
               <button

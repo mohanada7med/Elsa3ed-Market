@@ -34,7 +34,10 @@ import {
   ReportStatus,
   ReportPriority,
   ReportCategory,
-  ShippingConfig
+  ShippingConfig,
+  ShippingCompany,
+  Shipment,
+  ShipmentStatus
 } from '../types.ts';
 
 
@@ -1733,10 +1736,8 @@ export const api = {
   },
 
   async getPublicPaymentConfig(): Promise<{
-    isFawaterakActive: boolean;
+    isOnlinePaymentActive: boolean;
     isCashOnDeliveryActive: boolean;
-    fawaterakEnv?: 'staging' | 'live';
-    hasFawaterakKey?: boolean;
     instaPayAccount?: string;
     vodafoneCashNumber?: string;
     instaPayInstructions?: string;
@@ -1752,10 +1753,8 @@ export const api = {
       console.warn('Failed to fetch public payment config, using fallback defaults', e);
     }
     return {
-      isFawaterakActive: true,
+      isOnlinePaymentActive: true,
       isCashOnDeliveryActive: true,
-      fawaterakEnv: 'staging',
-      hasFawaterakKey: false,
       instaPayAccount: 'elsa3ed@instapay',
       vodafoneCashNumber: '01158969931',
       instaPayInstructions: 'قم بالتحويل عبر تطبيق إنستاباي إلى المعرف الموضح أعلاه واضغط على "تم التحويل".',
@@ -1777,10 +1776,7 @@ export const api = {
   async updateAdminPaymentConfig(
     user: { id?: string; role?: string },
     payload: {
-      fawaterakApiKey?: string;
-      fawaterakVendorKey?: string;
-      fawaterakEnv?: 'staging' | 'live';
-      isFawaterakActive?: boolean;
+      isOnlinePaymentActive?: boolean;
       isCashOnDeliveryActive?: boolean;
       instaPayAccount?: string;
       vodafoneCashNumber?: string;
@@ -1802,40 +1798,14 @@ export const api = {
     return json.data;
   },
 
-  async initiateFawaterakPayment(
-    orderId: string,
-    user?: { id?: string; role?: string }
-  ): Promise<{
-    success: boolean;
-    invoiceUrl: string;
-    invoiceId?: string | number;
-    invoiceKey?: string;
-    isMock?: boolean;
-    message?: string;
-  }> {
-    const res = await fetch(`${API_BASE}/payments/fawaterak/initiate`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...getAuthHeaders(user)
-      },
-      body: JSON.stringify({ orderId })
-    });
-    const json: ApiResponse<any> = await res.json();
-    if (!json.success || !json.data) {
-      throw new Error(json.error || 'تعذر بدء الدفع الإلكتروني عبر فاتورتك');
-    }
-    return json.data;
-  },
-
-  // ==================== BOSTA & SHIPPING INTEGRATION ====================
+  // ==================== SHIPPING CONFIG & RATES ====================
   async getAdminShippingConfig(user: { id?: string; role?: string }): Promise<ShippingConfig> {
     const res = await fetch(`${API_BASE}/shipping/config`, {
       headers: getAuthHeaders(user)
     });
     const json: ApiResponse<ShippingConfig> = await res.json();
     if (!json.success || !json.data) {
-      throw new Error(json.error || 'فشل في جلب إعدادات الشحن وبوسطة');
+      throw new Error(json.error || 'فشل في جلب إعدادات الشحن');
     }
     return json.data;
   },
@@ -1856,48 +1826,253 @@ export const api = {
     return json.data;
   },
 
-  async getBostaPickupLocations(user: { id?: string; role?: string }): Promise<any[]> {
-    const res = await fetch(`${API_BASE}/shipping/bosta/pickup-locations`, {
-      headers: getAuthHeaders(user)
-    });
-    const json: ApiResponse<any[]> = await res.json();
+  // ==================== APPROVED SHIPPING COMPANIES & SHIPMENTS ====================
+  async getApprovedShippingCompanies(): Promise<ShippingCompany[]> {
+    const res = await fetch(`${API_BASE}/shipping/companies`);
+    const json: ApiResponse<ShippingCompany[]> = await res.json();
     if (!json.success || !json.data) {
-      throw new Error(json.error || 'فشل في جلب عناوين الاستلام من بوسطة');
+      throw new Error(json.error || 'فشل في جلب شركات الشحن المعتمدة');
     }
     return json.data;
   },
 
-  async createBostaShipment(
-    orderId: string,
+  async getAdminShippingCompanies(user: { id?: string; role?: string }): Promise<ShippingCompany[]> {
+    const res = await fetch(`${API_BASE}/shipping/admin/companies`, {
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<ShippingCompany[]> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في جلب قائمة شركات الشحن');
+    }
+    return json.data;
+  },
+
+  async createAdminShippingCompany(
     user: { id?: string; role?: string },
-    options?: { notes?: string; allowSimulationFallback?: boolean }
-  ): Promise<{
-    trackingNumber: string;
-    bostaDeliveryId?: string;
-    awbUrl?: string;
-    isSimulated?: boolean;
-    order: any;
-  }> {
-    const res = await fetch(`${API_BASE}/shipping/bosta/create-shipment/${orderId}`, {
+    payload: Partial<ShippingCompany>
+  ): Promise<ShippingCompany> {
+    const res = await fetch(`${API_BASE}/shipping/admin/companies`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         ...getAuthHeaders(user)
       },
-      body: JSON.stringify(options || {})
+      body: JSON.stringify(payload)
     });
-    const json: ApiResponse<any> = await res.json();
+    const json: ApiResponse<ShippingCompany> = await res.json();
     if (!json.success || !json.data) {
-      throw new Error(json.error || 'تعذر إصدار الشحنة عبر بوسطة');
+      throw new Error(json.error || 'تعذر إضافة شركة الشحن');
     }
     return json.data;
   },
 
-  async trackBostaShipment(trackingNumber: string): Promise<any> {
-    const res = await fetch(`${API_BASE}/shipping/bosta/track/${trackingNumber}`);
-    const json: ApiResponse<any> = await res.json();
+  async updateAdminShippingCompany(
+    user: { id?: string; role?: string },
+    id: string,
+    payload: Partial<ShippingCompany>
+  ): Promise<ShippingCompany> {
+    const res = await fetch(`${API_BASE}/shipping/admin/companies/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders(user)
+      },
+      body: JSON.stringify(payload)
+    });
+    const json: ApiResponse<ShippingCompany> = await res.json();
     if (!json.success || !json.data) {
-      throw new Error(json.error || 'فشل جلب تفاصيل التتبع من بوسطة');
+      throw new Error(json.error || 'تعذر تحديث شركة الشحن');
+    }
+    return json.data;
+  },
+
+  async getSellerShipments(
+    user: { id?: string; role?: string; sellerId?: string },
+    filters: {
+      search?: string;
+      status?: string;
+      companyId?: string;
+      paymentMethod?: string;
+      dateFrom?: string;
+      dateTo?: string;
+    } = {}
+  ): Promise<{
+    shipments: Shipment[];
+    stats: {
+      totalCount: number;
+      readyForBookingCount: number;
+      bookedCount: number;
+      awaitingPickupCount: number;
+      inTransitCount: number;
+      deliveredCount: number;
+      failedOrReturnedCount: number;
+      cancelledCount: number;
+    };
+  }> {
+    const params = new URLSearchParams();
+    if (filters.search) params.set('search', filters.search);
+    if (filters.status && filters.status !== 'all') params.set('status', filters.status);
+    if (filters.companyId && filters.companyId !== 'all') params.set('companyId', filters.companyId);
+    if (filters.paymentMethod && filters.paymentMethod !== 'all') params.set('paymentMethod', filters.paymentMethod);
+    if (filters.dateFrom) params.set('dateFrom', filters.dateFrom);
+    if (filters.dateTo) params.set('dateTo', filters.dateTo);
+
+    const queryString = params.toString() ? `?${params.toString()}` : '';
+    const res = await fetch(`${API_BASE}/shipping/seller/shipments${queryString}`, {
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<Shipment[]> & { stats: any } = await res.json();
+    if (!json.success) {
+      throw new Error(json.error || 'فشل في جلب شحنات الورشة');
+    }
+    return {
+      shipments: json.data || [],
+      stats: json.stats || {
+        totalCount: 0,
+        readyForBookingCount: 0,
+        bookedCount: 0,
+        awaitingPickupCount: 0,
+        inTransitCount: 0,
+        deliveredCount: 0,
+        failedOrReturnedCount: 0,
+        cancelledCount: 0
+      }
+    };
+  },
+
+  async getSellerReadyOrders(user: { id?: string; role?: string; sellerId?: string }): Promise<any[]> {
+    const res = await fetch(`${API_BASE}/shipping/seller/ready-orders`, {
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<any[]> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في جلب الطلبات الجاهزة للشحن');
+    }
+    return json.data;
+  },
+
+  async createSellerShipment(
+    user: { id?: string; role?: string; sellerId?: string },
+    payload: {
+      orderId: string;
+      companyId: string;
+      trackingNumber: string;
+      shippingLabelRef?: string;
+      actualShippingCost: number;
+      bookingDate: string;
+      handoverDate?: string;
+      notes?: string;
+      allowReshipment?: boolean;
+    }
+  ): Promise<Shipment> {
+    const res = await fetch(`${API_BASE}/shipping/seller/shipments`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders(user)
+      },
+      body: JSON.stringify(payload)
+    });
+    const json: ApiResponse<Shipment> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'تعذر تسجيل بيانات الشحنة');
+    }
+    return json.data;
+  },
+
+  async updateSellerShipmentStatus(
+    user: { id?: string; role?: string; sellerId?: string },
+    shipmentId: string,
+    payload: {
+      status: ShipmentStatus;
+      note?: string;
+      handoverDate?: string;
+      failureReason?: string;
+      proofOfDeliveryNote?: string;
+      proofOfDeliveryUrl?: string;
+    }
+  ): Promise<Shipment> {
+    const res = await fetch(`${API_BASE}/shipping/seller/shipments/${shipmentId}/status`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders(user)
+      },
+      body: JSON.stringify(payload)
+    });
+    const json: ApiResponse<Shipment> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'تعذر تحديث مسار الشحنة');
+    }
+    return json.data;
+  },
+
+  async getAdminShipments(
+    user: { id?: string; role?: string },
+    filters: { search?: string; status?: string; companyId?: string; paymentMethod?: string } = {}
+  ): Promise<{
+    shipments: Shipment[];
+    stats: {
+      totalCount: number;
+      bookedCount: number;
+      awaitingPickupCount: number;
+      inTransitCount: number;
+      deliveredCount: number;
+      failedOrReturnedCount: number;
+      cancelledCount: number;
+      totalCodExpected: number;
+    };
+  }> {
+    const params = new URLSearchParams();
+    if (filters.search) params.set('search', filters.search);
+    if (filters.status && filters.status !== 'all') params.set('status', filters.status);
+    if (filters.companyId && filters.companyId !== 'all') params.set('companyId', filters.companyId);
+    if (filters.paymentMethod && filters.paymentMethod !== 'all') params.set('paymentMethod', filters.paymentMethod);
+
+    const queryString = params.toString() ? `?${params.toString()}` : '';
+    const res = await fetch(`${API_BASE}/shipping/admin/shipments${queryString}`, {
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<Shipment[]> & { stats: any } = await res.json();
+    if (!json.success) {
+      throw new Error(json.error || 'فشل في جلب شحنات المنصة');
+    }
+    return {
+      shipments: json.data || [],
+      stats: json.stats || {
+        totalCount: 0,
+        bookedCount: 0,
+        awaitingPickupCount: 0,
+        inTransitCount: 0,
+        deliveredCount: 0,
+        failedOrReturnedCount: 0,
+        cancelledCount: 0,
+        totalCodExpected: 0
+      }
+    };
+  },
+
+  async updateAdminShipmentStatus(
+    user: { id?: string; role?: string },
+    shipmentId: string,
+    payload: {
+      status: ShipmentStatus;
+      note?: string;
+      failureReason?: string;
+      proofOfDeliveryNote?: string;
+    }
+  ): Promise<Shipment> {
+    const res = await fetch(`${API_BASE}/shipping/admin/shipments/${shipmentId}/status`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders(user)
+      },
+      body: JSON.stringify(payload)
+    });
+    const json: ApiResponse<Shipment> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'تعذر تحديث الشحنة');
     }
     return json.data;
   },

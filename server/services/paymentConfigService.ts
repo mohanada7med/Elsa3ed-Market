@@ -5,10 +5,7 @@ import { addAuditLog } from './auditService.ts';
 
 const DEFAULT_CONFIG: PaymentConfigDocument = {
   id: 'platform_payment_config',
-  fawaterakApiKey: process.env.FAWATERAK_API_KEY || '',
-  fawaterakVendorKey: process.env.FAWATERAK_VENDOR_KEY || '',
-  fawaterakEnv: 'staging',
-  isFawaterakActive: true,
+  isOnlinePaymentActive: true,
   isCashOnDeliveryActive: true,
   instaPayAccount: 'elsa3ed@instapay',
   vodafoneCashNumber: '01158969931',
@@ -21,7 +18,7 @@ const DEFAULT_CONFIG: PaymentConfigDocument = {
 };
 
 /**
- * Get current platform payment configuration (Fawaterak gateway & COD & legacy accounts).
+ * Get current platform payment configuration (COD, Online & Wallets).
  */
 export async function getPaymentConfig(): Promise<PaymentConfigDocument> {
   const { db, isMongo } = await getDatabase();
@@ -51,10 +48,7 @@ export async function getPaymentConfig(): Promise<PaymentConfigDocument> {
 export async function updatePaymentConfig(
   admin: AuthenticatedUser,
   payload: {
-    fawaterakApiKey?: string;
-    fawaterakVendorKey?: string;
-    fawaterakEnv?: 'staging' | 'live';
-    isFawaterakActive?: boolean;
+    isOnlinePaymentActive?: boolean;
     isCashOnDeliveryActive?: boolean;
     instaPayAccount?: string;
     vodafoneCashNumber?: string;
@@ -69,13 +63,8 @@ export async function updatePaymentConfig(
 
   const updated: PaymentConfigDocument = {
     ...current,
-    fawaterakApiKey:
-      payload.fawaterakApiKey !== undefined ? payload.fawaterakApiKey.trim() : current.fawaterakApiKey,
-    fawaterakVendorKey:
-      payload.fawaterakVendorKey !== undefined ? payload.fawaterakVendorKey.trim() : current.fawaterakVendorKey,
-    fawaterakEnv: payload.fawaterakEnv || current.fawaterakEnv || 'staging',
-    isFawaterakActive:
-      payload.isFawaterakActive !== undefined ? payload.isFawaterakActive : (current.isFawaterakActive ?? true),
+    isOnlinePaymentActive:
+      payload.isOnlinePaymentActive !== undefined ? payload.isOnlinePaymentActive : (current.isOnlinePaymentActive ?? true),
     isCashOnDeliveryActive:
       payload.isCashOnDeliveryActive !== undefined ? payload.isCashOnDeliveryActive : (current.isCashOnDeliveryActive ?? true),
     instaPayAccount: payload.instaPayAccount?.trim() || current.instaPayAccount,
@@ -114,11 +103,11 @@ export async function updatePaymentConfig(
     actorId: admin.id,
     userName: admin.name,
     userRole: 'admin',
-    action: 'تحديث إعدادات بوابة الدفع وطرق الدفع',
+    action: 'تحديث إعدادات طرق الدفع والتحصيل',
     resource: 'إعدادات المنصة',
     resourceId: 'platform_payment_config',
     status: 'نجاح',
-    details: `قام المدير ${admin.name} بتحديث إعدادات بوابة فاتورتك (تفعيل: ${updated.isFawaterakActive ? 'نعم' : 'لا'}) والدفع عند الاستلام (تفعيل: ${updated.isCashOnDeliveryActive ? 'نعم' : 'لا'})`
+    details: `قام المدير ${admin.name} بتحديث إعدادات طرق الدفع (الدفع الإلكتروني: ${updated.isOnlinePaymentActive ? 'مفعل' : 'معطل'}، الدفع عند الاستلام: ${updated.isCashOnDeliveryActive ? 'مفعل' : 'معطل'})`
   });
 
   return updated;

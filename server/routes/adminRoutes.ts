@@ -1546,14 +1546,11 @@ router.get('/settings/payment', async (_req: AuthenticatedRequest, res: Response
   }
 });
 
-// PUT /api/admin/settings/payment - Update platform payment gateway & accounts configuration
+// PUT /api/admin/settings/payment - Update platform payment methods configuration
 router.put('/settings/payment', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const {
-      fawaterakApiKey,
-      fawaterakVendorKey,
-      fawaterakEnv,
-      isFawaterakActive,
+      isOnlinePaymentActive,
       isCashOnDeliveryActive,
       instaPayAccount,
       vodafoneCashNumber,
@@ -1564,10 +1561,7 @@ router.put('/settings/payment', async (req: AuthenticatedRequest, res: Response)
     } = req.body;
 
     const updated = await updatePaymentConfig(req.user!, {
-      fawaterakApiKey,
-      fawaterakVendorKey,
-      fawaterakEnv,
-      isFawaterakActive,
+      isOnlinePaymentActive,
       isCashOnDeliveryActive,
       instaPayAccount,
       vodafoneCashNumber,
@@ -1579,7 +1573,7 @@ router.put('/settings/payment', async (req: AuthenticatedRequest, res: Response)
 
     res.json({
       success: true,
-      message: 'تم تحديث إعدادات بوابة الدفع وطرق السداد بنجاح',
+      message: 'تم تحديث إعدادات طرق الدفع والتحصيل بنجاح',
       data: updated
     });
   } catch (error) {

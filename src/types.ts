@@ -191,22 +191,123 @@ export interface Order {
   createdAt: string;
   updatedAt: string;
   trackingNumber: string;
-  bostaDeliveryId?: string;
-  bostaTrackingNumber?: string;
-  bostaAwbUrl?: string;
-  bostaState?: string;
-  shippingProvider?: 'bosta' | 'saed_express' | string;
+  shippingProvider?: string;
+  shipmentId?: string;
+  shipmentStatus?: ShipmentStatus;
+  codCollectionStatus?: CODCollectionStatus;
+  sellerSettlementStatus?: SellerSettlementStatus;
   timeline: OrderTimelineItem[];
   sellerIds: string[];
 }
 
+export type ShipmentStatus =
+  | 'not_booked'
+  | 'booked'
+  | 'awaiting_pickup'
+  | 'picked_up'
+  | 'in_transit'
+  | 'out_for_delivery'
+  | 'delivered'
+  | 'failed'
+  | 'refused'
+  | 'returned'
+  | 'cancelled';
+
+export type CODCollectionStatus =
+  | 'not_applicable'
+  | 'pending_collection'
+  | 'collected_by_carrier'
+  | 'settled_to_seller'
+  | 'remitted_to_wah';
+
+export type SellerSettlementStatus =
+  | 'pending'
+  | 'ready_for_payout'
+  | 'requested'
+  | 'paid'
+  | 'on_hold';
+
+export interface ShippingCompany {
+  id: string;
+  name: string;
+  nameEn?: string;
+  code: string;
+  bookingMethod: 'external_booking' | 'carrier_api' | 'manual_dispatch';
+  trackingUrlTemplate?: string;
+  websiteUrl?: string;
+  contactPhone?: string;
+  supportEmail?: string;
+  coverageGovernorates: string[];
+  pickupTerms?: string;
+  notes?: string;
+  isActive: boolean;
+  isApproved: boolean;
+  approvedAt?: string;
+  approvedBy?: string;
+  hasApiIntegration: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface ShipmentTrackingEvent {
+  id: string;
+  status: ShipmentStatus;
+  title: string;
+  description: string;
+  location?: string;
+  timestamp: string;
+  actorId: string;
+  actorName: string;
+  actorRole: 'seller' | 'admin' | 'carrier_webhook' | 'system';
+  source: 'seller_portal' | 'admin_portal' | 'carrier_api' | 'system';
+  proofNote?: string;
+  proofDocumentUrl?: string;
+}
+
+export interface Shipment {
+  id: string;
+  orderId: string;
+  orderNumber: string;
+  sellerId: string;
+  sellerName: string;
+  sellerGovernorate: string;
+  buyerId: string;
+  buyerName: string;
+  buyerPhone: string;
+  shippingAddress: OrderAddress;
+  companyId: string;
+  companyName: string;
+  companyCode: string;
+  bookingMethod: 'external_booking' | 'carrier_api' | 'manual_dispatch';
+  trackingNumber: string;
+  shippingLabelRef?: string;
+  trackingUrl?: string;
+  actualShippingCost: number;
+  bookingDate: string;
+  handoverDate?: string;
+  estimatedDeliveryDate?: string;
+  actualDeliveryDate?: string;
+  status: ShipmentStatus;
+  paymentMethod: PaymentMethod;
+  paymentStatus: PaymentStatus;
+  codAmount: number;
+  codCollectionStatus: CODCollectionStatus;
+  sellerSettlementStatus: SellerSettlementStatus;
+  itemCount: number;
+  itemsSummary: string;
+  notes?: string;
+  failureReason?: string;
+  proofOfDeliveryNote?: string;
+  proofOfDeliveryUrl?: string;
+  isReshipment?: boolean;
+  events: ShipmentTrackingEvent[];
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string;
+}
+
 export interface ShippingConfig {
   id: string;
-  bostaApiKey: string;
-  bostaEnv: 'live' | 'staging';
-  isBostaActive: boolean;
-  bostaPickupLocationId?: string;
-  bostaPickupLocationName?: string;
   defaultPackageType?: 'Small' | 'Medium' | 'Large';
   freeShippingThreshold: number;
   upperEgyptShippingFee: number;
@@ -485,8 +586,12 @@ export interface AdminPayoutSummary {
 }
 
 export interface PaymentConfig {
-  instaPayAccount: string;
-  vodafoneCashNumber: string;
+  isOnlinePaymentActive?: boolean;
+  isCashOnDeliveryActive?: boolean;
+  isInstaPayActive?: boolean;
+  isVodafoneCashActive?: boolean;
+  instaPayAccount?: string;
+  vodafoneCashNumber?: string;
   instaPayInstructions?: string;
   vodafoneCashInstructions?: string;
   updatedAt?: string;

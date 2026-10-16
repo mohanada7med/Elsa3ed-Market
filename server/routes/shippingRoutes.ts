@@ -1,22 +1,26 @@
 import express from 'express';
 import type { Response } from 'express';
-import { requireAdmin, requireAuth, type AuthenticatedRequest } from '../middleware/auth.ts';
+import { requireAdmin, requireAuth, requireSeller, type AuthenticatedRequest } from '../middleware/auth.ts';
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
 import type { OrderDocument } from '../models/types.ts';
 import {
   getShippingConfig,
   updateShippingConfig,
-  getBostaPickupLocations,
-  createBostaShipment,
-  trackBostaShipment,
-  getBostaAwbPdf,
-  handleBostaWebhook
-} from '../services/bostaService.ts';
+  getApprovedShippingCompanies,
+  getAllShippingCompanies,
+  createShippingCompany,
+  updateShippingCompany,
+  getSellerShipments,
+  getSellerReadyOrders,
+  createShipment,
+  updateShipmentStatus,
+  getAdminShipments
+} from '../services/shippingService.ts';
 
 const router = express.Router();
 
 /**
- * GET /api/shipping/config - Get platform shipping & Bosta settings (Admin only)
+ * GET /api/shipping/config - Get platform shipping rates & rules (Admin only)
  */
 router.get('/config', requireAdmin, async (_req: AuthenticatedRequest, res: Response) => {
   try {
@@ -29,21 +33,21 @@ router.get('/config', requireAdmin, async (_req: AuthenticatedRequest, res: Resp
     console.error('[ShippingRoutes] Error getting shipping config:', error);
     res.status(500).json({
       success: false,
-      error: (error as Error).message || 'فشل في جلب إعدادات الشحن وبوسطة',
+      error: (error as Error).message || 'فشل في جلب إعدادات الشحن',
       code: 'SERVER_ERROR'
     });
   }
 });
 
 /**
- * PUT /api/shipping/config - Update platform shipping & Bosta settings (Admin only)
+ * PUT /api/shipping/config - Update platform shipping rates & rules (Admin only)
  */
 router.put('/config', requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const updated = await updateShippingConfig(req.user!, req.body);
     res.json({
       success: true,
-      message: 'تم تحديث إعدادات الشحن وربط بوسطة بنجاح',
+      message: 'تم تحديث إعدادات وأسعار الشحن بنجاح',
       data: updated
     });
   } catch (error) {
@@ -56,155 +60,276 @@ router.put('/config', requireAdmin, async (req: AuthenticatedRequest, res: Respo
   }
 });
 
-/**
- * GET /api/shipping/bosta/pickup-locations - Fetch Bosta configured pickup addresses (Admin only)
- */
-router.get('/bosta/pickup-locations', requireAdmin, async (_req: AuthenticatedRequest, res: Response) => {
-  try {
-    const result = await getBostaPickupLocations();
-    if (result.success) {
-      return res.json({
-        success: true,
-        data: result.list
-      });
-    }
+// =========================================================================
+// APPROVED SHIPPING COMPANIES (ADMIN MANAGEMENT & SELLER VIEW)
+// =========================================================================
 
-    return res.status(400).json({
-      success: false,
-      error: result.error || 'فشل جلب عناوين الاستلام من بوسطة',
-      code: 'BOSTA_API_ERROR'
+/**
+ * GET /api/shipping/companies - Active & approved shipping companies (Sellers & Public)
+ * Never exposes API keys, vendor credentials or internal secrets.
+ */
+router.get('/companies', async (_req: express.Request, res: Response) => {
+  try {
+    const companies = await getApprovedShippingCompanies();
+    res.json({
+      success: true,
+      count: companies.length,
+      data: companies
     });
-  } catch (error) {
-    console.error('[ShippingRoutes] Error fetching pickup locations:', error);
+  } catch (error: any) {
+    console.error('[ShippingRoutes] Error getting approved companies:', error);
     res.status(500).json({
       success: false,
-      error: (error as Error).message || 'خطأ في الاتصال بشركة بوسطة',
+      error: error?.message || 'فشل في جلب شركات الشحن المعتمدة',
       code: 'SERVER_ERROR'
     });
   }
 });
 
 /**
- * POST /api/shipping/bosta/create-shipment/:orderId - Create a shipment for an order on Bosta (Admin or Seller)
+ * GET /api/shipping/admin/companies - All companies including inactive (Admin only)
  */
-router.post('/bosta/create-shipment/:orderId', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+router.get('/admin/companies', requireAdmin, async (_req: AuthenticatedRequest, res: Response) => {
   try {
-    const { orderId } = req.params;
-    const { notes, allowSimulationFallback } = req.body;
-    const user = req.user!;
-
-    const { db, isMongo } = await getDatabase();
-    let order: OrderDocument | null = null;
-
-    if (isMongo && db) {
-      order = (await db.collection('orders').findOne({ id: orderId })) as unknown as OrderDocument | null;
-    }
-
-    if (!order) {
-      order = memoryDb.orders.find((o) => o.id === orderId) || null;
-    }
-
-    if (!order) {
-      return res.status(404).json({
-        success: false,
-        error: 'الطلب غير موجود',
-        code: 'NOT_FOUND'
-      });
-    }
-
-    // Role check: Only admin or the seller of this order can initiate shipping
-    const sellerId = user.sellerId || user.id;
-    if (user.role !== 'admin' && !order.sellerIds?.includes(sellerId)) {
-      return res.status(403).json({
-        success: false,
-        error: 'غير مصرح لك بإنشاء شحنة لهذا الطلب',
-        code: 'FORBIDDEN'
-      });
-    }
-
-    const result = await createBostaShipment(order, {
-      notes,
-      allowSimulationFallback: allowSimulationFallback !== false
-    });
-
+    const companies = await getAllShippingCompanies();
     res.json({
       success: true,
-      message: result.message,
-      data: {
-        trackingNumber: result.trackingNumber,
-        bostaDeliveryId: result.bostaDeliveryId,
-        awbUrl: result.awbUrl,
-        isSimulated: result.isSimulated,
-        order: result.order
-      }
+      count: companies.length,
+      data: companies
     });
-  } catch (error) {
-    console.error('[ShippingRoutes] Error creating Bosta shipment:', error);
+  } catch (error: any) {
+    console.error('[ShippingRoutes] Error getting all companies for admin:', error);
+    res.status(500).json({
+      success: false,
+      error: error?.message || 'فشل في جلب قائمة شركات الشحن',
+      code: 'SERVER_ERROR'
+    });
+  }
+});
+
+/**
+ * POST /api/shipping/admin/companies - Add new approved shipping company (Admin only)
+ */
+router.post('/admin/companies', requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const created = await createShippingCompany(req.user!, req.body);
+    res.status(201).json({
+      success: true,
+      message: `تم اعتماد شركة الشحن "${created.name}" بنجاح`,
+      data: created
+    });
+  } catch (error: any) {
+    console.error('[ShippingRoutes] Error creating shipping company:', error);
     res.status(400).json({
       success: false,
-      error: (error as Error).message || 'تعذر إصدار الشحنة عبر بوسطة',
-      code: 'BOSTA_SHIPMENT_FAILED'
+      error: error?.message || 'تعذر إضافة شركة الشحن',
+      code: 'VALIDATION_ERROR'
     });
   }
 });
 
 /**
- * GET /api/shipping/bosta/track/:trackingNumber - Real-time tracking of Bosta delivery
+ * PUT /api/shipping/admin/companies/:id - Update shipping company (Admin only)
  */
-router.get('/bosta/track/:trackingNumber', async (req: express.Request, res: Response) => {
+router.put('/admin/companies/:id', requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { trackingNumber } = req.params;
-    const result = await trackBostaShipment(trackingNumber);
+    const updated = await updateShippingCompany(req.user!, req.params.id, req.body);
+    res.json({
+      success: true,
+      message: 'تم تحديث بيانات وحالة شركة الشحن بنجاح',
+      data: updated
+    });
+  } catch (error: any) {
+    console.error('[ShippingRoutes] Error updating shipping company:', error);
+    res.status(400).json({
+      success: false,
+      error: error?.message || 'تعذر تحديث شركة الشحن',
+      code: 'UPDATE_ERROR'
+    });
+  }
+});
+
+// =========================================================================
+// ARTISAN SELLER SHIPMENT WORKFLOWS & MANAGEMENT
+// =========================================================================
+
+/**
+ * GET /api/shipping/seller/shipments - Seller's shipments with statistics and filters
+ */
+router.get('/seller/shipments', requireSeller, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const sellerId = req.user!.sellerId || req.user!.id;
+    const { search, status, companyId, paymentMethod, dateFrom, dateTo } = req.query;
+
+    const result = await getSellerShipments(sellerId, {
+      search: typeof search === 'string' ? search : undefined,
+      status: (typeof status === 'string' ? status : undefined) as any,
+      companyId: typeof companyId === 'string' ? companyId : undefined,
+      paymentMethod: typeof paymentMethod === 'string' ? paymentMethod : undefined,
+      dateFrom: typeof dateFrom === 'string' ? dateFrom : undefined,
+      dateTo: typeof dateTo === 'string' ? dateTo : undefined
+    });
 
     res.json({
       success: true,
-      data: result
+      data: result.shipments,
+      stats: result.stats
     });
-  } catch (error) {
-    console.error('[ShippingRoutes] Error tracking Bosta shipment:', error);
+  } catch (error: any) {
+    console.error('[ShippingRoutes] Error getting seller shipments:', error);
     res.status(500).json({
       success: false,
-      error: (error as Error).message || 'فشل جلب تفاصيل التتبع',
-      code: 'TRACKING_ERROR'
+      error: error?.message || 'فشل في جلب شحنات الورشة',
+      code: 'SERVER_ERROR'
     });
   }
 });
 
 /**
- * GET /api/shipping/bosta/awb/:identifier - Download or view AWB PDF for delivery/tracking
+ * GET /api/shipping/seller/ready-orders - Orders ready for shipment booking
  */
-router.get('/bosta/awb/:identifier', async (req: express.Request, res: Response) => {
+router.get('/seller/ready-orders', requireSeller, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { identifier } = req.params;
-    const result = await getBostaAwbPdf(identifier);
+    const sellerId = req.user!.sellerId || req.user!.id;
+    const readyOrders = await getSellerReadyOrders(sellerId);
+    res.json({
+      success: true,
+      count: readyOrders.length,
+      data: readyOrders
+    });
+  } catch (error: any) {
+    console.error('[ShippingRoutes] Error getting seller ready orders:', error);
+    res.status(500).json({
+      success: false,
+      error: error?.message || 'فشل في جلب الطلبات الجاهزة للشحن',
+      code: 'SERVER_ERROR'
+    });
+  }
+});
 
-    if (result.success && result.data) {
-      const pdfBuffer = Buffer.from(result.data, 'base64');
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `inline; filename="bosta-awb-${identifier}.pdf"`);
-      return res.send(pdfBuffer);
+/**
+ * POST /api/shipping/seller/shipments - Create/register a shipment for an order
+ */
+router.post('/seller/shipments', requireSeller, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const shipment = await createShipment(req.user!, req.body);
+    res.status(201).json({
+      success: true,
+      message: `تم تسجيل بوليصة الشحن بنجاح لدى ${shipment.companyName}`,
+      data: shipment
+    });
+  } catch (error: any) {
+    console.error('[ShippingRoutes] Error creating shipment:', error);
+    res.status(400).json({
+      success: false,
+      error: error?.message || 'تعذر تسجيل بيانات الشحنة',
+      code: 'SHIPMENT_CREATION_FAILED'
+    });
+  }
+});
+
+/**
+ * PUT /api/shipping/seller/shipments/:id/status - Update shipment lifecycle status
+ */
+router.put('/seller/shipments/:id/status', requireSeller, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { status, note, handoverDate, failureReason, proofOfDeliveryNote, proofOfDeliveryUrl } = req.body;
+
+    if (!status) {
+      return res.status(400).json({
+        success: false,
+        error: 'حالة الشحنة الجديدة مطلوبة',
+        code: 'VALIDATION_ERROR'
+      });
     }
 
-    // Fallback: redirect to public Bosta tracking portal if PDF is unavailable or simulated
-    return res.redirect(`https://bosta.co/tracking-shipment/?trackNumber=${encodeURIComponent(identifier)}`);
-  } catch (error) {
-    console.error('[ShippingRoutes] Error fetching Bosta AWB:', error);
-    res.redirect(`https://bosta.co/tracking-shipment/?trackNumber=${encodeURIComponent(req.params.identifier)}`);
+    const updatedShipment = await updateShipmentStatus(req.user!, req.params.id, status, {
+      note,
+      handoverDate,
+      failureReason,
+      proofOfDeliveryNote,
+      proofOfDeliveryUrl
+    });
+
+    res.json({
+      success: true,
+      message: 'تم تحديث مسار الشحنة بنجاح',
+      data: updatedShipment
+    });
+  } catch (error: any) {
+    console.error('[ShippingRoutes] Error updating shipment status:', error);
+    res.status(400).json({
+      success: false,
+      error: error?.message || 'تعذر تحديث حالة الشحنة',
+      code: 'STATUS_UPDATE_FAILED'
+    });
+  }
+});
+
+// =========================================================================
+// ADMIN SHIPMENTS SUPERVISION & EXCEPTION RESOLUTION
+// =========================================================================
+
+/**
+ * GET /api/shipping/admin/shipments - Platform-wide shipments list and analytics
+ */
+router.get('/admin/shipments', requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { search, status, companyId, paymentMethod } = req.query;
+    const result = await getAdminShipments({
+      search: typeof search === 'string' ? search : undefined,
+      status: (typeof status === 'string' ? status : undefined) as any,
+      companyId: typeof companyId === 'string' ? companyId : undefined,
+      paymentMethod: typeof paymentMethod === 'string' ? paymentMethod : undefined
+    });
+
+    res.json({
+      success: true,
+      data: result.shipments,
+      stats: result.stats
+    });
+  } catch (error: any) {
+    console.error('[ShippingRoutes] Error fetching admin shipments:', error);
+    res.status(500).json({
+      success: false,
+      error: error?.message || 'فشل في جلب شحنات المنصة',
+      code: 'SERVER_ERROR'
+    });
   }
 });
 
 /**
- * POST /api/shipping/bosta/webhook - Automated webhook endpoint for Bosta status updates
+ * PUT /api/shipping/admin/shipments/:id/status - Admin override of shipment status
  */
-router.post('/bosta/webhook', async (req: express.Request, res: Response) => {
+router.put('/admin/shipments/:id/status', requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const result = await handleBostaWebhook(req.body);
-    res.json(result);
-  } catch (error) {
-    console.error('[ShippingRoutes] Error handling Bosta webhook:', error);
-    res.status(500).json({
+    const { status, note, failureReason, proofOfDeliveryNote } = req.body;
+
+    if (!status) {
+      return res.status(400).json({
+        success: false,
+        error: 'الحالة الجديدة للشحنة مطلوبة',
+        code: 'VALIDATION_ERROR'
+      });
+    }
+
+    const updatedShipment = await updateShipmentStatus(req.user!, req.params.id, status, {
+      note,
+      failureReason,
+      proofOfDeliveryNote
+    });
+
+    res.json({
+      success: true,
+      message: 'تم تحديث حالة الشحنة من قبل إدارة المنصة بنجاح',
+      data: updatedShipment
+    });
+  } catch (error: any) {
+    console.error('[ShippingRoutes] Error admin updating shipment status:', error);
+    res.status(400).json({
       success: false,
-      error: (error as Error).message || 'خطأ في معالجة إشعار بوسطة'
+      error: error?.message || 'تعذر تحديث الشحنة',
+      code: 'ADMIN_UPDATE_FAILED'
     });
   }
 });
