@@ -206,8 +206,6 @@ export const HeroSection: React.FC = () => {
           />
 
           {/* اسم عم وه */}
-
-          {/* اسم عم وه */}
           <motion.div
             initial={{
               opacity: 0,
@@ -224,8 +222,8 @@ export const HeroSection: React.FC = () => {
             className="
     absolute
     bottom-5
-    -right-3
-    min-w-[210px]           /* 👈 زيادة العرض عبر حد أدنى مناسب للنصوص */
+    left-4
+    min-w-[200px]           /* 👈 زيادة العرض عبر حد أدنى مناسب للنصوص */
     rounded-full            /* ملحوظة: لو زادت الأسطر يمكنك تحويله إلى rounded-2xl */
     border
     border-white/15
