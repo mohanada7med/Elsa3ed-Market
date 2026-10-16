@@ -207,6 +207,7 @@ export const HeroSection: React.FC = () => {
 
           {/* اسم عم وه */}
 
+          {/* اسم عم وه */}
           <motion.div
             initial={{
               opacity: 0,
@@ -221,33 +222,35 @@ export const HeroSection: React.FC = () => {
               duration: 0.4,
             }}
             className="
-              absolute
-              bottom-5
-              -right-3
-              rounded-full
-              border
-              border-white/15
-              bg-black/45
-              px-3
-              py-1.5
-              shadow-lg
-              backdrop-blur-md
-            "
+    absolute
+    bottom-5
+    -right-3
+    min-w-[210px]           /* 👈 زيادة العرض عبر حد أدنى مناسب للنصوص */
+    rounded-full            /* ملحوظة: لو زادت الأسطر يمكنك تحويله إلى rounded-2xl */
+    border
+    border-white/15
+    bg-black/45
+    px-4                    /* 👈 وسّعنا الحشو الجانبي من px-3 إلى px-4 */
+    py-2                    /* تحسين طفيف في التباعد الرأسي */
+    shadow-lg
+    backdrop-blur-md
+  "
           >
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-1.5">
                 <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary shadow-[0_0_6px_rgba(255,255,255,0.35)]" />
 
-                <span className="text-[9px] font-black leading-tight text-white">
+                <span className="whitespace-nowrap text-[9px] font-black leading-tight text-white">
                   أهلاً بيك، أنا عم وه 👋
                 </span>
               </div>
 
-              <span className="pl-3 text-[8px] leading-relaxed text-white/55">
+              <span className="whitespace-nowrap pl-3 text-[8px] leading-relaxed text-white/55">
                 وهساعدك تكتشف حكايات الصعيد ومنتجاته
               </span>
             </div>
           </motion.div>
+
         </motion.div>
 
         {/* ===================================================== */}
