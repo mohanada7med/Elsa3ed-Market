@@ -1532,6 +1532,25 @@ export const api = {
     return json.data;
   },
 
+  async syncCart(
+    user: { id?: string; role?: string },
+    items: Array<{
+      productId: string;
+      quantity: number;
+      selectedColor?: string;
+      customNote?: string;
+    }>
+  ): Promise<any> {
+    const res = await fetch(`${API_BASE}/cart/sync`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify({ items })
+    });
+    const json: ApiResponse<any> = await res.json();
+    return json.data || null;
+  },
+
   // Order API
   async createOrder(
     user: { id?: string; role?: string },
@@ -1541,6 +1560,12 @@ export const api = {
       paymentReference?: string;
       discountCode?: string;
       notes?: string;
+      items?: Array<{
+        productId: string;
+        quantity: number;
+        selectedColor?: string;
+        customNote?: string;
+      }>;
     }
   ): Promise<any> {
     const res = await fetch(`${API_BASE}/orders`, {

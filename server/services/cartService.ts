@@ -344,3 +344,32 @@ export async function clearCart(buyerId: string): Promise<CartSummary> {
   await saveRawCart(rawCart);
   return getCart(buyerId);
 }
+
+/**
+ * Bulk synchronize or replace cart items for a buyer from client state
+ */
+export async function syncCart(
+  buyerId: string,
+  items: Array<{
+    productId: string;
+    quantity: number;
+    selectedColor?: string;
+    customNote?: string;
+  }>
+): Promise<CartSummary> {
+  const rawCart = await getRawCart(buyerId);
+  const now = new Date().toISOString();
+  rawCart.items = (items || [])
+    .filter((it) => it && it.productId && Number(it.quantity) > 0)
+    .map((it) => ({
+      productId: it.productId,
+      quantity: Math.max(1, Math.floor(Number(it.quantity))),
+      selectedColor: it.selectedColor,
+      customNote: it.customNote,
+      addedAt: now
+    }));
+
+  await saveRawCart(rawCart);
+  return getCart(buyerId);
+}
+

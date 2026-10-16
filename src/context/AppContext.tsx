@@ -1501,6 +1501,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
           setCart((prevCart) => {
             if (mappedItems.length === 0) {
+              if (prevCart.length > 0) {
+                const payload = prevCart.map((it) => ({
+                  productId: it.product.id,
+                  quantity: it.quantity,
+                  selectedColor: it.selectedColor,
+                  customNote: it.customNote
+                }));
+                api.syncCart({ id: currentUser.id, role: 'buyer' }, payload).catch((err) => {
+                  console.warn('[AppContext] Failed to sync local cart to remote:', err);
+                });
+              }
               return prevCart;
             }
             const map = new Map<string, CartItem>();
@@ -1509,12 +1520,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
                 map.set(item.product.id, item);
               }
             });
+            let hasNewLocalItems = false;
             prevCart.forEach((item) => {
               if (item.product?.id && !map.has(item.product.id)) {
                 map.set(item.product.id, item);
+                hasNewLocalItems = true;
               }
             });
             const merged = Array.from(map.values());
+            if (hasNewLocalItems) {
+              const payload = merged.map((it) => ({
+                productId: it.product.id,
+                quantity: it.quantity,
+                selectedColor: it.selectedColor,
+                customNote: it.customNote
+              }));
+              api.syncCart({ id: currentUser.id, role: 'buyer' }, payload).catch((err) => {
+                console.warn('[AppContext] Failed to sync merged cart to remote:', err);
+              });
+            }
             try {
               localStorage.setItem('saeed_cart', JSON.stringify(merged));
             } catch { }
@@ -1776,10 +1800,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const data = await api.login(identifier, pass);
     if (data && data.user) {
       setCurrentUser(data.user);
-      setCurrentRole(data.user.role || 'buyer');
+      const role = data.user.role || 'buyer';
+      setCurrentRole(role);
       setAuthState('AUTHENTICATED');
       setIsAuthModalOpen(false);
       addToast('تسجيل الدخول', `مرحباً بك يا ${data.user.username || data.user.name} في وه!`, 'success');
+
+      // Sync any local cart items to backend if buyer
+      if (role === 'buyer' && cart.length > 0) {
+        const payload = cart.map((it) => ({
+          productId: it.product.id,
+          quantity: it.quantity,
+          selectedColor: it.selectedColor,
+          customNote: it.customNote
+        }));
+        api.syncCart({ id: data.user.id, role: 'buyer' }, payload).catch((err) => {
+          console.warn('[AppContext] Failed to sync local cart upon login:', err);
+        });
+      }
 
       // توجيه المستخدم بعد تسجيل الدخول:
       // 1. لو كان داخل من خلال صفحة أو إجراء محدد (زي إتمام الشراء في السلة checkout أو الرسائل أو الحساب)
@@ -1834,9 +1872,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     if (data && data.user) {
       setCurrentUser(data.user);
-      setCurrentRole(data.user.role || 'buyer');
+      const role = data.user.role || 'buyer';
+      setCurrentRole(role);
       setAuthState('AUTHENTICATED');
       setIsAuthModalOpen(false);
+
+      // Sync any local cart items to backend if buyer
+      if (role === 'buyer' && cart.length > 0) {
+        const payload = cart.map((it) => ({
+          productId: it.product.id,
+          quantity: it.quantity,
+          selectedColor: it.selectedColor,
+          customNote: it.customNote
+        }));
+        api.syncCart({ id: data.user.id, role: 'buyer' }, payload).catch((err) => {
+          console.warn('[AppContext] Failed to sync local cart upon registration:', err);
+        });
+      }
+
       const isPendingSeller = data.user.sellerStatus === 'pending' || params.role === 'seller';
       addToast(
         'إنشاء الحساب',
@@ -2066,6 +2119,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const clearCart = async () => {
     setCart([]);
     setAppliedDiscount(null);
+    try {
+      localStorage.removeItem('saeed_cart');
+    } catch { }
 
     if (isAuthenticated && currentRole === 'buyer') {
       try {
@@ -2786,6 +2842,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     paymentReference?: string;
     notes?: string;
   }): Promise<Order> => {
+    if (cart.length === 0) {
+      throw new Error('سلة المشتريات فارغة، لا يمكن إتمام الطلب');
+    }
+
     const resolvedAddress = {
       fullName: orderData.buyerName || orderData.address?.fullName || orderData.address?.buyerName || currentUser.name || 'عميل وه',
       phone: orderData.buyerPhone || orderData.address?.phone || orderData.address?.buyerPhone || currentUser.phone || '01000000000',
@@ -2796,6 +2856,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       notes: orderData.notes || orderData.address?.notes || ''
     };
 
+    const cartPayloadItems = cart.map((item) => ({
+      productId: item.product.id,
+      quantity: item.quantity,
+      selectedColor: item.selectedColor,
+      customNote: item.customNote
+    }));
+
+    // Pre-sync cart to server so persistent cart session matches frontend state
+    if (isAuthenticated && currentRole === 'buyer' && currentUser.id) {
+      try {
+        await api.syncCart({ id: currentUser.id, role: 'buyer' }, cartPayloadItems);
+      } catch (syncErr) {
+        console.warn('[AppContext] Pre-sync cart before order creation notice:', syncErr);
+      }
+    }
+
     try {
       const createdOrder = await api.createOrder(
         { id: currentUser.id, role: currentRole },
@@ -2804,7 +2880,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           paymentMethod: orderData.paymentMethod,
           paymentReference: orderData.paymentReference,
           discountCode: appliedDiscount?.code,
-          notes: orderData.notes
+          notes: orderData.notes,
+          items: cartPayloadItems
         }
       );
 

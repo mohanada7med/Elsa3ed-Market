@@ -7,7 +7,8 @@ import {
   addToCart,
   updateCartItemQuantity,
   removeCartItem,
-  clearCart
+  clearCart,
+  syncCart
 } from '../services/cartService.ts';
 
 const router = express.Router();
@@ -173,10 +174,51 @@ router.patch('/items/:productId', async (req: AuthenticatedRequest, res: Respons
   }
 });
 
+// POST /api/cart/sync - Bulk synchronize cart items from frontend
+router.post('/sync', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const buyerId = req.user!.id;
+    const { items } = req.body;
+
+    if (!Array.isArray(items)) {
+      return res.status(400).json({
+        success: false,
+        error: 'عناصر السلة غير صالحة للمزامنة',
+        code: 'VALIDATION_ERROR'
+      });
+    }
+
+    const updatedCart = await syncCart(buyerId, items);
+
+    res.json({
+      success: true,
+      message: 'تمت مزامنة سلة المشتريات بنجاح',
+      data: updatedCart
+    });
+  } catch (error) {
+    console.error('Error syncing cart:', error);
+    res.status(400).json({
+      success: false,
+      error: (error as Error).message || 'تعذر مزامنة السلة',
+      code: 'CART_ERROR'
+    });
+  }
+});
+
 // PUT & PATCH /api/cart - Bulk or single body update
 const bulkOrBodyUpdateHandler = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const buyerId = req.user!.id;
+
+    if (Array.isArray(req.body.items)) {
+      const updatedCart = await syncCart(buyerId, req.body.items);
+      return res.json({
+        success: true,
+        message: 'تمت مزامنة سلة المشتريات بنجاح',
+        data: updatedCart
+      });
+    }
+
     const { productId, quantity } = req.body;
 
     if (!productId || quantity === undefined || isNaN(Number(quantity))) {

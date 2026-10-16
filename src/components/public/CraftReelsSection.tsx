@@ -487,7 +487,7 @@ export const CraftReelsSection: React.FC = () => {
       } else if (e.key === ' ') {
         e.preventDefault();
         togglePlayback();
-      } else if (e.key.toLowerCase() === 'm') {
+      } else if (typeof e.key === 'string' && e.key.toLowerCase() === 'm') {
         toggleSound();
       }
     };

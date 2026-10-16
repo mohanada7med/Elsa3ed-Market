@@ -65,7 +65,7 @@ export const CheckoutPage: React.FC = () => {
   };
 
   // حالة السلة الفارغة
-  if (cart.length === 0 && !completedOrder) {
+  if (cart.length === 0 && !completedOrder && !isSubmitting) {
     return (
       <div dir="rtl" className="min-h-[75vh] flex items-center justify-center max-w-4xl mx-auto px-4 py-16">
         <div className="relative w-full max-w-md p-10 text-center bg-white/90 dark:bg-espresso-900/90 backdrop-blur-2xl rounded-3xl border border-black/5 dark:border-white/10 shadow-2xl space-y-6">

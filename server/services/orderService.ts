@@ -9,7 +9,7 @@ import type {
   ProductDocument
 } from '../models/types.ts';
 import type { AuthenticatedUser } from '../middleware/auth.ts';
-import { getCart, clearCart } from './cartService.ts';
+import { getCart, clearCart, syncCart } from './cartService.ts';
 import { incrementCouponUsage } from './discountService.ts';
 import { addAuditLog } from './auditService.ts';
 import { createNotification, resolveSellerUserId } from './notificationService.ts';
@@ -20,6 +20,12 @@ export interface CreateOrderInput {
   discountCode?: string;
   notes?: string;
   paymentReference?: string;
+  items?: Array<{
+    productId: string;
+    quantity: number;
+    selectedColor?: string;
+    customNote?: string;
+  }>;
 }
 
 /**
@@ -29,7 +35,7 @@ export async function createOrder(
   buyer: AuthenticatedUser,
   input: CreateOrderInput
 ): Promise<OrderDocument> {
-  const { shippingAddress, paymentMethod, discountCode, notes, paymentReference } = input;
+  const { shippingAddress, paymentMethod, discountCode, notes, paymentReference, items } = input;
 
   // 1. Validate shipping address fields
   if (!shippingAddress.fullName || !shippingAddress.fullName.trim()) {
@@ -46,7 +52,13 @@ export async function createOrder(
   }
 
   // 2. Fetch buyer's validated cart
-  const cartSummary = await getCart(buyer.id, discountCode, shippingAddress.governorate);
+  let cartSummary = await getCart(buyer.id, discountCode, shippingAddress.governorate);
+
+  // If server-side cart is empty but request payload provided items (e.g. client cart session), synchronize them
+  if (cartSummary.items.length === 0 && items && items.length > 0) {
+    await syncCart(buyer.id, items);
+    cartSummary = await getCart(buyer.id, discountCode, shippingAddress.governorate);
+  }
 
   if (cartSummary.items.length === 0) {
     throw new Error('سلة المشتريات فارغة، لا يمكن إتمام الطلب');

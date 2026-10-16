@@ -17,7 +17,7 @@ router.use(requireBuyer);
 // POST /api/orders - Place a new order
 router.post('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { shippingAddress, paymentMethod, discountCode, notes, paymentReference } = req.body;
+    const { shippingAddress, paymentMethod, discountCode, notes, paymentReference, items } = req.body;
 
     if (!shippingAddress) {
       return res.status(400).json({
@@ -40,7 +40,8 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
       paymentMethod,
       discountCode,
       notes,
-      paymentReference
+      paymentReference,
+      items
     });
 
     res.status(201).json({
