@@ -329,25 +329,10 @@ export const HelpAndContactPage: React.FC = () => {
               </p>
             </div>
             <div className="mt-4 pt-3 border-t border-black/5 dark:border-white/10 flex items-center justify-between text-xs font-bold text-blue-600 dark:text-blue-400">
-              <span dir="ltr">support@wah-saeed.com</span>
+              <span dir="ltr">waaah.site@gmail.com</span>
               <Send className="w-3.5 h-3.5" />
             </div>
           </a>
-        </div>
-
-        {/* Upper Egypt Centers Ribbon */}
-        <div className="mt-4 p-4 rounded-2xl bg-white/80 dark:bg-[#26160D]/80 backdrop-blur-sm border border-[#C99444]/25 flex flex-wrap items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-2.5 text-[#3B1E0E] dark:text-[#FFF9EE]">
-            <MapPin className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
-            <span className="font-bold">مراكز ومقرات وَه في محافظات الصعيد:</span>
-            <span className="text-[#8C6F53] dark:text-[#D6C6B1]">
-              الأقصر (الكورنيش) • أسوان (غرب سهيل) • قنا (نقادة وقوص) • القاهرة (ديوان التوزيع)
-            </span>
-          </div>
-          <div className="inline-flex items-center gap-1 text-[11px] text-primary dark:text-primary-hover font-bold">
-            <Compass className="w-3.5 h-3.5" />
-            <span>الصعيد كله بلدنا</span>
-          </div>
         </div>
       </section>
 
@@ -673,14 +658,14 @@ export const HelpAndContactPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActivePage('privacy')}
-                  className="px-3 py-1.5 rounded-lg bg-white dark:bg-[#3B1E0E] border border-black/10 dark:border-white/15 text-primary hover:border-primary font-bold transition-colors cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl bg-primary hover:bg-[#B37A2B] text-white text-xs font-bold transition-all shrink-0 cursor-pointer shadow-sm active:scale-95 flex items-center gap-2"
                 >
                   سياسة الخصوصية
                 </button>
                 <button
                   type="button"
                   onClick={() => setActivePage('terms')}
-                  className="px-3 py-1.5 rounded-lg bg-white dark:bg-[#3B1E0E] border border-black/10 dark:border-white/15 text-primary hover:border-primary font-bold transition-colors cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl bg-primary hover:bg-[#B37A2B] text-white text-xs font-bold transition-all shrink-0 cursor-pointer shadow-sm active:scale-95 flex items-center gap-2"
                 >
                   الشروط والأحكام
                 </button>

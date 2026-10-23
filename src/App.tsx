@@ -60,6 +60,7 @@ import { ForbiddenPage } from './components/pages/ForbiddenPage';
 import { NotFoundPage } from './components/pages/NotFoundPage';
 import { ResetPasswordPage } from './components/pages/ResetPasswordPage';
 import { AmWahSupportButton } from './components/common/AmWahSupportButton';
+import { MessageCircle, UserRound } from 'lucide-react';
 
 // High-performance code-splitting: Heavy non-home views loaded on-demand
 const CheckoutPage = lazyWithRetry(() =>
@@ -458,8 +459,8 @@ const MainContent: React.FC = () => {
                   <ChatView isSellerMode={currentRole === 'seller'} />
                 ) : (
                   <div className="max-w-md mx-auto my-16 p-8 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xl text-center space-y-4">
-                    <div className="w-16 h-16 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-primary-hover flex items-center justify-center mx-auto text-2xl">
-                      💬
+                    <div className="w-16 h-16 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-primary-hover flex items-center justify-center mx-auto">
+                      <MessageCircle size={30} strokeWidth={1.7} />
                     </div>
                     <h2 className="text-xl font-bold text-stone-900 dark:text-stone-100">مراسلة إدارة منصة وه (الدعم الفني)</h2>
                     <p className="text-sm text-stone-500 dark:text-stone-400 leading-relaxed">
@@ -486,8 +487,8 @@ const MainContent: React.FC = () => {
                   <BuyerAccountPage />
                 ) : (
                   <div className="max-w-md mx-auto my-16 p-8 bg-white/80 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 shadow-xl text-center space-y-4">
-                    <div className="w-16 h-16 rounded-2xl bg-primary/15 text-primary dark:text-primary-hover flex items-center justify-center mx-auto text-2xl border border-primary/20">
-                      👤
+                    <div className="w-16 h-16 rounded-2xl bg-primary/15 text-primary dark:text-primary-hover flex items-center justify-center mx-auto border border-primary/20">
+                      <UserRound size={30} strokeWidth={1.7} />
                     </div>
                     <h2 className="text-xl font-bold text-espresso dark:text-cream">إعدادات الحساب الشخصي</h2>
                     <p className="text-sm text-black/60 dark:text-white/60 leading-relaxed">
