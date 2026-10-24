@@ -33,7 +33,7 @@ router.get('/stream', requireAuth, (req: AuthenticatedRequest, res: Response) =>
  * 2. GET /api/chat/unread-count
  * Returns the total unread messages count for current user
  */
-router.get('/unread-count', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+router.get('/unread-count', async (req: AuthenticatedRequest, res: Response) => {
   try {
     if (!req.user) {
       return res.json({ success: true, unreadCount: 0 });
