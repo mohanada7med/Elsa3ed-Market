@@ -421,8 +421,8 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                 type="button"
                 onClick={() => setMobileTab('form')}
                 className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer min-h-[40px] ${mobileTab === 'form'
-                    ? 'bg-white dark:bg-[#26160D] text-primary dark:text-[#E66A2E] shadow-xs'
-                    : 'text-black/60 dark:text-white/60 dark:text-[#D6C6B1]'
+                  ? 'bg-white dark:bg-[#26160D] text-primary dark:text-[#E66A2E] shadow-xs'
+                  : 'text-black/60 dark:text-white/60 dark:text-[#D6C6B1]'
                   }`}
               >
                 <Layers className="w-3.5 h-3.5" />
@@ -432,8 +432,8 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                 type="button"
                 onClick={() => setMobileTab('preview')}
                 className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer min-h-[40px] ${mobileTab === 'preview'
-                    ? 'bg-white dark:bg-[#26160D] text-primary dark:text-[#E66A2E] shadow-xs'
-                    : 'text-black/60 dark:text-white/60 dark:text-[#D6C6B1]'
+                  ? 'bg-white dark:bg-[#26160D] text-primary dark:text-[#E66A2E] shadow-xs'
+                  : 'text-black/60 dark:text-white/60 dark:text-[#D6C6B1]'
                   }`}
               >
                 <Eye className="w-3.5 h-3.5" />
@@ -465,8 +465,8 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                         type="button"
                         onClick={() => setSourceType('upload')}
                         className={`py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl sm:rounded-2xl border text-[11px] sm:text-xs font-bold flex flex-col items-center gap-1 transition-all cursor-pointer min-h-[44px] justify-center ${sourceType === 'upload'
-                            ? 'border-primary bg-primary/10 text-primary dark:text-[#E66A2E] shadow-xs'
-                            : 'border-black/10 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#26160D]'
+                          ? 'border-primary bg-primary/10 text-primary dark:text-[#E66A2E] shadow-xs'
+                          : 'border-black/10 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#26160D]'
                           }`}
                       >
                         <Upload className="w-4 h-4" />
@@ -477,8 +477,8 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                         type="button"
                         onClick={() => setSourceType('url')}
                         className={`py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl sm:rounded-2xl border text-[11px] sm:text-xs font-bold flex flex-col items-center gap-1 transition-all cursor-pointer min-h-[44px] justify-center ${sourceType === 'url'
-                            ? 'border-primary bg-primary/10 text-primary dark:text-[#E66A2E] shadow-xs'
-                            : 'border-black/10 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#26160D]'
+                          ? 'border-primary bg-primary/10 text-primary dark:text-[#E66A2E] shadow-xs'
+                          : 'border-black/10 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#26160D]'
                           }`}
                       >
                         <LinkIcon className="w-4 h-4" />
@@ -489,8 +489,8 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                         type="button"
                         onClick={() => setSourceType('preset')}
                         className={`py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl sm:rounded-2xl border text-[11px] sm:text-xs font-bold flex flex-col items-center gap-1 transition-all cursor-pointer min-h-[44px] justify-center ${sourceType === 'preset'
-                            ? 'border-primary bg-primary/10 text-primary dark:text-[#E66A2E] shadow-xs'
-                            : 'border-black/10 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#26160D]'
+                          ? 'border-primary bg-primary/10 text-primary dark:text-[#E66A2E] shadow-xs'
+                          : 'border-black/10 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#26160D]'
                           }`}
                       >
                         <Sparkles className="w-4 h-4 text-amber-500" />
@@ -574,8 +574,8 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                             type="button"
                             onClick={() => handleSelectPreset(preset)}
                             className={`p-2.5 rounded-2xl border text-right transition-all flex items-center gap-2 cursor-pointer ${videoUrl === preset.videoUrl
-                                ? 'border-primary bg-primary/10 text-primary dark:text-[#E66A2E]'
-                                : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-cream/5 text-espresso dark:text-cream hover:border-primary/50'
+                              ? 'border-primary bg-primary/10 text-primary dark:text-[#E66A2E]'
+                              : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-cream/5 text-espresso dark:text-cream hover:border-primary/50'
                               }`}
                           >
                             <span className="text-lg">{preset.emoji || '🎬'}</span>
@@ -589,14 +589,16 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                     )}
                   </div>
 
+
                   {/* Step 2: Content Details */}
-                  <div className="space-y-3 pt-2 border-t border-black/10 dark:border-white/10">
-                    <label className="block text-xs sm:text-sm font-bold text-espresso dark:text-cream">
+                  <div className="space-y-3 pt-3 border-t border-[#E0C79B] dark:border-[#6B3A1F]">
+                    <label className="block text-xs sm:text-sm font-bold text-[#3B1E0E] dark:text-[#F8EBD7]">
                       ٢. تفاصيل وحكاية المقطع (Upper Egypt Content)
                     </label>
 
+                    {/* Video Title */}
                     <div>
-                      <label className="text-[11px] text-gray-500 dark:text-gray-400 block mb-1">
+                      <label className="text-[11px] text-[#796451] dark:text-[#C7B49D] block mb-1.5">
                         عنوان الفيديو أو الحكاية:
                       </label>
                       <input
@@ -604,19 +606,20 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         placeholder="مثال: جولة في سوق الخميس الأسبوعي بمدينة إسنا"
-                        className="w-full px-3 py-2.5 bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 rounded-xl text-xs sm:text-sm text-espresso dark:text-cream outline-none focus:border-primary"
+                        className="w-full px-3 py-2.5 bg-white dark:bg-[#26160D] border border-[#E0C79B] dark:border-[#6B3A1F] rounded-xl text-xs sm:text-sm text-[#3B1E0E] dark:text-[#F8EBD7] placeholder:text-[#A18C76] dark:placeholder:text-[#9E8772] outline-none transition-all duration-200 focus:border-[#C99444] focus:ring-2 focus:ring-[#C99444]/20"
                       />
                     </div>
 
+                    {/* Content Type & Governorate */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
-                        <label className="text-[11px] text-gray-500 dark:text-gray-400 block mb-1">
+                        <label className="text-[11px] text-[#796451] dark:text-[#C7B49D] block mb-1.5">
                           تصنيف المحتوى (Content Type):
                         </label>
                         <select
                           value={contentType}
                           onChange={(e) => setContentType(e.target.value)}
-                          className="w-full px-3 py-2.5 bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 rounded-xl text-xs font-bold text-espresso dark:text-cream outline-none focus:border-primary"
+                          className="w-full px-3 py-2.5 bg-white dark:bg-[#26160D] border border-[#E0C79B] dark:border-[#6B3A1F] rounded-xl text-xs sm:text-sm font-bold text-[#3B1E0E] dark:text-[#F8EBD7] outline-none transition-all duration-200 focus:border-[#C99444] focus:ring-2 focus:ring-[#C99444]/20 [&>option]:bg-white [&>option]:text-[#3B1E0E] dark:[&>option]:bg-[#26160D] dark:[&>option]:text-[#F8EBD7]"
                         >
                           <option value="places">أماكن ومعالم (Places & Landmarks)</option>
                           <option value="crafts">حرف وصناعات (Crafts & Industries)</option>
@@ -631,13 +634,13 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                       </div>
 
                       <div>
-                        <label className="text-[11px] text-gray-500 dark:text-gray-400 block mb-1">
+                        <label className="text-[11px] text-[#796451] dark:text-[#C7B49D] block mb-1.5">
                           المحافظة:
                         </label>
                         <select
                           value={governorate}
                           onChange={(e) => setGovernorate(e.target.value as Governorate)}
-                          className="w-full px-3 py-2.5 bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 rounded-xl text-xs font-medium text-espresso dark:text-cream outline-none focus:border-primary"
+                          className="w-full px-3 py-2.5 bg-white dark:bg-[#26160D] border border-[#E0C79B] dark:border-[#6B3A1F] rounded-xl text-xs sm:text-sm font-medium text-[#3B1E0E] dark:text-[#F8EBD7] outline-none transition-all duration-200 focus:border-[#C99444] focus:ring-2 focus:ring-[#C99444]/20 [&>option]:bg-white [&>option]:text-[#3B1E0E] dark:[&>option]:bg-[#26160D] dark:[&>option]:text-[#F8EBD7]"
                         >
                           <option value="قنا">قنا</option>
                           <option value="سوهاج">سوهاج</option>
@@ -653,9 +656,10 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                       </div>
                     </div>
 
+                    {/* Location & Hashtags */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
-                        <label className="text-[11px] text-gray-500 dark:text-gray-400 block mb-1">
+                        <label className="text-[11px] text-[#796451] dark:text-[#C7B49D] block mb-1.5">
                           الموقع / المكان بالتحديد (اختياري):
                         </label>
                         <input
@@ -663,12 +667,12 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                           value={location}
                           onChange={(e) => setLocation(e.target.value)}
                           placeholder="مثال: معبد حتشبسوت، قرية تونس، سوق إسنا..."
-                          className="w-full px-3 py-2.5 bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 rounded-xl text-xs text-espresso dark:text-cream outline-none focus:border-primary"
+                          className="w-full px-3 py-2.5 bg-white dark:bg-[#26160D] border border-[#E0C79B] dark:border-[#6B3A1F] rounded-xl text-xs sm:text-sm text-[#3B1E0E] dark:text-[#F8EBD7] placeholder:text-[#A18C76] dark:placeholder:text-[#9E8772] outline-none transition-all duration-200 focus:border-[#C99444] focus:ring-2 focus:ring-[#C99444]/20"
                         />
                       </div>
 
                       <div>
-                        <label className="text-[11px] text-gray-500 dark:text-gray-400 block mb-1">
+                        <label className="text-[11px] text-[#796451] dark:text-[#C7B49D] block mb-1.5">
                           الوسوم والهاشتاج (Hashtags):
                         </label>
                         <input
@@ -676,59 +680,66 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                           value={hashtagsStr}
                           onChange={(e) => setHashtagsStr(e.target.value)}
                           placeholder="#الصعيد, #وه_Stories, #أماكن_مصر"
-                          className="w-full px-3 py-2.5 bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 rounded-xl text-xs text-espresso dark:text-cream outline-none focus:border-primary"
+                          className="w-full px-3 py-2.5 bg-white dark:bg-[#26160D] border border-[#E0C79B] dark:border-[#6B3A1F] rounded-xl text-xs sm:text-sm text-[#3B1E0E] dark:text-[#F8EBD7] placeholder:text-[#A18C76] dark:placeholder:text-[#9E8772] outline-none transition-all duration-200 focus:border-[#C99444] focus:ring-2 focus:ring-[#C99444]/20"
                         />
                       </div>
                     </div>
 
+                    {/* Description */}
                     <div>
-                      <label className="text-[11px] text-gray-500 dark:text-gray-400 block mb-1">
+                      <label className="text-[11px] text-[#796451] dark:text-[#C7B49D] block mb-1.5">
                         وصف الحكاية أو الفيديو:
                       </label>
                       <textarea
-                        rows={2}
+                        rows={3}
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                         placeholder="اكتب نبذة شيقة وموجزة عن المكان، التجربة، أو الحكاية..."
-                        className="w-full px-3 py-2.5 bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 rounded-xl text-xs text-espresso dark:text-cream outline-none focus:border-primary"
+                        className="w-full px-3 py-2.5 bg-white dark:bg-[#26160D] border border-[#E0C79B] dark:border-[#6B3A1F] rounded-xl text-xs sm:text-sm text-[#3B1E0E] dark:text-[#F8EBD7] placeholder:text-[#A18C76] dark:placeholder:text-[#9E8772] outline-none resize-y transition-all duration-200 focus:border-[#C99444] focus:ring-2 focus:ring-[#C99444]/20"
                       />
                     </div>
                   </div>
 
                   {/* Step 3: Optional Linked Product */}
-                  <div className="space-y-3 pt-2 border-t border-black/10 dark:border-white/10">
-                    <div className="flex items-center justify-between">
-                      <label className="block text-xs sm:text-sm font-bold text-espresso dark:text-cream">
+                  <div className="space-y-3 pt-3 border-t border-[#E0C79B] dark:border-[#6B3A1F]">
+                    <div className="flex items-center justify-between gap-2">
+                      <label className="block text-xs sm:text-sm font-bold text-[#3B1E0E] dark:text-[#F8EBD7]">
                         ٣. ربط بمنتج (اختياري تماماً)
                       </label>
-                      <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-full">
+
+                      <span className="shrink-0 text-[10px] text-emerald-700 dark:text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-600/15">
                         غير إجباري
                       </span>
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[11px] text-gray-500 dark:text-gray-400 block">
+                      <label className="text-[11px] text-[#796451] dark:text-[#C7B49D] block">
                         هل ترغب بربط الفيديو بمنتج للشراء المباشر؟
                       </label>
+
                       <select
                         value={selectedProductId}
                         onChange={(e) => setSelectedProductId(e.target.value)}
-                        className="w-full px-3 py-2.5 bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 rounded-xl text-xs text-espresso dark:text-cream outline-none focus:border-primary font-bold"
+                        className="w-full px-3 py-2.5 bg-white dark:bg-[#26160D] border border-[#E0C79B] dark:border-[#6B3A1F] rounded-xl text-xs sm:text-sm font-bold text-[#3B1E0E] dark:text-[#F8EBD7] outline-none transition-all duration-200 focus:border-[#C99444] focus:ring-2 focus:ring-[#C99444]/20 [&>option]:bg-white [&>option]:text-[#3B1E0E] dark:[&>option]:bg-[#26160D] dark:[&>option]:text-[#F8EBD7]"
                       >
-                        <option value="none">✨ بدون ربط بمنتج (محتوى مرئي وثقافي فقط)</option>
-                        <option value="custom">✏️ إدخال منتج معروض يدوياً</option>
+                        <option value="none">
+                          بدون ربط بمنتج (محتوى مرئي وثقافي فقط)
+                        </option>
+                        <option value="custom">
+                          إدخال منتج معروض يدوياً
+                        </option>
                         {sellerProducts.map((prod) => (
                           <option key={prod.id} value={prod.id}>
-                            🛍️ {prod.title} — ({prod.price} ج.م)
+                            {prod.title} — ({prod.price} ج.م)
                           </option>
                         ))}
                       </select>
                     </div>
 
                     {selectedProductId === 'custom' && (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-black/5 dark:bg-cream/5 rounded-2xl border border-black/10 dark:border-white/10">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 sm:p-4 bg-[#F3E2C5] dark:bg-[#32190C] rounded-2xl border border-[#E0C79B] dark:border-[#6B3A1F] animate-in fade-in duration-200">
                         <div className="sm:col-span-2">
-                          <label className="text-[11px] font-bold text-[#2D2A26] dark:text-gray-300 block mb-1">
+                          <label className="text-[11px] font-bold text-[#3B1E0E] dark:text-[#E8D4B4] block mb-1.5">
                             اسم المنتج المعروض:
                           </label>
                           <input
@@ -736,36 +747,39 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                             value={productTitle}
                             onChange={(e) => setProductTitle(e.target.value)}
                             placeholder="مثال: طاجن فخار قناوي حراري مزجج"
-                            className="w-full px-3 py-2 bg-white dark:bg-[#26160D] border border-black/10 dark:border-white/10 rounded-xl text-xs text-espresso dark:text-cream outline-none focus:border-primary"
+                            className="w-full px-3 py-2.5 bg-white dark:bg-[#26160D] border border-[#E0C79B] dark:border-[#6B3A1F] rounded-xl text-xs sm:text-sm text-[#3B1E0E] dark:text-[#F8EBD7] placeholder:text-[#A18C76] dark:placeholder:text-[#9E8772] outline-none transition-all duration-200 focus:border-[#C99444] focus:ring-2 focus:ring-[#C99444]/20"
                           />
                         </div>
 
                         <div>
-                          <label className="text-[11px] font-bold text-[#2D2A26] dark:text-gray-300 block mb-1">
+                          <label className="text-[11px] font-bold text-[#3B1E0E] dark:text-[#E8D4B4] block mb-1.5">
                             السعر (ج.م):
                           </label>
                           <input
                             type="number"
+                            min="0"
                             value={productPrice}
                             onChange={(e) => setProductPrice(Number(e.target.value))}
-                            className="w-full px-3 py-2 bg-white dark:bg-[#26160D] border border-black/10 dark:border-white/10 rounded-xl text-xs font-bold text-primary outline-none focus:border-primary"
+                            className="w-full px-3 py-2.5 bg-white dark:bg-[#26160D] border border-[#E0C79B] dark:border-[#6B3A1F] rounded-xl text-xs sm:text-sm font-bold text-[#8A5B18] dark:text-[#E5B85C] outline-none transition-all duration-200 focus:border-[#C99444] focus:ring-2 focus:ring-[#C99444]/20"
                           />
                         </div>
 
                         <div>
-                          <label className="text-[11px] font-bold text-[#2D2A26] dark:text-gray-300 block mb-1">
+                          <label className="text-[11px] font-bold text-[#3B1E0E] dark:text-[#E8D4B4] block mb-1.5">
                             السعر قبل الخصم (اختياري):
                           </label>
                           <input
                             type="number"
+                            min="0"
                             value={productOriginalPrice}
                             onChange={(e) => setProductOriginalPrice(Number(e.target.value))}
-                            className="w-full px-3 py-2 bg-white dark:bg-[#26160D] border border-black/10 dark:border-white/10 rounded-xl text-xs text-gray-500 outline-none focus:border-primary"
+                            className="w-full px-3 py-2.5 bg-white dark:bg-[#26160D] border border-[#E0C79B] dark:border-[#6B3A1F] rounded-xl text-xs sm:text-sm text-[#796451] dark:text-[#C7B49D] outline-none transition-all duration-200 focus:border-[#C99444] focus:ring-2 focus:ring-[#C99444]/20"
                           />
                         </div>
                       </div>
                     )}
                   </div>
+
                 </div>
 
                 {/* Right Column: Live Interactive 9:16 Feed Preview Mockup */}
@@ -858,7 +872,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                     </div>
                   </div>
                 </div>
-              </div>dark:bg-cream
+              </div>
 
               {/* Action Buttons Footer */}
               <div className="w-full flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 pt-4 sm:pt-6 border-t border-black/10 dark:border-white/10 mt-6">
