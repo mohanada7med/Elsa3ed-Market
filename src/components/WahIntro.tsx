@@ -277,7 +277,7 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                             }`}
                     >
                         <h1 className="font-main text-2xl tracking-tight text-[#3B1E0E] dark:text-[#FFF9EE] sm:text-3xl">
-                            دوس على <span className="text-primary">وَه</span>
+                            دوس على <span className="text-primary">اللوجو</span>
                         </h1>
                         <br />
                         <p className="mt-1.5 text-xs sm:text-sm font-semibold text-[#806f5b]/80 dark:text-[#a89988]">

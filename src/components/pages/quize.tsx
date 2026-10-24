@@ -40,7 +40,7 @@ interface QuizQuestion {
 }
 
 const WAH_INTRO_AUDIO_URL = '/audio/site-intro.mp3';
-export const TOTAL_QUIZ_TIME = 60;
+export const TOTAL_QUIZ_TIME = 90;
 
 // Singleton AudioContext لمنع تسريب الذاكرة والتعليق
 let globalAudioCtx: AudioContext | null = null;

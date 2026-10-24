@@ -4558,11 +4558,10 @@ export const AdminDashboard: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => handleToggleCompany(comp)}
-                          className={`px-2.5 py-1 rounded-full text-[10px] font-bold border transition-colors cursor-pointer ${
-                            comp.isActive
-                              ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20'
-                              : 'bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20'
-                          }`}
+                          className={`px-2.5 py-1 rounded-full text-[10px] font-bold border transition-colors cursor-pointer ${comp.isActive
+                            ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20'
+                            : 'bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20'
+                            }`}
                         >
                           {comp.isActive ? 'مفعلة للحرفيين ✓' : 'معطلة ✕'}
                         </button>
@@ -5654,98 +5653,222 @@ export const AdminDashboard: React.FC = () => {
       )}
 
       {/* User Details Modal (Safe Display with Quick Actions) */}
+
       {selectedUserForDetails && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in overflow-y-auto">
-          <div className="bg-[#F8EBD7] dark:bg-[#3B1E0E] backdrop-blur-2xl rounded-[2rem] border border-[#E0C79B] dark:border-[#6B3A1F] max-w-lg w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto text-[#3B1E0E] dark:text-[#FFF9EE]">
-            <div className="flex items-center justify-between border-b border-[#E0C79B] dark:border-[#6B3A1F] pb-3">
-              <h3 className="font-bold text-base text-[#3B1E0E] dark:text-[#FFF9EE] flex items-center gap-2">
-                <Users className="w-5 h-5 text-primary dark:text-primary-hover" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center
+    p-3 sm:p-4 bg-black/60 backdrop-blur-sm
+    animate-in fade-in overflow-y-auto">
+
+          <div
+            className="w-full max-w-lg my-auto max-h-[92vh] overflow-y-auto
+        rounded-[2rem] border shadow-2xl
+        border-[#E0C79B] bg-[#FFF9EE] text-[#3B1E0E]
+        dark:border-[#6B3A1F] dark:bg-[#24140D] dark:text-[#FFF9EE]
+        p-4 sm:p-6 space-y-4
+        transition-colors duration-200"
+            dir="rtl"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between
+        border-b border-[#E0C79B] dark:border-[#6B3A1F] pb-3">
+
+              <h3 className="font-bold text-base flex items-center gap-2">
+                <Users className="w-5 h-5 text-[#9A622D] dark:text-[#E7B96F]" />
                 <span>بيانات حساب المستخدم</span>
               </h3>
+
               <button
                 type="button"
                 onClick={() => setSelectedUserForDetails(null)}
-                className="p-1 rounded-lg text-gray-400 hover:text-gray-600 cursor-pointer"
+                aria-label="إغلاق"
+                className="p-2 rounded-xl
+            text-[#806B58] hover:bg-[#EEDCC0]
+            dark:text-[#C5AE96] dark:hover:bg-[#4A2B1B]
+            transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="flex items-center gap-4 p-4 bg-black/5 dark:bg-cream/5 rounded-2xl border border-[#E0C79B] dark:border-[#6B3A1F]">
+            {/* User Profile */}
+            <div className="flex items-center gap-4 p-4 rounded-2xl
+        border border-[#E0C79B] bg-[#F5E7D0]
+        dark:border-[#6B3A1F] dark:bg-[#352116]">
+
               <div className="relative shrink-0">
                 <img
-                  src={selectedUserForDetails.profileImage?.secureUrl || selectedUserForDetails.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1788710904/user.jpg'}
+                  src={
+                    selectedUserForDetails.profileImage?.secureUrl ||
+                    selectedUserForDetails.avatar ||
+                    'https://res.cloudinary.com/kuana1nl/image/upload/v1788710904/user.jpg'
+                  }
                   alt={selectedUserForDetails.name}
-                  className="w-16 h-16 rounded-2xl object-cover border-2 border-white shadow-md"
+                  className="w-16 h-16 rounded-2xl object-cover
+              border-2 border-[#FFF9EE] dark:border-[#6B3A1F]
+              shadow-md"
                 />
+
                 <span
-                  className={`absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full border-2 border-white ${selectedUserForDetails.status === 'suspended' ? 'bg-rose-500' : 'bg-emerald-500'
+                  className={`absolute -bottom-1 -right-1 w-3.5 h-3.5
+              rounded-full border-2 border-[#FFF9EE]
+              dark:border-[#352116]
+              ${selectedUserForDetails.status === 'suspended'
+                      ? 'bg-rose-500'
+                      : 'bg-emerald-500'
                     }`}
-                  title={selectedUserForDetails.status === 'suspended' ? 'حساب متوقف' : 'حساب شغال'}
+                  title={
+                    selectedUserForDetails.status === 'suspended'
+                      ? 'حساب متوقف'
+                      : 'حساب شغال'
+                  }
                 />
               </div>
-              <div className="flex-1 min-w-0">
-                <h4 className="font-bold text-base text-[#3B1E0E] dark:text-[#FFF9EE] truncate">{selectedUserForDetails.name}</h4>
-                <p className="text-xs text-gray-500 font-mono">@{selectedUserForDetails.username || 'من غير اسم مستخدم'}</p>
-                <p className="text-xs text-gray-500 truncate">{selectedUserForDetails.email || 'الإيميل مش متسجل'}</p>
-                <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                  <span className="bg-purple-100 text-purple-800 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                    {selectedUserForDetails.role === 'admin' ? 'مسؤول المنصة' : selectedUserForDetails.role === 'seller' ? 'ورشة وصنايعي' : 'مشتري موثق'}
+
+              <div className="flex-1 min-w-0 space-y-1">
+                <h4 className="font-bold text-base truncate">
+                  {selectedUserForDetails.name}
+                </h4>
+
+                <p className="text-xs font-mono text-[#806B58]
+            dark:text-[#C5AE96] truncate">
+                  @{selectedUserForDetails.username || 'من غير اسم مستخدم'}
+                </p>
+
+                <p className="text-xs text-[#806B58]
+            dark:text-[#C5AE96] truncate" dir="ltr">
+                  {selectedUserForDetails.email || 'الإيميل مش متسجل'}
+                </p>
+
+                <div className="flex items-center gap-2 mt-2 flex-wrap">
+                  <span className="px-2 py-1 rounded-full text-[10px]
+              font-bold bg-[#E8D5F5] text-[#663399]
+              dark:bg-[#49305B] dark:text-[#E8C9FF]">
+                    {selectedUserForDetails.role === 'admin'
+                      ? 'مسؤول المنصة'
+                      : selectedUserForDetails.role === 'seller'
+                        ? 'ورشة وصنايعي'
+                        : 'مشتري موثق'}
                   </span>
+
                   <span
-                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${selectedUserForDetails.status === 'suspended'
-                      ? 'bg-rose-100 text-rose-800'
-                      : 'bg-emerald-100 text-emerald-800'
+                    className={`px-2 py-1 rounded-full text-[10px] font-bold
+                ${selectedUserForDetails.status === 'suspended'
+                        ? 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300'
+                        : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
                       }`}
                   >
-                    {selectedUserForDetails.status === 'suspended' ? 'متوقف مؤقتاً' : 'شغال'}
+                    {selectedUserForDetails.status === 'suspended'
+                      ? 'متوقف مؤقتاً'
+                      : 'شغال'}
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 text-xs">
-              <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
-                <span className="text-gray-500 block mb-0.5">رقم الموبايل:</span>
-                <span className="font-bold font-mono text-[#3B1E0E] dark:text-[#FFF9EE]">{selectedUserForDetails.phone || 'مش متسجل'}</span>
-              </div>
-              <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
-                <span className="text-gray-500 block mb-0.5">المحافظة:</span>
-                <span className="font-bold text-[#3B1E0E] dark:text-[#FFF9EE]">{selectedUserForDetails.governorate || 'مش محدد'}</span>
-              </div>
-              <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
-                <span className="text-gray-500 block mb-0.5">كود الحساب (ID):</span>
-                <span className="font-bold font-mono text-[11px] text-gray-700">{selectedUserForDetails.id}</span>
-              </div>
-              <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
-                <span className="text-gray-500 block mb-0.5">تاريخ التسجيل:</span>
-                <span className="font-bold text-gray-700">
-                  {selectedUserForDetails.createdAt ? new Date(selectedUserForDetails.createdAt).toLocaleDateString('ar-EG') : '---'}
-                </span>
-              </div>
+            {/* User Information */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              {[
+                {
+                  label: 'رقم الموبايل:',
+                  value: selectedUserForDetails.phone || 'مش متسجل',
+                  mono: true,
+                  ltr: true,
+                },
+                {
+                  label: 'المحافظة:',
+                  value: selectedUserForDetails.governorate || 'مش محدد',
+                },
+                {
+                  label: 'كود الحساب (ID):',
+                  value: selectedUserForDetails.id,
+                  mono: true,
+                  ltr: true,
+                },
+                {
+                  label: 'تاريخ التسجيل:',
+                  value: selectedUserForDetails.createdAt
+                    ? new Date(selectedUserForDetails.createdAt).toLocaleDateString('ar-EG')
+                    : '---',
+                },
+              ].map((item) => (
+                <div
+                  key={item.label}
+                  className="min-w-0 p-3 rounded-xl
+              border border-[#E0C79B] bg-[#F5E7D0]
+              dark:border-[#6B3A1F] dark:bg-[#352116]"
+                >
+                  <span className="block mb-1 text-[#806B58]
+              dark:text-[#C5AE96]">
+                    {item.label}
+                  </span>
+
+                  <span
+                    dir={item.ltr ? 'ltr' : undefined}
+                    className={`block font-bold break-words
+                text-[#3B1E0E] dark:text-[#FFF9EE]
+                ${item.mono ? 'font-mono' : ''}`}
+                  >
+                    {item.value}
+                  </span>
+                </div>
+              ))}
             </div>
 
+            {/* Seller Information */}
             {selectedUserForDetails.seller && (
-              <div className="p-4 bg-amber-50 rounded-2xl border border-amber-200 text-xs space-y-2">
-                <h5 className="font-bold text-amber-900 flex items-center gap-1.5">
-                  <Store className="w-4 h-4 text-amber-700" />
+              <div className="p-4 rounded-2xl border
+          border-[#E5C58B] bg-[#FBF0D9]
+          dark:border-[#755126] dark:bg-[#392919]
+          text-xs space-y-3">
+
+                <h5 className="font-bold text-[#80521C]
+            dark:text-[#F2CA83] flex items-center gap-2">
+                  <Store className="w-4 h-4" />
                   <span>بيانات الورشة المرتبطة</span>
                 </h5>
-                <p className="text-gray-700"><strong>اسم الورشة:</strong> {selectedUserForDetails.seller.brandName || selectedUserForDetails.seller.name}</p>
-                <p className="text-gray-700"><strong>الصنعة والتخصص:</strong> {selectedUserForDetails.seller.specialty || 'شغل يدوي تراثي'}</p>
-                <p className="text-gray-700"><strong>حالة الاعتماد:</strong> {selectedUserForDetails.seller.status}</p>
+
+                <p className="text-[#59432D] dark:text-[#E4D0B5]">
+                  <strong className="text-[#3B1E0E] dark:text-[#FFF9EE]">
+                    اسم الورشة:
+                  </strong>{' '}
+                  {selectedUserForDetails.seller.brandName ||
+                    selectedUserForDetails.seller.name}
+                </p>
+
+                <p className="text-[#59432D] dark:text-[#E4D0B5]">
+                  <strong className="text-[#3B1E0E] dark:text-[#FFF9EE]">
+                    الصنعة والتخصص:
+                  </strong>{' '}
+                  {selectedUserForDetails.seller.specialty ||
+                    'شغل يدوي تراثي'}
+                </p>
+
+                <p className="text-[#59432D] dark:text-[#E4D0B5]">
+                  <strong className="text-[#3B1E0E] dark:text-[#FFF9EE]">
+                    حالة الاعتماد:
+                  </strong>{' '}
+                  {selectedUserForDetails.seller.status}
+                </p>
               </div>
             )}
 
-            {/* Quick Action Buttons inside Details Modal */}
-            <div className="pt-2 border-t border-[#E0C79B] dark:border-[#6B3A1F] flex flex-wrap items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
+            {/* Actions */}
+            <div className="pt-3 border-t border-[#E0C79B]
+        dark:border-[#6B3A1F] flex flex-wrap items-center
+        justify-between gap-3">
+
+              <div className="flex flex-wrap items-center gap-2">
+
                 <button
                   type="button"
-                  onClick={() => {
-                    handleOpenEditUser(selectedUserForDetails);
-                  }}
-                  className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                  onClick={() => handleOpenEditUser(selectedUserForDetails)}
+                  className="px-3 py-2 rounded-xl text-xs font-bold
+              flex items-center gap-1.5 border
+              bg-sky-50 text-sky-800 border-sky-200
+              hover:bg-sky-100
+              dark:bg-sky-950/50 dark:text-sky-300
+              dark:border-sky-900 dark:hover:bg-sky-900/60
+              transition-colors cursor-pointer"
                 >
                   <Edit2 className="w-3.5 h-3.5" />
                   <span>تعديل الحساب</span>
@@ -5753,10 +5876,14 @@ export const AdminDashboard: React.FC = () => {
 
                 <button
                   type="button"
-                  onClick={() => {
-                    handleOpenResetPassword(selectedUserForDetails);
-                  }}
-                  className="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                  onClick={() => handleOpenResetPassword(selectedUserForDetails)}
+                  className="px-3 py-2 rounded-xl text-xs font-bold
+              flex items-center gap-1.5 border
+              bg-amber-50 text-amber-800 border-amber-200
+              hover:bg-amber-100
+              dark:bg-amber-950/50 dark:text-amber-300
+              dark:border-amber-900 dark:hover:bg-amber-900/60
+              transition-colors cursor-pointer"
                 >
                   <Key className="w-3.5 h-3.5" />
                   <span>الباسورد</span>
@@ -5767,9 +5894,12 @@ export const AdminDashboard: React.FC = () => {
                     type="button"
                     onClick={() => handleToggleUserStatus(selectedUserForDetails)}
                     disabled={isTogglingStatus === selectedUserForDetails.id}
-                    className={`px-3 py-1.5 border rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${selectedUserForDetails.status === 'suspended'
-                      ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200'
-                      : 'bg-orange-50 hover:bg-orange-100 text-orange-700 border-orange-200'
+                    className={`px-3 py-2 rounded-xl text-xs font-bold
+                flex items-center gap-1.5 border transition-colors
+                disabled:opacity-50 disabled:cursor-not-allowed
+                cursor-pointer ${selectedUserForDetails.status === 'suspended'
+                        ? 'bg-emerald-50 text-emerald-800 border-emerald-200 hover:bg-emerald-100 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-900 dark:hover:bg-emerald-900/60'
+                        : 'bg-orange-50 text-orange-800 border-orange-200 hover:bg-orange-100 dark:bg-orange-950/50 dark:text-orange-300 dark:border-orange-900 dark:hover:bg-orange-900/60'
                       }`}
                   >
                     {isTogglingStatus === selectedUserForDetails.id ? (
@@ -5779,7 +5909,12 @@ export const AdminDashboard: React.FC = () => {
                     ) : (
                       <UserX className="w-3.5 h-3.5" />
                     )}
-                    <span>{selectedUserForDetails.status === 'suspended' ? 'تفعيل' : 'وقف'}</span>
+
+                    <span>
+                      {selectedUserForDetails.status === 'suspended'
+                        ? 'تفعيل'
+                        : 'وقف'}
+                    </span>
                   </button>
                 )}
               </div>
@@ -5787,7 +5922,12 @@ export const AdminDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setSelectedUserForDetails(null)}
-                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-bold rounded-xl transition-all cursor-pointer"
+                className="px-4 py-2 rounded-xl text-xs font-bold
+            bg-[#EEDCC0] text-[#3B1E0E]
+            hover:bg-[#E3CBA5]
+            dark:bg-[#4A2B1B] dark:text-[#FFF9EE]
+            dark:hover:bg-[#603A25]
+            transition-colors cursor-pointer"
               >
                 قفل
               </button>
@@ -7213,74 +7353,74 @@ export const AdminDashboard: React.FC = () => {
               </button>
             </div>
 
-              <div className="space-y-4">
-                {/* Tracking Number & Quick Links */}
-                <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/40 flex items-center justify-between">
-                  <div>
-                    <span className="text-[10px] text-amber-800 dark:text-amber-300 font-bold block">رقم بوليصة التتبع (Tracking Number):</span>
-                    <span className="font-mono text-base font-black text-amber-950 dark:text-amber-100">
-                      {trackingModalOrder.trackingNumber || 'غير متوفر'}
+            <div className="space-y-4">
+              {/* Tracking Number & Quick Links */}
+              <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/40 flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] text-amber-800 dark:text-amber-300 font-bold block">رقم بوليصة التتبع (Tracking Number):</span>
+                  <span className="font-mono text-base font-black text-amber-950 dark:text-amber-100">
+                    {trackingModalOrder.trackingNumber || 'غير متوفر'}
+                  </span>
+                  {trackingModalOrder.shippingCompanyName && (
+                    <span className="text-[11px] font-bold text-gray-500 block mt-0.5">
+                      شركة الشحن: {trackingModalOrder.shippingCompanyName}
                     </span>
-                    {trackingModalOrder.shippingCompanyName && (
-                      <span className="text-[11px] font-bold text-gray-500 block mt-0.5">
-                        شركة الشحن: {trackingModalOrder.shippingCompanyName}
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const trk = trackingModalOrder.trackingNumber || '';
-                        if (trk) {
-                          navigator.clipboard.writeText(trk);
-                          addToast('تم النسخ', 'تم نسخ رقم التتبع للحافظة', 'info');
-                        }
-                      }}
-                      className="px-2.5 py-1.5 rounded-lg bg-white dark:bg-black/30 border border-amber-200 text-amber-800 text-xs font-bold flex items-center gap-1 cursor-pointer"
+                  )}
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const trk = trackingModalOrder.trackingNumber || '';
+                      if (trk) {
+                        navigator.clipboard.writeText(trk);
+                        addToast('تم النسخ', 'تم نسخ رقم التتبع للحافظة', 'info');
+                      }
+                    }}
+                    className="px-2.5 py-1.5 rounded-lg bg-white dark:bg-black/30 border border-amber-200 text-amber-800 text-xs font-bold flex items-center gap-1 cursor-pointer"
+                  >
+                    <Copy className="w-3 h-3" />
+                    <span>نسخ</span>
+                  </button>
+                  {trackingModalOrder.trackingUrl && (
+                    <a
+                      href={trackingModalOrder.trackingUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-hover text-white text-xs font-bold flex items-center gap-1 cursor-pointer"
                     >
-                      <Copy className="w-3 h-3" />
-                      <span>نسخ</span>
-                    </button>
-                    {trackingModalOrder.trackingUrl && (
-                      <a
-                        href={trackingModalOrder.trackingUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-hover text-white text-xs font-bold flex items-center gap-1 cursor-pointer"
-                      >
-                        <span>رابط التتبع</span>
-                        <ExternalLink className="w-3 h-3" />
-                      </a>
-                    )}
-                  </div>
-                </div>
-
-                {/* Status State */}
-                <div className="p-4 rounded-2xl bg-white dark:bg-black/20 border border-[#E0C79B] dark:border-[#6B3A1F] space-y-1">
-                  <span className="text-[10px] text-gray-500 font-bold">الحالة الحالية:</span>
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="font-bold text-sm text-[#3B1E0E] dark:text-[#FFF9EE]">
-                      {trackingModalOrder.status || 'قيد المتابعة والتوصيل'}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Recipient Details */}
-                <div className="p-4 rounded-2xl bg-white dark:bg-black/20 border border-[#E0C79B] dark:border-[#6B3A1F] space-y-1.5 text-xs">
-                  <span className="text-[10px] text-gray-500 font-bold block">عنوان التسليم والمستلم:</span>
-                  <div className="font-bold text-[#3B1E0E] dark:text-[#FFF9EE]">
-                    {trackingModalOrder.shippingAddress?.fullName || trackingModalOrder.buyerName}
-                    <span className="text-gray-500 font-normal mr-2">
-                      ({trackingModalOrder.shippingAddress?.phone || trackingModalOrder.buyerPhone})
-                    </span>
-                  </div>
-                  <div className="text-black/70 dark:text-white/70">
-                    {trackingModalOrder.shippingAddress?.governorate} - {trackingModalOrder.shippingAddress?.city} - {trackingModalOrder.shippingAddress?.streetAddress}
-                  </div>
+                      <span>رابط التتبع</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
                 </div>
               </div>
+
+              {/* Status State */}
+              <div className="p-4 rounded-2xl bg-white dark:bg-black/20 border border-[#E0C79B] dark:border-[#6B3A1F] space-y-1">
+                <span className="text-[10px] text-gray-500 font-bold">الحالة الحالية:</span>
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="font-bold text-sm text-[#3B1E0E] dark:text-[#FFF9EE]">
+                    {trackingModalOrder.status || 'قيد المتابعة والتوصيل'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Recipient Details */}
+              <div className="p-4 rounded-2xl bg-white dark:bg-black/20 border border-[#E0C79B] dark:border-[#6B3A1F] space-y-1.5 text-xs">
+                <span className="text-[10px] text-gray-500 font-bold block">عنوان التسليم والمستلم:</span>
+                <div className="font-bold text-[#3B1E0E] dark:text-[#FFF9EE]">
+                  {trackingModalOrder.shippingAddress?.fullName || trackingModalOrder.buyerName}
+                  <span className="text-gray-500 font-normal mr-2">
+                    ({trackingModalOrder.shippingAddress?.phone || trackingModalOrder.buyerPhone})
+                  </span>
+                </div>
+                <div className="text-black/70 dark:text-white/70">
+                  {trackingModalOrder.shippingAddress?.governorate} - {trackingModalOrder.shippingAddress?.city} - {trackingModalOrder.shippingAddress?.streetAddress}
+                </div>
+              </div>
+            </div>
 
             <div className="pt-2 flex justify-end">
               <button
