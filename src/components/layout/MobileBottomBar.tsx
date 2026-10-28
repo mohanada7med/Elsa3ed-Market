@@ -222,7 +222,7 @@ export const MobileBottomBar: React.FC = () => {
       },
       {
         id: 'map',
-        label: 'العصيد',
+        label: 'الصعيد',
         icon: MapPin,
         isActive: activePage === 'map',
         onClick: () =>

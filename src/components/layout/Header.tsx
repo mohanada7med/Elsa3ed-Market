@@ -816,7 +816,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
           }}
           whileHover={{ y: -1 }}
           whileTap={{ scale: 0.95 }}
-          className="group relative flex items-center gap-2 rounded-full px-3.5 py-2 cursor-pointer overflow-hidden whitespace-nowrap"
+          className="group relative flex items-center gap-1 xl:gap-2 rounded-full px-2 xl:px-3.5 py-1.5 xl:py-2 cursor-pointer overflow-hidden whitespace-nowrap"
           style={{
             color:
               isActive || isHovered
@@ -851,14 +851,14 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               transition={{ duration: 0.4 }}
             >
               <Icon
-                size={14}
+                size={13}
                 strokeWidth={isActive ? 2.4 : 1.8}
-                className={isActive ? (isDark ? 'text-[#C99444]' : 'text-[#6B3A1F]') : ''}
+                className={`xl:size-[14px] ${isActive ? (isDark ? 'text-[#C99444]' : 'text-[#6B3A1F]') : ''}`}
               />
             </motion.span>
           )}
 
-          <span className="relative z-10 text-[10px] font-bold whitespace-nowrap">
+          <span className="relative z-10 text-[9px] xl:text-[10px] font-bold whitespace-nowrap">
             {link.shortLabel || link.label}
           </span>
 
@@ -1318,7 +1318,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             3. MOBILE MAIN ROW (يمين وشمال + اللوجو المتدلي في المنتصف)
             ========================================================= */}
         <div className="flex lg:hidden relative mx-auto max-w-[1600px] h-18 sm:h-22 items-center justify-between px-3 sm:px-6 overflow-visible">
-          {/* الجانب الأيمن */}
+          {/* الجانب الأيمن: القائمة والبحث */}
           <div className="flex items-center gap-1.5 z-20">
             <button
               type="button"
@@ -1333,40 +1333,54 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
 
             <button
               type="button"
-              onClick={toggleTheme}
+              onClick={() => setSearchOverlayOpen(true)}
+              aria-label="البحث"
+              title="البحث"
               className="flex h-8.5 w-8.5 items-center justify-center rounded-full cursor-pointer active:scale-95"
+              style={{ backgroundColor: hoverBg, color: mainText }}
+            >
+              <Search size={16} />
+            </button>
+          </div>
+
+          {/* اللوجو المتدلي الواصل للـ Sub Bar في الموبايل والتابلت */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-auto select-none">
+            <button
+              type="button"
+              onClick={() => navigate('home')}
+              className="group flex flex-col items-center justify-center focus:outline-none cursor-pointer transition-transform active:scale-95"
+            >
+              <img
+                src="https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png"
+                alt="وه"
+                draggable={false}
+                className="
+                  block
+                  h-20 w-auto max-w-[140px] translate-y-3
+                  xs:h-24 xs:max-w-[180px] xs:translate-y-5
+                  sm:h-26 sm:max-w-[220px] sm:translate-y-6
+                  object-contain
+                  transition-all duration-300
+                  group-hover:scale-105
+                  drop-shadow-md
+                "
+              />
+            </button>
+          </div>
+
+          {/* الجانب الأيسر: المظهر والمفضلة والسلة والحساب */}
+          <div className="relative flex items-center gap-1 sm:gap-1.5 z-50">
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label="تغيير المظهر"
+              title="تغيير المظهر"
+              className="flex h-8.5 w-8.5 items-center justify-center rounded-full cursor-pointer transition-transform active:scale-95"
               style={{ backgroundColor: hoverBg, color: mainText }}
             >
               {isDark ? <Sun size={16} className="text-primary-hover" /> : <Moon size={16} />}
             </button>
-          </div>
 
-          {/* اللوجو المتدلي الواصل للـ Sub Bar في الموبايل */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-auto select-none">            <button
-            type="button"
-            onClick={() => navigate('home')}
-            className="group flex flex-col items-center justify-center focus:outline-none cursor-pointer transition-transform active:scale-95"
-          >
-            <img
-              src="https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png"
-              alt="وه"
-              draggable={false}
-              className="
-    block
-    h-28 w-auto max-w-[180px] translate-y-6
-    xs:h-24 xs:max-w-[210px] xs:translate-y-7
-    sm:h-26 sm:max-w-[250px] sm:translate-y-8
-    object-contain
-    transition-all duration-300
-    group-hover:scale-105
-    drop-shadow-md
-  "
-            />
-          </button>
-          </div>
-
-          {/* الجانب الأيسر */}
-          <div className="relative flex items-center gap-1 sm:gap-1.5 z-50">
             {!isStaff && (
               <button
                 type="button"
@@ -1385,21 +1399,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 )}
               </button>
             )}
-
-            <button
-              type="button"
-              onClick={toggleTheme}
-              aria-label="تغيير المظهر"
-              title="تغيير المظهر"
-              className="hidden xs:flex h-8.5 w-8.5 items-center justify-center rounded-full cursor-pointer transition-transform active:scale-95"
-              style={{ backgroundColor: hoverBg, color: mainText }}
-            >
-              {isDark ? (
-                <Sun size={16} className="text-primary-hover" />
-              ) : (
-                <Moon size={16} />
-              )}
-            </button>
 
             {!isStaff && (
               <button
@@ -1575,26 +1574,26 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               style={{ background: 'linear-gradient(90deg, transparent, #C99444, transparent)' }}
             />
 
-            <div className="mx-auto flex h-[68px] max-w-[1450px] items-center px-8 overflow-visible">
+            <div className="mx-auto flex h-[68px] max-w-[1600px] items-center px-3 xl:px-8 overflow-visible">
               {/* الجانب الأيمن من البوابات بالكمبيوتر */}
               <div className="flex flex-1 items-center justify-end gap-1">
                 {rightPortals.map((link) => renderDesktopPortalItem(link, false))}
               </div>
 
               {/* لوجو الكمبيوتر المتدلي الأصلي بتأثيره القديم */}
-              <div className="relative mx-4 shrink-0 flex items-center justify-center select-none overflow-visible">
+              <div className="relative mx-2 xl:mx-4 shrink-0 flex items-center justify-center select-none overflow-visible">
                 <motion.button
                   type="button"
                   onClick={() => navigate('home')}
                   whileHover={{ scale: 1.04 }}
                   whileTap={{ scale: 0.96 }}
-                  className="group relative z-30 flex flex-col items-center justify-center -translate-y-12 bg-transparent border-0 p-0 cursor-pointer focus:outline-none overflow-visible"
+                  className="group relative z-30 flex flex-col items-center justify-center -translate-y-8 xl:-translate-y-12 bg-transparent border-0 p-0 cursor-pointer focus:outline-none overflow-visible"
                 >
                   <img
                     src="https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png"
                     alt="وه"
                     draggable={false}
-                    className="block h-50 w-auto max-w-[280px] object-contain transition-transform duration-300 group-hover:scale-103"
+                    className="block h-36 xl:h-48 w-auto max-w-[200px] xl:max-w-[260px] object-contain transition-transform duration-300 group-hover:scale-103"
                   />
                 </motion.button>
               </div>

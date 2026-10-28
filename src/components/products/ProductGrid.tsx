@@ -1819,11 +1819,12 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ customProducts, limit 
         className="
           grid
           grid-cols-1
-          gap-5
+          gap-4
+          sm:gap-5
 
           sm:grid-cols-2
 
-          xl:grid-cols-3
+          lg:grid-cols-3
 
           2xl:grid-cols-4
         "

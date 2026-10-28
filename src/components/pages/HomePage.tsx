@@ -98,7 +98,7 @@ export const HomePage: React.FC = () => {
                   BEST SELLERS / الأكتر طلبًا وإقبالًا
                 </div>
 
-                <h1 className="max-w-6xl text-5xl sm:text-7xl lg:text-[8rem] font-black leading-[0.95] tracking-tight">
+                <h1 className="max-w-6xl text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-7xl xl:text-[7.5rem] font-black leading-[0.95] tracking-tight">
                   سوق
                   <br />
 

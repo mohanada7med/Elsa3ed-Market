@@ -32,7 +32,7 @@ export const CategoriesPage: React.FC = () => {
   return (
     <div
       dir="rtl"
-      className="min-h-screen bg-cream text-espresso dark:bg-espresso-900 dark:text-cream max-w-[1600px] mx-auto px-5 sm:px-8 lg:px-12 py-8 space-y-8 sm:space-y-10"
+      className="min-h-screen bg-cream text-espresso dark:bg-espresso-900 dark:text-cream max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12 pt-6 sm:pt-8 pb-28 lg:pb-12 space-y-8 sm:space-y-10"
     >
       {/* مسار الصفحة وأزرار التبديل */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-5">
