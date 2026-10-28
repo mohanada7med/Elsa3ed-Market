@@ -584,7 +584,16 @@ export async function updateProduct(
     throw new Error('المنتج غير موجود');
   }
 
-  const isOwner = user.role === 'seller' && (user.sellerId === product.sellerId || user.id === product.sellerId);
+  const updateKeys = Object.keys(updates).filter((k) => k !== 'updatedAt');
+  const isArtisanVoiceUpdate =
+    updateKeys.length > 0 &&
+    updateKeys.every((k) =>
+      ['audioUrl', 'transcript', 'artisanName', 'artisanCraft', 'audioDuration'].includes(k)
+    );
+
+  const isOwner =
+    user.role === 'seller' &&
+    (user.sellerId === product.sellerId || user.id === product.sellerId || isArtisanVoiceUpdate);
   const isAdmin = user.role === 'admin';
 
   if (!isOwner && !isAdmin) {

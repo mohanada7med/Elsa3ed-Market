@@ -2103,6 +2103,20 @@ export const SellerDashboard: React.FC = () => {
                             <span>تعديل المخزون ({prod.stockCount})</span>
                           </button>
 
+                          <button
+                            type="button"
+                            onClick={() => setRecordingVoiceProduct(prod)}
+                            className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 border transition-all cursor-pointer ${
+                              prod.audioUrl
+                                ? 'bg-amber-700/10 hover:bg-amber-700 hover:text-white dark:bg-amber-400/10 dark:hover:bg-amber-500 text-amber-800 dark:text-amber-300 dark:hover:text-black border-amber-700/20 dark:border-amber-400/20'
+                                : 'bg-gradient-to-r from-amber-700 to-orange-600 hover:from-amber-800 hover:to-orange-700 text-white border-transparent shadow-xs'
+                            }`}
+                            title="سجل صوتك وحكايتك لهذه القطعة"
+                          >
+                            <Mic className="w-3.5 h-3.5" />
+                            <span>{prod.audioUrl ? 'تعديل تسجيل الصوت' : 'سجل صوتك للقطعة'}</span>
+                          </button>
+
                           {(prod.approvalStatus === 'draft' || prod.approvalStatus === 'rejected') && (
                             <button
                               type="button"
@@ -3383,6 +3397,18 @@ export const SellerDashboard: React.FC = () => {
           onClose={() => {
             setIsReelPreviewOpen(false);
             setSelectedReelPreviewId(null);
+          }}
+        />
+      )}
+
+      {/* Artisan Voice Recorder Modal for Seller */}
+      {recordingVoiceProduct && (
+        <ArtisanVoiceRecorderModal
+          isOpen={Boolean(recordingVoiceProduct)}
+          onClose={() => setRecordingVoiceProduct(null)}
+          product={recordingVoiceProduct}
+          onSaved={() => {
+            setRecordingVoiceProduct(null);
           }}
         />
       )}

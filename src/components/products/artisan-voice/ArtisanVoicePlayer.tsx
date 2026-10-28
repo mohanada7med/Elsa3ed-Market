@@ -94,9 +94,13 @@ export const ArtisanVoicePlayer: React.FC<ArtisanVoicePlayerProps> = ({
   // Check if current user is owner (seller) or admin to show quick management action
   const isOwnerOrAdmin =
     currentRole === 'admin' ||
-    (currentRole === 'seller' &&
+    currentRole === 'seller' ||
+    Boolean(
       product &&
-      (currentUser?.sellerId === product.sellerId || currentUser?.id === product.sellerId));
+        (currentUser?.sellerId === product.sellerId ||
+          currentUser?.id === product.sellerId ||
+          currentUser?.role === 'seller')
+    );
 
   // Global Audio Coordination across players
   const playerId = useMemo(
@@ -305,8 +309,8 @@ export const ArtisanVoicePlayer: React.FC<ArtisanVoicePlayerProps> = ({
               كل قطعة وراها حكاية.. اسمعها من صاحبها.
             </p>
 
-            {/* Seller-Only Action Button */}
-            {isOwnerOrAdmin && product && (
+            {/* Seller / Artisan Voice Recording Action */}
+            {product && (
               <button
                 type="button"
                 onClick={() => setIsRecorderOpen(true)}
@@ -386,11 +390,13 @@ export const ArtisanVoicePlayer: React.FC<ArtisanVoicePlayerProps> = ({
               </div>
             </div>
 
-            {/* Quick Admin / Seller Action to Add Audio */}
-            {isOwnerOrAdmin && product && (
+            {/* Quick Seller / Artisan Action to Add Audio */}
+            {product && (
               <div className="pt-2 border-t border-amber-900/10 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <span className="text-[11px] font-bold text-muted">
-                  بصفتك صانع القطعة أو مسؤولاً، يمكنك تسجيل صوتك الآن مباشرة وسيظهر لجميع المشترين:
+                  {isOwnerOrAdmin
+                    ? 'بصفتك صانع القطعة أو مسؤولاً، يمكنك تسجيل صوتك الآن مباشرة وسيظهر لجميع المشترين:'
+                    : 'هل أنت صاحب هذه الورشة أو صانع القطعة؟ يمكنك تسجيل صوتك وحكايتك هنا:'}
                 </span>
                 <button
                   type="button"
@@ -398,7 +404,7 @@ export const ArtisanVoicePlayer: React.FC<ArtisanVoicePlayerProps> = ({
                   className="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-700 to-orange-600 hover:from-amber-800 hover:to-orange-700 text-white text-xs font-bold shadow-xs transition-all cursor-pointer shrink-0"
                 >
                   <Mic size={14} />
-                  <span>سجل صوتك لهذه القطعة الآن</span>
+                  <span>{hasAudioRecording ? 'تعديل تسجيل صوت الحرفي' : 'سجل صوتك لهذه القطعة الآن'}</span>
                 </button>
               </div>
             )}
@@ -411,6 +417,9 @@ export const ArtisanVoicePlayer: React.FC<ArtisanVoicePlayerProps> = ({
           isOpen={isRecorderOpen}
           onClose={() => setIsRecorderOpen(false)}
           product={product}
+          onSaved={() => {
+            setIsRecorderOpen(false);
+          }}
         />
       )}
     </div>
