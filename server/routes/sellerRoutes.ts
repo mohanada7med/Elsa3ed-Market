@@ -3,6 +3,8 @@ import type { Response } from 'express';
 import { requireSeller, requireAuth, invalidateAuthSession } from '../middleware/auth.ts';
 import type { AuthenticatedRequest } from '../middleware/auth.ts';
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
+import { storageService } from '../services/storage/storageProvider.ts';
+import type { ProductDocument } from '../models/types.ts';
 import type { SellerStatus } from '../models/types.ts';
 import {
   getSellerProducts,
@@ -590,6 +592,53 @@ router.put('/products/:id', async (req: AuthenticatedRequest, res: Response) => 
       success: false,
       error: (error as Error).message || 'تعذر تحديث المنتج',
       code: 'UPDATE_ERROR'
+    });
+  }
+});
+
+// POST /api/seller/products/:id/voice - Seller records and saves artisan audio for their product
+router.post('/products/:id/voice', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const productId = req.params.id;
+    const { audioData, audioUrl, transcript, artisanName, artisanCraft, audioDuration } = req.body;
+
+    let finalAudioUrl = audioUrl;
+
+    // If seller recorded audio in browser and provided base64 data:
+    if (audioData && typeof audioData === 'string' && audioData.startsWith('data:')) {
+      const uploadRes = await storageService.upload({
+        data: audioData,
+        filename: `artisan_voice_${productId}.webm`,
+        mimeType: 'audio/webm',
+        folder: 'products',
+        productId,
+        ownerId: req.user!.sellerId || req.user!.id,
+        resourceType: 'auto'
+      });
+      finalAudioUrl = uploadRes.url;
+    }
+
+    const updates: Partial<ProductDocument> = {
+      audioUrl: finalAudioUrl,
+      transcript: transcript !== undefined ? String(transcript).trim() : undefined,
+      artisanName: artisanName !== undefined ? String(artisanName).trim() : undefined,
+      artisanCraft: artisanCraft !== undefined ? String(artisanCraft).trim() : undefined,
+      audioDuration: audioDuration ? Number(audioDuration) : undefined,
+    };
+
+    const updatedProduct = await updateProduct(req.user!, productId, updates);
+
+    res.json({
+      success: true,
+      message: 'تم حفظ تسجيل صوت الحرفي والحكاية بنجاح!',
+      data: updatedProduct
+    });
+  } catch (error) {
+    console.error('Error saving artisan voice by seller:', error);
+    res.status(400).json({
+      success: false,
+      error: (error as Error).message || 'تعذر حفظ تسجيل صوت الحرفي',
+      code: 'VOICE_SAVE_ERROR'
     });
   }
 });

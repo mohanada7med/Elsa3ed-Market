@@ -126,11 +126,22 @@ export class CloudinaryStorageProvider implements IStorageProvider {
       filename.endsWith('.webm') ||
       filename.endsWith('.mov');
 
+    const isAudio =
+      resourceType === 'auto' ||
+      Boolean(mimeType && (mimeType.startsWith('audio/') || mimeType === 'video/webm')) ||
+      filename.endsWith('.mp3') ||
+      filename.endsWith('.wav') ||
+      filename.endsWith('.m4a') ||
+      filename.endsWith('.ogg') ||
+      filename.endsWith('.aac') ||
+      filename.endsWith('.webm') ||
+      (typeof data === 'string' && data.startsWith('data:audio/'));
+
     let uploadPayload: string | Buffer;
     let detectedMime = mimeType;
     let sizeBytes = 0;
 
-    if (isVideo) {
+    if (isVideo || isAudio) {
       // Video upload handling
       if (typeof data === 'string') {
         uploadPayload = data;
@@ -221,7 +232,7 @@ export class CloudinaryStorageProvider implements IStorageProvider {
       let uploadResult: UploadApiResponse;
 
       if (Buffer.isBuffer(uploadPayload)) {
-        if (isVideo) {
+        if (isVideo || isAudio) {
           uploadOptions.resource_type = 'video';
           uploadOptions.chunk_size = 20000000; // 20MB chunk size for video stream
           uploadOptions.timeout = 600000; // 10 min timeout for large 1GB video processing
@@ -240,7 +251,7 @@ export class CloudinaryStorageProvider implements IStorageProvider {
           });
           stream.end(uploadPayload);
         });
-      } else if (isVideo) {
+      } else if (isVideo || isAudio) {
         uploadOptions.resource_type = 'video';
         uploadOptions.chunk_size = 20000000; // 20MB chunk size for reliable video streaming uploads
         uploadOptions.timeout = 600000; // 10 min timeout for large 1GB video processing

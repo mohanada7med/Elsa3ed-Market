@@ -216,6 +216,17 @@ interface AppContextType {
   addProduct: (productData: Partial<Product>, initialStatus?: ProductStatus) => Promise<Product>;
   submitProductForReview: (productId: string) => Promise<Product>;
   updateProduct: (id: string, updates: Partial<Product>) => Promise<Product | void>;
+  saveArtisanVoice: (
+    productId: string,
+    payload: {
+      audioData?: string;
+      audioUrl?: string;
+      transcript?: string;
+      artisanName?: string;
+      artisanCraft?: string;
+      audioDuration?: number;
+    }
+  ) => Promise<Product>;
   deleteProduct: (id: string) => Promise<void>;
   approveProduct: (id: string) => Promise<void>;
   rejectProduct: (id: string, reason: string) => Promise<void>;
@@ -2548,6 +2559,52 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
+  const saveArtisanVoice = async (
+    productId: string,
+    payload: {
+      audioData?: string;
+      audioUrl?: string;
+      transcript?: string;
+      artisanName?: string;
+      artisanCraft?: string;
+      audioDuration?: number;
+    }
+  ): Promise<Product> => {
+    try {
+      let updated: Product;
+      if (currentRole === 'admin' || currentUser.role === 'admin') {
+        updated = await api.updateAdminProduct(
+          { id: currentUser.id, role: 'admin' },
+          productId,
+          {
+            audioUrl: payload.audioUrl || payload.audioData,
+            transcript: payload.transcript,
+            artisanName: payload.artisanName,
+            artisanCraft: payload.artisanCraft,
+            audioDuration: payload.audioDuration
+          }
+        );
+      } else {
+        updated = await api.saveSellerArtisanVoice(
+          { id: currentUser.id, role: currentRole, sellerId: currentUser.sellerId || currentUser.id },
+          productId,
+          payload
+        );
+      }
+
+      setSellerProducts((prev) => prev.map((prod) => (prod.id === productId ? updated : prod)));
+      setAdminProducts((prev) => prev.map((prod) => (prod.id === productId ? updated : prod)));
+      setProducts((prev) => prev.map((prod) => (prod.id === productId ? updated : prod)));
+
+      addToast('توثيق صوت الحرفي', 'تم حفظ تسجيل صوت الحرفي والحكاية بنجاح! تظهر الآن لكل الناس.', 'success');
+      return updated;
+    } catch (err: any) {
+      console.error('Failed to save artisan voice:', err);
+      addToast('تعذر الحفظ', err.message || 'حدث خطأ أثناء حفظ تسجيل الصوت', 'error');
+      throw err;
+    }
+  };
+
   const deleteProduct = async (id: string) => {
     try {
       if (currentRole === 'admin' || currentUser.role === 'admin') {
@@ -3287,6 +3344,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         addProduct,
         submitProductForReview,
         updateProduct,
+        saveArtisanVoice,
         deleteProduct,
         approveProduct,
         rejectProduct,

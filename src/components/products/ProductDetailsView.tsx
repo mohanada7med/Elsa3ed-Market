@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ProductCard } from './ProductCard';
+import { ArtisanVoicePlayer } from './ArtisanVoicePlayer';
 import { updatePageSEO, generateProductSchema } from '../../utils/seo';
 import { getOptimizedImageUrl } from '../../utils/cloudinaryMedia';
 
@@ -2308,6 +2309,15 @@ export const ProductDetailsView: React.FC = () => {
             </div>
           </div>
         </section>
+
+        {/* ========================================= */}
+        {/* VOICE OF THE ARTISAN - اسمع حكاية الصنعة  */}
+        {/* ========================================= */}
+        {product && (
+          <section className="mt-14 mb-14" aria-label="صوت الحرفي">
+            <ArtisanVoicePlayer product={product} />
+          </section>
+        )}
 
         {/* ========================================= */}
         {/* RELATED PRODUCTS - قطع من نفس الحكاية */}

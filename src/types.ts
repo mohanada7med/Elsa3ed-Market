@@ -60,6 +60,14 @@ export interface Product {
   approvedAt?: string | null;
   approvedBy?: string | null;
   rejectionReason?: string | null;
+  // Voice of the Artisan (صوت الحرفي وتوثيق الحكاية)
+  artisanName?: string;
+  artisanPortrait?: string;
+  artisanGovernorate?: Governorate | string;
+  artisanCraft?: string;
+  audioUrl?: string;
+  transcript?: string;
+  audioDuration?: number;
 }
 
 export interface Category {

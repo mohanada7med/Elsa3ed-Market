@@ -341,6 +341,13 @@ export const AdminDashboard: React.FC = () => {
   const [prodApprovalStatus, setProdApprovalStatus] = useState<ProductStatus>('approved');
   const [prodIsHandmade, setProdIsHandmade] = useState(true);
   const [prodIsHeritage, setProdIsHeritage] = useState(true);
+  // Voice of the Artisan (صوت الحرفي)
+  const [prodArtisanName, setProdArtisanName] = useState('');
+  const [prodArtisanPortrait, setProdArtisanPortrait] = useState('');
+  const [prodArtisanCraft, setProdArtisanCraft] = useState('');
+  const [prodAudioUrl, setProdAudioUrl] = useState('');
+  const [prodTranscript, setProdTranscript] = useState('');
+  const [prodAudioDuration, setProdAudioDuration] = useState<number | undefined>(undefined);
 
   // Rejection Modal State for Products
   const [rejectingProductId, setRejectingProductId] = useState<string | null>(null);

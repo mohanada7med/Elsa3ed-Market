@@ -12,8 +12,10 @@ import { ReelEditModal } from '../common/ReelEditModal.tsx';
 import { CraftReelsModal } from '../public/CraftReelsModal.tsx';
 import { ChatView } from '../chat/ChatView.tsx';
 import { DeleteAccountModal } from '../common/DeleteAccountModal.tsx';
+import { ArtisanVoiceRecorderModal } from './ArtisanVoiceRecorderModal.tsx';
 import {
   Store,
+  Mic,
   Package,
   DollarSign,
   Star,
@@ -304,6 +306,7 @@ export const SellerDashboard: React.FC = () => {
   // Product Modal State
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [recordingVoiceProduct, setRecordingVoiceProduct] = useState<Product | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Form Fields for Product
@@ -3255,6 +3258,36 @@ export const SellerDashboard: React.FC = () => {
                   </div>
                 )}
               </div>
+
+              {/* Artisan Voice Feature for Seller */}
+              {editingProduct && (
+                <div className="p-4 rounded-2xl bg-amber-700/10 dark:bg-amber-400/10 border border-amber-700/20 dark:border-amber-400/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-2 rounded-xl bg-amber-700 text-white">
+                      <Mic className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-black text-espresso dark:text-cream">
+                        صوت الحرفي وتوثيق الحكاية (Voice of the Artisan)
+                      </h4>
+                      <p className="text-[11px] text-secondary dark:text-cream/70">
+                        {editingProduct.audioUrl
+                          ? 'هذه القطعة تحتوي على تسجيل صوتي موثق يظهر لكل الزوار.'
+                          : 'لم يتم تسجيل صوتك لهذه القطعة بعد. سجله الآن ليظهر لكل زوار المنصة.'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setRecordingVoiceProduct(editingProduct)}
+                    className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-amber-700 hover:bg-amber-800 text-white text-xs font-bold shadow-xs cursor-pointer transition-colors shrink-0"
+                  >
+                    <Mic className="w-3.5 h-3.5" />
+                    <span>{editingProduct.audioUrl ? 'تعديل أو إعادة تسجيل الصوت' : 'سجل صوتك للقطعة الآن'}</span>
+                  </button>
+                </div>
+              )}
 
               <div className="flex items-center justify-end gap-3 pt-3 border-t border-black/10 dark:border-white/10">
                 <button

@@ -277,7 +277,14 @@ export async function createProduct(
     approvalStatus: initialStatus,
     approvedAt: null,
     approvedBy: null,
-    rejectionReason: null
+    rejectionReason: null,
+    artisanName: data.artisanName?.trim(),
+    artisanPortrait: data.artisanPortrait?.trim(),
+    artisanGovernorate: data.artisanGovernorate?.trim(),
+    artisanCraft: data.artisanCraft?.trim(),
+    audioUrl: data.audioUrl?.trim(),
+    transcript: data.transcript?.trim(),
+    audioDuration: data.audioDuration ? Number(data.audioDuration) : undefined
   };
 
   const { db, isMongo } = await getDatabase();

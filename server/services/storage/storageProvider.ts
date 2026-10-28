@@ -70,10 +70,21 @@ export class LocalStorageProvider implements IStorageProvider {
       filename.endsWith('.webm') ||
       filename.endsWith('.mov');
 
-    let detectedMime = mimeType || (isVideo ? 'video/mp4' : 'image/jpeg');
-    let ext = isVideo ? '.mp4' : '.jpg';
+    const isAudio =
+      resourceType === 'auto' ||
+      Boolean(mimeType && (mimeType.startsWith('audio/') || mimeType === 'video/webm')) ||
+      filename.endsWith('.mp3') ||
+      filename.endsWith('.wav') ||
+      filename.endsWith('.m4a') ||
+      filename.endsWith('.ogg') ||
+      filename.endsWith('.aac') ||
+      filename.endsWith('.webm') ||
+      (typeof data === 'string' && data.startsWith('data:audio/'));
 
-    if (!isVideo) {
+    let detectedMime = mimeType || (isVideo ? 'video/mp4' : isAudio ? 'audio/webm' : 'image/jpeg');
+    let ext = isVideo ? '.mp4' : isAudio ? (filename.endsWith('.mp3') ? '.mp3' : filename.endsWith('.wav') ? '.wav' : filename.endsWith('.m4a') ? '.m4a' : filename.endsWith('.ogg') ? '.ogg' : '.webm') : '.jpg';
+
+    if (!isVideo && !isAudio) {
       // 1. Image Validation
       const validation = validateImage(data, filename, mimeType);
       if (!validation.valid) {

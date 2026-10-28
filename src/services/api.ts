@@ -1286,6 +1286,30 @@ export const api = {
     return json.data;
   },
 
+  async saveSellerArtisanVoice(
+    user: { id: string; role: string; sellerId?: string },
+    productId: string,
+    payload: {
+      audioData?: string;
+      audioUrl?: string;
+      transcript?: string;
+      artisanName?: string;
+      artisanCraft?: string;
+      audioDuration?: number;
+    }
+  ): Promise<Product> {
+    const res = await fetch(`${API_BASE}/seller/products/${encodeURIComponent(productId)}/voice`, {
+      method: 'POST',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(payload)
+    });
+    const json: ApiResponse<Product> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في حفظ تسجيل صوت الحرفي');
+    }
+    return json.data;
+  },
+
   async deleteSellerProduct(
     user: { id: string; role: string; sellerId?: string },
     productId: string
