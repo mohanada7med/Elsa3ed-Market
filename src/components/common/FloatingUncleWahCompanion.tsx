@@ -420,7 +420,7 @@ export const FloatingUncleWahCompanion: React.FC = () => {
     <>
       <aside
       aria-label="رفيق الرحلة عم وه"
-      className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom,0px))] md:bottom-8 right-3 sm:right-6 z-50 select-none font-sans"
+      className="fixed bottom-[calc(5.25rem+env(safe-area-inset-bottom,0px))] lg:bottom-8 right-3 sm:right-6 z-50 select-none font-sans"
       dir="rtl"
     >
       {/* =========================

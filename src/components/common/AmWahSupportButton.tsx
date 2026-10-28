@@ -140,7 +140,7 @@ export const AmWahSupportButton: React.FC = () => {
 
   return (
     <div
-      className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom,0px))] md:bottom-8 left-3 sm:left-6 z-50 select-none font-sans"
+      className="fixed bottom-[calc(5.25rem+env(safe-area-inset-bottom,0px))] lg:bottom-8 left-3 sm:left-6 z-50 select-none font-sans"
       dir="rtl"
     >
       {/* =========================================================
