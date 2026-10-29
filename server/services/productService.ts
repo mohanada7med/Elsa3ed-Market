@@ -593,11 +593,11 @@ export async function updateProduct(
 
   const isOwner =
     user.role === 'seller' &&
-    (user.sellerId === product.sellerId || user.id === product.sellerId || isArtisanVoiceUpdate);
+    (user.sellerId === product.sellerId || user.id === product.sellerId);
   const isAdmin = user.role === 'admin';
 
   if (!isOwner && !isAdmin) {
-    throw new Error('غير مصرح لك بتعديل هذا المنتج');
+    throw new Error('غير مصرح لك بتسجيل صوت أو تعديل هذا المنتج، فقط البائع صاحب القطعة هو المخول بذلك');
   }
 
   // Security: prevent seller from setting status to approved directly

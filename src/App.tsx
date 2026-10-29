@@ -314,8 +314,8 @@ const MainContent: React.FC = () => {
         break;
       case 'quize':
         updatePageSEO({
-          title: 'تحدي اللهجة الصعيدية | وه',
-          description: 'اختبر معرفتك بلهجة ومفردات أهل الصعيد في 10 أسئلة سريعة وممتعة.'
+          title: 'مسابقة عم وه • كلام الصعيد | وه',
+          description: 'اختبر معرفتك بكلمات ومصطلحات لهجة أهل الصعيد الأصيلة مع عم وه.'
         });
         break;
       case 'help':
