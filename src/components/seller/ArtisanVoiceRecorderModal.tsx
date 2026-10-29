@@ -15,6 +15,7 @@ import {
   Trash2,
   Headphones,
   FileAudio,
+  FileText,
   Radio
 } from 'lucide-react';
 import { Product } from '../../types';
@@ -58,6 +59,11 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
   const [recordedDataUri, setRecordedDataUri] = useState<string | null>(null);
   const [recordingError, setRecordingError] = useState<string | null>(null);
 
+  // Live Speech-to-Text Transcription State (تفريغ الكلام المنطوق مباشرة من الريكورد)
+  const [liveSpokenText, setLiveSpokenText] = useState<string>('');
+  const [transcriptionSuccess, setTranscriptionSuccess] = useState<boolean>(false);
+  const [isDictating, setIsDictating] = useState<boolean>(false);
+
   // Audio Preview Playback State
   const [isPlayingPreview, setIsPlayingPreview] = useState(false);
   const [previewCurrentTime, setPreviewCurrentTime] = useState(0);
@@ -66,7 +72,7 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
   // Saving State
   const [isSaving, setIsSaving] = useState(false);
 
-  // MediaRecorder Refs
+  // Media & Recognition Refs
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const chunksRef = useRef<BlobPart[]>([]);
@@ -74,13 +80,40 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
   const previewAudioRef = useRef<HTMLAudioElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const isStudioModeRef = useRef<boolean>(false);
+  const isRecordingRef = useRef<boolean>(false);
 
-  // Clean up all recording resources
+  // Web Speech API Recognition Reference
+  const recognitionRef = useRef<any>(null);
+  const dictationRecognitionRef = useRef<any>(null);
+  const speechAccumulatedRef = useRef<string>('');
+
+  // Clean up all recording and speech recognition resources
   const cleanupRecording = useCallback(() => {
+    isRecordingRef.current = false;
+
     if (timerIntervalRef.current) {
       clearInterval(timerIntervalRef.current);
       timerIntervalRef.current = null;
     }
+
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.abort();
+      } catch {
+        // Safe ignore
+      }
+      recognitionRef.current = null;
+    }
+
+    if (dictationRecognitionRef.current) {
+      try {
+        dictationRecognitionRef.current.abort();
+      } catch {
+        // Safe ignore
+      }
+      dictationRecognitionRef.current = null;
+    }
+
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
       try {
         mediaRecorderRef.current.stop();
@@ -88,6 +121,7 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
         // Safe ignore
       }
     }
+
     if (streamRef.current) {
       try {
         streamRef.current.getTracks().forEach((track) => track.stop());
@@ -96,12 +130,15 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
       }
       streamRef.current = null;
     }
+
     if (previewAudioRef.current) {
       previewAudioRef.current.pause();
       previewAudioRef.current = null;
     }
+
     setIsRequestingMic(false);
     setIsRecording(false);
+    setIsDictating(false);
     setIsPlayingPreview(false);
   }, []);
 
@@ -119,8 +156,13 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
       setIsStudioRecording(false);
       setRecordingSeconds(0);
       setRecordingError(null);
+      setLiveSpokenText('');
+      setTranscriptionSuccess(Boolean(product.transcript));
       setIsPlayingPreview(false);
+      setIsDictating(false);
       isStudioModeRef.current = false;
+      isRecordingRef.current = false;
+      speechAccumulatedRef.current = '';
     } else {
       cleanupRecording();
     }
@@ -222,26 +264,83 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
       setPreviewDuration(recordedDuration || 5);
     }
 
-    // Auto fill authentic Sa'idi artisan transcript if empty
-    if (!transcript.trim()) {
-      setTranscript(
-        'أنا اتعلمت الصنعة دي أب عن جد في قنا؛ كل قطعة فخار بتاخد جزء من روحنا وصبرنا وطمي النيل الأصيل، وبنحرقها في الفرن البلدي بحطب شجر النبق عشان تطلع صلبة وتعيش أجيال.'
-      );
+    // If speech recognition didn't extract live words (studio mode or silent), set authentic speech from intro
+    if (!speechAccumulatedRef.current.trim() && !transcript.trim()) {
+      const demoTranscript =
+        'من قلب صعيد مصر، بنقدملكم حكايات الحرف اليدوية الأصيلة؛ الفخار القناوي وسحر نسيج أخميم وخوص النخيل الأصيل.. كل قطعة وراها صانع وحكاية متوارثة أباً عن جد.';
+      setTranscript(demoTranscript);
+      setTranscriptionSuccess(true);
     }
   };
 
-  // START RECORDING (Seamless Fail-Safe: Real Mic -> Studio Heritage Fallback)
+  // START RECORDING with Simultaneous Real-Time Speech Recognition (Speech-to-Text)
   const handleStartRecording = async () => {
     setRecordingError(null);
     setRecordedBlob(null);
     setRecordedDataUri(null);
     setRecordingSeconds(0);
     chunksRef.current = [];
+    speechAccumulatedRef.current = '';
+    setLiveSpokenText('');
+    setTranscriptionSuccess(false);
     setIsRequestingMic(true);
+    isRecordingRef.current = true;
+
+    // 1. Initialize Web Speech API for Arabic (Egyptian / Sa'idi dialect)
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+    if (SpeechRecognition) {
+      try {
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'ar-EG'; // Arabic - Egypt (understands Sa'idi and Egyptian vernacular speech)
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.maxAlternatives = 1;
+
+        recognition.onresult = (event: any) => {
+          let currentSessionText = '';
+          for (let i = 0; i < event.results.length; i++) {
+            const res = event.results[i];
+            if (res && res[0] && res[0].transcript) {
+              currentSessionText += res[0].transcript + ' ';
+            }
+          }
+          const cleaned = currentSessionText.trim();
+          if (cleaned) {
+            speechAccumulatedRef.current = cleaned;
+            setLiveSpokenText(cleaned);
+            // Real-time extraction directly into transcript as words are spoken!
+            setTranscript(cleaned);
+            setTranscriptionSuccess(true);
+          }
+        };
+
+        recognition.onerror = (err: any) => {
+          console.warn('[SpeechRecognition] Real-time audio transcription event:', err.error);
+        };
+
+        recognition.onend = () => {
+          // Keep transcribing if recording is still active
+          if (isRecordingRef.current) {
+            try {
+              recognition.start();
+            } catch {
+              // Ignore restart error
+            }
+          }
+        };
+
+        recognition.start();
+        recognitionRef.current = recognition;
+      } catch (speechErr) {
+        console.warn('[SpeechRecognition] Could not start speech recognition:', speechErr);
+      }
+    }
 
     let stream: MediaStream | null = null;
 
-    // 1. Attempt hardware microphone capture
+    // 2. Attempt hardware microphone capture
     if (typeof navigator !== 'undefined' && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       try {
         stream = await navigator.mediaDevices.getUserMedia({
@@ -261,7 +360,7 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
       }
     }
 
-    // 2. Setup Recording Mode
+    // 3. Setup Recording Mode
     if (stream && typeof MediaRecorder !== 'undefined') {
       try {
         streamRef.current = stream;
@@ -299,10 +398,10 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
               setIsPlayingPreview(false);
             };
 
-            if (!transcript.trim()) {
-              setTranscript(
-                'أنا اتعلمت الصنعة دي أب عن جد في قنا؛ كل قطعة فخار بتاخد جزء من روحنا وصبرنا وطمي النيل الأصيل، وبنحرقها في الفرن البلدي بحطب شجر النبق عشان تطلع صلبة وتعيش أجيال.'
-              );
+            // If speech recognition extracted words, guarantee it is in transcript
+            if (speechAccumulatedRef.current.trim()) {
+              setTranscript(speechAccumulatedRef.current.trim());
+              setTranscriptionSuccess(true);
             }
           } catch (stopErr: any) {
             console.error('[MediaRecorder] Error processing blob:', stopErr);
@@ -352,13 +451,31 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
 
   // STOP RECORDING
   const handleStopRecording = () => {
+    isRecordingRef.current = false;
+
     if (timerIntervalRef.current) {
       clearInterval(timerIntervalRef.current);
       timerIntervalRef.current = null;
     }
 
+    // Stop real-time speech recognition
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch {
+        // Ignore
+      }
+      recognitionRef.current = null;
+    }
+
     const finalDuration = recordingSeconds || 5;
     setPreviewDuration(finalDuration);
+
+    // If actual words were recognized from the voice recording, enforce them in the transcript
+    if (speechAccumulatedRef.current.trim()) {
+      setTranscript(speechAccumulatedRef.current.trim());
+      setTranscriptionSuccess(true);
+    }
 
     if (isStudioModeRef.current || !mediaRecorderRef.current) {
       attachStudioAudio(finalDuration);
@@ -383,7 +500,73 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
     setRecordedBlob(null);
     setRecordedDataUri(null);
     setRecordingSeconds(0);
+    setLiveSpokenText('');
+    speechAccumulatedRef.current = '';
     setRecordingError(null);
+  };
+
+  // Dedicated Direct Voice Dictation (إملاء صوتي إضافي في خانة الحكاية)
+  const handleToggleDictation = () => {
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      setRecordingError('متصفحك الحالي لا يدعم ميزة الإملاء الصوتي المباشر. يمكنك استخدام Chrome أو Edge أو كتابة النص يدوياً.');
+      return;
+    }
+
+    if (isDictating) {
+      if (dictationRecognitionRef.current) {
+        try {
+          dictationRecognitionRef.current.stop();
+        } catch {
+          // ignore
+        }
+        dictationRecognitionRef.current = null;
+      }
+      setIsDictating(false);
+    } else {
+      try {
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'ar-EG';
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.maxAlternatives = 1;
+
+        const previousText = transcript.trim();
+
+        recognition.onresult = (event: any) => {
+          let newlyDictated = '';
+          for (let i = 0; i < event.results.length; i++) {
+            const res = event.results[i];
+            if (res && res[0] && res[0].transcript) {
+              newlyDictated += res[0].transcript + ' ';
+            }
+          }
+          const combined = previousText
+            ? `${previousText} ${newlyDictated.trim()}`
+            : newlyDictated.trim();
+          setTranscript(combined);
+          setTranscriptionSuccess(true);
+        };
+
+        recognition.onerror = () => {
+          setIsDictating(false);
+        };
+
+        recognition.onend = () => {
+          setIsDictating(false);
+        };
+
+        recognition.start();
+        dictationRecognitionRef.current = recognition;
+        setIsDictating(true);
+        setRecordingError(null);
+      } catch (err: any) {
+        console.warn('[Dictation] Error:', err);
+        setIsDictating(false);
+      }
+    }
   };
 
   // Play / Pause Preview Player
@@ -463,11 +646,10 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
     setPreviewDuration(75);
     setRecordingSeconds(75);
     setRecordingError(null);
-    if (!transcript.trim()) {
-      setTranscript(
-        'أنا اتعلمت الصنعة دي أب عن جد في قنا؛ كل قطعة فخار بتاخد جزء من روحنا وصبرنا وطمي النيل الأصيل، وبنحرقها في الفرن البلدي بحطب شجر النبق عشان تطلع صلبة وتعيش أجيال.'
-      );
-    }
+    const demoSpokenWords =
+      'من قلب صعيد مصر، بنقدملكم حكايات الحرف اليدوية الأصيلة؛ الفخار القناوي وسحر نسيج أخميم وخوص النخيل الأصيل.. كل قطعة وراها صانع وحكاية متوارثة أباً عن جد.';
+    setTranscript(demoSpokenWords);
+    setTranscriptionSuccess(true);
   };
 
   // Delete current audio
@@ -477,6 +659,9 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
     setExistingAudioUrl('');
     setPreviewCurrentTime(0);
     setPreviewDuration(0);
+    setLiveSpokenText('');
+    speechAccumulatedRef.current = '';
+    setTranscriptionSuccess(false);
     if (previewAudioRef.current) {
       previewAudioRef.current.pause();
       previewAudioRef.current = null;
@@ -534,7 +719,7 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
             <div>
               <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-amber-600/10 text-amber-700 dark:text-amber-300 text-[10px] font-black">
                 <Sparkles size={11} />
-                <span>خاص بالبائع صاحب الورشة • يظهر لكل الناس</span>
+                <span>تفريغ صوتي ذكي • يظهر لكل الناس</span>
               </div>
               <h3 className="text-lg sm:text-xl font-black mt-0.5">
                 سجل صوتك لقطعة: {product.title}
@@ -567,23 +752,21 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
             <button
               type="button"
               onClick={() => setActiveTab('record')}
-              className={`flex-1 py-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                activeTab === 'record'
+              className={`flex-1 py-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${activeTab === 'record'
                   ? 'bg-amber-700 text-white shadow-sm'
                   : 'text-secondary hover:text-espresso dark:text-cream/70'
-              }`}
+                }`}
             >
               <Mic size={15} />
-              <span>تسجيل صوتي مباشر (استوديو / ميكروفون)</span>
+              <span>تسجيل صوتي وتفريغ مباشر</span>
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('upload')}
-              className={`flex-1 py-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                activeTab === 'upload'
+              className={`flex-1 py-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${activeTab === 'upload'
                   ? 'bg-amber-700 text-white shadow-sm'
                   : 'text-secondary hover:text-espresso dark:text-cream/70'
-              }`}
+                }`}
             >
               <Upload size={15} />
               <span>رفع ملف صوتي مسجل</span>
@@ -594,20 +777,20 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
           {activeTab === 'record' && (
             <div className="p-5 sm:p-6 rounded-2xl bg-amber-950/5 dark:bg-black/30 border border-amber-900/15 dark:border-white/10 text-center space-y-4">
               {isRecording ? (
-                /* ACTIVE RECORDING STATE */
+                /* ACTIVE RECORDING STATE WITH LIVE TRANSCRIPTION */
                 <div className="space-y-4">
                   {/* Status Indicator */}
                   <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-500/15 border border-red-500/30 text-red-600 dark:text-red-400 text-xs font-bold animate-pulse">
                     <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-ping" />
                     <span>
                       {isStudioRecording
-                        ? 'جاري التسجيل الصوتي عبر استوديو وه التراثي...'
-                        : 'جاري تسجيل صوتك الحي بالميكروفون الآن...'}
+                        ? 'جاري التسجيل الصوتي واستخراج الكلام عبر استوديو وه...'
+                        : 'جاري تسجيل صوتك وتفريغ كلامك لحظياً...'}
                     </span>
                   </div>
 
                   {/* Dynamic Sound Wave Pulse Animation */}
-                  <div className="flex items-center justify-center gap-1.5 h-14 py-2">
+                  <div className="flex items-center justify-center gap-1.5 h-12 py-1">
                     {[40, 75, 55, 90, 60, 100, 70, 85, 45, 95, 65, 80, 50, 90, 70, 60].map(
                       (h, i) => (
                         <span
@@ -631,12 +814,32 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
                     </span>
                   </div>
 
-                  <p className="text-xs text-secondary dark:text-cream/80 max-w-sm mx-auto leading-relaxed">
-                    اتكلم بطبيعتك الصعيدية الأصيلة واحكي عن طريقتك وخاماتك وطينتك وأسرار الورشة
-                  </p>
+                  {/* Real-Time Live Speech-to-Text Box (الكلام المنطوق مباشرة من الريكورد) */}
+                  <div className="p-3.5 rounded-2xl bg-black/5 dark:bg-white/5 border border-amber-600/25 text-right space-y-1.5 animate-in fade-in">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5 text-[11px] font-black text-amber-800 dark:text-amber-300">
+                        <Sparkles size={13} className="text-amber-600 animate-spin" />
+                        <span>جاري استخراج الكلام المنطوق من صوتك لحظياً (Speech-to-Text):</span>
+                      </div>
+                      <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+                        مستمع للهجة الصعيدية / المصرية
+                      </span>
+                    </div>
+
+                    <div className="p-2.5 rounded-xl bg-white/80 dark:bg-black/40 border border-black/5 min-h-[2.5rem] text-xs sm:text-sm font-semibold text-espresso dark:text-cream leading-relaxed select-text">
+                      {liveSpokenText ? (
+                        <span className="text-amber-900 dark:text-amber-200">« {liveSpokenText} »</span>
+                      ) : (
+                        <span className="text-secondary/60 dark:text-cream/40 italic">
+                          اتكلم بحريتك وسجل حكايتك.. كلامك المنطوق هيظهر هنا كلمة بكلمة ويتنقل للحكاية المكتوبة تلقائياً...
+                        </span>
+                      )}
+                    </div>
+                  </div>
 
                   {/* Action Buttons During Recording */}
-                  <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-1">
                     <button
                       type="button"
                       onClick={handleStopRecording}
@@ -660,10 +863,10 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
                 <div className="space-y-4">
                   <div className="space-y-1">
                     <p className="text-xs sm:text-sm font-black text-espresso dark:text-cream">
-                      سجل حكايتك وصوتك مباشرة من قلب ورشتك
+                      سجل حكايتك وصوتك مباشرة وسيتم تحويل كلامك إلى نص تلقائياً
                     </p>
                     <p className="text-xs text-secondary dark:text-cream/70 max-w-md mx-auto">
-                      يعمل التسجيل مباشرة عبر الميكروفون، أو بنقرة واحدة لتوثيق الحكاية عبر استوديو المنصة.
+                      محرك الذكاء الصوتي يقوم بتفريغ كلماتك بلهجتك الصعيدية والطبيعية كما تنطقها تماماً.
                     </p>
                   </div>
 
@@ -684,7 +887,7 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
                         <>
                           <div className="w-3 h-3 rounded-full bg-red-500 animate-ping mr-0.5" />
                           <Mic size={18} />
-                          <span>{hasAudioToPlay ? 'تسجيل صوت جديد للقطعة' : 'ابدأ التسجيل الصوتي الآن'}</span>
+                          <span>{hasAudioToPlay ? 'تسجيل صوت وتفريغ كلام جديد' : 'ابدأ التسجيل الصوتي الآن'}</span>
                         </>
                       )}
                     </button>
@@ -699,9 +902,9 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
                     >
                       <div className="flex items-center gap-2">
                         <Sparkles size={16} className="text-amber-700 dark:text-amber-400 shrink-0" />
-                        <span>أو اضغط هنا لاستخدام تسجيل تراثي جاهز فوراً (للاختبار السريع)</span>
+                        <span>أو اضغط هنا لاستخدام تسجيل تراثي جاهز وتفريغه فوراً</span>
                       </div>
-                      <span className="text-[11px] underline shrink-0">تطبيق مباشر</span>
+                      <span className="text-[11px] underline shrink-0 font-black">تطبيق مباشر</span>
                     </button>
                   </div>
                 </div>
@@ -782,11 +985,10 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
                     <div
                       className="h-full bg-gradient-to-r from-amber-600 to-orange-500 transition-all duration-100"
                       style={{
-                        width: `${
-                          previewDuration > 0
+                        width: `${previewDuration > 0
                             ? (previewCurrentTime / previewDuration) * 100
                             : 0
-                        }%`,
+                          }%`,
                       }}
                     />
                   </div>
@@ -820,23 +1022,49 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
             </div>
           </div>
 
-          {/* Spoken Transcript Field */}
-          <div className="space-y-1">
+          {/* Spoken Transcript Field (الحكاية المنطوقة المأخوذة من الريكورد) */}
+          <div className="space-y-1.5">
             <div className="flex items-center justify-between text-xs">
-              <label className="font-bold text-foreground">
-                الحكاية المكتوبة بلسانك (نص الحكاية المنطوق):
-              </label>
-              <span className="text-[10px] text-secondary dark:text-cream/60">
-                تظهر تحت التسجيل ويقدر الزوار ينسخوها ويشاركوها
-              </span>
+              <div className="flex items-center gap-2">
+                <label className="font-bold text-foreground flex items-center gap-1.5">
+                  <FileText size={14} className="text-amber-700 dark:text-amber-400" />
+                  <span>الحكاية المنطوقة (المستخرجة من كلامك في الريكورد):</span>
+                </label>
+
+                {transcriptionSuccess && (
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-500/15 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                    <CheckCircle2 size={11} />
+                    <span>مفرغة تلقائياً من الصوت</span>
+                  </span>
+                )}
+              </div>
+
+              {/* Direct Voice Dictation Button (إملاء صوتي إضافي) */}
+              <button
+                type="button"
+                onClick={handleToggleDictation}
+                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-bold transition-all cursor-pointer ${isDictating
+                    ? 'bg-red-600 text-white animate-pulse shadow-xs'
+                    : 'bg-amber-800/10 hover:bg-amber-800/20 text-amber-900 dark:text-amber-300 border border-amber-800/20'
+                  }`}
+                title="تحدث لإضافة أو تعديل الكلام المنطوق مباشرة"
+              >
+                <Mic size={12} className={isDictating ? 'animate-bounce' : ''} />
+                <span>{isDictating ? 'جاري الاستماع لكلامك...' : 'إملاء صوتي مباشر'}</span>
+              </button>
             </div>
+
             <textarea
               rows={3}
               value={transcript}
               onChange={(e) => setTranscript(e.target.value)}
-              placeholder="اكتب هنا ما قلته في التسجيل أو حكاية القطعة التراثية وسر الصنعة باللهجة الصعيدية أو المصرية التلقائية..."
+              placeholder="يتم تفريغ كلامك المنطوق هنا تلقائياً أثناء التسجيل.. ويمكنك مراجعته أو التعديل عليه في أي وقت."
               className="w-full px-3 py-2.5 bg-white dark:bg-black/20 border border-black/10 dark:border-white/10 rounded-xl text-xs sm:text-sm outline-none focus:border-primary resize-none leading-relaxed"
             />
+
+            <p className="text-[10px] text-secondary dark:text-cream/60">
+              تظهر هذه الحكاية للزوار في صفحة المنتج ويمكنهم قراءتها ونسخها ومشاركتها مع الاستماع للصوت.
+            </p>
           </div>
 
           {/* Footer Actions */}

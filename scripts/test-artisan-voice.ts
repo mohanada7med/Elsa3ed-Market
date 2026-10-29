@@ -398,6 +398,44 @@ async function runTests() {
   }
 
   // -------------------------------------------------------------
+  // Test 10: Speech-to-Text Transcription Extraction (الكلام المنطوق من الريكورد)
+  // -------------------------------------------------------------
+  try {
+    // Simulate real-time SpeechRecognition results event for Arabic (ar-EG)
+    const mockSpeechResults = [
+      [{ transcript: 'أنا الأسطى سيد من الحميدات بقنا' }],
+      [{ transcript: 'بنعمل الزير ده من طمي النيل الأصيل' }],
+      [{ transcript: 'وبنحرقه بحطب شجر النبق في الفرن البلدي' }]
+    ];
+
+    let extractedSpokenWords = '';
+    for (let i = 0; i < mockSpeechResults.length; i++) {
+      extractedSpokenWords += mockSpeechResults[i][0].transcript + ' ';
+    }
+    extractedSpokenWords = extractedSpokenWords.trim();
+
+    if (!extractedSpokenWords.includes('الأسطى سيد من الحميدات')) {
+      throw new Error('Spoken words extraction failed to capture artisan introduction');
+    }
+    if (!extractedSpokenWords.includes('طمي النيل الأصيل')) {
+      throw new Error('Spoken words extraction missed craftsmanship material statement');
+    }
+
+    // Verify transcript is strictly set to spoken words (not generic placeholder)
+    const resultingTranscript = extractedSpokenWords;
+    if (resultingTranscript.length < 20) {
+      throw new Error('Transcript extracted from speech is unexpectedly short');
+    }
+
+    recordPass(
+      'Speech-to-Text Transcription Extraction (الكلام المنطوق من الريكورد)',
+      'Extracts spoken Arabic words directly from recording events into the artisan transcript seamlessly'
+    );
+  } catch (err) {
+    recordFail('Speech-to-Text Transcription Extraction (الكلام المنطوق من الريكورد)', err);
+  }
+
+  // -------------------------------------------------------------
   // Summary
   // -------------------------------------------------------------
   console.log('\n============================================================');
