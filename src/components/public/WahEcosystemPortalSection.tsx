@@ -5,6 +5,8 @@ import {
   ArrowUpLeft,
   Compass,
   Crown,
+  ArrowDownLeft,
+  DoorOpen,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { HeritageCornerStamp } from '../common/HeritageCornerStamp';
@@ -199,7 +201,6 @@ export const WahEcosystemPortalSection: React.FC = () => {
     <section
       dir="rtl"
       className="
-        py-16
         bg-transparent
         text-foreground
         transition-colors duration-500
@@ -215,68 +216,159 @@ export const WahEcosystemPortalSection: React.FC = () => {
       {/* HEADER */}
       {/* ======================================== */}
 
-      <div className="relative z-10 mb-12 sm:mb-16 text-foreground select-none">
-        <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
-          <div>
-            <div className="mb-6 flex items-center gap-3 text-[10px] font-black tracking-[0.28em] text-primary dark:text-primary-hover">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/10">
-                <Compass
-                  size={14}
-                  className="animate-spin-slow text-accent"
-                />
-              </span>
+      <div className="relative z-10 mb-16 sm:mb-24 overflow-hidden text-foreground select-none">
 
-              DISCOVER / أبواب ودليل «وه» السبعة
+        {/* Main Hero */}
+        <div className="relative grid items-center gap-10 marge lg:grid-cols-[1.15fr_0.85fr] lg:gap-8">
+
+          {/* Typography Side */}
+          <div className="relative z-10">
+
+            <div className="mb-5 flex items-center gap-3">
+              <span className="h-px w-9 bg-accent" />
+              <span className="text-xs font-bold tracking-wide text-foreground-secondary">
+                تعالى نكتشف حكاية الصعيد
+              </span>
             </div>
 
-            <br />
+            <h1 className="relative text-6xl font-normal leading-[1.15] tracking-tight sm:text-8xl lg:text-[8.5rem]">
 
-            <h1 className="max-w-6xl text-5xl sm:text-7xl lg:text-[7rem] font-normal leading-[1.1] tracking-normal">
-              أبواب
-              <br />
-
-              <span className="ps-22 mr-3 sm:mr-8 lg:mr-20 text-primary dark:text-primary-hover">
-                وه
+              <span className="block">
+                أبواب
               </span>
+
+              <span className="relative mt-1 inline-flex items-center gap-4 sm:gap-7">
+
+                <span className="relative z-10 font-main text-primary dark:text-primary-hover">
+                  وه
+                </span>
+
+                <div className="group relative mt-5 flex h-[82px] w-[68px] items-end justify-center sm:h-[100px] sm:w-[82px]">
+
+                  {/* Door Frame */}
+                  <div className="
+    absolute inset-x-1 top-0 bottom-0
+    rounded-t-[38px] rounded-b-sm
+    border-[3px] border-accent/70
+    bg-accent/10
+    shadow-[0_8px_20px_rgba(180,95,66,0.12)]
+    transition-all duration-500
+    group-hover:border-primary
+  " />
+
+                  {/* Wooden Door */}
+                  <div className="
+    relative z-10
+    mb-1 flex h-[88%] w-[78%]
+    items-center justify-center
+    rounded-t-[32px] rounded-b-sm
+    border-2 border-[#8B542E]
+    bg-gradient-to-br from-[#C99458] via-[#A96B3D] to-[#754426]
+    shadow-[inset_3px_0_5px_rgba(255,255,255,0.2),inset_-3px_0_5px_rgba(0,0,0,0.2)]
+    transition-all duration-500
+    group-hover:translate-x-1
+  ">
+
+                    {/* Wooden Panels */}
+                    <div className="absolute inset-x-2 top-4 bottom-3 rounded-t-[24px] rounded-b-sm border border-[#E4B77D]/50" />
+
+                    <div className="absolute inset-x-3 top-7 bottom-5 rounded-t-[20px] rounded-b-sm border border-[#754426]/40" />
+
+                    {/* Door Handle */}
+                    <div className="absolute right-2 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full border border-[#F5D18B] bg-[#D9AD65] shadow-sm" />
+
+                  </div>
+
+                  {/* Door Light */}
+                  <div className="absolute -bottom-1 h-2 w-[85%] rounded-full bg-accent/30 blur-md" />
+
+                </div>
+
+              </span>
+
             </h1>
 
-            <div className="mt-8 grid max-w-3xl gap-6 sm:grid-cols-[80px_1fr] items-start">
-              <div className="hidden sm:block">
-                <div className="text-[10px] font-black tracking-[0.2em] text-foreground-disabled">
-                  هتلاقى ايه
-                </div>
+            {/* Description */}
+            <div className="mt-9 grid max-w-2xl grid-cols-[35px_1fr] gap-4 sm:mt-12 sm:grid-cols-[65px_1fr] sm:gap-6">
 
-                <div className="mt-3 h-px w-10 bg-accent" />
+              <div className="flex flex-col items-center">
+                <span className="text-[10px] font-black tracking-widest text-accent">
+                  WAH
+                </span>
+                <span className="mt-3 h-full min-h-20 w-px bg-gradient-to-b from-accent/60 to-transparent" />
               </div>
 
-              <div className="space-y-3">
-                <p className="max-w-2xl text-sm font-medium leading-7 text-foreground-secondary sm:text-base sm:leading-8">
-                  كل خير الصعيد متجمع في{' '}
-                  <strong className="text-foreground font-black">
+              <div>
+                <p className="text-sm font-medium leading-8 text-foreground-secondary sm:text-base sm:leading-9">
+                  كل خير الصعيد متجمع في{" "}
+                  <strong className="font-black text-foreground">
                     7 أبواب تراثية رئيسية
                   </strong>
-                  . في كل باب، هتلاقي{' '}
-                  <strong className="                    text-primary dark:text-primary-hover
- font-main">
+                  . في كل باب، هتلاقي{" "}
+                  <strong className="font-black text-primary dark:text-primary-hover">
                     «عم وه»
-                  </strong>{' '}
-                  متقمص دوراً أصيلاً وموثقاً حكايته بيده:
-                  من تاجر الصنعة الأمين، لدليل النيل والرحالة،
-                  لحارس العتيق وراعي بهجة الموالد!
+                  </strong>{" "}
+                  متقمص دوراً أصيلاً وموثقاً حكايته بيده!
                 </p>
 
-                <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 border border-primary/20 px-3.5 py-1 text-xs font-bold                     text-primary dark:text-primary-hover
-">
-                  <Crown size={13} className="shrink-0" />
-
-                  <span>
-                    «عم وه» مرافقك في الأبواب السبعة بشخصيات وأدوار فريدة
-                  </span>
-                </div>
               </div>
             </div>
           </div>
+
+          {/* Visual Heritage Side */}
+          <div className="relative mx-auto flex w-full max-w-[460px] items-center justify-center lg:min-h-[510px]">
+
+            {/* Background Decorative Circle */}
+            <div className="absolute h-[85%] w-[85%] rounded-full border border-primary/10" />
+            <div className="absolute h-[70%] w-[70%] rounded-full border border-dashed border-accent/20" />
+
+
+            {/* Uncle WAH */}
+            <div className="relative z-10 flex h-[350px] w-full items-end justify-center sm:h-[440px]">
+
+              <div className="absolute bottom-8 h-48 w-48 rounded-full bg-accent/10 blur-3xl sm:h-64 sm:w-64" />
+
+              <img
+                src="/mascot/doors.png"
+                alt="عم وه"
+                className="
+  relative
+  z-10
+  h-[82%]
+  max-w-[100%]
+  sm:h-[90%]
+  sm:max-w-[125%]
+  lg:h-[100%]
+  lg:max-w-[140%]
+  object-contain
+  object-bottom
+  drop-shadow-[0_20px_25px_rgba(36,30,26,0.15)]
+  transition-transform
+  duration-700
+  hover:scale-105
+"              />
+
+              {/* Floating Welcome Label */}
+              <div className="absolute right-0 top-10 z-20 rounded-2xl border border-border/70 bg-background/90 px-4 py-3 shadow-lg backdrop-blur-md sm:right-2">
+                <div className="text-[10px] font-bold text-foreground-secondary">
+                  دليلك في كل حكاية
+                </div>
+                <div className="mt-1 text-sm font-black text-primary dark:text-primary-hover">
+                  وكل مكان
+                </div>
+              </div>
+
+              {/* Decorative Number */}
+              <div className="absolute bottom-6 left-2 z-20 flex h-12 w-12 items-center justify-center rounded-full border border-accent/30 bg-background text-sm font-black text-accent shadow-sm sm:left-4">
+                07
+              </div>
+            </div>
+
+          </div>
         </div>
+
+
+
       </div>
 
       {/* ======================================== */}
@@ -996,7 +1088,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
           </motion.div>
         ))}
       </div>
-      
+
     </section>
   );
 };

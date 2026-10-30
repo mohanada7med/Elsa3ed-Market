@@ -98,16 +98,61 @@ export const HomePage: React.FC = () => {
                   BEST SELLERS / الأكتر طلبًا وإقبالًا
                 </div>
 
-                <h1 className="max-w-6xl text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-7xl xl:text-[7.5rem] font-black leading-[0.95] tracking-tight">
-                  سوق
-                  <br />
+                <h1 className="max-w-6xl flex flex-col items-start gap-2 text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-7xl xl:text-[7.5rem] font-black leading-[0.95] tracking-tight">
 
-                  <span className="ps-18 mr-3 sm:mr-8 lg:mr-20 text-primary dark:text-primary-hover">
-                    وه
+                  {/* الكلمة الأولى: سوق */}
+                  <span>سوق</span>
+
+                  {/* السطر الثاني: كلمة وه + الشنطة */}
+                  <span className="inline-flex items-center gap-3 sm:gap-5">
+                    <span className="text-primary dark:text-primary-hover">
+                      وه
+                    </span>
+
+                    {/* 3D Shopping Basket */}
+                    <span className="relative inline-flex h-24 w-24 sm:h-32 sm:w-32 lg:h-35 lg:w-32 items-center justify-center rotate-[-7deg] hover:rotate-0 hover:scale-110 transition-all duration-500">
+
+                      {/* Basket Handle */}
+                      <span className="absolute top-1 left-1/2 -translate-x-1/2 h-12 w-14 sm:h-16 sm:w-20 rounded-t-full border-[5px] sm:border-[7px] border-b-0 border-[#704323] dark:border-[#D6A56B]" />
+
+                      {/* Basket Body */}
+                      <span className="absolute bottom-4 left-2 right-2 h-14 sm:h-20 rounded-b-2xl border-[5px] sm:border-[7px] border-[#704323] bg-gradient-to-br from-[#D6A56B] via-[#B77A45] to-[#80502E] shadow-[inset_0_3px_5px_#ffffff55,0_7px_0_#59351F,0_12px_15px_#00000030] overflow-hidden">
+
+                        {/* Basket Grid */}
+                        <span className="absolute inset-0 grid grid-cols-4">
+                          {[1, 2, 3, 4].map((item) => (
+                            <span
+                              key={item}
+                              className="border-r-[3px] border-[#704323]/60"
+                            />
+                          ))}
+                        </span>
+
+                        <span className="absolute inset-0 grid grid-rows-3">
+                          {[1, 2, 3].map((item) => (
+                            <span
+                              key={item}
+                              className="border-b-[3px] border-[#704323]/60"
+                            />
+                          ))}
+                        </span>
+
+                        {/* Front Shine */}
+                        <span className="absolute top-1 left-2 h-2 w-8 rounded-full bg-white/30 blur-[2px]" />
+                      </span>
+
+                      {/* Basket Wheels */}
+                      <span className="absolute bottom-1 left-5 h-3 w-3 sm:h-4 sm:w-4 rounded-full bg-[#3B2113] shadow-[inset_0_1px_2px_#ffffff55]" />
+                      <span className="absolute bottom-1 right-5 h-3 w-3 sm:h-4 sm:w-4 rounded-full bg-[#3B2113] shadow-[inset_0_1px_2px_#ffffff55]" />
+
+                      {/* Decorative Spark */}
+                      <span className="absolute -top-1 -right-1 text-xl sm:text-3xl text-[#D6A56B] animate-pulse">
+                        ✦
+                      </span>
+
+                    </span>
                   </span>
-                </h1>
-
-                <div className="mt-8 grid max-w-3xl gap-6 sm:grid-cols-[80px_1fr] items-start">
+                </h1>                <div className="mt-8 grid max-w-3xl gap-6 sm:grid-cols-[80px_1fr] items-start">
                   <div className="hidden sm:block">
                     <div className="text-[10px] font-black tracking-[0.2em] text-foreground-disabled">
                       منتجات وه
@@ -204,7 +249,7 @@ export const HomePage: React.FC = () => {
             <FeaturedSellers />
           </div>
         </section>
-        
+
 
         {/* فاصل تراثي أصيل */}
         <HeritageSectionDivider variant="ribbon" />

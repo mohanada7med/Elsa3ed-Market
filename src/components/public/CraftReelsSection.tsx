@@ -741,14 +741,59 @@ export const CraftReelsSection: React.FC = () => {
               </div>
 
               <h1 className="max-w-6xl text-5xl sm:text-7xl lg:text-[8rem] font-black leading-[0.95] tracking-tight">
-                ريلز
-                <br />
+                <span className="block">ريلز</span>
 
-                <span className="ps-18 mr-3 sm:mr-8 lg:mr-20 text-primary dark:text-primary-hover">
-                  وه
+                <span className="flex items-center gap-3 sm:gap-5">
+                  <span className="text-primary dark:text-primary-hover">
+                    وه
+                  </span>
+
+                  {/* Vintage Camera */}
+                  <span className="group relative mt-3 inline-flex h-[48px] w-[65px] items-center justify-center sm:h-[65px] sm:w-[88px] lg:h-[82px] lg:w-[112px]">
+
+                    {/* Camera Flash */}
+                    <span className="absolute -top-3 right-4 h-2 w-3 rounded-full bg-accent/60 blur-[2px] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+
+                    {/* Camera Body */}
+                    <span className="
+        relative flex h-[34px] w-[58px] items-center justify-center
+        rounded-xl border-2 border-[#754426]
+        bg-gradient-to-br from-[#D9B477] via-[#B77B49] to-[#754426]
+        shadow-[0_8px_18px_rgba(36,30,26,0.2)]
+        transition-all duration-500
+        group-hover:-translate-y-1 group-hover:rotate-[-4deg]
+        sm:h-[46px] sm:w-[78px]
+        lg:h-[56px] lg:w-[100px]
+      ">
+
+                      {/* Camera Top Viewfinder */}
+                      <span className="absolute -top-[7px] left-3 h-2 w-5 rounded-t-md border border-[#754426] bg-[#C99458] sm:w-7" />
+
+                      {/* Lens Outer Ring */}
+                      <span className="
+          relative flex h-7 w-7 items-center justify-center
+          rounded-full border-[3px] border-[#E8C17C]
+          bg-[#241E1A] shadow-inner
+          sm:h-9 sm:w-9 lg:h-11 lg:w-11
+        ">
+                        {/* Lens Glass */}
+                        <span className="flex h-4 w-4 items-center justify-center rounded-full border border-sky-300/40 bg-gradient-to-br from-sky-300/60 via-[#243B53] to-black sm:h-5 sm:w-5 lg:h-6 lg:w-6">
+                          <span className="h-1.5 w-1.5 rounded-full bg-white/80 blur-[1px]" />
+                        </span>
+                      </span>
+
+                      {/* Camera Button */}
+                      <span className="absolute right-2 top-1 h-1.5 w-1.5 rounded-full bg-[#E66A2E] shadow-[0_0_6px_rgba(230,106,46,0.7)]" />
+
+                      {/* Camera Grip */}
+                      <span className="absolute bottom-1 left-2 h-1 w-3 rounded-full bg-[#F3D5A3]/50" />
+                    </span>
+
+                    {/* Camera Shadow */}
+                    <span className="absolute -bottom-1 h-1.5 w-3/4 rounded-full bg-black/20 blur-md transition-all duration-500 group-hover:w-1/2" />
+                  </span>
                 </span>
               </h1>
-
               <p className="mt-4 max-w-2xl text-xs sm:text-sm text-[#6B4B35] dark:text-stone-300 leading-relaxed font-medium">
                 اكتشف الصعيد من أماكنه وحكاياته، لورش صنايعيته وحرفه وأكلاته، واتعرّف على تراثه وأهله بكل تفاصيله.              </p>
 
