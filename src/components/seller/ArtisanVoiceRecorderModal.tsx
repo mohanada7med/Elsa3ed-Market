@@ -753,8 +753,8 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
               type="button"
               onClick={() => setActiveTab('record')}
               className={`flex-1 py-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${activeTab === 'record'
-                  ? 'bg-amber-700 text-white shadow-sm'
-                  : 'text-secondary hover:text-espresso dark:text-cream/70'
+                ? 'bg-amber-700 text-white shadow-sm'
+                : 'text-secondary hover:text-espresso dark:text-cream/70'
                 }`}
             >
               <Mic size={15} />
@@ -764,8 +764,8 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
               type="button"
               onClick={() => setActiveTab('upload')}
               className={`flex-1 py-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${activeTab === 'upload'
-                  ? 'bg-amber-700 text-white shadow-sm'
-                  : 'text-secondary hover:text-espresso dark:text-cream/70'
+                ? 'bg-amber-700 text-white shadow-sm'
+                : 'text-secondary hover:text-espresso dark:text-cream/70'
                 }`}
             >
               <Upload size={15} />
@@ -986,8 +986,8 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
                       className="h-full bg-gradient-to-r from-amber-600 to-orange-500 transition-all duration-100"
                       style={{
                         width: `${previewDuration > 0
-                            ? (previewCurrentTime / previewDuration) * 100
-                            : 0
+                          ? (previewCurrentTime / previewDuration) * 100
+                          : 0
                           }%`,
                       }}
                     />
@@ -1044,8 +1044,8 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
                 type="button"
                 onClick={handleToggleDictation}
                 className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-bold transition-all cursor-pointer ${isDictating
-                    ? 'bg-red-600 text-white animate-pulse shadow-xs'
-                    : 'bg-amber-800/10 hover:bg-amber-800/20 text-amber-900 dark:text-amber-300 border border-amber-800/20'
+                  ? 'bg-red-600 text-white animate-pulse shadow-xs'
+                  : 'bg-amber-800/10 hover:bg-amber-800/20 text-amber-900 dark:text-amber-300 border border-amber-800/20'
                   }`}
                 title="تحدث لإضافة أو تعديل الكلام المنطوق مباشرة"
               >

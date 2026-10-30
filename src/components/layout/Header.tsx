@@ -35,6 +35,8 @@ import {
   Layers,
   Headphones,
   User,
+  HomeIcon,
+  ChevronLeft,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -467,6 +469,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
   } = useApp();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeMobileCategory, setActiveMobileCategory] = useState<string | null>(null);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [searchOverlayOpen, setSearchOverlayOpen] = useState(false);
   const [hoveredPortalId, setHoveredPortalId] = useState<string | null>(null);
@@ -579,8 +582,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
     }
 
     return links;
-  }, [currentRole, isAuthenticated]);
-
+  }, [currentRole, isAuthenticated, isSeller, isAdmin]);
   const portalLinks = useMemo(() => {
     return roleNavLinks.filter(
       (link: any) =>
@@ -591,7 +593,102 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
         link.id !== 'about'
     );
   }, [roleNavLinks]);
+  const mobileNavCategories = useMemo(() => {
+    const categories = isSeller
+      ? [
+        {
+          id: 'seller-main',
+          title: 'إدارة الورشة',
+          description: 'لوحة التحكم وإعدادات الورشة',
+          icon: Store,
+          items: ['seller-dashboard', 'seller-account'],
+        },
+        {
+          id: 'seller-products',
+          title: 'المنتجات والمخزون',
+          description: 'إدارة منتجاتك ومتابعة المخزون',
+          icon: Package,
+          items: ['seller-products', 'seller-inventory'],
+        },
+        {
+          id: 'seller-orders',
+          title: 'الطلبات والأداء',
+          description: 'الطلبات والإحصائيات',
+          icon: ClipboardList,
+          items: ['seller-orders', 'seller-analytics'],
+        },
+      ]
+      : isAdmin
+        ? [
+          {
+            id: 'admin-main',
+            title: 'الإدارة الرئيسية',
+            description: 'لوحة التحكم والمستخدمون',
+            icon: LayoutDashboard,
+            items: ['admin-dashboard', 'admin-buyers'],
+          },
+          {
+            id: 'admin-market',
+            title: 'إدارة السوق',
+            description: 'المنتجات والبائعون والطلبات',
+            icon: Store,
+            items: ['admin-products', 'admin-sellers', 'admin-orders'],
+          },
+          {
+            id: 'admin-system',
+            title: 'إدارة النظام',
+            description: 'البلاغات وسجل النشاط',
+            icon: ShieldCheck,
+            items: ['admin-reports', 'admin-audit-logs'],
+          },
+        ]
+        : [
+          {
+            id: 'main',
+            title: 'الرئيسية والسوق',
+            description: 'ابدأ رحلتك في منصة وَه',
+            icon: HomeIcon,
+            items: ['home', 'products', 'cart', 'orders'],
+          },
+          {
+            id: 'discover',
+            title: 'اكتشف الصعيد',
+            description: 'المحافظات والأماكن والشخصيات',
+            icon: Compass,
+            items: ['map', 'places', 'people'],
+          },
+          {
+            id: 'heritage',
+            title: 'تراث وحكايات الصعيد',
+            description: 'الأكل والمواسم والحكايات',
+            icon: Landmark,
+            items: ['food', 'events', 'reels'],
+          },
+          {
+            id: 'wah-market',
+            title: 'سوق وَه',
+            description: 'الحرفيون والمنتجات التراثية',
+            icon: ShoppingBag,
+            items: ['sellers', 'categories'],
+          },
+          {
+            id: 'about',
+            title: 'عن وَه والمساعدة',
+            description: 'تعرف على وَه وتواصل معنا',
+            icon: Headphones,
+            items: ['quize', 'about', 'help'],
+          },
+        ];
 
+    return categories
+      .map((category) => ({
+        ...category,
+        links: roleNavLinks.filter((link: any) =>
+          category.items.includes(link.id)
+        ),
+      }))
+      .filter((category) => category.links.length > 0);
+  }, [roleNavLinks, isSeller, isAdmin]);
   const splitHalf = Math.ceil(portalLinks.length / 2);
   const rightPortals = portalLinks.slice(0, splitHalf);
   const leftPortals = portalLinks.slice(splitHalf);
@@ -1317,7 +1414,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
         {/* =========================================================
             3. MOBILE MAIN ROW (يمين وشمال + اللوجو المتدلي في المنتصف)
             ========================================================= */}
-        <div className="flex lg:hidden relative mx-auto max-w-[1600px] h-18 sm:h-22 items-center justify-between px-3 sm:px-6 overflow-visible">
+        <div className="flex lg:hidden relative mx-auto max-w-[1600px] h-28 sm:h-36 items-center justify-between px-3 sm:px-6 overflow-visible mt-2">
           {/* الجانب الأيمن: القائمة والبحث */}
           <div className="flex items-center gap-1.5 z-20">
             <button
@@ -1330,6 +1427,16 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             >
               <Menu size={16} className="text-primary-hover" />
             </button>
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label="تغيير المظهر"
+              title="تغيير المظهر"
+              className="flex h-8.5 w-8.5 items-center justify-center rounded-full cursor-pointer transition-transform active:scale-95"
+              style={{ backgroundColor: hoverBg, color: mainText }}
+            >
+              {isDark ? <Sun size={16} className="text-primary-hover" /> : <Moon size={16} />}
+            </button>
 
             <button
               type="button"
@@ -1341,9 +1448,10 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             >
               <Search size={16} />
             </button>
+
           </div>
 
-          {/* اللوجو المتدلي الواصل للـ Sub Bar في الموبايل والتابلت */}
+          {/* اللوجو في منتصف الهيدر تماماً وبنفس المساحة */}
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-auto select-none">
             <button
               type="button"
@@ -1356,9 +1464,9 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 draggable={false}
                 className="
                   block
-                  h-20 w-auto max-w-[140px] translate-y-3
-                  xs:h-24 xs:max-w-[180px] xs:translate-y-5
-                  sm:h-26 sm:max-w-[220px] sm:translate-y-6
+                  h-24 w-auto max-w-[150px]
+                  xs:h-28 xs:max-w-[190px]
+                  sm:h-32 sm:max-w-[230px]
                   object-contain
                   transition-all duration-300
                   group-hover:scale-105
@@ -1370,17 +1478,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
 
           {/* الجانب الأيسر: المظهر والمفضلة والسلة والحساب */}
           <div className="relative flex items-center gap-1 sm:gap-1.5 z-50">
-            <button
-              type="button"
-              onClick={toggleTheme}
-              aria-label="تغيير المظهر"
-              title="تغيير المظهر"
-              className="flex h-8.5 w-8.5 items-center justify-center rounded-full cursor-pointer transition-transform active:scale-95"
-              style={{ backgroundColor: hoverBg, color: mainText }}
-            >
-              {isDark ? <Sun size={16} className="text-primary-hover" /> : <Moon size={16} />}
-            </button>
-
             {!isStaff && (
               <button
                 type="button"
@@ -1399,26 +1496,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 )}
               </button>
             )}
-
-            {!isStaff && (
-              <button
-                type="button"
-                onClick={() => setIsCartDrawerOpen(true)}
-                aria-label="السلة"
-                title="السلة"
-                className="relative flex h-8.5 w-8.5 items-center justify-center rounded-full cursor-pointer transition-transform active:scale-95"
-                style={{ backgroundColor: hoverBg, color: mainText }}
-              >
-                <ShoppingBag size={16} />
-
-                {cartCount > 0 && (
-                  <span className="absolute -right-0.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full px-1 text-[8px] font-bold bg-[#E66A2E] text-white">
-                    {cartCount > 99 ? '99+' : cartCount}
-                  </span>
-                )}
-              </button>
-            )}
-
             {/* المستخدم المسجل */}
             {isAuthenticated ? (
               <>
@@ -1557,7 +1634,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             )}
           </div>
         </div>
-
         {/* =========================================================
             4. DESKTOP SIGNATURE BAR (البار التراثي الأصلي للكمبيوتر باللوجو المتدلي القديم)
             ========================================================= */}
@@ -1644,56 +1720,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
           </div>
         </div>
 
-        {/* =========================================================
-            5. MOBILE SUB BAR (أيقونات فقط + لون مختلف مستوحى من Tokens)
-            ========================================================= */}
-        <div className="block lg:hidden relative border-t select-none" style={{ borderColor }}>
-          <div
-            className="flex h-11 sm:h-12 items-center justify-between px-3 sm:px-6 relative overflow-visible shadow-xs backdrop-blur-md"
-            style={{
-              backgroundColor: isDark ? '#26160D' : '#F8EBD7',
-              borderBottom: `1px solid ${isDark ? 'rgba(201, 148, 68, 0.25)' : '#E0C79B'}`,
-            }}
-          >
-            {/* يمين: نصف الأيقونات */}
-            <div className="flex flex-1 items-center justify-end gap-1.5 overflow-x-auto no-scrollbar py-1">
-              {rightPortals.map((link) => renderMobileIconPortalItem(link))}
-            </div>
 
-            {/* مساحة فارغة في المركز محجوزة للوجو المتدلي */}
-            <div className="w-24 xs:w-28 sm:w-36 shrink-0 pointer-events-none" />
-
-            {/* شمال: باقي الأيقونات + عن وه */}
-            <div className="flex flex-1 items-center justify-start gap-1.5 overflow-x-auto no-scrollbar py-1">
-              {leftPortals.map((link) => renderMobileIconPortalItem(link))}
-
-              <button
-                type="button"
-                onClick={() => navigate('about')}
-                aria-label="عن وه"
-                className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full transition-all active:scale-95 cursor-pointer border"
-                style={{
-                  color: '#C99444',
-                  borderColor: isDark ? 'rgba(201,148,68,0.4)' : '#E0C79B',
-                  backgroundColor: isDark ? 'rgba(201,148,68,0.15)' : 'rgba(255, 249, 238, 0.85)',
-                }}
-              >
-                <Sparkles size={14} />
-              </button>
-            </div>
-          </div>
-
-          {/* خط الشيمر للموبايل */}
-          <div className="relative h-px w-full overflow-hidden pointer-events-none">
-            <motion.div
-              initial={{ left: '-300px' }}
-              animate={{ left: '100%' }}
-              transition={{ duration: 5, repeat: Infinity, repeatType: 'loop', ease: 'linear' }}
-              className="absolute top-0 h-full w-60"
-              style={{ background: 'linear-gradient(90deg, transparent 0%, #C99444 50%, transparent 100%)' }}
-            />
-          </div>
-        </div>
       </header>
 
       {/* =========================================================
@@ -1770,92 +1797,455 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
       <AnimatePresence>
         {mobileMenuOpen && (
           <>
+            {/* Overlay */}
             <motion.div
-              className="fixed inset-0 z-[700] bg-black/50 backdrop-blur-xs"
+              className="fixed inset-0 z-[700] bg-black/60 backdrop-blur-md"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMobileMenuOpen(false)}
             />
 
+            {/* Mobile Drawer */}
             <motion.aside
               dir="rtl"
-              className="fixed bottom-0 right-0 top-0 z-[710] w-[85vw] max-w-[340px] overflow-y-auto shadow-2xl p-4"
+              className="fixed bottom-0 right-0 top-0 z-[710] flex w-[90vw] max-w-[390px] flex-col overflow-hidden shadow-2xl"
               style={{
-                backgroundColor: isDark ? '#1B1009' : '#FFF9EE',
+                backgroundColor: isDark ? '#1B1009' : '#FAF7F0',
                 color: mainText,
+                borderLeft: `1px solid ${borderColor}`,
               }}
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              initial={{ x: '100%', opacity: 0.8 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: '100%', opacity: 0.8 }}
+              transition={{ type: 'spring', stiffness: 280, damping: 30 }}
             >
-              <div className="flex items-center justify-between border-b pb-4 mb-4" style={{ borderColor }}>
-                <img
-                  src="https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png"
-                  alt="وه"
-                  className="h-12 w-auto"
-                />
-                <button
-                  type="button"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex h-9 w-9 items-center justify-center rounded-full cursor-pointer"
-                  style={{ backgroundColor: hoverBg, color: mainText }}
-                >
-                  <X size={18} />
-                </button>
+              {/* Decorative Background */}
+              <div
+                className="pointer-events-none absolute inset-0 opacity-[0.035]"
+                style={{
+                  backgroundImage: `
+              repeating-linear-gradient(
+                45deg,
+                #C99444 0px,
+                #C99444 1px,
+                transparent 1px,
+                transparent 14px
+              )
+            `,
+                }}
+              />
+
+              {/* Header */}
+              <div
+                className="relative shrink-0 overflow-hidden px-5 pb-5 pt-6"
+                style={{
+                  background: isDark
+                    ? 'linear-gradient(135deg, #3B1E0E 0%, #241309 60%, #1B1009 100%)'
+                    : 'linear-gradient(135deg, #6B3A1F 0%, #3B1E0E 100%)',
+                }}
+              >
+                {/* Decorative Circles */}
+                <div className="pointer-events-none absolute -left-12 -top-12 h-40 w-40 rounded-full border border-[#C99444]/20" />
+                <div className="pointer-events-none absolute -left-6 -top-6 h-28 w-28 rounded-full border border-[#C99444]/15" />
+                <div className="pointer-events-none absolute -bottom-16 right-20 h-36 w-36 rounded-full bg-[#C99444]/10 blur-2xl" />
+
+                <div className="relative flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-[#C99444]/30 bg-white/10 p-1.5 backdrop-blur-sm">
+                      <img
+                        src="https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png"
+                        alt="وه"
+                        className="h-full w-full object-contain"
+                      />
+                    </div>
+
+                    <div>
+                      <p className="text-lg font-black tracking-wide text-[#FAF7F0]">
+                        أهلاً بيك في وَه
+                      </p>
+
+                      <p className="mt-1 text-[10px] font-medium text-[#E8D6B5]/75">
+                        من قلب الصعيد... حكاية بتبدأ
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setMobileMenuOpen(false)}
+                    aria-label="إغلاق القائمة"
+                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-white/10 text-white transition-all hover:rotate-90 hover:bg-white/20 active:scale-90"
+                  >
+                    <X size={19} />
+                  </button>
+                </div>
+
+                {/* Brand Bottom */}
+                <div className="relative mt-5 flex items-center gap-2">
+                  <span className="h-px flex-1 bg-gradient-to-l from-[#C99444]/60 to-transparent" />
+                  <span className="text-[9px] font-bold tracking-[0.2em] text-[#C99444]">
+                    العالم الرقمي لصعيد مصر
+                  </span>
+                  <span className="h-px flex-1 bg-gradient-to-r from-[#C99444]/60 to-transparent" />
+                </div>
               </div>
 
-              <div className="space-y-1">
-                {roleNavLinks.map((link: any) => {
-                  const Icon = link.icon;
-                  const isActive = activePage === link.id;
-
-                  return (
-                    <button
-                      key={link.id}
-                      type="button"
-                      onClick={() => navigate(link.id)}
-                      className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-right font-bold text-xs sm:text-sm cursor-pointer transition-colors"
-                      style={{
-                        backgroundColor: isActive
-                          ? isDark
-                            ? 'rgba(201,148,68,0.2)'
-                            : 'rgba(201,148,68,0.1)'
-                          : 'transparent',
-                        color: isActive ? (isDark ? '#C99444' : '#6B3A1F') : mainText,
-                      }}
-                    >
-                      {Icon && <Icon size={17} />}
-                      <span className="flex-1">{link.label}</span>
-                      {link.isNew && (
-                        <span className="rounded-full px-2 py-0.5 text-[9px] font-bold bg-[#E66A2E] text-white">
-                          جديد
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-
+              {/* User Card */}
               {isAuthenticated && (
                 <button
                   type="button"
                   onClick={() => {
                     setMobileMenuOpen(false);
-                    logout();
+                    navigate(getAccountPage());
                   }}
-                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl py-2.5 text-xs font-bold text-rose-500 hover:bg-rose-500/10 cursor-pointer border border-rose-500/20"
+                  className="relative mx-4 mt-4 flex shrink-0 items-center gap-3 overflow-hidden rounded-2xl border p-3 text-right transition-all active:scale-[0.98]"
+                  style={{
+                    borderColor: isDark
+                      ? 'rgba(201,148,68,0.3)'
+                      : 'rgba(107,58,31,0.15)',
+                    backgroundColor: isDark
+                      ? 'rgba(201,148,68,0.08)'
+                      : 'rgba(201,148,68,0.08)',
+                  }}
                 >
-                  <LogOut size={16} />
-                  <span>اخرج من الحساب</span>
+                  <div className="absolute bottom-0 right-0 top-0 w-1 bg-[#C99444]" />
+
+                  <img
+                    src={profileImage}
+                    alt={displayName}
+                    className="h-12 w-12 rounded-xl border-2 border-[#C99444]/50 object-cover"
+                  />
+
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-black">{displayName}</p>
+
+                    <p
+                      className="mt-1 text-[10px] font-semibold"
+                      style={{ color: secondaryText }}
+                    >
+                      {isAdmin
+                        ? 'مدير النظام'
+                        : isSeller
+                          ? 'صاحب ورشة'
+                          : 'عضو في مجتمع وَه'}
+                    </p>
+                  </div>
+
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#C99444]/15 text-[#C99444]">
+                    <UserCircle size={19} />
+                  </div>
                 </button>
               )}
+
+              {/* Navigation Content */}
+              <div className="relative flex-1 overflow-y-auto px-4 pb-5 pt-5">
+                {/* Section Title */}
+                <div className="mb-4 flex items-end justify-between">
+                  <div>
+                    <div className="mb-1 flex items-center gap-2">
+                      <span className="h-5 w-1 rounded-full bg-[#C99444]" />
+                      <h3 className="text-sm font-black">اكتشف وَه</h3>
+                    </div>
+
+                    <p
+                      className="mr-3 text-[10px]"
+                      style={{ color: secondaryText }}
+                    >
+                      كل حكايات الصعيد في مكان واحد
+                    </p>
+                  </div>
+
+                  <span
+                    className="rounded-lg px-3 py-1.5 text-[10px] font-black"
+                    style={{
+                      backgroundColor: isDark
+                        ? 'rgba(201,148,68,0.13)'
+                        : 'rgba(201,148,68,0.15)',
+                      color: '#C99444',
+                    }}
+                  >
+                    {mobileNavCategories.length} أقسام
+                  </span>
+                </div>
+
+                {/* Categories Grid with In-line Expansion */}
+                <div className="flex flex-col gap-3">
+                  {mobileNavCategories.map((category, index) => {
+                    const CategoryIcon = category.icon;
+                    const isOpen = activeMobileCategory === category.id;
+                    const hasActivePage = category.links.some(
+                      (link: any) => activePage === link.id
+                    );
+
+                    return (
+                      <div key={category.id} className="flex flex-col gap-2">
+                        {/* Category Card Button */}
+                        <motion.button
+                          type="button"
+                          initial={{ opacity: 0, y: 12 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{
+                            duration: 0.25,
+                            delay: index * 0.035,
+                          }}
+                          onClick={() => {
+                            setActiveMobileCategory(
+                              isOpen ? null : category.id
+                            );
+                          }}
+                          aria-expanded={isOpen}
+                          className="group relative flex min-h-[110px] w-full flex-col items-start overflow-hidden rounded-2xl border p-3.5 text-right transition-all duration-300 active:scale-[0.97]"
+                          style={{
+                            borderColor: hasActivePage || isOpen
+                              ? '#C99444'
+                              : borderColor,
+
+                            backgroundColor: isOpen
+                              ? isDark
+                                ? 'rgba(201,148,68,0.14)'
+                                : 'rgba(201,148,68,0.12)'
+                              : isDark
+                                ? 'rgba(255,255,255,0.035)'
+                                : '#FFFFFF',
+                          }}
+                        >
+                          {/* Decorative Shape */}
+                          <div
+                            className="pointer-events-none absolute -left-5 -top-5 h-20 w-20 rounded-full transition-transform duration-500 group-hover:scale-150"
+                            style={{
+                              backgroundColor: isOpen
+                                ? 'rgba(201,148,68,0.13)'
+                                : isDark
+                                  ? 'rgba(201,148,68,0.045)'
+                                  : 'rgba(201,148,68,0.06)',
+                            }}
+                          />
+
+                          {/* Icon */}
+                          <div
+                            className="relative mb-3 flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-300"
+                            style={{
+                              backgroundColor: hasActivePage || isOpen
+                                ? '#C99444'
+                                : isDark
+                                  ? 'rgba(201,148,68,0.12)'
+                                  : 'rgba(201,148,68,0.13)',
+
+                              color: hasActivePage || isOpen
+                                ? '#241309'
+                                : '#C99444',
+                            }}
+                          >
+                            <CategoryIcon size={20} />
+                          </div>
+
+                          {/* Text */}
+                          <div className="relative w-full">
+                            <p className="text-xs font-black leading-relaxed">
+                              {category.title}
+                            </p>
+
+                            <p
+                              className="mt-1 text-[9px] font-medium"
+                              style={{ color: secondaryText }}
+                            >
+                              {category.links.length} روابط
+                            </p>
+                          </div>
+
+                          {/* Bottom Indicator */}
+                          <div className="absolute bottom-3 left-3 flex items-center gap-1">
+                            <motion.span
+                              animate={{ rotate: isOpen ? -90 : 0 }}
+                              transition={{ duration: 0.2 }}
+                            >
+                              <ChevronLeft
+                                size={15}
+                                style={{
+                                  color: hasActivePage || isOpen
+                                    ? '#C99444'
+                                    : secondaryText,
+                                }}
+                              />
+                            </motion.span>
+                          </div>
+
+                          {hasActivePage && (
+                            <span className="absolute left-3 top-3 h-2 w-2 rounded-full bg-[#C99444] shadow-[0_0_8px_#C99444]" />
+                          )}
+                        </motion.button>
+
+                        {/* In-line Links Drawer (Appears right below this specific card) */}
+                        <AnimatePresence>
+                          {isOpen && (
+                            <motion.div
+                              initial={{ opacity: 0, height: 0, y: -8 }}
+                              animate={{ opacity: 1, height: 'auto', y: 0 }}
+                              exit={{ opacity: 0, height: 0, y: -8 }}
+                              transition={{ duration: 0.25 }}
+                              className="overflow-hidden"
+                            >
+                              <div
+                                className="space-y-1.5 rounded-2xl border p-2 shadow-inner"
+                                style={{
+                                  borderColor: '#C99444',
+                                  backgroundColor: isDark
+                                    ? 'rgba(201,148,68,0.06)'
+                                    : 'rgba(201,148,68,0.04)',
+                                }}
+                              >
+                                {category.links.map((link: any, linkIndex: number) => {
+                                  const Icon = link.icon;
+                                  const isActive = activePage === link.id;
+
+                                  return (
+                                    <motion.button
+                                      key={link.id}
+                                      type="button"
+                                      initial={{ opacity: 0, x: 8 }}
+                                      animate={{ opacity: 1, x: 0 }}
+                                      transition={{
+                                        duration: 0.18,
+                                        delay: linkIndex * 0.03,
+                                      }}
+                                      onClick={() => navigate(link.id)}
+                                      className="flex w-full items-center gap-3 rounded-xl p-2.5 text-right transition-all active:scale-[0.98]"
+                                      style={{
+                                        backgroundColor: isActive
+                                          ? isDark
+                                            ? 'rgba(201,148,68,0.2)'
+                                            : 'rgba(201,148,68,0.15)'
+                                          : 'transparent',
+
+                                        color: isActive
+                                          ? '#C99444'
+                                          : mainText,
+                                      }}
+                                    >
+                                      <div
+                                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
+                                        style={{
+                                          backgroundColor: isActive
+                                            ? 'rgba(201,148,68,0.2)'
+                                            : hoverBg,
+                                          color: isActive
+                                            ? '#C99444'
+                                            : secondaryText,
+                                        }}
+                                      >
+                                        {Icon ? (
+                                          <Icon size={16} />
+                                        ) : (
+                                          <Sparkles size={16} />
+                                        )}
+                                      </div>
+
+                                      <span className="flex-1 text-xs font-bold">
+                                        {link.label}
+                                      </span>
+
+                                      {link.isNew && (
+                                        <span className="rounded-full bg-[#E66A2E] px-2 py-0.5 text-[8px] font-bold text-white">
+                                          جديد
+                                        </span>
+                                      )}
+
+                                      {isActive && (
+                                        <span className="h-2 w-2 rounded-full bg-[#C99444]" />
+                                      )}
+                                    </motion.button>
+                                  );
+                                })}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Small Brand Note */}
+                <div
+                  className="mt-6 flex items-center gap-3 rounded-xl border p-3"
+                  style={{
+                    borderColor,
+                    backgroundColor: isDark
+                      ? 'rgba(201,148,68,0.045)'
+                      : 'rgba(201,148,68,0.06)',
+                  }}
+                >
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#C99444]/15 text-[#C99444]">
+                    <Sparkles size={18} />
+                  </div>
+
+                  <div>
+                    <p className="text-[10px] font-black">
+                      الصعيد حكاية تستاهل تتحكي
+                    </p>
+
+                    <p
+                      className="mt-1 text-[9px]"
+                      style={{ color: secondaryText }}
+                    >
+                      اكتشف تراثنا، ناسنا، وأماكننا
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div
+                className="relative shrink-0 border-t p-4"
+                style={{
+                  borderColor,
+                  backgroundColor: isDark ? '#170D07' : '#F3EBDD',
+                }}
+              >
+                {isAuthenticated ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      setIsProfileMenuOpen(false);
+                      setUserDropdownOpen(false);
+                      logout();
+                    }}
+                    className="flex w-full items-center justify-center gap-2 rounded-xl border border-rose-500/20 py-3.5 text-xs font-black text-rose-500 transition-all hover:bg-rose-500/10 active:scale-[0.98]"
+                  >
+                    <LogOut size={17} />
+                    <span>تسجيل الخروج</span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      setPostLoginRedirect(
+                        activePage !== 'home' ? activePage : null
+                      );
+                      setAuthModalTab('login');
+                      setIsAuthModalOpen(true);
+                    }}
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#6B3A1F] py-3.5 text-xs font-black text-white shadow-lg shadow-[#6B3A1F]/15 transition-all hover:bg-[#3B1E0E] active:scale-[0.98]"
+                  >
+                    <User size={17} />
+                    <span>تسجيل الدخول</span>
+                  </button>
+                )}
+
+                <p
+                  className="mt-3 text-center text-[9px] font-bold tracking-wide"
+                  style={{ color: secondaryText }}
+                >
+                  وَه — العالم الرقمي لصعيد مصر
+                </p>
+              </div>
             </motion.aside>
           </>
         )}
-      </AnimatePresence>
-    </>
+      </AnimatePresence>    </>
   );
 };
 
