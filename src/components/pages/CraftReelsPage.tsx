@@ -26,7 +26,12 @@ import {
   Lock,
   Trash2,
   Loader2,
-  LayoutGrid
+  LayoutGrid,
+  ChevronRight,
+  Sparkles,
+  Compass,
+  SlidersHorizontal,
+  RotateCcw
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getOptimizedVideoPoster } from '../../utils/cloudinaryMedia.ts';
@@ -629,7 +634,7 @@ export const CraftReelsPage: React.FC = () => {
       <>
         <div
           dir="rtl"
-          className="fixed inset-0 z-50 flex select-none flex-col overflow-hidden bg-black"
+          className="fixed inset-0 z-[150] flex select-none flex-col overflow-hidden bg-black"
           style={{ height: '100dvh' }}
         >
           <header className="absolute inset-x-0 top-0 z-50 flex items-center justify-between gap-2 bg-gradient-to-b from-black/90 to-transparent px-3 pb-6 pt-[max(calc(env(safe-area-inset-top,0px)+12px),2.5rem)] sm:px-6 sm:pt-3.5">
@@ -726,56 +731,36 @@ export const CraftReelsPage: React.FC = () => {
   return (
     <div
       dir="rtl"
-      className="min-h-screen overflow-x-hidden bg-cream font-cairo text-espresso dark:bg-espresso-900 dark:text-cream"
+      className="min-h-screen overflow-x-hidden bg-cream font-cairo text-espresso transition-colors duration-500 dark:bg-espresso-900 dark:text-cream"
     >
       <FloatingDock count={filteredReels.length} label="حكاية مصورة" />
 
-      {/* Sticky toolbar: one solid bar instead of several glass panels */}
-      <div
-        className="sticky top-0 z-30 border-b border-black/10 bg-cream dark:border-white/10 dark:bg-espresso-900"
-        style={{
-          contain: 'layout paint',
-          transform: 'translateZ(0)',
-        }}
-      >
-        <div className="mx-auto max-w-[1600px] space-y-3 px-5 py-3 sm:px-8 lg:px-12">
-          <div className="flex items-center gap-3">
+      {/* Decorative Background Rings */}
+      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+        <div className="absolute -right-[260px] top-[18%] h-[600px] w-[600px] rounded-full border border-primary/[0.07] dark:border-[#C99444]/[0.06]" />
+        <div className="absolute -left-[300px] top-[55%] h-[700px] w-[700px] rounded-full border border-primary/[0.05] dark:border-[#C99444]/[0.05]" />
+        <div className="absolute right-[15%] top-[42%] h-2 w-2 rounded-full bg-primary/30 dark:bg-[#C99444]/30" />
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-[1600px] px-4 sm:px-8 lg:px-12 pt-6 sm:pt-8 pb-28 lg:pb-16 space-y-8 sm:space-y-10">
+        {/* Page Path & Quick Actions */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-5">
+          <nav className="flex items-center gap-2 text-xs text-espresso/60 dark:text-cream/60 font-medium">
             <button
               type="button"
-              onClick={handleExitToHome}
-              className="flex shrink-0 items-center gap-1.5 rounded-xl bg-black/5 px-3 py-2.5 text-xs font-bold dark:bg-white/10 active:scale-95 transition-all cursor-pointer"
-              title="الرجوع للصفحة الرئيسية"
-              aria-label="الرجوع للصفحة الرئيسية"
+              onClick={() => setActivePage('home')}
+              className="hover:text-primary dark:hover:text-[#C99444] transition-colors cursor-pointer"
             >
-              <ArrowLeft size={14} />
-              <span className="inline">الرئيسية</span>
+              الرئيسية
             </button>
+            <ChevronRight className="w-3.5 h-3.5 rotate-180 opacity-50" />
+            <span className="text-espresso dark:text-cream font-bold">
+              ريلز وحكايات الصعيد
+            </span>
+          </nav>
 
-            <div className="relative min-w-0 flex-1">
-              <Search
-                size={16}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-black/40 dark:text-white/40"
-              />
-
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="ابحث عن مكان أو حرفة أو حكاية..."
-                className="h-11 w-full rounded-xl bg-black/[0.05] pl-10 pr-10 text-sm outline-none placeholder:text-black/35 focus:ring-2 focus:ring-primary/40 dark:bg-white/[0.07] dark:placeholder:text-white/30"
-              />
-
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery('')}
-                  className="absolute left-2.5 top-1/2 -translate-y-1/2 rounded-full p-1.5 hover:bg-black/10 dark:hover:bg-white/10"
-                >
-                  <X size={14} />
-                </button>
-              )}
-            </div>
-
+          {/* Quick Actions */}
+          <div className="flex items-center gap-2.5 flex-wrap">
             <button
               type="button"
               onClick={() =>
@@ -783,71 +768,24 @@ export const CraftReelsPage: React.FC = () => {
                   ? openReelInFeed(filteredReels[0].id)
                   : setViewMode('feed')
               }
-              className="flex shrink-0 items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs font-black text-white"
-              title="مشاهدة بالشاشة الكاملة"
+              className="flex items-center gap-2 rounded-xl bg-primary hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] dark:hover:text-[#1B1009] px-4 py-2 text-xs font-bold text-white shadow-sm transition-all cursor-pointer"
             >
-              <Play size={14} className="fill-white" />
-              <span className="hidden sm:inline">
-                شاهد بالشاشة الكاملة
-              </span>
+              <Play size={14} className="fill-current" />
+              <span>شاهد بالشاشة الكاملة</span>
             </button>
 
             <button
               type="button"
               onClick={handleOpenUpload}
-              className="flex shrink-0 items-center gap-1.5 rounded-xl border border-black/15 px-3 py-2.5 text-xs font-bold dark:border-white/15"
-              title="نشر حكاية جديدة"
+              className="flex items-center gap-1.5 rounded-xl border border-black/15 dark:border-white/15 bg-white/60 dark:bg-espresso-900/60 hover:bg-black/5 dark:hover:bg-white/10 px-3.5 py-2 text-xs font-bold transition-all cursor-pointer"
             >
               <Plus size={14} />
-              <span className="hidden md:inline">
-                نشر حكاية
-              </span>
+              <span>شارك حكايتك</span>
             </button>
-          </div>
-
-          {/* Governorates */}
-          <div className="no-scrollbar flex items-center gap-2 overflow-x-auto">
-            <button
-              type="button"
-              onClick={() => setSelectedGovernorate('all')}
-              className={`${chipBase} ${selectedGovernorate === 'all' ? chipOn : chipIdle
-                }`}
-            >
-              كل الصعيد ({reels.length})
-            </button>
-
-            {GOVERNORATES.map((g) => (
-              <button
-                key={g}
-                type="button"
-                onClick={() => setSelectedGovernorate(g)}
-                className={`${chipBase} ${selectedGovernorate === g ? chipOn : chipIdle
-                  }`}
-              >
-                {g} ({governorateCounts[g] || 0})
-              </button>
-            ))}
-          </div>
-
-          {/* Content types */}
-          <div className="no-scrollbar flex items-center gap-5 overflow-x-auto">
-            {CONTENT_TYPES.map((c) => (
-              <button
-                key={c.id}
-                type="button"
-                onClick={() => setSelectedContentType(c.id)}
-                className={`shrink-0 cursor-pointer whitespace-nowrap border-b-2 pb-1.5 text-xs font-bold transition-colors ${selectedContentType === c.id
-                  ? 'border-primary text-primary'
-                  : 'border-transparent text-black/55 hover:text-black dark:text-white/55 dark:hover:text-white'
-                  }`}
-              >
-                {c.label}
-              </button>
-            ))}
           </div>
         </div>
-      </div>
-      <div className="mx-auto my-5 max-w-[1600px] px-5 sm:px-8 lg:px-12">
+
+        {/* UNCLE WAH HERO BANNER - MASTER OF REELS */}
         <UncleWahHeroBanner
           doorTitle="حكاوي وتجارب حية من ورش ودكاكين الصعيد"
           doorBadge="باب ريلز وه"
@@ -858,56 +796,175 @@ export const CraftReelsPage: React.FC = () => {
           actionText="شارك حكايتك"
           onAction={handleOpenUpload}
         />
-      </div>
 
-      <section className="mx-auto max-w-[1600px] px-5 pb-24 sm:px-8 lg:px-12">
-        <h2 className="mb-4 text-sm font-black">
-          {filteredReels.length} حكاية
-          {selectedGovernorate !== 'all' && ` من ${selectedGovernorate}`}
-        </h2>
+        {/* Editorial Grand Header */}
+        <div className="relative rounded-[2rem] p-6 sm:p-10 bg-espresso text-cream overflow-hidden shadow-xl border border-black/10 dark:border-white/10">
+          <div className="absolute top-0 right-1/4 w-80 h-80 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
+          <div className="relative z-10 max-w-3xl space-y-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 border border-primary/30 text-[#C99444] text-xs font-bold">
+              <Film className="w-3.5 h-3.5 text-[#C99444]" />
+              <span>فيديوهات وتجارب حية من قلب الصعيد</span>
+            </div>
+            <h1 className="text-2xl sm:text-4xl font-main font-black leading-tight">
+              حكايات الصنعة.. صوت وصورة من قلب الورشة
+            </h1>
+            <p className="text-xs sm:text-sm text-cream/80 leading-relaxed max-w-2xl font-light">
+              شاهد كبار شيوخ الصنعة وحرفيي صعيد مصر في ورشهم؛ أسرار الطين والحرير والنحاس والخوص، وتقدر تشتري القطعة مباشرة من الورشة مع كل حكاية.
+            </p>
+          </div>
+        </div>
 
-        {isLoading ? (
-          <div className="flex flex-col items-center gap-4 py-20">
-            <Loader2 className="h-10 w-10 animate-spin text-primary" />
-            <p className="text-sm font-bold text-black/60 dark:text-white/60">جارٍ تحميل الحكايات...</p>
-          </div>
-        ) : filteredReels.length === 0 ? (
-          <div className="space-y-4 rounded-3xl border border-black/10 p-12 text-center dark:border-white/10">
-            <Film className="mx-auto h-12 w-12 text-black/30 dark:text-white/30" />
-            <h3 className="text-lg font-black">لا توجد حكايات مطابقة</h3>
-            <p className="text-xs text-black/60 dark:text-white/60">جرّب تصنيفاً آخر أو امسح الفلاتر.</p>
-            <button
-              type="button"
-              onClick={resetFilters}
-              className="rounded-xl bg-[#6B3A1F] px-6 py-3 text-xs font-bold text-[#FFF9EE]"
-            >
-              مسح الفلاتر
-            </button>
-          </div>
-        ) : (
-          <>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 sm:gap-4">
-              {filteredReels.slice(0, visibleCount).map((reel, i) => (
-                <ReelCard
-                  key={reel.id}
-                  reel={reel}
-                  featured={i === 0}
-                  isAdmin={isAdmin}
-                  onOpen={openReelInFeed}
-                  onAdd={handleQuickAdd}
-                  onDelete={handleAdminDeleteReel}
-                />
-              ))}
+        {/* Unified Search & Filters Bar */}
+        <div className="space-y-4 rounded-2xl bg-white/60 dark:bg-espresso-900/60 p-4 sm:p-6 border border-black/10 dark:border-white/10 shadow-sm backdrop-blur-md">
+          {/* Top row: Search input + Results summary */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+            <div className="relative flex-1">
+              <Search
+                size={16}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-espresso/40 dark:text-cream/40"
+              />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="ابحث عن مكان، حرفة، صانع أو حكاية..."
+                className="h-11 w-full rounded-xl bg-black/[0.04] dark:bg-white/[0.06] pl-10 pr-10 text-xs sm:text-sm outline-none placeholder:text-espresso/40 dark:placeholder:text-cream/35 focus:ring-2 focus:ring-primary/40 border border-black/5 dark:border-white/10 transition-all"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute left-2.5 top-1/2 -translate-y-1/2 rounded-full p-1.5 hover:bg-black/10 dark:hover:bg-white/10 text-espresso/60 dark:text-cream/60 transition-colors"
+                >
+                  <X size={14} />
+                </button>
+              )}
             </div>
 
-            {hasMore && (
-              <div ref={sentinelRef} className="flex justify-center py-10">
-                <Loader2 className="h-6 w-6 animate-spin text-primary/60" />
-              </div>
+            {(selectedGovernorate !== 'all' || selectedContentType !== 'all' || searchQuery) && (
+              <button
+                type="button"
+                onClick={resetFilters}
+                className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-black/10 dark:border-white/10 px-3.5 py-2.5 text-xs font-bold text-espresso/70 dark:text-cream/70 hover:bg-black/5 dark:hover:bg-white/5 transition-all cursor-pointer shrink-0"
+              >
+                <RotateCcw size={13} />
+                <span>إعادة ضبط الفلاتر</span>
+              </button>
             )}
-          </>
-        )}
-      </section>
+          </div>
+
+          {/* Content Types Tabs */}
+          <div className="no-scrollbar flex items-center gap-2 overflow-x-auto pt-1 pb-1">
+            {CONTENT_TYPES.map((c) => {
+              const isSelected = selectedContentType === c.id;
+              return (
+                <button
+                  key={c.id}
+                  type="button"
+                  onClick={() => setSelectedContentType(c.id)}
+                  className={`shrink-0 cursor-pointer whitespace-nowrap rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all ${
+                    isSelected
+                      ? 'bg-primary text-white shadow-xs'
+                      : 'bg-black/[0.04] dark:bg-white/[0.06] text-espresso/70 dark:text-cream/70 hover:bg-black/[0.08] dark:hover:bg-white/[0.1]'
+                  }`}
+                >
+                  {c.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Governorates Filter Pills */}
+          <div className="no-scrollbar flex items-center gap-2 overflow-x-auto border-t border-black/5 dark:border-white/5 pt-3">
+            <button
+              type="button"
+              onClick={() => setSelectedGovernorate('all')}
+              className={`${chipBase} ${
+                selectedGovernorate === 'all' ? chipOn : chipIdle
+              }`}
+            >
+              كل المحافظات ({reels.length})
+            </button>
+
+            {GOVERNORATES.map((g) => (
+              <button
+                key={g}
+                type="button"
+                onClick={() => setSelectedGovernorate(g)}
+                className={`${chipBase} ${
+                  selectedGovernorate === g ? chipOn : chipIdle
+                }`}
+              >
+                {g} ({governorateCounts[g] || 0})
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Gallery Section */}
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm sm:text-base font-black flex items-center gap-2 text-espresso dark:text-cream">
+              <span>{filteredReels.length} حكاية مصورة</span>
+              {selectedGovernorate !== 'all' && (
+                <span className="text-xs font-medium text-espresso/60 dark:text-cream/60">
+                  من محافظة {selectedGovernorate}
+                </span>
+              )}
+            </h2>
+
+            <div className="text-xs text-espresso/50 dark:text-cream/50">
+              اضغط على أي فيديو لبدء العرض الحي
+            </div>
+          </div>
+
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center gap-3 py-20">
+              <Loader2 className="h-10 w-10 animate-spin text-primary" />
+              <p className="text-xs sm:text-sm font-bold text-espresso/60 dark:text-cream/60">
+                جارٍ تحميل حكايات ورش الصعيد...
+              </p>
+            </div>
+          ) : filteredReels.length === 0 ? (
+            <div className="space-y-4 rounded-3xl border border-black/10 dark:border-white/10 p-12 text-center bg-white/40 dark:bg-espresso-900/40">
+              <Film className="mx-auto h-12 w-12 text-espresso/30 dark:text-cream/30" />
+              <h3 className="text-lg font-black">لا توجد حكايات مطابقة للبحث أو التصنيف</h3>
+              <p className="text-xs text-espresso/60 dark:text-cream/60 max-w-md mx-auto">
+                جرّب اختيار تصنيف آخر، أو مسح الفلاتر لاستعراض جميع مقاطع ورش الصعيد.
+              </p>
+              <button
+                type="button"
+                onClick={resetFilters}
+                className="rounded-xl bg-[#6B3A1F] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] dark:hover:text-[#1B1009] px-6 py-3 text-xs font-bold text-[#FFF9EE] transition-all cursor-pointer shadow-sm"
+              >
+                عرض كل الحكايات ({reels.length})
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 sm:gap-4">
+                {filteredReels.slice(0, visibleCount).map((reel, i) => (
+                  <ReelCard
+                    key={reel.id}
+                    reel={reel}
+                    featured={i === 0}
+                    isAdmin={isAdmin}
+                    onOpen={openReelInFeed}
+                    onAdd={handleQuickAdd}
+                    onDelete={handleAdminDeleteReel}
+                  />
+                ))}
+              </div>
+
+              {hasMore && (
+                <div ref={sentinelRef} className="flex justify-center py-10">
+                  <Loader2 className="h-6 w-6 animate-spin text-primary/60" />
+                </div>
+              )}
+            </>
+          )}
+        </section>
+      </div>
 
       {modals}
     </div>
