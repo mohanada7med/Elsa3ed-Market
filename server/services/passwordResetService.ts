@@ -547,7 +547,8 @@ export async function resetPasswordWithToken(params: {
     passwordHash: newPasswordHash,
     passwordResetTokenHash: null,
     passwordResetExpiresAt: null,
-    mustChangePassword: false
+    mustChangePassword: false,
+    authVersion: (user.authVersion || 0) + 1
   });
 
   if (!updated) {

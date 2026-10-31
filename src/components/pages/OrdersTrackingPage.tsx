@@ -20,6 +20,7 @@ const STATUS_STEPS: { status: OrderStatus; label: string; desc: string }[] = [
   { status: 'confirmed', label: 'تأكيد الورش الحرفية', desc: 'تم تأكيد توافر القطع وجودة الصنعة اليدوية' },
   { status: 'processing', label: 'التجهيز والتغليف الآمن', desc: 'يتم الآن فحص القطعة وتغليفها بمواد امتصاص الصدمات' },
   { status: 'shipped', label: 'في الطريق مع شحن الصعيد', desc: 'خرجت الشحنة من الصعيد وهي متجهة لمدينتك' },
+  { status: 'out_for_delivery', label: 'خرجت للتوصيل', desc: 'مندوب الشحن في طريقه لتسليم الطلب على عنوانك' },
   { status: 'delivered', label: 'تم الاستلام بنجاح', desc: 'تم تسليم الطلب إلى باب المنزل' }
 ];
 
@@ -50,8 +51,10 @@ export const OrdersTrackingPage: React.FC = () => {
         return 2;
       case 'shipped':
         return 3;
-      case 'delivered':
+      case 'out_for_delivery':
         return 4;
+      case 'delivered':
+        return 5;
       default:
         return 0;
     }
@@ -194,7 +197,7 @@ export const OrdersTrackingPage: React.FC = () => {
                       <span
                         className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${ord.status === 'delivered'
                           ? 'bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20'
-                          : ord.status === 'shipped'
+                          : ord.status === 'shipped' || ord.status === 'out_for_delivery'
                             ? 'bg-sky-500/10 text-sky-800 dark:text-sky-300 border border-sky-500/20'
                             : ord.status === 'processing'
                               ? 'bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/20'
@@ -339,6 +342,11 @@ export const OrdersTrackingPage: React.FC = () => {
                                 {step.label}
                               </h5>
                               <p className="text-[11px] text-espresso/60 dark:text-cream/60 mt-0.5">{step.desc}</p>
+                              {currentSelected.timeline?.find((event) => event.status === step.status)?.time && (
+                                <p className="mt-1 text-[10px] font-medium text-primary dark:text-primary-hover">
+                                  {currentSelected.timeline.find((event) => event.status === step.status)?.time}
+                                </p>
+                              )}
                             </div>
                           </div>
                         );

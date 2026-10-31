@@ -60,6 +60,10 @@ export const ProductDetailsView: React.FC = () => {
     currentUser,
     currentRole,
     isAuthenticated,
+    orders,
+    setIsAuthModalOpen,
+    setAuthModalTab,
+    setPostLoginRedirect,
     openChatWithArtisan,
     isLoading,
   } = useApp();
@@ -118,6 +122,15 @@ export const ProductDetailsView: React.FC = () => {
     () => (reviews || []).filter((r) => r.productId === product?.id),
     [reviews, product?.id]
   );
+  const hasDeliveredProduct = Boolean(
+    product &&
+    orders.some((order) =>
+      order.buyerId === currentUser?.id &&
+      order.status === 'delivered' &&
+      order.items.some((item) => item.product?.id === product.id)
+    )
+  );
+  const hasReviewedProduct = productReviews.some((review) => review.userId === currentUser?.id);
 
   useEffect(() => {
     if (!product) return;
@@ -242,14 +255,17 @@ export const ProductDetailsView: React.FC = () => {
       ? product.originalPrice - product.price
       : 0;
 
-  const handleAddReview = (e: React.FormEvent) => {
+  const handleAddReview = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!product || !newComment.trim()) return;
+    if (!product || !newComment.trim() || !hasDeliveredProduct || hasReviewedProduct) return;
 
-    addReview(product.id, newRating, newComment);
-
-    setNewComment('');
+    try {
+      await addReview(product.id, newRating, newComment);
+      setNewComment('');
+    } catch {
+      // The app context reports the API error.
+    }
   };
 
   const handleShare = async () => {
@@ -278,6 +294,12 @@ export const ProductDetailsView: React.FC = () => {
         'info'
       );
     }
+  };
+  const handleShareOnWhatsApp = () => {
+    if (!product) return;
+    const shareUrl = `${window.location.origin}/products/${encodeURIComponent(product.id)}`;
+    const message = `شاهد ${product.title} من سوق وه: ${shareUrl}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
   };
 
   const handleCopyProductId = async () => {
@@ -607,9 +629,10 @@ export const ProductDetailsView: React.FC = () => {
         <section
           className="
             grid
-            gap-6
-            lg:grid-cols-[1.25fr_0.75fr]
-            lg:gap-8
+            items-stretch
+            gap-5
+            lg:grid-cols-[1.08fr_0.92fr]
+            lg:gap-7
           "
         >
           {/* ================= GALLERY ================= */}
@@ -618,13 +641,13 @@ export const ProductDetailsView: React.FC = () => {
             className="
               relative
               overflow-hidden
-              rounded-[2rem]
-              border
-              border-black/10
-              bg-[#ddd4c5]
+              rounded-[2.25rem]
+              border border-[#E0C79B]/70
+              bg-[#EFE5D6]
+              shadow-[0_24px_70px_-38px_rgba(59,30,14,0.42)]
               dark:border-white/10
-              dark:bg-espresso-900
-              lg:min-h-[760px]
+              dark:bg-[#26160D]
+              lg:min-h-[680px]
             "
           >
             {/* Number */}
@@ -668,10 +691,10 @@ export const ProductDetailsView: React.FC = () => {
             <div
               className="
                 relative
-                h-[430px]
-                sm:h-[560px]
+                h-[390px]
+                sm:h-[520px]
                 lg:h-full
-                lg:min-h-[760px]
+                lg:min-h-[680px]
               "
             >
               <img
@@ -697,7 +720,7 @@ export const ProductDetailsView: React.FC = () => {
                   absolute
                   inset-x-0
                   bottom-0
-                  h-48
+                  h-56
                   bg-gradient-to-t
                   from-black/60
                   to-transparent
@@ -724,12 +747,12 @@ export const ProductDetailsView: React.FC = () => {
                     <span
                       className="
                         rounded-full
-                        bg-[#C99444]
+                        bg-primary-hover
                         px-3
                         py-1
                         text-[9px]
                         font-black
-                        text-black
+                        text-white
                       "
                     >
                       {product.isHandmade
@@ -821,6 +844,15 @@ export const ProductDetailsView: React.FC = () => {
                 >
                   <Share2 size={17} />
                 </button>
+                <button
+                  type="button"
+                  onClick={handleShareOnWhatsApp}
+                  aria-label="مشاركة المنتج على واتساب"
+                  className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-black/25 text-white backdrop-blur-xl transition hover:bg-white hover:text-green-700"
+                  title="مشاركة على واتساب"
+                >
+                  <MessageCircle size={17} />
+                </button>
 
                 {(currentRole === 'buyer' ||
                   !isAuthenticated) && (
@@ -866,7 +898,8 @@ export const ProductDetailsView: React.FC = () => {
                   absolute
                   bottom-5
                   left-5
-                  right-5
+                  right-auto
+                  max-w-[55%]
                   z-20
                   flex
                   gap-2
@@ -915,15 +948,14 @@ export const ProductDetailsView: React.FC = () => {
             className="
               flex
               flex-col
-              rounded-[2rem]
-              border
-              border-black/10
-              bg-white/65
+              rounded-[2.25rem]
+              border border-primary/15
+              bg-gradient-to-br from-white/95 via-white/80 to-[#F8EBD7]/75
               p-5
-              shadow-sm
+              shadow-[0_24px_70px_-42px_rgba(59,30,14,0.5)]
               backdrop-blur-xl
               dark:border-white/10
-              dark:bg-[#121210]/80
+              dark:bg-gradient-to-br dark:from-[#3B1E0E] dark:via-[#26160D] dark:to-[#1B1009]
               sm:p-7
               lg:p-9
             "
@@ -954,13 +986,14 @@ export const ProductDetailsView: React.FC = () => {
                     items-center
                     gap-1.5
                     rounded-full
-                    bg-emerald-500/10
+                    border border-primary/15
+                    bg-primary/5
                     px-2.5
                     py-1.5
                     text-[9px]
                     font-bold
-                    text-emerald-700
-                    dark:text-emerald-300
+                    text-primary
+                    dark:text-primary-hover
                   "
                 >
                   <BadgeCheck size={13} />
@@ -971,16 +1004,16 @@ export const ProductDetailsView: React.FC = () => {
 
             {/* Product Title */}
 
-            <div className="mt-8">
+            <div className="mt-6">
               <h1
                 className="
                   max-w-xl
-                  text-4xl
+                  text-3xl
                   font-black
-                  leading-[1.05]
-                  tracking-[-0.055em]
-                  sm:text-5xl
-                  lg:text-6xl
+                  leading-[1.2]
+                  tracking-[-0.035em]
+                  sm:text-4xl
+                  lg:text-5xl
                 "
               >
                 {product.title}
@@ -1011,18 +1044,21 @@ export const ProductDetailsView: React.FC = () => {
               }
               className="
                 relative overflow-hidden
-                mt-8
+                mt-6
                 flex
                 w-full
                 items-center
                 justify-between
-                border-y
-                border-black/10
-                py-4 px-2 rounded-xl
+                rounded-2xl
+                border border-primary/10
+                bg-white/55
+                py-4 px-3
                 text-right
                 transition
-                hover:bg-black/[0.025]
+                hover:border-primary/25
+                hover:bg-white/80
                 dark:border-white/10
+                dark:bg-white/[0.025]
                 dark:hover:bg-white/[0.025]
                 cursor-pointer
               "
@@ -1126,11 +1162,16 @@ export const ProductDetailsView: React.FC = () => {
 
             <div
               className="
-                mt-6
+                mt-5
                 flex
                 flex-wrap
                 items-center
                 gap-3
+                rounded-2xl
+                border border-primary/10
+                bg-primary/[0.035]
+                px-4
+                py-3
               "
             >
               <div className="flex items-center gap-1">
@@ -1160,11 +1201,11 @@ export const ProductDetailsView: React.FC = () => {
 
             <p
               className="
-                mt-7
+                mt-5
                 text-sm
                 leading-8
-                text-black/55
-                dark:text-white/50
+                text-espresso/70
+                dark:text-cream/65
               "
             >
               {product.description}
@@ -1267,7 +1308,7 @@ export const ProductDetailsView: React.FC = () => {
 
             {/* Price */}
 
-            <div className="mt-8">
+            <div className="mt-7 rounded-2xl border border-primary/15 bg-primary/[0.045] p-4 sm:p-5">
               <div className="flex items-end justify-between gap-4">
                 <div>
                   <div className="text-[10px] font-bold text-black/40 dark:text-white/35">
@@ -1388,7 +1429,7 @@ export const ProductDetailsView: React.FC = () => {
                       type="button"
                       disabled={!product.inStock}
                       onClick={() => addToCart(product, quantity)}
-                      className="flex min-h-14 flex-1 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#6B3A1F] px-4 text-xs font-black text-[#FFF9EE] shadow-lg transition hover:-translate-y-0.5 hover:bg-[#3B1E0E] disabled:cursor-not-allowed disabled:opacity-40 dark:bg-[#6B3A1F] dark:text-[#FFF9EE] dark:hover:bg-[#4A2715]"
+                      className="flex min-h-14 flex-1 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-primary px-4 text-xs font-black text-white shadow-[0_12px_28px_-12px_rgba(59,30,14,0.75)] transition hover:-translate-y-0.5 hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-40"
                     >
                       <ShoppingBag size={18} />
                       <span>حط في السلة</span>
@@ -1550,11 +1591,11 @@ export const ProductDetailsView: React.FC = () => {
           className="
             mt-6
             overflow-hidden
-            rounded-[2rem]
-            border
-            border-primary/20
-            bg-espresso
-            text-white
+            rounded-[2.25rem]
+            border border-primary/15
+            bg-gradient-to-br from-espresso to-[#4A2715]
+            text-cream-50
+            shadow-[0_24px_70px_-42px_rgba(59,30,14,0.65)]
             dark:border-[#C99444]/20
           "
         >
@@ -1568,7 +1609,7 @@ export const ProductDetailsView: React.FC = () => {
                   text-[9px]
                   font-black
                   tracking-[0.25em]
-                  text-[#C99444]
+                  text-primary-hover
                 "
               >
                 <Building2 size={14} />
@@ -1600,11 +1641,11 @@ export const ProductDetailsView: React.FC = () => {
                   justify-center
                   gap-2
                   rounded-xl
-                  bg-[#C99444]
+                  bg-primary-hover
                   px-6
                   text-xs
                   font-black
-                  text-black
+                  text-white
                   transition
                   hover:bg-white
                 "
@@ -1645,67 +1686,56 @@ export const ProductDetailsView: React.FC = () => {
         {/* INFORMATION TABS */}
         {/* ========================================= */}
 
-        <section className="mt-6">
+        <section className="mt-8">
           <div
             className="
               overflow-hidden
-              rounded-[2rem]
-              border
-              border-black/10
-              bg-white/65
-              shadow-sm
+              rounded-[2.25rem]
+              border border-primary/15
+              bg-white/75
+              shadow-[0_24px_70px_-48px_rgba(59,30,14,0.48)]
               backdrop-blur-xl
               dark:border-white/10
-              dark:bg-[#121210]/80
+              dark:bg-[#26160D]/90
             "
           >
             {/* Tabs */}
 
-            <div
-              className="
-                flex
-                overflow-x-auto
-                border-b
-                border-black/10
-                dark:border-white/10
-              "
-            >
-              {[
-                ['desc', 'الحكاية والوصف'],
-                ['specs', 'المواصفات'],
-                ['reviews', `التقييمات (${productReviews.length})`],
-                ['shipping', 'الشحن والتغليف'],
-              ].map(([key, label]) => (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() =>
-                    setActiveTab(
-                      key as
-                      | 'desc'
-                      | 'specs'
-                      | 'reviews'
-                      | 'shipping'
-                    )
-                  }
-                  className={`
-                    shrink-0
-                    px-5
-                    py-5
-                    text-xs
-                    font-black
-                    transition
-                    cursor-pointer
-                    sm:px-7
-                    ${activeTab === key
-                      ? 'border-b-2 border-primary text-primary dark:border-[#C99444] dark:text-primary-hover'
-                      : 'text-black/40 hover:text-black dark:text-white/40 dark:hover:text-white'
+            <div className="border-b border-primary/10 px-4 pt-5 dark:border-white/10 sm:px-7">
+              <div className="mb-3 text-[9px] font-black tracking-[0.22em] text-primary/65 dark:text-primary-hover/80">
+                دليل القطعة
+              </div>
+              <div className="-mb-px flex overflow-x-auto">
+                {[
+                  ['desc', 'الحكاية والوصف'],
+                  ['specs', 'المواصفات'],
+                  ['reviews', `التقييمات (${productReviews.length})`],
+                  ['shipping', 'الشحن والتغليف'],
+                ].map(([key, label]) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() =>
+                      setActiveTab(
+                        key as
+                        | 'desc'
+                        | 'specs'
+                        | 'reviews'
+                        | 'shipping'
+                      )
                     }
-                  `}
-                >
-                  {label}
-                </button>
-              ))}
+                    className={`
+                      relative shrink-0 rounded-t-xl px-4 py-4 text-xs font-black transition cursor-pointer sm:px-6
+                      ${activeTab === key
+                        ? 'border-b-2 border-primary bg-primary/[0.045] text-primary dark:border-primary-hover dark:bg-primary-hover/10 dark:text-primary-hover'
+                        : 'text-espresso/45 hover:bg-primary/[0.035] hover:text-primary dark:text-cream/45 dark:hover:bg-white/[0.035] dark:hover:text-cream'
+                      }
+                    `}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div className="p-5 sm:p-8 lg:p-10">
@@ -2104,10 +2134,16 @@ export const ProductDetailsView: React.FC = () => {
                                   {review.userName}
                                 </div>
 
-                                <div className="mt-1 text-[9px] text-black/40 dark:text-white/30">
+                                <div className="mt-1 flex items-center gap-1 text-[9px] text-black/40 dark:text-white/30">
                                   {review.userGovernorate
                                     ? `محافظة ${review.userGovernorate}`
                                     : 'مشتري موثق'}
+                                  {review.verifiedPurchase && (
+                                    <span className="inline-flex items-center gap-0.5 text-emerald-700 dark:text-emerald-400">
+                                      <BadgeCheck size={11} />
+                                      شراء موثق
+                                    </span>
+                                  )}
                                 </div>
                               </div>
                             </div>
@@ -2138,6 +2174,31 @@ export const ProductDetailsView: React.FC = () => {
 
                     {/* Add Review */}
 
+                    {hasReviewedProduct ? (
+                      <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-5 text-xs text-emerald-800 dark:text-emerald-300 flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 shrink-0" />
+                        <span>شكرًا لك، لقد أضفت تقييمك لهذا المنتج بالفعل.</span>
+                      </div>
+                    ) : !isAuthenticated ? (
+                      <div className="rounded-2xl border border-black/10 dark:border-white/10 bg-white/60 dark:bg-cream/[0.02] p-5 text-center space-y-3">
+                        <p className="text-xs text-black/60 dark:text-white/60">سجّل الدخول بعد استلام المنتج لإضافة تقييم موثق.</p>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setPostLoginRedirect('product-details');
+                            setAuthModalTab('login');
+                            setIsAuthModalOpen(true);
+                          }}
+                          className="px-5 py-2.5 rounded-xl bg-primary text-white text-xs font-bold cursor-pointer"
+                        >
+                          تسجيل الدخول
+                        </button>
+                      </div>
+                    ) : currentRole !== 'buyer' || !hasDeliveredProduct ? (
+                      <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-5 text-xs text-amber-900 dark:text-amber-200">
+                        يتاح التقييم للمشتري بعد استلام هذا المنتج ضمن طلب مكتمل.
+                      </div>
+                    ) : (
                     <form
                       onSubmit={handleAddReview}
                       className="
@@ -2229,6 +2290,7 @@ export const ProductDetailsView: React.FC = () => {
                         إرسال التقييم
                       </button>
                     </form>
+                    )}
                   </div>
                 </div>
               )}

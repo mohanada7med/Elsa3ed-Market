@@ -1352,12 +1352,14 @@ export async function changeUserPersonalPassword(
           passwordHash: newHash,
           mustChangePassword: false,
           updatedAt: now
-        }
+        },
+        $inc: { authVersion: 1 }
       }
     );
   } else {
     (user as any).passwordHash = newHash;
     (user as any).mustChangePassword = false;
+    (user as any).authVersion = ((user as any).authVersion || 0) + 1;
     (user as any).updatedAt = now;
   }
 
@@ -1377,3 +1379,27 @@ export async function changeUserPersonalPassword(
   };
 }
 
+export async function revokeUserSessions(userId: string): Promise<void> {
+  if (!userId || typeof userId !== 'string') {
+    throw new Error('معرف المستخدم غير صالح');
+  }
+
+  const { db, isMongo } = await getDatabase();
+  if (isMongo && db) {
+    const result = await db.collection('users').updateOne(
+      { id: userId },
+      { $inc: { authVersion: 1 }, $set: { updatedAt: new Date().toISOString() } }
+    );
+    if (result.matchedCount === 0) {
+      throw new Error('المستخدم غير موجود');
+    }
+    return;
+  }
+
+  const user = memoryDb.users.find((entry) => entry.id === userId);
+  if (!user) {
+    throw new Error('المستخدم غير موجود');
+  }
+  (user as any).authVersion = ((user as any).authVersion || 0) + 1;
+  (user as any).updatedAt = new Date().toISOString();
+}

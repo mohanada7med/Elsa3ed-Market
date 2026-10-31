@@ -141,7 +141,7 @@ interface AppContextType {
     workshopName?: string;
     specialty?: string;
   }) => Promise<void>;
-  logout: () => void;
+  logout: (successMessage?: string) => void;
   deleteMyAccount: (password?: string) => Promise<boolean>;
   uploadProfileImage: (imageDataUri: string, filename?: string) => Promise<void>;
   removeProfileImage: () => Promise<void>;
@@ -209,6 +209,10 @@ interface AppContextType {
   setSelectedCategoryFilter: (cat: string | 'all') => void;
   selectedHandmadeOnly: boolean;
   setSelectedHandmadeOnly: (val: boolean) => void;
+  selectedPriceMin: number | null;
+  setSelectedPriceMin: (value: number | null) => void;
+  selectedPriceMax: number | null;
+  setSelectedPriceMax: (value: number | null) => void;
   selectedSort: 'featured' | 'price-asc' | 'price-desc' | 'rating' | 'newest';
   setSelectedSort: (sort: 'featured' | 'price-asc' | 'price-desc' | 'rating' | 'newest') => void;
 
@@ -1084,6 +1088,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [selectedGovernorateFilter, setSelectedGovernorateFilter] = useState<Governorate | 'all'>('all');
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string | 'all'>(initialNav.categoryId || 'all');
   const [selectedHandmadeOnly, setSelectedHandmadeOnly] = useState(false);
+  const [selectedPriceMin, setSelectedPriceMin] = useState<number | null>(null);
+  const [selectedPriceMax, setSelectedPriceMax] = useState<number | null>(null);
   const [selectedSort, setSelectedSort] = useState<'featured' | 'price-asc' | 'price-desc' | 'rating' | 'newest'>('featured');
 
   // Notifications / Toast
@@ -1927,7 +1933,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  const logout = async () => {
+  const logout = async (successMessage?: string) => {
     try {
       await api.logout();
     } catch (err) {
@@ -1946,7 +1952,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       // أول لما حد يعمل تسجيل خروج يرجع على طول على الصفحة الرئيسية فوراً
       setActivePage('home');
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      addToast('تسجيل الخروج', 'تم تسجيل الخروج بنجاح. أهلاً بك دائماً في وه.', 'info');
+      addToast('تسجيل الخروج', successMessage || 'تم تسجيل الخروج بنجاح. أهلاً بك دائماً في وه.', 'info');
     }
   };
 
@@ -1979,8 +1985,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       currentPassword,
       newPassword
     );
-    setCurrentUser((prev) => ({ ...prev, mustChangePassword: false }));
-    addToast('تغيير كلمة المرور', 'تم تعيين كلمة المرور الشخصية وتأكيد حسابك بنجاح!', 'success');
   };
 
   // Upload Profile Image to Cloudinary & update MongoDB
@@ -3086,6 +3090,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } catch (err: any) {
       const errMsg = err.message || 'فشل في إضافة التقييم';
       addToast('تنبيه التقييم', errMsg, 'warning');
+      throw err;
     }
   };
 
@@ -3338,6 +3343,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setSelectedCategoryFilter,
         selectedHandmadeOnly,
         setSelectedHandmadeOnly,
+        selectedPriceMin,
+        setSelectedPriceMin,
+        selectedPriceMax,
+        setSelectedPriceMax,
         selectedSort,
         setSelectedSort,
 

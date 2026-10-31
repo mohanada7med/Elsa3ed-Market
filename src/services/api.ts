@@ -2763,6 +2763,21 @@ export const api = {
     if (!json.success) {
       throw new Error(json.error || 'فشل في تغيير كلمة المرور');
     }
+    clearStoredToken();
+    return json;
+  },
+
+  async revokeAllSessions(user: { id: string; role: string }): Promise<{ success: boolean; message: string }> {
+    const res = await fetch(`${API_BASE}/auth/logout-all`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { ...getAuthHeaders(user), 'Content-Type': 'application/json' }
+    });
+    const json = await res.json();
+    if (!json.success) {
+      throw new Error(json.error || 'فشل تسجيل الخروج من كل الأجهزة');
+    }
+    clearStoredToken();
     return json;
   },
 

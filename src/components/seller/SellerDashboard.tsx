@@ -1384,6 +1384,36 @@ export const SellerDashboard: React.FC = () => {
         </div>
       </div>
 
+      <section className="rounded-[1.5rem] border border-primary/20 bg-primary/[0.04] p-5 sm:p-6">
+        <div className="flex items-start gap-3">
+          <div className="rounded-xl bg-primary/10 p-2.5 text-primary dark:text-primary-hover">
+            <Camera className="h-5 w-5" />
+          </div>
+          <div className="space-y-3">
+            <div>
+              <h2 className="text-sm font-black">خلّي صفحة ورشتك ومنتجاتك أوضح للمشتري</h2>
+              <p className="mt-1 text-xs leading-6 text-espresso/65 dark:text-cream/65">
+                صور واضحة ووصف صادق يساعدوا العملاء يثقوا في شغلك ويختاروا القطعة المناسبة.
+              </p>
+            </div>
+            <ul className="grid gap-2 text-xs leading-6 text-espresso/80 dark:text-cream/80 sm:grid-cols-2">
+              <li>• صوّر المنتج في ضوء طبيعي وخلفية هادئة، ومن أكثر من زاوية.</li>
+              <li>• أظهر تفاصيل الخامة والحجم وأي اختلاف طبيعي بين القطع اليدوية.</li>
+              <li>• استخدم صورة غلاف واضحة للورشة وشعارًا سهل التمييز.</li>
+              <li>• اكتب وصفًا دقيقًا للمقاسات والخامة ومدة التجهيز والعناية بالمنتج.</li>
+            </ul>
+            <button
+              type="button"
+              onClick={() => setActiveTab('settings')}
+              className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-primary/20 px-4 text-xs font-bold text-primary transition hover:bg-primary/10 dark:text-primary-hover"
+            >
+              <Settings className="h-3.5 w-3.5" />
+              تحسين بيانات وصور الورشة
+            </button>
+          </div>
+        </div>
+      </section>
+
       {/* Main Workplace Layout */}
       <div className={(layoutMode === 'sidebar' || layoutMode === 'compact-rail') ? "flex flex-col lg:flex-row gap-5 items-start" : "w-full space-y-6"}>
         {/* LAYOUT 1: SIDEBAR */}

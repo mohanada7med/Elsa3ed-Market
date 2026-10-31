@@ -446,7 +446,13 @@ async function seedMongoDatabase(database: Db) {
 
       // Reviews
       database.collection('reviews').createIndex({ productId: 1, status: 1, createdAt: -1 }),
-      database.collection('reviews').createIndex({ buyerId: 1, productId: 1 }),
+      database.collection('reviews').createIndex(
+        { verifiedBuyerId: 1, productId: 1 },
+        {
+          unique: true,
+          partialFilterExpression: { verifiedBuyerId: { $type: 'string' } }
+        }
+      ),
 
       // Categories
       database.collection('categories').createIndex({ slug: 1 }, { unique: true }),
@@ -523,4 +529,3 @@ async function seedMongoDatabase(database: Db) {
     Logger.error('[MongoDB] Database index/taxonomy initialization error:', err);
   }
 }
-

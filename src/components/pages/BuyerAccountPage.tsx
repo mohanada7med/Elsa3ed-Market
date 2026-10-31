@@ -22,19 +22,31 @@ import {
   CheckCircle2,
   RefreshCw,
   X,
-  Sparkles
+  Sparkles,
+  KeyRound,
+  LogOut,
+  Bell,
+  ClipboardList
 } from 'lucide-react';
-import { Governorate } from '../../types';
+import { Governorate, OrderAddress } from '../../types';
 import { DeleteAccountModal } from '../common/DeleteAccountModal';
+import { NotificationsManager } from '../common/NotificationsManager';
+
+type AccountTab = 'personal' | 'security' | 'addresses' | 'orders' | 'notifications';
+type ProfileAddress = OrderAddress & { isDefault?: boolean };
 
 export const BuyerAccountPage: React.FC = () => {
   const {
     currentUser,
     setCurrentUser,
     currentRole,
+    logout,
+    changePersonalPassword,
     orders,
     favorites,
+    unreadNotificationsCount,
     setActivePage,
+    navigateToOrder,
     addToast,
     uploadProfileImage,
     removeProfileImage,
@@ -46,6 +58,16 @@ export const BuyerAccountPage: React.FC = () => {
   } = useApp();
 
   const isAdmin = currentRole === 'admin' || currentUser?.role === 'admin';
+  const isSeller = currentRole === 'seller' || currentUser?.role === 'seller';
+  const isBuyer = !isAdmin && !isSeller;
+
+  const profileTabs: { id: AccountTab; label: string; icon: typeof User; badge?: number }[] = [
+    { id: 'personal', label: 'البيانات الشخصية', icon: User },
+    { id: 'security', label: 'الأمان', icon: KeyRound },
+    ...(isBuyer ? [{ id: 'addresses' as const, label: 'العناوين', icon: MapPin }] : []),
+    ...(isBuyer ? [{ id: 'orders' as const, label: 'الطلبات', icon: ClipboardList, badge: orders.length }] : []),
+    { id: 'notifications', label: 'الإشعارات', icon: Bell, badge: unreadNotificationsCount }
+  ];
 
   const [name, setName] = useState(currentUser?.name || '');
   const [email, setEmail] = useState(currentUser?.email || '');
@@ -54,6 +76,14 @@ export const BuyerAccountPage: React.FC = () => {
     (currentUser?.governorate as Governorate) || 'قنا'
   );
   const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<AccountTab>('personal');
+  const [addresses, setAddresses] = useState<ProfileAddress[]>(currentUser?.savedAddresses || []);
+  const [isSavingAddresses, setIsSavingAddresses] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [isRevokingSessions, setIsRevokingSessions] = useState(false);
 
   // Seller Application In-Place State
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
@@ -90,8 +120,15 @@ export const BuyerAccountPage: React.FC = () => {
         setApplyPhone(currentUser.phone);
         setPayoutAccount(currentUser.phone);
       }
+      setAddresses(currentUser.savedAddresses || []);
     }
   }, [currentUser]);
+
+  useEffect(() => {
+    if (!isBuyer && (activeTab === 'addresses' || activeTab === 'orders')) {
+      setActiveTab('personal');
+    }
+  }, [activeTab, isBuyer]);
 
   useEffect(() => {
     try {
@@ -252,6 +289,94 @@ export const BuyerAccountPage: React.FC = () => {
     }
   };
 
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword.length < 6) {
+      addToast('كلمة المرور قصيرة', 'كلمة المرور الجديدة يجب ألا تقل عن 6 خانات.', 'warning');
+      return;
+    }
+    if (newPassword === currentPassword) {
+      addToast('كلمة المرور لم تتغير', 'اختر كلمة مرور جديدة مختلفة عن الحالية.', 'warning');
+      return;
+    }
+    if (newPassword !== confirmNewPassword) {
+      addToast('تأكيد كلمة المرور', 'كلمتا المرور الجديدتان غير متطابقتين.', 'warning');
+      return;
+    }
+
+    setIsChangingPassword(true);
+    try {
+      await changePersonalPassword(currentPassword, newPassword);
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmNewPassword('');
+      await logout('تم تغيير كلمة المرور وتسجيل الخروج من كل الأجهزة. سجّل الدخول مجددًا بكلمة المرور الجديدة.');
+    } catch (error: any) {
+      addToast('تعذر تغيير كلمة المرور', error?.message || 'حاول مرة أخرى.', 'error');
+    } finally {
+      setIsChangingPassword(false);
+    }
+  };
+
+  const handleLogoutAllSessions = () => {
+    confirmModal({
+      title: 'تسجيل الخروج من كل الأجهزة',
+      message: 'سيتم إنهاء جلستك الحالية وكل الجلسات المفتوحة على أجهزتك، وستحتاج إلى تسجيل الدخول مرة أخرى.',
+      confirmText: 'تسجيل الخروج من الكل',
+      danger: true,
+      onConfirm: async () => {
+        setIsRevokingSessions(true);
+        try {
+          await api.revokeAllSessions({ id: currentUser.id, role: currentRole });
+          await logout('تم تسجيل الخروج من كل الأجهزة. يمكنك تسجيل الدخول مرة أخرى في أي وقت.');
+        } catch (error: any) {
+          addToast('تعذر تسجيل الخروج من كل الأجهزة', error?.message || 'حاول مرة أخرى.', 'error');
+        } finally {
+          setIsRevokingSessions(false);
+        }
+      }
+    });
+  };
+
+  const handleSaveAddresses = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (addresses.some((address) =>
+      !address.fullName.trim() ||
+      !address.phone.trim() ||
+      !address.city.trim() ||
+      !address.streetAddress.trim()
+    )) {
+      addToast('بيانات العنوان ناقصة', 'أكمل الاسم والهاتف والمدينة والعنوان التفصيلي لكل عنوان.', 'warning');
+      return;
+    }
+
+    setIsSavingAddresses(true);
+    try {
+      const defaultIndex = addresses.findIndex((address) => address.isDefault);
+      const savedAddresses = addresses.map((address, index) => ({
+        ...address,
+        isDefault: index === (defaultIndex >= 0 ? defaultIndex : 0)
+      }));
+      await api.updateProfile(
+        { id: currentUser.id, role: currentUser.role },
+        { savedAddresses }
+      );
+      setAddresses(savedAddresses);
+      setCurrentUser((previous) => ({ ...previous, savedAddresses }));
+      addToast('تم حفظ العناوين', 'تم تحديث عناوين التوصيل بنجاح.', 'success');
+    } catch (error: any) {
+      addToast('تعذر حفظ العناوين', error?.message || 'حاول مرة أخرى.', 'error');
+    } finally {
+      setIsSavingAddresses(false);
+    }
+  };
+
+  const updateAddress = (index: number, updates: Partial<OrderAddress>) => {
+    setAddresses((previous) => previous.map((address, addressIndex) =>
+      addressIndex === index ? { ...address, ...updates } : address
+    ));
+  };
+
   const DEFAULT_USER_AVATAR = 'https://res.cloudinary.com/kuana1nl/image/upload/v1788710904/user.jpg';
   const hasCustomImage = Boolean(
     currentUser?.profileImage?.secureUrl ||
@@ -392,42 +517,83 @@ export const BuyerAccountPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Quick Metrics */}
-          <div className="grid grid-cols-2 gap-3 sm:flex items-center">
-            <button
-              type="button"
-              onClick={() => setActivePage('orders')}
-              className="p-3 rounded-2xl bg-black/[0.035] dark:bg-cream/[0.04] border border-black/10 dark:border-white/10 hover:border-primary transition-all text-center cursor-pointer backdrop-blur-xl"
-            >
-              <div className="flex items-center justify-center gap-1 text-primary font-bold text-base">
-                <Package className="w-4 h-4" />
-                <span>{orders.length}</span>
-              </div>
-              <span className="text-[10px] text-black/50 dark:text-white/50">طلبات سابقة</span>
-            </button>
+          {isBuyer && (
+            <div className="grid grid-cols-2 gap-3 sm:flex items-center">
+              <button
+                type="button"
+                onClick={() => setActiveTab('addresses')}
+                className="p-3 rounded-2xl bg-black/[0.035] dark:bg-cream/[0.04] border border-black/10 dark:border-white/10 hover:border-primary transition-all text-center cursor-pointer backdrop-blur-xl"
+              >
+                <div className="flex items-center justify-center gap-1 text-primary font-bold text-base">
+                  <MapPin className="w-4 h-4" />
+                  <span>{addresses.length}</span>
+                </div>
+                <span className="text-[10px] text-black/50 dark:text-white/50">عناوين التوصيل</span>
+              </button>
 
-            <button
-              type="button"
-              onClick={() => setActivePage('favorites')}
-              className="p-3 rounded-2xl bg-black/[0.035] dark:bg-cream/[0.04] border border-black/10 dark:border-white/10 hover:border-primary transition-all text-center cursor-pointer backdrop-blur-xl"
-            >
-              <div className="flex items-center justify-center gap-1 text-rose-600 dark:text-rose-400 font-bold text-base">
-                <Heart className="w-4 h-4 fill-rose-600 dark:fill-rose-400" />
-                <span>{favorites.length}</span>
-              </div>
-              <span className="text-[10px] text-black/50 dark:text-white/50">قطع في المفضلة</span>
-            </button>
-          </div>
+              <button
+                type="button"
+                onClick={() => setActivePage('favorites')}
+                className="p-3 rounded-2xl bg-black/[0.035] dark:bg-cream/[0.04] border border-black/10 dark:border-white/10 hover:border-primary transition-all text-center cursor-pointer backdrop-blur-xl"
+              >
+                <div className="flex items-center justify-center gap-1 text-rose-600 dark:text-rose-400 font-bold text-base">
+                  <Heart className="w-4 h-4 fill-rose-600 dark:fill-rose-400" />
+                  <span>{favorites.length}</span>
+                </div>
+                <span className="text-[10px] text-black/50 dark:text-white/50">قطع في المفضلة</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
+      <div
+        role="tablist"
+        aria-label="أقسام الملف الشخصي"
+        className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 p-2 rounded-2xl bg-white/70 dark:bg-espresso-900/80 border border-black/10 dark:border-white/10 shadow-sm"
+      >
+        {profileTabs.map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              role="tab"
+              id={`profile-tab-${tab.id}`}
+              aria-selected={isActive}
+              onClick={() => setActiveTab(tab.id)}
+              className={`min-h-[46px] rounded-xl px-2.5 py-2 flex items-center justify-center gap-2 text-xs font-bold transition-colors cursor-pointer ${
+                isActive
+                  ? 'bg-primary text-white shadow-md'
+                  : 'text-black/65 dark:text-white/65 hover:bg-black/5 dark:hover:bg-white/5'
+              }`}
+            >
+              <Icon className="w-4 h-4 shrink-0" />
+              <span>{tab.label}</span>
+              {tab.badge !== undefined && tab.badge > 0 && (
+                <span className={`min-w-5 rounded-full px-1 text-[10px] ${isActive ? 'bg-white/20' : 'bg-primary/10 text-primary'}`}>
+                  {tab.badge > 99 ? '99+' : tab.badge}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
       {/* Main Form & Settings */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      {activeTab === 'personal' && (
+      <div
+        role="tabpanel"
+        id="profile-panel-personal"
+        aria-labelledby="profile-tab-personal"
+        className="grid grid-cols-1 lg:grid-cols-12 gap-8"
+      >
         {/* Profile Settings Form */}
         <div className="lg:col-span-8">
           <form onSubmit={handleSaveProfile} className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-lg backdrop-blur-xl space-y-5">
             <h3 className="font-bold text-base border-b border-black/10 dark:border-white/10 pb-3">
-              البيانات الشخصية وعنوان التوصيل الافتراضي
+              بياناتك الشخصية
             </h3>
 
             {/* Username display (read-only for security) */}
@@ -552,10 +718,24 @@ export const BuyerAccountPage: React.FC = () => {
                 <ShieldCheck className="w-4 h-4" />
                 <span>الانتقال للوحة تحكم الإدارة</span>
               </button>
+              <div className="grid grid-cols-2 gap-2 pt-1">
+                <button type="button" onClick={() => setActivePage('admin-buyers')} className="py-2.5 px-2 bg-black/5 dark:bg-cream/5 hover:bg-black/10 dark:hover:bg-white/10 text-xs font-bold rounded-xl transition-colors cursor-pointer">
+                  إدارة المستخدمين
+                </button>
+                <button type="button" onClick={() => setActivePage('admin-products')} className="py-2.5 px-2 bg-black/5 dark:bg-cream/5 hover:bg-black/10 dark:hover:bg-white/10 text-xs font-bold rounded-xl transition-colors cursor-pointer">
+                  إدارة المنتجات
+                </button>
+                <button type="button" onClick={() => setActivePage('admin-orders')} className="py-2.5 px-2 bg-black/5 dark:bg-cream/5 hover:bg-black/10 dark:hover:bg-white/10 text-xs font-bold rounded-xl transition-colors cursor-pointer">
+                  إدارة الطلبات
+                </button>
+                <button type="button" onClick={() => setActivePage('admin-reports')} className="py-2.5 px-2 bg-black/5 dark:bg-cream/5 hover:bg-black/10 dark:hover:bg-white/10 text-xs font-bold rounded-xl transition-colors cursor-pointer">
+                  البلاغات
+                </button>
+              </div>
             </div>
           ) : (
             <div className="bg-white/75 dark:bg-espresso-900/90 p-6 rounded-[2rem] border border-black/10 dark:border-white/10 space-y-3 text-right shadow-lg backdrop-blur-xl">
-              {currentUser?.sellerStatus === 'approved' || currentRole === 'seller' ? (
+              {currentUser?.sellerStatus === 'approved' || (isSeller && !currentUser?.sellerStatus) ? (
                 <>
                   <div className="flex items-center justify-between">
                     <h4 className="font-bold text-xs">ورشتك الحرفية المعتمدة</h4>
@@ -569,18 +749,34 @@ export const BuyerAccountPage: React.FC = () => {
                   </p>
                   <button
                     type="button"
-                    id="go-to-seller-dashboard-btn"
-                    onClick={() => setActivePage('seller-dashboard')}
+                    id="go-to-seller-settings-btn"
+                    onClick={() => setActivePage('seller-account')}
                     className="w-full py-2.5 bg-primary hover:bg-[#3B1E0E] text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
                   >
                     <Store className="w-4 h-4" />
-                    <span>ادخل للوحة البائع الحرفي</span>
+                    <span>إعدادات الورشة</span>
+                  </button>
+                </>
+              ) : currentUser?.sellerStatus === 'suspended' ? (
+                <>
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-bold text-xs">حالة الورشة</h4>
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-700 dark:text-rose-300 border border-rose-500/20">
+                      <AlertTriangle className="w-3 h-3" />
+                      موقوفة مؤقتًا
+                    </span>
+                  </div>
+                  <p className="text-xs text-black/60 dark:text-white/60 leading-relaxed">
+                    تواصل مع الإدارة لمعرفة تفاصيل الإيقاف ومتابعة حالة ورشتك.
+                  </p>
+                  <button type="button" onClick={() => setActivePage('seller-account')} className="w-full py-2.5 bg-black/5 dark:bg-cream/5 hover:bg-black/10 dark:hover:bg-white/10 text-espresso dark:text-cream font-bold text-xs rounded-xl border border-black/10 dark:border-white/10 transition-colors cursor-pointer">
+                    إعدادات الورشة
                   </button>
                 </>
               ) : currentUser?.sellerStatus === 'pending' ? (
                 <>
                   <div className="flex items-center justify-between">
-                    <h4 className="font-bold text-xs">طلب انضمام ورشة حرفية</h4>
+                    <h4 className="font-bold text-xs">حالة اعتماد الورشة</h4>
                     <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-700 dark:text-primary-hover border border-amber-500/20">
                       <Clock className="w-3 h-3" />
                       قيد المراجعة والتدقيق
@@ -609,7 +805,7 @@ export const BuyerAccountPage: React.FC = () => {
               ) : currentUser?.sellerStatus === 'rejected' ? (
                 <>
                   <div className="flex items-center justify-between">
-                    <h4 className="font-bold text-xs">طلب انضمام ورشة حرفية</h4>
+                    <h4 className="font-bold text-xs">حالة اعتماد الورشة</h4>
                     <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-500/20">
                       <AlertCircle className="w-3 h-3" />
                       تم الرفض
@@ -626,7 +822,7 @@ export const BuyerAccountPage: React.FC = () => {
                     className="w-full py-2.5 bg-primary hover:bg-[#3B1E0E] text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
                   >
                     <Store className="w-4 h-4" />
-                    <span>عدّل وقدّم الطلب تاني</span>
+                    <span>إعدادات الورشة وإعادة التقديم</span>
                   </button>
                 </>
               ) : (
@@ -689,44 +885,340 @@ export const BuyerAccountPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-white/75 dark:bg-espresso-900/90 p-5 rounded-[2rem] border border-black/10 dark:border-white/10 text-xs text-black/60 dark:text-white/60 space-y-2 shadow-lg backdrop-blur-xl">
-            <div className="flex items-center gap-2 font-bold text-emerald-600 dark:text-emerald-400">
-              <ShieldCheck className="w-4 h-4" />
-              <span>حماية البيانات والخصوصية</span>
-            </div>
-            <p className="text-[11px] leading-relaxed">
-              بياناتك وعناوين الشحن مشفرة ومحمية وفق أعلى معايير الأمان المعتمدة في منصة وه.
-            </p>
-          </div>
-
-          {/* Danger Zone: Delete Account */}
-          {!isAdmin && (
-            <div className="bg-white/75 dark:bg-espresso-900/90 p-5 rounded-[2rem] border border-rose-500/25 text-xs space-y-3 shadow-lg backdrop-blur-xl">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 font-bold text-rose-600 dark:text-rose-400">
-                  <AlertTriangle className="w-4 h-4" />
-                  <span>منطقة الخطر</span>
-                </div>
-                <span className="text-[10px] text-rose-700 dark:text-rose-300 font-bold px-2 py-0.5 bg-rose-500/10 rounded-full border border-rose-500/20">
-                  إجراء لا رجعة فيه
-                </span>
-              </div>
-              <p className="text-[11px] text-black/60 dark:text-white/60 leading-relaxed font-medium">
-                هل ترغب في مغادرة المنصة ومسح كافة بياناتك؟ سيتم حذف حسابك نهائياً من قاعدة البيانات وإلغاء تنشيطه بالكامل.
-              </p>
-              <button
-                type="button"
-                id="open-delete-account-modal-btn"
-                onClick={() => setIsDeleteAccountModalOpen(true)}
-                className="w-full py-2.5 px-3 bg-rose-50 dark:bg-rose-950/30 hover:bg-rose-100 dark:hover:bg-rose-900/40 text-rose-600 dark:text-rose-400 font-bold text-xs rounded-xl border border-rose-500/30 flex items-center justify-center gap-2 transition-colors cursor-pointer"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-                <span>حذف حسابي نهائياً من المنصة</span>
-              </button>
-            </div>
-          )}
         </div>
       </div>
+      )}
+
+      {activeTab === 'security' && (
+        <section
+          role="tabpanel"
+          id="profile-panel-security"
+          aria-labelledby="profile-tab-security"
+          className="max-w-3xl mx-auto space-y-5"
+        >
+          <div className="bg-white/75 dark:bg-espresso-900/90 p-6 sm:p-8 rounded-[2rem] border border-black/10 dark:border-white/10 space-y-5 shadow-lg backdrop-blur-xl">
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                <KeyRound className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="font-black text-lg">الأمان وكلمة المرور</h2>
+                <p className="text-xs text-black/60 dark:text-white/60 mt-1">
+                  تحديث كلمة المرور يسجل خروج حسابك من جميع الأجهزة.
+                </p>
+              </div>
+            </div>
+            <form onSubmit={handleChangePassword} className="space-y-3">
+              <input
+                type="password"
+                required
+                autoComplete="current-password"
+                value={currentPassword}
+                onChange={(event) => setCurrentPassword(event.target.value)}
+                placeholder="كلمة المرور الحالية"
+                aria-label="كلمة المرور الحالية"
+                className="w-full px-4 py-3 bg-black/[0.035] dark:bg-cream/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-sm outline-none focus:border-primary"
+                dir="ltr"
+              />
+              <input
+                type="password"
+                required
+                minLength={6}
+                autoComplete="new-password"
+                value={newPassword}
+                onChange={(event) => setNewPassword(event.target.value)}
+                placeholder="كلمة المرور الجديدة (6 خانات على الأقل)"
+                aria-label="كلمة المرور الجديدة"
+                className="w-full px-4 py-3 bg-black/[0.035] dark:bg-cream/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-sm outline-none focus:border-primary"
+                dir="ltr"
+              />
+              <input
+                type="password"
+                required
+                minLength={6}
+                autoComplete="new-password"
+                value={confirmNewPassword}
+                onChange={(event) => setConfirmNewPassword(event.target.value)}
+                placeholder="تأكيد كلمة المرور الجديدة"
+                aria-label="تأكيد كلمة المرور الجديدة"
+                className="w-full px-4 py-3 bg-black/[0.035] dark:bg-cream/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-sm outline-none focus:border-primary"
+                dir="ltr"
+              />
+              <button
+                type="submit"
+                disabled={isChangingPassword || isRevokingSessions}
+                className="w-full sm:w-auto px-6 py-3 bg-primary hover:bg-[#3B1E0E] text-white font-bold text-sm rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer disabled:opacity-50"
+              >
+                {isChangingPassword ? <Loader2 className="w-4 h-4 animate-spin" /> : <KeyRound className="w-4 h-4" />}
+                <span>{isChangingPassword ? 'جاري تغيير كلمة المرور...' : 'تغيير كلمة المرور'}</span>
+              </button>
+            </form>
+          </div>
+
+          <div className="bg-white/75 dark:bg-espresso-900/90 p-6 rounded-[2rem] border border-rose-500/25 space-y-4 shadow-lg backdrop-blur-xl">
+            <div className="flex items-center gap-3">
+              <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+              <div>
+                <h3 className="font-bold text-sm">جلسات تسجيل الدخول</h3>
+                <p className="text-xs text-black/60 dark:text-white/60 mt-1">
+                  أنهِ الجلسات المفتوحة على جميع أجهزتك، بما فيها هذا الجهاز.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={handleLogoutAllSessions}
+              disabled={isChangingPassword || isRevokingSessions}
+              className="w-full sm:w-auto px-5 py-3 bg-rose-50 dark:bg-rose-950/30 hover:bg-rose-100 dark:hover:bg-rose-900/40 text-rose-700 dark:text-rose-300 font-bold text-sm rounded-xl border border-rose-500/25 flex items-center justify-center gap-2 transition-colors cursor-pointer disabled:opacity-50"
+            >
+              {isRevokingSessions ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogOut className="w-4 h-4" />}
+              <span>{isRevokingSessions ? 'جاري إنهاء الجلسات...' : 'تسجيل الخروج من كل الأجهزة'}</span>
+            </button>
+          </div>
+
+          <div className="flex items-start gap-3 rounded-2xl bg-emerald-500/5 border border-emerald-500/15 p-4 text-xs text-black/60 dark:text-white/60">
+            <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            <p className="leading-relaxed">بيانات حسابك محمية، ولا نعرض كلمة المرور الحالية أو نخزنها كنص قابل للقراءة.</p>
+          </div>
+        </section>
+      )}
+
+      {activeTab === 'addresses' && (
+        <section
+          role="tabpanel"
+          id="profile-panel-addresses"
+          aria-labelledby="profile-tab-addresses"
+          className="max-w-4xl mx-auto space-y-5"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h2 className="font-black text-lg">عناوين التوصيل</h2>
+              <p className="text-xs text-black/60 dark:text-white/60 mt-1">احفظ عناوينك واختر العنوان الافتراضي للطلبات القادمة.</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setAddresses((previous) => [
+                ...previous,
+                {
+                  fullName: currentUser.name || '',
+                  phone: currentUser.phone || '',
+                  governorate: (currentUser.governorate as Governorate) || 'قنا',
+                  city: '',
+                  streetAddress: '',
+                  isDefault: previous.length === 0
+                }
+              ])}
+              className="px-4 py-2.5 bg-primary/10 hover:bg-primary/15 text-primary font-bold text-xs rounded-xl border border-primary/20 transition-colors cursor-pointer"
+            >
+              إضافة عنوان جديد
+            </button>
+          </div>
+
+          {addresses.length === 0 ? (
+            <form onSubmit={handleSaveAddresses} className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-dashed border-black/20 dark:border-white/20 p-10 text-center space-y-3">
+              <MapPin className="w-8 h-8 mx-auto text-primary" />
+              <p className="font-bold text-sm">لسه مفيش عناوين محفوظة</p>
+              <p className="text-xs text-black/55 dark:text-white/55">أضف عنوانًا لتسهيل إتمام طلباتك القادمة.</p>
+              <button
+                type="submit"
+                disabled={isSavingAddresses}
+                className="px-5 py-2.5 bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300 font-bold text-xs rounded-xl border border-rose-500/25 cursor-pointer disabled:opacity-50"
+              >
+                {isSavingAddresses ? 'جاري التحديث...' : 'حفظ قائمة العناوين فارغة'}
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleSaveAddresses} className="space-y-4">
+              {addresses.map((address, index) => (
+                <div key={`address-${index}`} className="bg-white/75 dark:bg-espresso-900/90 p-5 sm:p-6 rounded-[2rem] border border-black/10 dark:border-white/10 space-y-4 shadow-lg backdrop-blur-xl">
+                  <div className="flex items-center justify-between gap-3">
+                    <h3 className="font-bold text-sm">عنوان التوصيل {index + 1}</h3>
+                    <div className="flex items-center gap-3">
+                      <label className="flex items-center gap-2 text-xs font-bold cursor-pointer">
+                        <input
+                          type="radio"
+                          name="default-address"
+                          checked={Boolean(address.isDefault)}
+                          onChange={() => setAddresses((previous) => previous.map((item, itemIndex) => ({
+                            ...item,
+                            isDefault: itemIndex === index
+                          })))}
+                          className="accent-primary"
+                        />
+                        افتراضي
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => setAddresses((previous) => {
+                          const remaining = previous.filter((_, itemIndex) => itemIndex !== index);
+                          const defaultIndex = remaining.findIndex((item) => item.isDefault);
+                          return remaining.map((item, itemIndex) => ({
+                            ...item,
+                            isDefault: itemIndex === (defaultIndex >= 0 ? defaultIndex : 0)
+                          }));
+                        })}
+                        aria-label={`حذف عنوان التوصيل ${index + 1}`}
+                        className="p-2 text-rose-600 hover:bg-rose-500/10 rounded-lg cursor-pointer"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <input
+                      required
+                      value={address.fullName}
+                      onChange={(event) => updateAddress(index, { fullName: event.target.value })}
+                      placeholder="اسم المستلم"
+                      aria-label="اسم المستلم"
+                      className="w-full px-3 py-2.5 bg-black/[0.035] dark:bg-cream/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary"
+                    />
+                    <input
+                      required
+                      type="tel"
+                      value={address.phone}
+                      onChange={(event) => updateAddress(index, { phone: event.target.value })}
+                      placeholder="رقم الهاتف"
+                      aria-label="رقم هاتف المستلم"
+                      className="w-full px-3 py-2.5 bg-black/[0.035] dark:bg-cream/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary"
+                    />
+                    <select
+                      required
+                      value={address.governorate}
+                      onChange={(event) => updateAddress(index, { governorate: event.target.value as Governorate })}
+                      aria-label="المحافظة"
+                      className="w-full px-3 py-2.5 bg-black/[0.035] dark:bg-cream/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary"
+                    >
+                      {['القاهرة', 'الجيزة', 'الإسكندرية', 'قنا', 'سوهاج', 'أسوان', 'الأقصر', 'أسيوط', 'المنيا', 'بني سويف', 'الوادي الجديد'].map((governorateOption) => (
+                        <option key={governorateOption} value={governorateOption} className="dark:bg-espresso-900">{governorateOption}</option>
+                      ))}
+                    </select>
+                    <input
+                      required
+                      value={address.city}
+                      onChange={(event) => updateAddress(index, { city: event.target.value })}
+                      placeholder="المدينة أو المركز"
+                      aria-label="المدينة أو المركز"
+                      className="w-full px-3 py-2.5 bg-black/[0.035] dark:bg-cream/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary"
+                    />
+                    <input
+                      required
+                      value={address.streetAddress}
+                      onChange={(event) => updateAddress(index, { streetAddress: event.target.value })}
+                      placeholder="الشارع والعنوان بالتفصيل"
+                      aria-label="الشارع والعنوان بالتفصيل"
+                      className="w-full sm:col-span-2 px-3 py-2.5 bg-black/[0.035] dark:bg-cream/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary"
+                    />
+                    <input
+                      value={address.buildingNo || ''}
+                      onChange={(event) => updateAddress(index, { buildingNo: event.target.value })}
+                      placeholder="رقم المبنى (اختياري)"
+                      aria-label="رقم المبنى"
+                      className="w-full px-3 py-2.5 bg-black/[0.035] dark:bg-cream/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary"
+                    />
+                    <input
+                      value={address.notes || ''}
+                      onChange={(event) => updateAddress(index, { notes: event.target.value })}
+                      placeholder="علامة مميزة أو ملاحظات (اختياري)"
+                      aria-label="ملاحظات العنوان"
+                      className="w-full px-3 py-2.5 bg-black/[0.035] dark:bg-cream/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary"
+                    />
+                  </div>
+                </div>
+              ))}
+              <button
+                type="submit"
+                disabled={isSavingAddresses}
+                className="px-6 py-3 bg-primary hover:bg-[#3B1E0E] text-white font-bold text-sm rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer disabled:opacity-50"
+              >
+                {isSavingAddresses ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                <span>{isSavingAddresses ? 'جاري حفظ العناوين...' : 'حفظ العناوين'}</span>
+              </button>
+            </form>
+          )}
+        </section>
+      )}
+
+      {activeTab === 'orders' && (
+        <section
+          role="tabpanel"
+          id="profile-panel-orders"
+          aria-labelledby="profile-tab-orders"
+          className="max-w-4xl mx-auto space-y-4"
+        >
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <h2 className="font-black text-lg">طلباتي</h2>
+              <p className="text-xs text-black/60 dark:text-white/60 mt-1">تابع أحدث طلباتك وحالتها.</p>
+            </div>
+            <button type="button" onClick={() => setActivePage('orders')} className="text-xs font-bold text-primary hover:underline cursor-pointer">
+              عرض كل الطلبات
+            </button>
+          </div>
+          {orders.length === 0 ? (
+            <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-10 text-center space-y-3">
+              <Package className="w-8 h-8 mx-auto text-primary" />
+              <p className="font-bold text-sm">لا توجد طلبات حتى الآن</p>
+              <button type="button" onClick={() => setActivePage('products')} className="text-xs font-bold text-primary hover:underline cursor-pointer">
+                ابدأ التسوق
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {orders.slice(0, 8).map((order) => (
+                <button
+                  key={order.id}
+                  type="button"
+                  onClick={() => navigateToOrder(order.id)}
+                  className="w-full text-right bg-white/75 dark:bg-espresso-900/90 rounded-2xl border border-black/10 dark:border-white/10 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-primary/50 transition-colors cursor-pointer"
+                >
+                  <div>
+                    <span className="font-bold text-sm">طلب رقم {order.orderNumber || order.id}</span>
+                    <p className="text-xs text-black/55 dark:text-white/55 mt-1">
+                      {new Date(order.createdAt).toLocaleDateString('ar-EG')} · {order.items.length} منتجات
+                    </p>
+                  </div>
+                  <div className="flex items-center justify-between sm:justify-end gap-4">
+                    <span className="text-xs font-bold text-primary">
+                      {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(order.total)}
+                    </span>
+                    <span className="text-[11px] px-2.5 py-1 rounded-full bg-primary/10 text-primary font-bold">{order.status}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+
+      {activeTab === 'notifications' && (
+        <section
+          role="tabpanel"
+          id="profile-panel-notifications"
+          aria-labelledby="profile-tab-notifications"
+          className="max-w-5xl mx-auto bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-4 sm:p-6 shadow-lg backdrop-blur-xl"
+        >
+          <NotificationsManager
+            viewMode={currentRole === 'admin' ? 'admin' : currentRole === 'seller' ? 'seller' : 'buyer'}
+            onNavigateTab={(tab) => {
+              if (currentRole === 'admin') {
+                setActivePage('admin-dashboard');
+              } else if (currentRole === 'seller') {
+                if (tab === 'orders') setActivePage('seller-orders');
+                else if (tab === 'products') setActivePage('seller-products');
+                else if (tab === 'payouts') setActivePage('seller-payouts');
+                else setActivePage('seller-dashboard');
+              } else if (tab === 'orders') {
+                setActiveTab('orders');
+              } else if (tab === 'profile') {
+                setActiveTab('personal');
+              } else {
+                setActiveTab('personal');
+              }
+            }}
+          />
+        </section>
+      )}
 
       {/* In-Place Seller Application Modal */}
       {!isAdmin && isApplyModalOpen && (

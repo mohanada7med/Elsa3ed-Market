@@ -363,6 +363,7 @@ export interface ReviewDocument {
   id: string;
   productId: string;
   productTitle?: string;
+  verifiedBuyerId?: string;
   userId: string;
   userName: string;
   userGovernorate?: string;
@@ -423,6 +424,7 @@ export interface UserDocument {
   name: string;
   email?: string;
   passwordHash?: string;
+  authVersion?: number;
   phone: string;
   role: UserRole;
   avatar?: string;
@@ -1271,8 +1273,6 @@ export interface ReportTicketDocument {
   createdAt: string;
   updatedAt: string;
 }
-
-
 
 
 

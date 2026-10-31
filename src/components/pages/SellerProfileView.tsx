@@ -12,6 +12,7 @@ import {
   Sparkles,
   Award,
   Share2,
+  MessageCircle,
   Package,
   Layers,
   ArrowDownLeft,
@@ -284,6 +285,13 @@ export const SellerProfileView: React.FC = () => {
       );
     }
   };
+  const handleShareOnWhatsApp = () => {
+    const shareUrl = `${window.location.origin}/sellers/${encodeURIComponent(
+      seller.id || effectiveSellerId || ''
+    )}`;
+    const message = `ورشة ${brandTitle} - اكتشف منتجاتها على سوق وه: ${shareUrl}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
+  };
 
   return (
     <div
@@ -344,6 +352,14 @@ export const SellerProfileView: React.FC = () => {
               <span className="hidden sm:inline text-[11px] font-black">
                 مشاركة
               </span>
+            </button>
+            <button
+              type="button"
+              onClick={handleShareOnWhatsApp}
+              aria-label="مشاركة الورشة على واتساب"
+              className="h-10 w-10 rounded-xl border border-border-subtle bg-surface-subtle hover:border-green-500/40 hover:text-green-600 inline-flex items-center justify-center transition-all duration-300 hover:-translate-y-0.5"
+            >
+              <MessageCircle className="w-4 h-4" />
             </button>
           </div>
         </nav>

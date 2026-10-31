@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { Lock, ShieldAlert, KeyRound, CheckCircle2, RefreshCw, LogOut, Eye, EyeOff, ShieldCheck } from 'lucide-react';
 
 export const ForceChangePasswordModal: React.FC = () => {
-  const { currentUser, changePersonalPassword, logout, addToast } = useApp();
+  const { currentUser, changePersonalPassword, logout } = useApp();
 
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -61,10 +61,10 @@ export const ForceChangePasswordModal: React.FC = () => {
     setIsSubmitting(true);
     try {
       await changePersonalPassword(currentPassword, newPassword);
-      addToast('أمان الحساب', 'تم تحديث كلمة المرور الشخصية وتفعيل الحساب بنجاح', 'success');
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
+      await logout('تم تغيير كلمة المرور وتسجيل الخروج من كل الأجهزة. سجّل الدخول مجددًا بكلمة المرور الجديدة.');
     } catch (err: any) {
       setErrorMessage(err?.message || 'فشل في تحديث كلمة المرور، يرجى التأكد من كلمة المرور المؤقتة');
     } finally {

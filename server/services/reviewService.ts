@@ -76,63 +76,45 @@ export async function createProductReview(
     throw new Error('المنتج المراد تقييمه غير موجود');
   }
 
-  // 2. Verified Purchase check: Verify user actually purchased this product in an active/delivered order
-  let hasPurchased = false;
+  // Reviews are only available after the buyer has received this exact product.
+  let hasCompletedPurchase = false;
   let matchingOrderId = '';
 
   if (isMongo && db) {
-    try {
-      const order = await db.collection('orders').findOne({
-        buyerId: buyerUser.id,
-        'items.productId': productId
-      });
-      if (order) {
-        hasPurchased = true;
-        matchingOrderId = (order as any).id || (order as any).orderNumber;
-      }
-    } catch (e) {
-      console.error('[ReviewService] Order purchase check error:', e);
+    const order = await db.collection('orders').findOne({
+      buyerId: buyerUser.id,
+      status: 'delivered',
+      'items.productId': productId
+    });
+    if (order) {
+      hasCompletedPurchase = true;
+      matchingOrderId = (order as any).id || (order as any).orderNumber;
     }
-  }
-
-  if (!hasPurchased) {
+  } else {
     const memOrder = memoryDb.orders.find(
-      (o) => o.buyerId === buyerUser.id && o.items.some((item) => item.productId === productId)
+      (o) =>
+        o.buyerId === buyerUser.id &&
+        o.status === 'delivered' &&
+        o.items.some((item) => item.productId === productId)
     );
     if (memOrder) {
-      hasPurchased = true;
+      hasCompletedPurchase = true;
       matchingOrderId = memOrder.id;
     }
   }
 
-  // If not found by strict buyerId, check by buyer name or email if logged in as buyer
-  if (!hasPurchased && buyerUser.role === 'buyer') {
-    const memOrder2 = memoryDb.orders.find((o) =>
-      o.items.some((item) => item.productId === productId)
-    );
-    if (memOrder2) {
-      hasPurchased = true;
-      matchingOrderId = memOrder2.id;
-    }
-  }
-
-  if (!hasPurchased) {
-    throw new Error('عذراً، التقييم متاح فقط للعملاء الذين اشتروا هذا المنتج من سوق الصعيد (Verified Purchase Check)');
+  if (!hasCompletedPurchase) {
+    throw new Error('التقييم متاح للمشتري بعد استلام المنتج فقط.');
   }
 
   // 3. Check for duplicate review by same user on same product
   let existingReview: any = null;
   if (isMongo && db) {
-    try {
-      existingReview = await db.collection('reviews').findOne({
-        userId: buyerUser.id,
-        productId: productId
-      });
-    } catch (e) {
-      console.error('[ReviewService] Duplicate check error:', e);
-    }
-  }
-  if (!existingReview) {
+    existingReview = await db.collection('reviews').findOne({
+      userId: buyerUser.id,
+      productId
+    });
+  } else {
     existingReview = memoryDb.reviews.find((r) => r.userId === buyerUser.id && r.productId === productId);
   }
 
@@ -145,6 +127,7 @@ export async function createProductReview(
     id: `rev-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
     productId,
     productTitle: product.title,
+    verifiedBuyerId: buyerUser.id,
     userId: buyerUser.id,
     userName: buyerUser.name || 'مشتري معتمد',
     userGovernorate: buyerUser.governorate || 'القاهرة',
@@ -161,12 +144,15 @@ export async function createProductReview(
   if (isMongo && db) {
     try {
       await db.collection('reviews').insertOne(newReview as any);
-    } catch (e) {
-      console.error('[ReviewService] MongoDB insert review error:', e);
+    } catch (error) {
+      if (typeof error === 'object' && error !== null && 'code' in error && error.code === 11000) {
+        throw new Error('لقد قمت بتقييم هذا المنتج مسبقاً');
+      }
+      throw error;
     }
+  } else {
+    memoryDb.reviews.unshift(newReview);
   }
-
-  memoryDb.reviews.unshift(newReview);
 
   // 4. Recalculate average rating & review count for product
   const allReviews = await getProductReviews(productId, false);

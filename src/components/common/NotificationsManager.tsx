@@ -653,7 +653,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               }`}
           >
             <History className="w-4 h-4" />
-            <span>سجل التنبيهات والإعلانات المرسلة (MongoDB)</span>
+            <span>سجل التنبيهات والإعلانات المرسلة</span>
             <span className="px-2 py-0.5 rounded-full text-[10px] bg-black/10 dark:bg-cream/10 font-bold">
               {broadcastHistory.length}
             </span>

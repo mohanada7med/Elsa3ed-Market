@@ -55,6 +55,7 @@ export function generateToken(user: UserDocument): string {
     role: user.role,
     sellerId: user.sellerId,
     sellerStatus: user.sellerStatus,
+    authVersion: user.authVersion || 0,
     iat: now,
     exp: now + TOKEN_EXPIRATION_MS
   };
@@ -70,6 +71,7 @@ export function verifyToken(token: string): {
   role: UserRole;
   sellerId?: string;
   sellerStatus?: SellerStatus;
+  authVersion?: number;
   exp?: number;
 } | null {
   try {

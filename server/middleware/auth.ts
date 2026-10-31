@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from 'express';
 import type { UserRole, SellerStatus } from '../models/types.ts';
 import { memoryDb, getDatabase } from '../db/mongodb.ts';
 import { verifyToken } from '../services/authService.ts';
-import { getAuthTokenFromRequest } from '../config/authCookie.ts';
+import { clearAuthCookie, getAuthTokenFromRequest } from '../config/authCookie.ts';
 
 export interface AuthenticatedUser {
   id: string;
@@ -20,6 +20,7 @@ export interface AuthenticatedUser {
   sellerId?: string;
   sellerStatus?: SellerStatus;
   mustChangePassword?: boolean;
+  authVersion?: number;
   seller?: any;
 }
 
@@ -76,8 +77,19 @@ export async function authenticate(req: AuthenticatedRequest, res: Response, nex
   // 2. Fast-path: Check short-term in-memory cache
   const cached = authSessionCache.get(userId);
   if (cached && Date.now() < cached.expiresAt) {
-    req.user = { ...cached.user };
-    return next();
+    if (token && verified && (verified.authVersion ?? 0) < (cached.user.authVersion ?? 0)) {
+      clearAuthCookie(res);
+      return res.status(401).json({
+        success: false,
+        error: 'انتهت صلاحية الجلسة. سجّل الدخول مرة أخرى.',
+        code: 'SESSION_REVOKED'
+      });
+    }
+    if (!token || !verified || (verified.authVersion ?? 0) === (cached.user.authVersion ?? 0)) {
+      req.user = { ...cached.user };
+      return next();
+    }
+    authSessionCache.delete(userId);
   }
 
   // 3. Look up user from database or memory
@@ -105,12 +117,22 @@ export async function authenticate(req: AuthenticatedRequest, res: Response, nex
       email: verified.email || '',
       role: verified.role,
       sellerId: verified.sellerId,
-      sellerStatus: verified.sellerStatus
+      sellerStatus: verified.sellerStatus,
+      authVersion: verified.authVersion ?? 0
     };
   }
 
   if (!userProfile) {
     return next();
+  }
+
+  if (token && verified && (verified.authVersion ?? 0) !== (userProfile.authVersion ?? 0)) {
+    clearAuthCookie(res);
+    return res.status(401).json({
+      success: false,
+      error: 'انتهت صلاحية الجلسة. سجّل الدخول مرة أخرى.',
+      code: 'SESSION_REVOKED'
+    });
   }
 
   // Resolve Seller Status and Seller ID accurately
@@ -161,6 +183,7 @@ export async function authenticate(req: AuthenticatedRequest, res: Response, nex
     avatar: userProfile.avatar,
     profileImage: userProfile.profileImage,
     mustChangePassword: Boolean(userProfile.mustChangePassword),
+    authVersion: userProfile.authVersion ?? 0,
     seller: sellerDetails
   };
 

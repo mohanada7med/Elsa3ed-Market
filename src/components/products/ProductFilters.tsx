@@ -24,6 +24,10 @@ export const ProductFilters: React.FC = () => {
     setSelectedCategoryFilter,
     selectedHandmadeOnly,
     setSelectedHandmadeOnly,
+    selectedPriceMin,
+    setSelectedPriceMin,
+    selectedPriceMax,
+    setSelectedPriceMax,
     selectedSort,
     setSelectedSort,
     searchQuery,
@@ -36,12 +40,15 @@ export const ProductFilters: React.FC = () => {
     (selectedGovernorateFilter !== 'all' ? 1 : 0) +
     (selectedCategoryFilter !== 'all' ? 1 : 0) +
     (selectedHandmadeOnly ? 1 : 0) +
+    (selectedPriceMin !== null || selectedPriceMax !== null ? 1 : 0) +
     (searchQuery.trim() !== '' ? 1 : 0);
 
   const hasActiveFilters =
     selectedGovernorateFilter !== 'all' ||
     selectedCategoryFilter !== 'all' ||
     selectedHandmadeOnly ||
+    selectedPriceMin !== null ||
+    selectedPriceMax !== null ||
     searchQuery.trim() !== '' ||
     selectedSort !== 'featured';
 
@@ -49,6 +56,8 @@ export const ProductFilters: React.FC = () => {
     setSelectedGovernorateFilter('all');
     setSelectedCategoryFilter('all');
     setSelectedHandmadeOnly(false);
+    setSelectedPriceMin(null);
+    setSelectedPriceMax(null);
     setSearchQuery('');
     setSelectedSort('featured');
   };
@@ -172,6 +181,35 @@ export const ProductFilters: React.FC = () => {
               );
             })}
           </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <label className="flex items-center gap-2 rounded-xl border border-black/10 bg-black/5 px-3 py-2 dark:border-white/10 dark:bg-cream/5">
+            <span className="shrink-0 text-xs font-bold text-espresso dark:text-cream">أقل سعر</span>
+            <input
+              type="number"
+              min="0"
+              value={selectedPriceMin ?? ''}
+              onChange={(event) => setSelectedPriceMin(event.target.value === '' ? null : Number(event.target.value))}
+              placeholder="بدون حد"
+              className="min-w-0 w-full bg-transparent text-xs outline-none"
+              aria-label="أقل سعر للمنتج"
+            />
+            <span className="shrink-0 text-xs text-black/50 dark:text-white/50">ج.م</span>
+          </label>
+          <label className="flex items-center gap-2 rounded-xl border border-black/10 bg-black/5 px-3 py-2 dark:border-white/10 dark:bg-cream/5">
+            <span className="shrink-0 text-xs font-bold text-espresso dark:text-cream">أعلى سعر</span>
+            <input
+              type="number"
+              min="0"
+              value={selectedPriceMax ?? ''}
+              onChange={(event) => setSelectedPriceMax(event.target.value === '' ? null : Number(event.target.value))}
+              placeholder="بدون حد"
+              className="min-w-0 w-full bg-transparent text-xs outline-none"
+              aria-label="أعلى سعر للمنتج"
+            />
+            <span className="shrink-0 text-xs text-black/50 dark:text-white/50">ج.م</span>
+          </label>
         </div>
 
         {/* Toggles & Sorting */}

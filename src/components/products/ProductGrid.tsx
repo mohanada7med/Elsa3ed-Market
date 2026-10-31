@@ -1448,7 +1448,12 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ customProducts, limit 
   const {
     products,
     searchQuery,
+    selectedGovernorateFilter,
     selectedCategoryFilter,
+    selectedHandmadeOnly,
+    selectedPriceMin,
+    selectedPriceMax,
+    selectedSort,
     setSelectedProductId,
     setActivePage,
   } = useApp();
@@ -1590,15 +1595,46 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ customProducts, limit 
             }
           }
 
+          if (selectedGovernorateFilter !== 'all') {
+            const governorate = text(item, [
+              'sellerGovernorate',
+              'governorate',
+              'governorateName',
+              'originGovernorate',
+            ]);
+            if (governorate !== selectedGovernorateFilter) return false;
+          }
+
+          if (selectedHandmadeOnly && item.isHandmade !== true) return false;
+
+          const price = numberValue(item, ['price']);
+          if (selectedPriceMin !== null && (price === null || price < selectedPriceMin)) return false;
+          if (selectedPriceMax !== null && (price === null || price > selectedPriceMax)) return false;
+
           return true;
         }
       );
+
+      if (selectedSort === 'price-asc') {
+        filtered.sort((a, b) => (numberValue(a as ProductLike, ['price']) ?? 0) - (numberValue(b as ProductLike, ['price']) ?? 0));
+      } else if (selectedSort === 'price-desc') {
+        filtered.sort((a, b) => (numberValue(b as ProductLike, ['price']) ?? 0) - (numberValue(a as ProductLike, ['price']) ?? 0));
+      } else if (selectedSort === 'rating') {
+        filtered.sort((a, b) => (numberValue(b as ProductLike, ['rating']) ?? 0) - (numberValue(a as ProductLike, ['rating']) ?? 0));
+      } else if (selectedSort === 'newest') {
+        filtered.sort((a, b) => Date.parse(text(b as ProductLike, ['createdAt'])) - Date.parse(text(a as ProductLike, ['createdAt'])));
+      }
 
       return limit ? filtered.slice(0, limit) : filtered;
     }, [
       sourceProducts,
       searchQuery,
+      selectedGovernorateFilter,
       selectedCategoryFilter,
+      selectedHandmadeOnly,
+      selectedPriceMin,
+      selectedPriceMax,
+      selectedSort,
       limit,
     ]);
 

@@ -1,7 +1,7 @@
 import express from 'express';
 import type { Request, Response } from 'express';
 import { register, login, verifyToken } from '../services/authService.ts';
-import { findUserById, updateUser, DEFAULT_USER_AVATAR, changeUserPersonalPassword, deleteOwnAccount } from '../services/userService.ts';
+import { findUserById, updateUser, DEFAULT_USER_AVATAR, changeUserPersonalPassword, deleteOwnAccount, revokeUserSessions } from '../services/userService.ts';
 import {
   createPasswordResetRequest,
   requestAutomatedPasswordReset,
@@ -470,6 +470,8 @@ router.post('/change-password', requireAuth, async (req: AuthenticatedRequest, r
     }
 
     const result = await changeUserPersonalPassword(userId, currentPassword, newPassword);
+    invalidateAuthSession(userId);
+    clearAuthCookie(res);
     res.json({
       success: true,
       message: result.message
@@ -479,6 +481,26 @@ router.post('/change-password', requireAuth, async (req: AuthenticatedRequest, r
     res.status(400).json({
       success: false,
       error: error?.message || 'فشل في تغيير كلمة المرور'
+    });
+  }
+});
+
+// POST /api/auth/logout-all - Revoke every active session for the authenticated user
+router.post('/logout-all', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    await revokeUserSessions(userId);
+    invalidateAuthSession(userId);
+    clearAuthCookie(res);
+    res.json({
+      success: true,
+      message: 'تم تسجيل الخروج من كل الأجهزة بنجاح'
+    });
+  } catch (error: any) {
+    console.error('[authRoutes] Error revoking user sessions:', error?.message || error);
+    res.status(400).json({
+      success: false,
+      error: error?.message || 'فشل تسجيل الخروج من كل الأجهزة'
     });
   }
 });
