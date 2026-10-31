@@ -151,41 +151,107 @@ export const HeroSection: React.FC = () => {
         {/* عم وه — MASCOT ON THE LEFT & SPEECH BUBBLE ON RIGHT   */}
         {/* ===================================================== */}
 
-        <div className="relative z-10 flex items-center justify-between gap-3 my-auto py-1.5">
-          {/* كبسولة كلام عم وه على اليمين */}
+        <div
+          dir="ltr"
+          className="relative z-10 flex w-full items-end justify-start my-auto py-1.5"
+        >
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.25, duration: 0.4 }}
-            className="relative flex-1 max-w-[210px] xs:max-w-[240px] rounded-2xl border border-white/20 dark:border-white/10 bg-black/55 dark:bg-black/70 p-3 shadow-lg backdrop-blur-md text-right"
-          >
-            <div className="flex items-center gap-1.5 mb-1">
-              <span className="h-2 w-2 rounded-full bg-primary shadow-[0_0_6px_rgba(255,255,255,0.6)]" />
-              <span className="text-[11px] font-black text-white">
-                أهلاً بيك، أنا عم وه 👋
-              </span>
-            </div>
-            <p className="text-[9.5px] leading-relaxed text-white/80 font-medium">
-              دليلك في حكاوي وخير الصعيد.. هلف معاك الورش والدكاكين حتة حتة!
-            </p>
-          </motion.div>
-
-          {/* شخصية عم وه على شمال الشاشة */}
-          <motion.div
-            animate={{ y: [0, -5, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
             className="relative shrink-0"
+            animate={{
+              y: [0, -7, 0],
+              rotate: [0, 1.5, 0, -1.5, 0],
+            }}
+            transition={{
+              y: {
+                duration: 2.8,
+                repeat: Infinity,
+                ease: "easeInOut",
+              },
+              rotate: {
+                duration: 4,
+                repeat: Infinity,
+                ease: "easeInOut",
+              },
+            }}
           >
-            <div className="absolute inset-0 rounded-full bg-primary/25 blur-2xl" />
+            {/* إضاءة خلف الشخصية */}
+            <motion.div
+              animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0.8, 0.5] }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              className="
+        absolute bottom-5 left-1/2
+        h-36 w-36 -translate-x-1/2
+        rounded-full bg-primary/20 blur-[55px]
+      "
+            />
+
+            {/* صورة عم وه */}
             <img
               src="/mascot/welcoming.png"
               alt="عم وه"
-              className="relative h-28 xs:h-34 w-auto object-contain drop-shadow-[0_12px_16px_rgba(0,0,0,0.5)]"
-              style={{ imageRendering: 'crisp-edges' }}
+              className="
+        relative h-[175px] w-auto
+        object-contain
+        drop-shadow-[0_15px_18px_rgba(0,0,0,0.55)]
+      "
+              style={{ imageRendering: "crisp-edges" }}
             />
+
+            {/* كبسولة الكلام */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8, y: 8 }}
+              animate={{
+                opacity: 1,
+                scale: [1, 1.025, 1],
+                y: [0, -3, 0],
+              }}
+              transition={{
+                opacity: { delay: 0.4, duration: 0.5 },
+                scale: {
+                  delay: 1,
+                  duration: 2.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                },
+                y: {
+                  delay: 1,
+                  duration: 2.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                },
+              }}
+              dir="rtl"
+              className="
+        absolute bottom-5 left-4
+        z-20 min-w-[200px]
+        rounded-full
+        border border-white/15
+        bg-black/45
+        px-4 py-2
+        text-right
+        shadow-lg backdrop-blur-md
+      "
+            >
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary shadow-[0_0_6px_rgba(255,255,255,0.35)]" />
+
+                  <span className="whitespace-nowrap text-[9px] font-black leading-tight text-white">
+                    أهلاً بيك، أنا عم وه 👋
+                  </span>
+                </div>
+
+                <span className="whitespace-nowrap pl-3 text-[8px] leading-relaxed text-white/55">
+                  وهساعدك تكتشف حكايات الصعيد ومنتجاته
+                </span>
+              </div>
+            </motion.div>
           </motion.div>
         </div>
-
         {/* ===================================================== */}
         {/* MOBILE EDITORIAL CONTENT & ACTIONS                    */}
         {/* ===================================================== */}

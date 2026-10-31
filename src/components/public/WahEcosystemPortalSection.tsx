@@ -334,12 +334,12 @@ export const WahEcosystemPortalSection: React.FC = () => {
                 className="
   relative
   z-10
-  h-[82%]
-  max-w-[100%]
+  h-[75%]
+  max-w-[90%]
   sm:h-[90%]
   sm:max-w-[125%]
   lg:h-[100%]
-  lg:max-w-[140%]
+  lg:max-w-[130%]
   object-contain
   object-bottom
   drop-shadow-[0_20px_25px_rgba(36,30,26,0.15)]
