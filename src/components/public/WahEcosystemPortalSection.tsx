@@ -2,14 +2,10 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import {
   Sparkles,
-  ArrowUpLeft,
   Compass,
   Crown,
-  ArrowDownLeft,
-  DoorOpen,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { HeritageCornerStamp } from '../common/HeritageCornerStamp';
 
 interface PortalMascot {
   src: string;
@@ -206,7 +202,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
         transition-colors duration-500
         max-w-[1600px]
         mx-auto
-        px-5
+        px-4
         sm:px-8
         lg:px-12
         overflow-x-clip
@@ -216,34 +212,34 @@ export const WahEcosystemPortalSection: React.FC = () => {
       {/* HEADER */}
       {/* ======================================== */}
 
-      <div className="relative z-10 mb-16 sm:mb-24 overflow-hidden text-foreground select-none">
+      <div className="relative z-10 mb-5 overflow-hidden text-foreground select-none sm:mb-20">
 
         {/* Main Hero */}
-        <div className="relative grid items-center gap-10 marge lg:grid-cols-[1.15fr_0.85fr] lg:gap-8">
+        <div className="relative grid items-center gap-2 sm:gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:gap-8">
 
           {/* Typography Side */}
           <div className="relative z-10">
 
-            <div className="mb-5 flex items-center gap-3">
+            <div className="mb-2 flex items-center gap-2 sm:mb-5 sm:gap-3">
               <span className="h-px w-9 bg-accent" />
-              <span className="text-xs font-bold tracking-wide text-foreground-secondary">
+              <span className="text-[10px] font-bold tracking-wide text-foreground-secondary sm:text-xs">
                 تعالى نكتشف حكاية الصعيد
               </span>
             </div>
 
-            <h1 className="relative text-6xl font-normal leading-[1.15] tracking-tight sm:text-8xl lg:text-[8.5rem]">
+            <h1 className="relative text-4xl font-normal leading-[1.1] tracking-tight sm:text-8xl sm:leading-[1.15] lg:text-[8.5rem]">
 
               <span className="block">
                 أبواب
               </span>
 
-              <span className="relative mt-1 inline-flex items-center gap-4 sm:gap-7">
+              <span className="relative mt-1 inline-flex items-center gap-2 sm:gap-7">
 
                 <span className="relative z-10 font-main text-primary dark:text-primary-hover">
                   وه
                 </span>
 
-                <div className="group relative mt-5 flex h-[82px] w-[68px] items-end justify-center sm:h-[100px] sm:w-[82px]">
+                <div className="group relative mt-2 flex h-[62px] w-[52px] items-end justify-center sm:mt-5 sm:h-[100px] sm:w-[82px]">
 
                   {/* Door Frame */}
                   <div className="
@@ -289,17 +285,17 @@ export const WahEcosystemPortalSection: React.FC = () => {
             </h1>
 
             {/* Description */}
-            <div className="mt-9 grid max-w-2xl grid-cols-[35px_1fr] gap-4 sm:mt-12 sm:grid-cols-[65px_1fr] sm:gap-6">
+            <div className="mt-3 grid max-w-2xl grid-cols-[25px_1fr] gap-2 sm:mt-12 sm:grid-cols-[65px_1fr] sm:gap-6">
 
               <div className="flex flex-col items-center">
                 <span className="text-[10px] font-black tracking-widest text-accent">
                   WAH
                 </span>
-                <span className="mt-3 h-full min-h-20 w-px bg-gradient-to-b from-accent/60 to-transparent" />
+                <span className="mt-3 h-full min-h-16 w-px bg-gradient-to-b from-accent/60 to-transparent sm:min-h-20" />
               </div>
 
               <div>
-                <p className="text-sm font-medium leading-8 text-foreground-secondary sm:text-base sm:leading-9">
+                <p className="text-xs font-medium leading-6 text-foreground-secondary sm:text-base sm:leading-9">
                   كل خير الصعيد متجمع في{" "}
                   <strong className="font-black text-foreground">
                     7 أبواب تراثية رئيسية
@@ -316,7 +312,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
           </div>
 
           {/* Visual Heritage Side */}
-          <div className="relative mx-auto flex w-full max-w-[460px] items-center justify-center lg:min-h-[510px]">
+          <div className="relative mx-auto flex w-full max-w-[340px] items-center justify-center sm:max-w-[460px] lg:min-h-[510px]">
 
             {/* Background Decorative Circle */}
             <div className="absolute h-[85%] w-[85%] rounded-full border border-primary/10" />
@@ -324,7 +320,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
 
 
             {/* Uncle WAH */}
-            <div className="relative z-10 flex h-[350px] w-full items-end justify-center sm:h-[440px]">
+            <div className="relative z-10 flex h-[170px] w-full items-end justify-center sm:h-[440px]">
 
               <div className="absolute bottom-8 h-48 w-48 rounded-full bg-accent/10 blur-3xl sm:h-64 sm:w-64" />
 
@@ -349,7 +345,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
 "              />
 
               {/* Floating Welcome Label */}
-              <div className="absolute right-0 top-10 z-20 rounded-2xl border border-border/70 bg-background/90 px-4 py-3 shadow-lg backdrop-blur-md sm:right-2">
+              <div className="absolute right-0 top-3 z-20 hidden rounded-xl border border-border/70 bg-background/90 px-3 py-2 shadow-lg backdrop-blur-md sm:right-2 sm:top-10 sm:block sm:rounded-2xl sm:px-4 sm:py-3">
                 <div className="text-[10px] font-bold text-foreground-secondary">
                   دليلك في كل حكاية
                 </div>
@@ -359,7 +355,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
               </div>
 
               {/* Decorative Number */}
-              <div className="absolute bottom-6 left-2 z-20 flex h-12 w-12 items-center justify-center rounded-full border border-accent/30 bg-background text-sm font-black text-accent shadow-sm sm:left-4">
+              <div className="absolute bottom-4 left-2 z-20 hidden h-10 w-10 items-center justify-center rounded-full border border-accent/30 bg-background text-xs font-black text-accent shadow-sm sm:bottom-6 sm:left-4 sm:flex sm:h-12 sm:w-12 sm:text-sm">
                 07
               </div>
             </div>
@@ -419,6 +415,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
                   absolute inset-0
                   w-full h-full
                   object-cover
+                  object-bottom
                   transition-transform
                   duration-700
                   ease-out
@@ -529,32 +526,6 @@ export const WahEcosystemPortalSection: React.FC = () => {
                       z-10
                     "
                   >
-                    <div className="
-                      flex
-                      items-center
-                      justify-between
-                      relative
-                    ">
-
-                      <div className="
-                        w-10
-                        h-10
-                        rounded-full
-                        bg-white/20
-                        backdrop-blur-md
-                        border border-white/30
-                        flex
-                        items-center
-                        justify-center
-                        text-white
-                        group-hover:bg-primary
-                        transition-colors
-                        shadow-lg
-                      ">
-                        <ArrowUpLeft className="w-5 h-5" />
-                      </div>
-                    </div>
-
                     <div className="
                       grid
                       grid-cols-[1fr_auto]
@@ -757,14 +728,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
       {/* MOBILE + TABLET */}
       {/* ======================================== */}
 
-      <div className="
-        flex
-        flex-col
-        gap-5
-        sm:grid
-        sm:grid-cols-2
-        lg:hidden
-      ">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:hidden">
         {portals.map((portal, idx) => (
           <motion.div
             key={portal.id}
@@ -797,17 +761,31 @@ export const WahEcosystemPortalSection: React.FC = () => {
             whileTap={{
               scale: 0.985,
             }}
+            aria-label={`${portal.title}: ${portal.tagline}`}
             className="
               group
               relative
+              h-[145px]
               w-full
               overflow-hidden
-              rounded-[28px]
-              bg-black
-              border border-white/10
-              shadow-[0_12px_35px_rgba(0,0,0,0.2)]
+              rounded-[1.4rem]
+              border border-primary/25
+              bg-[#21140d]
+              shadow-[0_10px_26px_rgba(35,20,10,0.22)]
               cursor-pointer
               select-none
+              text-right
+              focus-visible:outline-none
+              focus-visible:ring-2
+              focus-visible:ring-primary
+              last:col-span-2
+              last:h-[120px]
+              sm:h-[205px]
+              sm:last:col-span-3
+              sm:last:h-[165px]
+              sm:last:w-2/3
+              sm:last:justify-self-center
+              sm:rounded-[1.7rem]
             "
           >
             {/* ================================= */}
@@ -816,7 +794,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
 
             <div className="
               relative
-              h-[270px]
+              h-full
               overflow-hidden
             ">
               <img
@@ -830,6 +808,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
                   h-full
                   w-full
                   object-cover
+                  object-bottom
                   opacity-90
                   transition-transform
                   duration-700
@@ -844,9 +823,9 @@ export const WahEcosystemPortalSection: React.FC = () => {
                 absolute
                 inset-0
                 bg-gradient-to-t
-                from-black
-                via-black/20
-                to-black/10
+                from-black/90
+                via-black/15
+                to-black/15
               " />
 
               {/* Accent */}
@@ -868,9 +847,9 @@ export const WahEcosystemPortalSection: React.FC = () => {
 
               <div className="
                 absolute
-                top-4
-                left-4
-                right-4
+                top-2
+                left-2
+                right-2
                 z-10
                 flex
                 items-center
@@ -878,13 +857,13 @@ export const WahEcosystemPortalSection: React.FC = () => {
               ">
                 <span className="
                   rounded-full
-                  border border-white/15
-                  bg-black/50
-                  px-2.5
+                  border border-white/20
+                  bg-black/45
+                  px-2
                   py-1
-                  text-[10px]
+                  text-[9px]
                   font-black
-                  text-[#d5a56d]
+                  text-white/90
                   backdrop-blur-md
                 ">
                   0{idx + 1}
@@ -892,13 +871,17 @@ export const WahEcosystemPortalSection: React.FC = () => {
 
                 <span className="
                   rounded-full
-                  bg-primary
-                  px-3
-                  py-1
-                  text-[9px]
+                  border border-white/15
+                  bg-[#21140d]/70
+                  max-w-[75%]
+                  truncate
+                  px-2
+                  py-1.5
+                  text-[8px]
                   font-black
-                  text-white
+                  text-[#f4d18e]
                   shadow-lg
+                  backdrop-blur-md
                 ">
                   {portal.badge}
                 </span>
@@ -909,12 +892,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
               {/* ================================= */}
 
               <motion.div
-                className="
-                  absolute
-                  bottom-[-5px]
-                  left-4
-                  z-20
-                "
+                className={`absolute ${idx === portals.length - 1 ? 'bottom-[3.8rem] left-3' : 'bottom-[4.6rem] left-1.5'} z-20`}
                 animate={{
                   y: [0, -3, 0],
                 }}
@@ -928,11 +906,11 @@ export const WahEcosystemPortalSection: React.FC = () => {
 
                 <div className="
                   absolute
-                  bottom-3
+                  bottom-2
                   left-1/2
                   -translate-x-1/2
-                  h-16
-                  w-16
+                  h-10
+                  w-10
                   rounded-full
                   bg-primary/30
                   blur-2xl
@@ -946,145 +924,32 @@ export const WahEcosystemPortalSection: React.FC = () => {
                   style={{
                     imageRendering: 'crisp-edges',
                   }}
-                  className="
+                  className={`
                     relative
-                    h-[118px]
+                    ${idx === portals.length - 1 ? 'h-[72px] sm:h-[84px]' : 'h-[58px] sm:h-[68px]'}
                     w-auto
                     object-contain
                     select-none
                     -scale-x-100
                     drop-shadow-[0_10px_15px_rgba(0,0,0,0.65)]
-                  "
+                  `}
                 />
               </motion.div>
 
-              {/* ================================= */}
-              {/* ROLE */}
-              {/* ================================= */}
-
-              <div className="
-                absolute
-                bottom-4
-                left-[92px]
-                z-20
-                rounded-full
-                border border-white/15
-                bg-black/60
-                px-2.5
-                py-1
-                backdrop-blur-md
-              ">
-                <span className="
-                  text-[8px]
-                  font-black
-                  text-amber-300
-                ">
-                  {portal.mascot.role}
-                </span>
-              </div>
             </div>
 
-            {/* ================================= */}
-            {/* CONTENT */}
-            {/* ================================= */}
+            <div className={`absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/95 via-black/75 to-transparent ${idx === portals.length - 1 ? 'h-[92px] sm:h-[104px]' : 'h-[76px] sm:h-[86px]'}`} />
 
-            <div className="
-              relative
-              bg-black
-              px-5
-              pb-5
-              pt-4
-              text-right
-            ">
-              {/* Accent line */}
-
-              <div className="
-                absolute
-                top-0
-                right-5
-                h-[2px]
-                w-10
-                rounded-full
-                bg-primary
-              " />
-
-              {/* English */}
-
-              <span className="
-                block
-                text-[8px]
-                font-black
-                uppercase
-                tracking-[0.25em]
-                text-[#d5a56d]
-                mb-1.5
-              ">
-                {portal.nameEn}
-              </span>
-
-              {/* Title */}
-
-              <h3 className="
-                text-[21px]
-                font-black
-                leading-tight
-                tracking-tight
-                text-white
-                font-cairo
-              ">
+            <div className={`absolute bottom-2.5 right-2.5 z-20 text-right sm:bottom-3.5 sm:right-3.5 ${idx === portals.length - 1 ? 'left-3.5' : 'left-2.5'}`}>
+              <h3 className={`line-clamp-2 font-black leading-[1.4] text-white ${idx === portals.length - 1 ? 'text-sm sm:text-base' : 'text-xs sm:text-sm'}`}>
                 {portal.title}
               </h3>
-
-              {/* عم وه sentence */}
-
-              <p className="
-                mt-2
-                max-w-[90%]
-                text-[11px]
-                font-medium
-                leading-[1.7]
-                text-white/60
-              ">
-                {portal.mascot.quote
-                  .replace(/^عم وه[^:]*:\s*/i, '')
-                  .replace(/^عم وه\s*/i, '')}
+              <p className={`mt-0.5 line-clamp-1 font-medium text-white/75 ${idx === portals.length - 1 ? 'text-[9px] sm:text-[11px]' : 'text-[8px] sm:text-[10px]'}`}>
+                {portal.tagline}
               </p>
-
-              {/* Bottom */}
-
-              <div className="
-                mt-4
-                flex
-                items-center
-                justify-between
-                border-t
-                border-white/10
-                pt-3
-              ">
-                <span className="
-                  text-[10px]
-                  italic
-                  text-[#d5a56d]
-                ">
-                  {portal.mascot.reactionNote}
-                </span>
-
-                <span className="
-                  flex
-                  items-center
-                  gap-1
-                  text-[10px]
-                  font-black
-                  text-white
-                  transition-colors
-                  group-hover:text-primary
-                ">
-                  ادخل الباب
-
-                  <ArrowUpLeft className="h-3.5 w-3.5" />
-                </span>
-              </div>
             </div>
+
+            <div className="pointer-events-none absolute inset-1.5 z-20 rounded-[1rem] border border-white/15 sm:inset-2 sm:rounded-[1.3rem]" />
           </motion.div>
         ))}
       </div>

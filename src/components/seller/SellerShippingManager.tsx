@@ -396,13 +396,13 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 text-xs font-bold mb-2">
               <Truck className="w-3.5 h-3.5" />
-              <span>منظومة الشحن واللوجستيات المعتمدة - ورش وَه الحرفية</span>
+              <span>طلبات وشحن ورشتك</span>
             </div>
             <h3 className="font-bold text-2xl text-espresso dark:text-cream font-cairo">
-              إدارة وحجز شحنات الورشة
+              جهّز طلباتك وتابع شحنها
             </h3>
             <p className="text-xs text-black/60 dark:text-white/60 mt-1 max-w-2xl leading-relaxed font-medium">
-              احجز شحنات المنتجات المباعة لدى شركات الشحن المعتمدة من إدارة وَه، وسجل أرقام البوالص وتابع رحلة الطرد حتى تسليمه وتحصيل مستحقات الورشة.
+              جهّز الطلب، اختار شركة الشحن، وتابع الطرد لحد ما يوصل للزبون.
             </p>
           </div>
 
@@ -411,7 +411,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
               onRefresh={async () => {
                 await Promise.all([loadShippingData(), refreshOrders()]);
               }}
-              label="تحديث الشحنات والشركات"
+              label="حدّث الطلبات"
             />
           </div>
         </div>

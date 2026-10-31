@@ -768,24 +768,12 @@ export const DialectDictionaryPage: React.FC = () => {
       )}
 
       {/* 2. شاشة البداية */}
-      {showIntro && countdown === null && (
+{showIntro && countdown === null && (
         <div className="relative z-10">
-          {/* UNCLE WAH HERO BANNER - MASTER OF DIALECT */}
-          <div className="relative z-20 mx-auto max-w-[1700px] px-5 sm:px-8 lg:px-12 xl:px-16 pt-6 pb-2">
-            <UncleWahHeroBanner
-              doorTitle="تحدي اللهجة الصعيدية.. انت صعيدي بجد؟"
-              doorBadge="تحدي عم وه"
-              mascotSrc="/mascot/quiz.png"
-              mascotRole="عم وه حكم التحدي"
-              quote="عم وه نقّى لكم أصعب وأجمل الكلمات والأمثال الصعيدية الأصيلة، وعمل لكم التحدي ده عشان يشوف مين الصعيدي الأصلي ومين اللي محتاج يتدرب.. وريني شطارتك يا بوي!"
-              statsText="50 سؤال وتعبير أصيل"
-            />
-          </div>
-
-          <section className="mx-auto max-w-[1700px] px-5 pb-12 pt-10 sm:px-8 sm:pb-16 sm:pt-20 lg:px-12 xl:px-16">
-            <div className="grid gap-10 lg:grid-cols-[1fr_420px] lg:items-end lg:gap-20">
+<section className="mx-auto max-w-[1700px] px-5 pb-12 pt-0 sm:px-8 sm:pb-16 sm:px-12 xl:px-16">
+              <div className="grid gap-10 lg:grid-cols-[1fr_420px] lg:items-end lg:gap-20">
               <div>
-                <div className="mb-6 flex items-center gap-3 text-[9px] font-black tracking-[0.28em] text-primary dark:text-primary-hover">
+                <div className="mb-2 flex items-center gap-3 text-[9px] font-black tracking-[0.28em] text-primary dark:text-primary-hover">
                   <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 dark:bg-[#d6aa72]/10">
                     <Target size={14} className="text-primary dark:text-primary-hover" />
                   </span>
@@ -916,7 +904,6 @@ export const DialectDictionaryPage: React.FC = () => {
           </section>
         </div>
       )}
-
       {/* 3. شاشة الأسئلة والتفاعل */}
       {!completed && currentQuestion && gameStarted && (
         <section className="relative z-20 mx-auto max-w-[1000px] px-4 pt-6 pb-20 sm:px-8 sm:pt-10">

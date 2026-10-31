@@ -135,13 +135,13 @@ export const Footer: React.FC = () => {
         text-[#FFF9EE]
         transition-colors duration-500
         border-t border-[#C99444]/30
-        select-none pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] lg:pb-0
+        select-none pb-[calc(5rem+env(safe-area-inset-bottom,0px))] lg:pb-0
       "
     >
 
       {/* Authentic WAH Architectural Frieze Ribbon */}
       <div
-        className="w-full h-3.5 sm:h-4 overflow-hidden opacity-75 border-b border-[#C99444]/30"
+        className="w-full h-2.5 sm:h-4 overflow-hidden opacity-75 border-b border-[#C99444]/30"
         style={{
           backgroundImage: "url('/pattern/pat1.svg')",
           backgroundSize: '16px 100%',
@@ -167,29 +167,29 @@ export const Footer: React.FC = () => {
         />
       </div>
 
-      <div className="relative z-10 max-w-[1720px] mx-auto px-6 sm:px-10 lg:px-16 py-16">
+      <div className="relative z-10 max-w-[1720px] mx-auto px-4 sm:px-10 lg:px-16 py-6 sm:py-16">
 
         {/* شريط علوي ملكي: دعوة انضمام الحرفيين والورش + الفيلم التوثيقي */}
         {!isSeller && !isAdmin && (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center pb-12 mb-14 border-b border-white/10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-6 items-center pb-5 sm:pb-12 mb-6 sm:mb-14 border-b border-white/10">
 
-            <div className="lg:col-span-8 flex flex-col sm:flex-row items-start sm:items-center gap-6">
+            <div className="lg:col-span-8 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6">
               <div>
-                <h3 className="text-2xl sm:text-3xl font-cairo tracking-tight">
+                <h3 className="text-lg sm:text-3xl font-cairo tracking-tight">
                   عندك ورشة أو نول في الصعيد؟
                 </h3>
-                <p className="text-xl sm:text-xl text-white/70 mt-1 max-w-xl">
+                <p className="text-xs sm:text-xl text-white/70 mt-1 max-w-xl leading-relaxed">
                   انضم لمنصة «وه» واعرض شغلك وصنعتك التراثية مباشرة للناس اللي بتقدر الفن الأصيل في كل مكان.
                 </p>
               </div>
             </div>
 
-            <div className="lg:col-span-4 flex flex-wrap items-center justify-start lg:justify-end gap-3.5">
+            <div className="lg:col-span-4 flex flex-wrap items-center justify-start lg:justify-end gap-2 sm:gap-3.5">
               <button
                 type="button"
                 id="footer-workshop-register-btn"
                 onClick={handleWorkshopRegister}
-                className="px-7 py-4 rounded-2xl bg-primary text-white hover:bg-[#C99444] text-xs sm:text-sm font-extrabold transition-all duration-200 shadow-2xl flex items-center gap-2.5 cursor-pointer border border-[#C99444]/30 active:scale-95"
+                className="px-4 py-2.5 sm:px-7 sm:py-4 rounded-xl sm:rounded-2xl bg-primary text-white hover:bg-[#C99444] text-[11px] sm:text-sm font-extrabold transition-all duration-200 shadow-2xl flex items-center gap-2.5 cursor-pointer border border-[#C99444]/30 active:scale-95"
               >
                 <span>سجّل ورشتك معانا</span>
                 <ArrowLeft className="w-4 h-4" />
@@ -198,7 +198,7 @@ export const Footer: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowIntroVideo(true)}
-                className="px-7 py-4 rounded-2xl bg-white/[0.04] border border-primary/30 hover:border-primary hover:bg-primary/15 text-xs sm:text-sm font-bold text-white hover:text-primary-hover transition-all duration-200 flex items-center gap-2.5 cursor-pointer backdrop-blur-xl active:scale-95 shadow-lg hover:shadow-[0_0_20px_rgba(154,106,53,0.2)]"
+                className="px-4 py-2.5 sm:px-7 sm:py-4 rounded-xl sm:rounded-2xl bg-white/[0.04] border border-primary/30 hover:border-primary hover:bg-primary/15 text-[11px] sm:text-sm font-bold text-white hover:text-primary-hover transition-all duration-200 flex items-center gap-2.5 cursor-pointer backdrop-blur-xl active:scale-95 shadow-lg hover:shadow-[0_0_20px_rgba(154,106,53,0.2)]"
               >
                 <Film className="w-4 h-4 text-white" />
                 <span>اتفرج على فيلم وه</span>
@@ -209,7 +209,7 @@ export const Footer: React.FC = () => {
         )}
 
         {/* الهيكل الرئيسي للفوتر */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+        <div className="hidden grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 lg:grid">
 
           {/* 1. هوية المنصة والنبذة التأسيسية مع ختم نقشة وه وشخصية عم وه */}
           <div className="lg:col-span-3 space-y-5">
@@ -353,8 +353,130 @@ export const Footer: React.FC = () => {
 
         </div>
 
+        <div className="space-y-3 lg:hidden">
+          <div className="flex items-center gap-3 border-b border-white/10 pb-3">
+            <img
+              src="https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png"
+              alt="شعار منصة وه"
+              width={56}
+              height={56}
+              loading="lazy"
+              className="h-14 w-14 shrink-0 object-contain"
+            />
+            <div className="min-w-0">
+              <p className="text-sm font-extrabold text-white">وه — حكاية الصعيد</p>
+              <p className="mt-1 text-[11px] leading-5 text-white/65">
+                بنوصلك بأهل البلد وحكاياتهم وصناعتهم الأصيلة.
+              </p>
+              <div className="mt-1.5 flex flex-wrap gap-x-3 text-[10px] text-[#D6C6B1]">
+                <span>من الفيوم لأسوان</span>
+                <span>توثيق معتمد</span>
+              </div>
+            </div>
+          </div>
+
+          <details className="group rounded-xl border border-white/10 bg-white/[0.03]">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-3.5 py-3 text-xs font-bold text-white [&::-webkit-details-marker]:hidden">
+              <span className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-primary-hover" />
+                أبواب ودليل وه
+                <span className="text-[10px] font-normal text-white/45">({appPortals.length})</span>
+              </span>
+              <ChevronLeft className="h-4 w-4 text-white/55 transition-transform group-open:-rotate-90" />
+            </summary>
+            <div className="grid grid-cols-2 gap-x-2 gap-y-1 border-t border-white/10 px-3 py-2.5">
+              {appPortals.map((portal) => (
+                <button
+                  key={portal.page}
+                  type="button"
+                  onClick={() => setActivePage(portal.page as any)}
+                  className="flex min-h-9 items-center gap-1.5 text-right text-[10px] leading-4 text-white/75 transition-colors hover:text-primary-hover"
+                >
+                  <ChevronLeft className="h-3 w-3 shrink-0 text-white/40" />
+                  <span>{portal.label}</span>
+                </button>
+              ))}
+            </div>
+          </details>
+
+          <details className="group rounded-xl border border-white/10 bg-white/[0.03]">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-3.5 py-3 text-xs font-bold text-white [&::-webkit-details-marker]:hidden">
+              <span className="flex items-center gap-2">
+                <ShoppingBag className="h-4 w-4 text-primary-hover" />
+                حسابك وخدماتك
+                <span className="text-[10px] font-normal text-white/45">({clientServices.length + 2})</span>
+              </span>
+              <ChevronLeft className="h-4 w-4 text-white/55 transition-transform group-open:-rotate-90" />
+            </summary>
+            <div className="flex flex-wrap gap-1.5 border-t border-white/10 px-3 py-2.5">
+              {clientServices.map((service) => (
+                <button
+                  key={service.page}
+                  type="button"
+                  onClick={() => setActivePage(service.page as any)}
+                  className="rounded-lg border border-white/10 bg-white/[0.03] px-2.5 py-1.5 text-[10px] font-semibold text-white/75 transition-colors hover:border-primary/50 hover:text-white"
+                >
+                  {service.label}
+                </button>
+              ))}
+              <button
+                type="button"
+                onClick={() => setShowIntroVideo(true)}
+                className="rounded-lg border border-white/10 bg-white/[0.03] px-2.5 py-1.5 text-[10px] font-semibold text-white/75 transition-colors hover:border-primary/50 hover:text-white"
+              >
+                فيلم وه التوثيقي
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowOnboarding(true)}
+                className="rounded-lg border border-white/10 bg-white/[0.03] px-2.5 py-1.5 text-[10px] font-semibold text-white/75 transition-colors hover:border-primary/50 hover:text-white"
+              >
+                جولة وه التعريفية
+              </button>
+            </div>
+          </details>
+
+          <details className="group rounded-xl border border-white/10 bg-white/[0.03]">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-3.5 py-3 text-xs font-bold text-white [&::-webkit-details-marker]:hidden">
+              <span className="flex items-center gap-2">
+                <Mail className="h-4 w-4 text-primary-hover" />
+                جوابات وحكاوي الجنوب
+              </span>
+              <ChevronLeft className="h-4 w-4 text-white/55 transition-transform group-open:-rotate-90" />
+            </summary>
+            <div className="space-y-2 border-t border-white/10 px-3 py-3">
+              <p className="text-[10px] leading-5 text-white/60">
+                توصلك حكايات الصنعة وأسرار الجنوب أول بأول.
+              </p>
+              <form onSubmit={handleSubscribe} className="relative">
+                <input
+                  type="email"
+                  required
+                  value={newsletterEmail}
+                  onChange={(e) => setNewsletterEmail(e.target.value)}
+                  placeholder="اكتب إيميلك هنا..."
+                  className="h-10 w-full rounded-lg border border-white/15 bg-white/[0.05] py-2 pr-3 pl-11 text-xs text-white placeholder:text-white/40 focus:border-primary focus:outline-none"
+                />
+                <button
+                  type="submit"
+                  aria-label="الاشتراك في النشرة"
+                  className="absolute left-1 top-1 flex h-8 w-8 items-center justify-center rounded-md bg-primary text-white transition-colors hover:bg-[#C99444]"
+                >
+                  <Send className="h-3.5 w-3.5" />
+                </button>
+              </form>
+              {subscribed && (
+                <div className="flex items-center gap-2 text-[10px] font-bold text-emerald-400">
+                  <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+                  <span>اشتركت معانا خلاص ونورتنا!</span>
+                </div>
+              )}
+            </div>
+          </details>
+        </div>
+
         {/* الشريط السفلي الحقوق والضمان */}
-        <div className="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-5 text-center md:text-right">
+        <div className="mt-7 sm:mt-16 pt-5 sm:pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-5 text-center md:text-right">
           <div className="flex flex-col sm:flex-row items-center gap-3 text-xs text-white/60">
             <p className="font-medium tracking-wide">
               كل الحقوق محفوظة © {new Date().getFullYear()} —{' '}

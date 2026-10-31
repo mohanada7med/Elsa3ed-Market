@@ -233,13 +233,13 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#1E1917] p-6 rounded-2xl border border-gray-100 dark:border-[#352B24] shadow-xs">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-[#FAF6F2]">طلب صرف المستحقات</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-[#FAF6F2]">أرباحك والسحب</h1>
             <span className="text-xs bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 px-2 py-0.5 rounded-full font-medium">
-              المالية والأرباح
+              فلوس ورشتك
             </span>
           </div>
           <p className="text-sm text-gray-500 dark:text-[#A89C90]">
-            تابع رصيدك المالي، واطلب تحويل أرباح مبيعاتك مباشرة إلى حسابك أو محفظتك
+            تابع فلوسك واطلب تحويل أرباحك لحسابك أو محفظتك.
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -247,7 +247,7 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
             id="refresh-payouts-btn"
             onRefresh={fetchPayoutData}
             isLoading={loading}
-            label="تحديث المستحقات"
+            label="حدّث الأرباح"
           />
           <button
             id="open-payout-request-btn"
@@ -255,7 +255,7 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
             className="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white font-medium px-5 py-2.5 rounded-xl shadow-xs transition duration-200 cursor-pointer"
           >
             <ArrowUpRight className="w-5 h-5" />
-            <span>طلب صرف المستحقات</span>
+            <span>اطلب سحب أرباحك</span>
           </button>
         </div>
       </div>
@@ -282,9 +282,9 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
           <div className="flex items-start gap-3">
             <AlertTriangle className="w-6 h-6 text-amber-600 dark:text-primary-hover shrink-0 mt-0.5" />
             <div>
-              <h4 className="font-bold text-amber-900 dark:text-primary-hover text-base">بيانات استلام المستحقات غير مكتملة</h4>
+              <h4 className="font-bold text-amber-900 dark:text-primary-hover text-base">كمّل بيانات استلام فلوسك</h4>
               <p className="text-sm text-amber-800 dark:text-amber-300/80 mt-1">
-                يرجى إضافة بيانات استلام المستحقات أولاً (محفظة فودافون كاش أو إنستاباي أو حساب بنكي) لتتمكن من تقديم طلب صرف الأرباح.
+                سجّل محفظة فودافون كاش أو إنستاباي أو حسابك البنكي الأول، عشان تقدر تسحب أرباحك.
               </p>
             </div>
           </div>
@@ -294,7 +294,7 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
               onClick={onNavigateToAccount}
               className="shrink-0 inline-flex items-center gap-1.5 bg-amber-800 hover:bg-amber-900 text-white text-sm font-medium px-4 py-2 rounded-xl transition shadow-xs cursor-pointer"
             >
-              <span>إعداد بيانات الاستلام</span>
+              <span>سجّل بيانات الاستلام</span>
               <ChevronLeft className="w-4 h-4" />
             </button>
           )}
@@ -306,7 +306,7 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
         {/* 1. Total Earnings */}
         <div className="bg-white dark:bg-[#1E1917] p-5 rounded-2xl border border-gray-100 dark:border-[#352B24] shadow-xs relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-500 dark:text-[#A89C90]">إجمالي المستحقات</span>
+            <span className="text-sm font-medium text-gray-500 dark:text-[#A89C90]">كل أرباحك</span>
             <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center">
               <Wallet className="w-5 h-5" />
             </div>
@@ -328,7 +328,7 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
         {/* 2. Available Balance */}
         <div className="bg-gradient-to-br from-amber-500 to-amber-600 text-white p-5 rounded-2xl shadow-sm relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-amber-100">المبلغ المتاح للسحب</span>
+            <span className="text-sm font-medium text-amber-100">المتاح تسحبه</span>
             <div className="w-10 h-10 rounded-xl bg-white/20 text-white flex items-center justify-center backdrop-blur-xs">
               <ArrowUpRight className="w-5 h-5" />
             </div>
@@ -350,7 +350,7 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
         {/* 3. Under Review / Processing */}
         <div className="bg-white dark:bg-[#1E1917] p-5 rounded-2xl border border-gray-100 dark:border-[#352B24] shadow-xs relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-500 dark:text-[#A89C90]">المبالغ قيد المراجعة والتنفيذ</span>
+            <span className="text-sm font-medium text-gray-500 dark:text-[#A89C90]">طلبات سحب بتتراجع</span>
             <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-primary-hover flex items-center justify-center">
               <Clock className="w-5 h-5" />
             </div>
@@ -372,7 +372,7 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
         {/* 4. Total Paid */}
         <div className="bg-white dark:bg-[#1E1917] p-5 rounded-2xl border border-gray-100 dark:border-[#352B24] shadow-xs relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-500 dark:text-[#A89C90]">إجمالي المبالغ المصروفة</span>
+            <span className="text-sm font-medium text-gray-500 dark:text-[#A89C90]">اللي اتسحب قبل كده</span>
             <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
               <CheckCircle2 className="w-5 h-5" />
             </div>

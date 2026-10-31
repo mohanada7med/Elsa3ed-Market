@@ -3,7 +3,6 @@ import { HeroSection } from '../public/HeroSection';
 import { WahEcosystemPortalSection } from '../public/WahEcosystemPortalSection';
 import { CraftReelsSection } from '../public/CraftReelsSection';
 import { DialectDictionaryPage } from './quize';
-import { AboutSection } from '../public/AboutSection';
 import { HeritageSectionDivider } from '../common/HeritageSectionDivider';
 import { ProductOfWeekSection } from '../public/ProductOfWeekSection';
 import { PaidPromotionSection } from '../public/PaidPromotionSection';
@@ -24,35 +23,37 @@ export const HomePage: React.FC = () => {
         transition-colors duration-500
       "
     >
-      <div className="relative z-10 space-y-6 [&_section]:bg-transparent">
+      {/* تم تصغير المسافات بين الأقسام هنا */}
+      <div className="relative z-10 space-y-1.5 sm:space-y-3 [&_section]:bg-transparent">
 
-        {/* 1. Hero Section (تحميل فوري مباشر) */}
+        {/* Hero Section (تحميل فوري مباشر) */}
         <HeroSection />
         <PaidPromotionSection position="after-hero" />
         <ProductOfWeekSection />
         <PaidPromotionSection position="after-product-of-week" />
 
-        {/* فاصل تراثي أصيل */}
-        <HeritageSectionDivider variant="flanked" label="أبواب الصعيد ومحافظاته" />
+        {/* فاصل تراثي - شكل الجوهرة الماسية */}
+        <HeritageSectionDivider variant="diamond" label="أبواب الصعيد ومحافظاته" />
 
         {/* 2. Ecosystem Portals (المحافظات والأماكن) */}
         <WahEcosystemPortalSection />
         <PaidPromotionSection position="after-governorates" />
 
-        {/* فاصل تراثي أصيل */}
-        <HeritageSectionDivider variant="flanked" label="فيديوهات الصعيد" />
+        {/* فاصل تراثي - شكل الإطار المحفور */}
+        <HeritageSectionDivider variant="frame" label="فيديوهات الصعيد" />
 
         {/* 3. Craft Reels (وه بيحكي) */}
         <CraftReelsSection />
         <PaidPromotionSection position="after-reels" />
 
-        {/* فاصل تراثي أصيل */}
-        <HeritageSectionDivider variant="flanked" label="سوق ومنتجات وه" />
+        {/* فاصل تراثي - الشكل الموجي */}
+        <HeritageSectionDivider variant="wave" label="سوق ومنتجات وه" />
         <PaidPromotionSection position="before-market" />
         <HomeMarketSection />
         <PaidPromotionSection position="after-market" />
-        {/* فاصل تراثي أصيل */}
-        <HeritageSectionDivider variant="flanked" label="اختبار الصعيد" />
+
+        {/* فاصل تراثي - شكل النقاط المتتالية */}
+        <HeritageSectionDivider variant="dots" label="اختبار الصعيد" />
 
         {/* 5. Dialect Dictionary & Quiz Page */}
         <div style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 500px' }}>
@@ -60,9 +61,9 @@ export const HomePage: React.FC = () => {
         </div>
         <PaidPromotionSection position="after-quiz" />
 
-        {/* فاصل تراثي أصيل */}
+        {/* فاصل تراثي - شكل الجوهرة الماسية */}
         <HeritageSectionDivider
-          variant="flanked"
+          variant="diamond"
           label="شيوخ الصنعة وأصحاب الورش"
         />
 
@@ -70,14 +71,6 @@ export const HomePage: React.FC = () => {
         <HomeFeaturedSellersSection />
         <PaidPromotionSection position="after-sellers" />
 
-
-        {/* فاصل تراثي أصيل */}
-        <HeritageSectionDivider variant="ribbon" />
-
-        {/* 7. About Section */}
-        <div style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 400px' }}>
-          <AboutSection />
-        </div>
       </div>
     </div>
   );

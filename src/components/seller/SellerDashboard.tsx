@@ -314,14 +314,18 @@ export const SellerDashboard: React.FC = () => {
   const [title, setTitle] = useState('');
   const [titleEn, setTitleEn] = useState('');
   const [categoryId, setCategoryId] = useState('cat-pottery');
-  const [price, setPrice] = useState(250);
-  const [originalPrice, setOriginalPrice] = useState(300);
-  const [stockCount, setStockCount] = useState(15);
+  const [price, setPrice] = useState<number | ''>('');
+  const [originalPrice, setOriginalPrice] = useState<number | ''>('');
+  const [stockCount, setStockCount] = useState<number | ''>('');
   const [governorate, setGovernorate] = useState<Governorate>('قنا');
   const [isHandmade, setIsHandmade] = useState(true);
   const [description, setDescription] = useState('');
-  const [material, setMaterial] = useState('طمي نيلي معتق');
-  const [craftsmanship, setCraftsmanship] = useState('تشكيل يدوي على دولاب الفخار');
+  const [material, setMaterial] = useState('');
+  const [craftsmanship, setCraftsmanship] = useState('');
+  const [dimensions, setDimensions] = useState('');
+  const [weight, setWeight] = useState('');
+  const [careInstructions, setCareInstructions] = useState('');
+  const [estimatedMakingTime, setEstimatedMakingTime] = useState('');
   const [submissionIntent, setSubmissionIntent] = useState<'pending' | 'draft'>('pending');
 
   // Product Images Cloudinary State
@@ -457,14 +461,18 @@ export const SellerDashboard: React.FC = () => {
     setTitle('');
     setTitleEn('');
     setCategoryId(categories[0]?.id || 'cat-pottery');
-    setPrice(250);
-    setOriginalPrice(300);
-    setStockCount(15);
+    setPrice('');
+    setOriginalPrice('');
+    setStockCount('');
     setGovernorate(currentUser.governorate || 'قنا');
     setIsHandmade(true);
     setDescription('');
-    setMaterial('طمي نيلي معتق');
-    setCraftsmanship('تشكيل يدوي على دولاب الفخار');
+    setMaterial('');
+    setCraftsmanship('');
+    setDimensions('');
+    setWeight('');
+    setCareInstructions('');
+    setEstimatedMakingTime('');
     setSelectedImages([]);
     setExistingImages([]);
     setUploadError(null);
@@ -478,13 +486,19 @@ export const SellerDashboard: React.FC = () => {
     setTitleEn(prod.titleEn || '');
     setCategoryId(prod.categoryId);
     setPrice(prod.price);
-    setOriginalPrice(prod.originalPrice || prod.price);
+    setOriginalPrice(
+      prod.originalPrice && prod.originalPrice > prod.price ? prod.originalPrice : ''
+    );
     setStockCount(prod.stockCount);
     setGovernorate(prod.specifications?.originGovernorate || currentUser.governorate || 'قنا');
     setIsHandmade(prod.isHandmade ?? true);
     setDescription(prod.description || '');
-    setMaterial(prod.specifications?.material || 'طمي نيلي معتق');
-    setCraftsmanship(prod.specifications?.craftsmanship || 'صناعة يدوية أصيلة');
+    setMaterial(prod.specifications?.material || '');
+    setCraftsmanship(prod.specifications?.craftsmanship || '');
+    setDimensions(prod.specifications?.dimensions || '');
+    setWeight(prod.specifications?.weight || '');
+    setCareInstructions(prod.specifications?.careInstructions || '');
+    setEstimatedMakingTime(prod.specifications?.estimatedMakingTime || '');
     setSelectedImages([]);
     setExistingImages(prod.images || []);
     setUploadError(null);
@@ -594,22 +608,31 @@ export const SellerDashboard: React.FC = () => {
     setUploadError(null);
 
     if (!title.trim()) {
-      addToast('خطأ في البيانات', 'يرجى إدخال اسم المنتج', 'error');
+      addToast('خد بالك', 'اكتب اسم المنتج الأول', 'error');
       return;
     }
-    if (price <= 0) {
+    if (price === '' || price <= 0) {
       addToast('خطأ في البيانات', 'السعر يجب أن يكون أكبر من 0', 'error');
+      return;
+    }
+    if (stockCount === '') {
+      addToast('الكمية مطلوبة', 'اكتب عدد القطع المتاحة عندك', 'error');
       return;
     }
 
     if (selectedImages.length === 0 && existingImages.length === 0) {
-      const errMsg = 'يرجى رفع أو اختيار صورة واحدة على الأقل للمنتج (إلزامية للحفظ)';
+      const errMsg = 'ارفع صورة واحدة للمنتج أو اختارها من الصور المحفوظة';
       setUploadError(errMsg);
       addToast('صورة المنتج مطلوبة', errMsg, 'error');
       return;
     }
 
     const cat = categories.find((c) => c.id === categoryId);
+    const submittedOriginalPrice =
+      originalPrice !== '' && originalPrice > price ? originalPrice : undefined;
+    const discountPercent = submittedOriginalPrice
+      ? Math.round(((submittedOriginalPrice - Number(price)) / Number(price)) * 100)
+      : 0;
     setIsSubmitting(true);
     setIsUploadingImages(true);
 
@@ -631,32 +654,38 @@ export const SellerDashboard: React.FC = () => {
       if (editingProduct) {
         await updateProduct(editingProduct.id, {
           title,
-          titleEn,
+          titleEn: titleEn.trim(),
           categoryId,
           categoryName: cat?.name || 'فخار وخزف',
           price: Number(price),
-          originalPrice: Number(originalPrice),
+          originalPrice: submittedOriginalPrice ?? 0,
+          discountPercent,
           stockCount: Number(stockCount),
           inStock: Number(stockCount) > 0,
           isHandmade,
-          description,
+          description: description.trim(),
           images: finalImages,
           specifications: {
             ...(editingProduct.specifications || {}),
-            material,
+            material: material.trim(),
             originGovernorate: governorate,
-            craftsmanship
+            craftsmanship: craftsmanship.trim(),
+            dimensions: dimensions.trim() || undefined,
+            weight: weight.trim() || undefined,
+            careInstructions: careInstructions.trim() || undefined,
+            estimatedMakingTime: estimatedMakingTime.trim() || undefined
           }
         });
       } else {
         await addProduct(
           {
             title,
-            titleEn,
+            titleEn: titleEn.trim() || undefined,
             categoryId,
             categoryName: cat?.name || 'فخار وخزف',
             price: Number(price),
-            originalPrice: Number(originalPrice),
+            originalPrice: submittedOriginalPrice,
+            discountPercent: discountPercent || undefined,
             stockCount: Number(stockCount),
             inStock: Number(stockCount) > 0,
             isHandmade,
@@ -664,14 +693,15 @@ export const SellerDashboard: React.FC = () => {
             isFeatured: true,
             sellerGovernorate: governorate,
             images: finalImages,
-            description,
+            description: description.trim(),
             specifications: {
-              material,
+              material: material.trim(),
               originGovernorate: governorate,
-              craftsmanship,
-              dimensions: 'حجم تقليدي أصيل',
-              weight: '1.2 كجم',
-              estimatedMakingTime: '3 أيام عمل'
+              craftsmanship: craftsmanship.trim(),
+              dimensions: dimensions.trim() || undefined,
+              weight: weight.trim() || undefined,
+              careInstructions: careInstructions.trim() || undefined,
+              estimatedMakingTime: estimatedMakingTime.trim() || undefined
             },
             tags: ['صعيد', governorate, 'يدوي']
           },
@@ -704,8 +734,8 @@ export const SellerDashboard: React.FC = () => {
 
     const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
     if (!validTypes.includes(file.type)) {
-      setCoverUploadError('يرجى اختيار صورة بصيغة JPG أو PNG أو WebP');
-      addToast('صيغة غير مدعومة', 'يرجى اختيار صورة بصيغة JPG أو PNG أو WebP', 'error');
+      setCoverUploadError('اختار صورة بصيغة JPG أو PNG أو WebP');
+      addToast('الصورة دي مش مناسبة', 'اختار صورة بصيغة JPG أو PNG أو WebP', 'error');
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
@@ -754,7 +784,7 @@ export const SellerDashboard: React.FC = () => {
     e.preventDefault();
     if (!customCoverUrl.trim()) return;
     if (!customCoverUrl.startsWith('http://') && !customCoverUrl.startsWith('https://') && !customCoverUrl.startsWith('data:')) {
-      setCoverUploadError('يرجى إدخال رابط يبدأ بـ https://');
+      setCoverUploadError('الرابط لازم يبدأ بـ https://');
       return;
     }
     setSellerCoverImage(customCoverUrl.trim());
@@ -873,13 +903,13 @@ export const SellerDashboard: React.FC = () => {
   const navSections: SellerNavSection[] = [
     {
       id: 'overview',
-      title: 'نظرة عامة',
-      description: 'ملخص سريع لأداء الورشة ومؤشراتها',
+      title: 'الرئيسية',
+      description: 'ملخص سريع لشغل ورشتك',
       items: [
         {
           id: 'overview',
-          label: 'نظرة عامة وإحصائيات',
-          sublabel: 'المؤشرات والرسوم البيانية',
+          label: 'ملخص الورشة',
+          sublabel: 'أهم أرقام شغلك',
           icon: TrendingUp,
           elementId: 'seller-nav-overview-btn'
         }
@@ -888,20 +918,20 @@ export const SellerDashboard: React.FC = () => {
     {
       id: 'catalog',
       title: 'المنتجات والمخزون',
-      description: 'إدارة معروضات الورشة ومتابعة الكميات',
+      description: 'تابع منتجاتك والكميات المتاحة',
       items: [
         {
           id: 'products',
-          label: 'إدارة المنتجات والاعتماد',
-          sublabel: `${sellerProducts.length} قطعة مسجلة`,
+          label: 'منتجاتي',
+          sublabel: `${sellerProducts.length} منتج عندك`,
           icon: Package,
           badge: pendingProductsCount > 0 ? `${pendingProductsCount} قيد الاعتماد` : sellerProducts.length,
           elementId: 'seller-nav-products-btn'
         },
         {
           id: 'inventory',
-          label: 'المخزون وحركات الجرد',
-          sublabel: `${sellerProducts.reduce((acc, p) => acc + p.stockCount, 0)} قطعة بالمخزن`,
+          label: 'المخزون',
+          sublabel: `${sellerProducts.reduce((acc, p) => acc + p.stockCount, 0)} قطعة عندك`,
           icon: Boxes,
           badge: lowStockCount > 0 ? `${lowStockCount} نواقص` : undefined,
           elementId: 'seller-nav-inventory-btn'
@@ -910,13 +940,13 @@ export const SellerDashboard: React.FC = () => {
     },
     {
       id: 'sales',
-      title: 'المبيعات والطلبات',
-      description: 'تجهيز الطلبات ومتابعة الشحن والتوصيل',
+      title: 'الطلبات',
+      description: 'جهّز الطلبات وتابع توصيلها',
       items: [
         {
           id: 'orders',
-          label: 'تنفيذ وتجهيز الطلبات',
-          sublabel: `${totalOrdersCount} طلب إجمالي`,
+          label: 'طلبات الزباين',
+          sublabel: `${totalOrdersCount} طلب`,
           icon: Truck,
           badge: pendingOrdersCount > 0 ? pendingOrdersCount : undefined,
           elementId: 'seller-nav-orders-btn'
@@ -925,13 +955,13 @@ export const SellerDashboard: React.FC = () => {
     },
     {
       id: 'earnings',
-      title: 'الأرباح والمستحقات',
-      description: 'راجع مبيعاتك واطلب صرف مستحقاتك',
+      title: 'فلوسك',
+      description: 'تابع مبيعاتك واطلب سحب أرباحك',
       items: [
         {
           id: 'payouts',
-          label: 'طلب صرف المستحقات',
-          sublabel: `المبيعات ${totalRevenue.toLocaleString('ar-EG')} ج.م`,
+          label: 'الأرباح والسحب',
+          sublabel: `مبيعاتك ${totalRevenue.toLocaleString('ar-EG')} ج.م`,
           icon: CreditCard,
           elementId: 'seller-nav-payouts-btn'
         }
@@ -939,21 +969,21 @@ export const SellerDashboard: React.FC = () => {
     },
     {
       id: 'growth',
-      title: 'التسويق وإبراز الورشة',
-      description: 'عرّف العملاء بشغلك ووسّع انتشار منتجاتك',
+      title: 'خلّي الناس تعرف شغلك',
+      description: 'شارك شغلك وعرّف الناس بورشتك',
       items: [
         {
           id: 'reels',
-          label: 'فيديوهات الصنعة (Reels)',
-          sublabel: `${sellerReels.length} مقطع منشور`,
+          label: 'فيديوهات شغلي',
+          sublabel: `${sellerReels.length} فيديو منشور`,
           icon: Film,
           badge: sellerReels.length > 0 ? sellerReels.length : undefined,
           elementId: 'seller-nav-reels-btn'
         },
         ...(currentUser.role === 'seller' ? [{
           id: 'promotion' as const,
-          label: 'الاشتراك في مساحة الترشيح',
-          sublabel: 'اطلب ظهورًا مدفوعًا في السوق ودليل الورش',
+          label: 'روّج لورشتك',
+          sublabel: 'خلّي ورشتك تظهر لناس أكتر',
           icon: Sparkles,
           elementId: 'seller-nav-promotion-btn'
         }] : [])
@@ -961,13 +991,13 @@ export const SellerDashboard: React.FC = () => {
     },
     {
       id: 'workshop',
-      title: 'بيانات الورشة',
-      description: 'حدّث هوية الورشة وصورها ومعلوماتها',
+      title: 'بيانات ورشتك',
+      description: 'عدّل اسم الورشة وصورها وحكايتها',
       items: [
         {
           id: 'settings',
-          label: 'بيانات الورشة والبروفايل',
-          sublabel: 'الاسم والشعار والحكاية والتخصص',
+          label: 'ملف الورشة',
+          sublabel: 'الاسم والصور والحكاية',
           icon: Settings,
           elementId: 'seller-nav-settings-btn'
         }
@@ -975,28 +1005,28 @@ export const SellerDashboard: React.FC = () => {
     },
     {
       id: 'support',
-      title: 'التواصل والدعم',
-      description: 'تابع التنبيهات وتواصل مع إدارة المنصة',
+      title: 'المساعدة والتواصل',
+      description: 'تابع الجديد وكلم فريق وه',
       items: [
         {
           id: 'notifications',
-          label: 'التنبيهات والإشعارات',
-          sublabel: 'آخر المستجدات الخاصة بورشتك',
+          label: 'التنبيهات',
+          sublabel: 'آخر حاجة حصلت في ورشتك',
           icon: Bell,
           elementId: 'seller-nav-notifications-btn'
         },
         {
           id: 'messages',
-          label: 'مراسلة إدارة المنصة',
-          sublabel: 'الدعم الفني واستفسارات الورشة',
+          label: 'كلمنا',
+          sublabel: 'لو محتاج مساعدة أو عندك سؤال',
           icon: MessageSquare,
           badge: chatUnreadCount > 0 ? chatUnreadCount : undefined,
           elementId: 'seller-nav-messages-btn'
         },
         {
           id: 'reports',
-          label: 'الدعم والبلاغات',
-          sublabel: 'تقديم ومتابعة الشكاوى والبلاغات',
+          label: 'مشكلة أو شكوى',
+          sublabel: 'ابعتلنا وهنساعدك',
           icon: AlertTriangle,
           elementId: 'seller-nav-reports-btn'
         }
@@ -1006,6 +1036,15 @@ export const SellerDashboard: React.FC = () => {
 
   const allNavItems: SellerNavItem[] = navSections.flatMap((s) => s.items);
   const currentActiveItem: SellerNavItem | undefined = allNavItems.find((i) => i.id === activeTab);
+  const mobileQuickTabLabels: Partial<Record<SellerNavItem['id'], string>> = {
+    overview: 'الرئيسية',
+    products: 'المنتجات',
+    orders: 'الطلبات',
+    inventory: 'المخزون'
+  };
+  const mobileQuickTabs = (['overview', 'products', 'orders', 'inventory'] as const)
+    .map((id) => allNavItems.find((item) => item.id === id))
+    .filter((item): item is SellerNavItem => Boolean(item));
 
   const filteredSections: SellerNavSection[] = navSections.map((section) => ({
     ...section,
@@ -1025,21 +1064,21 @@ export const SellerDashboard: React.FC = () => {
         return (
           <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 border border-emerald-300 text-[11px] font-bold px-2.5 py-0.5 rounded-full">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-            <span>معتمد ومنشور</span>
+            <span>اتوافق عليه واتنشر</span>
           </span>
         );
       case 'pending':
         return (
           <span className="inline-flex items-center gap-1 bg-amber-100 text-amber-900 border border-amber-300 text-[11px] font-bold px-2.5 py-0.5 rounded-full">
             <Clock className="w-3.5 h-3.5 text-amber-600" />
-            <span>قيد المراجعة</span>
+            <span>بنراجعه</span>
           </span>
         );
       case 'rejected':
         return (
           <span className="inline-flex items-center gap-1 bg-rose-100 text-rose-900 border border-rose-300 text-[11px] font-bold px-2.5 py-0.5 rounded-full">
             <AlertCircle className="w-3.5 h-3.5 text-rose-600" />
-            <span>مرفوض من الإدارة</span>
+            <span>محتاج تعديل</span>
           </span>
         );
       case 'draft':
@@ -1047,7 +1086,7 @@ export const SellerDashboard: React.FC = () => {
         return (
           <span className="inline-flex items-center gap-1 bg-gray-100 text-gray-700 border border-gray-300 text-[11px] font-bold px-2.5 py-0.5 rounded-full">
             <FileText className="w-3.5 h-3.5 text-gray-500" />
-            <span>مسودة</span>
+            <span>لسه مسودة</span>
           </span>
         );
     }
@@ -1071,13 +1110,13 @@ export const SellerDashboard: React.FC = () => {
                   <div>
                     <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/15 text-primary text-xs font-bold mb-2 border border-primary/30">
                       <span className="w-2 h-2 rounded-full bg-primary animate-ping" />
-                      <span>طلب قيد المراجعة والاعتماد</span>
+                      <span>طلبك بيتراجع</span>
                     </div>
                     <h1 className="text-2xl sm:text-3xl font-main">
                       أهلاً بك يا أسطى {statusDetails?.name || currentUser.name}!
                     </h1>
                     <p className="text-xs sm:text-sm text-white/70 dark:text-black/70 mt-1 leading-relaxed">
-                      تم استلام طلب تسجيل ورشتكم في منصة وه بنجاح، وطلبكم قيد الفحص والتوثيق من قِبل إدارة المنصة.
+                      استلمنا طلب تسجيل ورشتك، وفريق وه بيراجعه دلوقتي.
                     </p>
                   </div>
                 </div>
@@ -1085,7 +1124,7 @@ export const SellerDashboard: React.FC = () => {
 
               <div className="p-6 sm:p-8 bg-black/[0.02] dark:bg-cream/[0.02] border-b border-black/10 dark:border-white/10">
                 <h2 className="text-xs font-bold text-black/60 dark:text-white/60 uppercase tracking-wider mb-4">
-                  مراحل اعتماد وتوثيق الورشة
+                  هنمشي معاك في كام خطوة
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="flex items-start gap-3 p-3.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 rounded-2xl">
@@ -1191,7 +1230,7 @@ export const SellerDashboard: React.FC = () => {
                     نعتذر، لم يتم قبول طلب اعتماد ورشتكم في الوقت الحالي
                   </h1>
                   <p className="text-xs text-rose-100 mt-1">
-                    تم مراجعة الطلب من قِبل إدارة المنصة وتبيّن عدم استيفاء الشروط والمعايير المطلوبة.
+                    راجعنا طلب ورشتك، ولسه محتاجين منك شوية تعديلات قبل الموافقة.
                   </p>
                 </div>
               </div>
@@ -1199,7 +1238,7 @@ export const SellerDashboard: React.FC = () => {
               <div className="p-6 sm:p-8 space-y-6">
                 {statusDetails?.rejectionReason && (
                   <div className="bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 rounded-2xl p-5">
-                    <h3 className="text-xs font-bold text-rose-900 dark:text-rose-200 mb-1">سبب الرفض المسجل من قِبل الإدارة:</h3>
+                    <h3 className="text-xs font-bold text-rose-900 dark:text-rose-200 mb-1">إيه اللي محتاج يتظبط؟</h3>
                     <p className="text-sm font-semibold text-rose-800 dark:text-rose-300">{statusDetails.rejectionReason}</p>
                   </div>
                 )}
@@ -1215,7 +1254,7 @@ export const SellerDashboard: React.FC = () => {
                     className="px-6 py-3 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] text-xs font-bold rounded-xl shadow-md flex items-center gap-2 cursor-pointer"
                   >
                     <RefreshCw className="w-4 h-4" />
-                    <span>إعادة التحقق من الحالة</span>
+                    <span>راجع الحالة تاني</span>
                   </button>
                   <button
                     type="button"
@@ -1240,10 +1279,10 @@ export const SellerDashboard: React.FC = () => {
                     <span>الحساب معلق مؤقتاً</span>
                   </div>
                   <h1 className="text-2xl font-main">
-                    حساب ورشتكم معلق مؤقتاً
+                    ورشتك متوقفة مؤقتًا
                   </h1>
                   <p className="text-xs text-amber-100 mt-1">
-                    تم إيقاف صلاحيات البيع وإدارة المنتجات مؤقتاً بقرار إداري.
+                    البيع وإدارة المنتجات متوقفين مؤقتًا من إدارة المنصة.
                   </p>
                 </div>
               </div>
@@ -1257,7 +1296,7 @@ export const SellerDashboard: React.FC = () => {
                 )}
 
                 <p className="text-xs text-black/60 dark:text-white/60 leading-relaxed">
-                  يرجى التواصل مع إدارة منصة وه لتسوية الملاحظات المرفوعة وإعادة تفعيل نشاط المتجر.
+                  كلم فريق وه عشان تعرف المطلوب وترجّع ورشتك تشتغل.
                 </p>
 
                 <div className="flex items-center gap-4 pt-4 border-t border-black/10 dark:border-white/10">
@@ -1267,7 +1306,7 @@ export const SellerDashboard: React.FC = () => {
                     className="px-6 py-3 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] text-xs font-bold rounded-xl shadow-md flex items-center gap-2 cursor-pointer"
                   >
                     <RefreshCw className="w-4 h-4" />
-                    <span>إعادة التحقق من الحالة</span>
+                    <span>راجع الحالة تاني</span>
                   </button>
                   <button
                     type="button"
@@ -1288,7 +1327,7 @@ export const SellerDashboard: React.FC = () => {
   return (
     <div
       dir="rtl"
-      className="min-h-screen overflow-x-hidden bg-[#F3F0E9] px-4 py-5 text-[#29231E] transition-colors duration-300 dark:bg-[#171411] dark:text-cream sm:px-6 lg:px-8"
+      className="min-h-screen overflow-x-hidden bg-[#F3F0E9] px-4 pt-5 pb-40 text-[#29231E] transition-colors duration-300 dark:bg-[#171411] dark:text-cream sm:px-6 lg:px-8 lg:pb-5"
     >
       <div className="mx-auto max-w-[1680px] space-y-5">
       <header className="overflow-hidden rounded-[1.5rem] border border-[#E6DFD2] bg-white shadow-sm dark:border-white/10 dark:bg-[#211C17]">
@@ -1314,8 +1353,8 @@ export const SellerDashboard: React.FC = () => {
             </div>
             <div className="min-w-0">
               <div className="mb-1 flex flex-wrap items-center gap-2">
-                <span className="text-[10px] font-bold text-[#8A7865] dark:text-white/50">إدارة الورشة</span>
-                <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 dark:bg-emerald-400/10 dark:text-emerald-300">معتمدة</span>
+                <span className="text-[10px] font-bold text-[#8A7865] dark:text-white/50">لوحة ورشتك</span>
+                <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 dark:bg-emerald-400/10 dark:text-emerald-300">ورشة معتمدة</span>
               </div>
               <h1 className="truncate text-lg font-black leading-tight text-[#29231E] dark:text-cream sm:text-xl">{brandName || 'ورشتك الحرفية'}</h1>
               <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-[#817568] dark:text-white/55">
@@ -1335,7 +1374,7 @@ export const SellerDashboard: React.FC = () => {
                 className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-[#704322] px-4 text-xs font-black text-white shadow-sm transition hover:bg-[#563219] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B47A35]"
               >
                 <Plus className="h-4 w-4" />
-                إضافة منتج
+                أضف منتج
               </button>
               <button
                 type="button"
@@ -1344,54 +1383,54 @@ export const SellerDashboard: React.FC = () => {
                 className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-[#E8E1D6] bg-white px-4 text-xs font-bold text-[#51483F] transition hover:bg-[#F8F5F0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B47A35] dark:border-white/10 dark:bg-white/5 dark:text-cream dark:hover:bg-white/10"
               >
                 <Settings className="h-4 w-4 text-[#A36A2F]" />
-                بيانات الورشة
+                بيانات ورشتك
               </button>
             </div>
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between lg:justify-end">
-              <span className="hidden text-[10px] font-medium text-[#968A7C] dark:text-white/40 sm:inline">طريقة العرض</span>
+              <span className="text-[10px] font-medium text-[#968A7C] dark:text-white/40">شكل اللوحة</span>
               <div
                 id="seller-layout-switcher"
                 role="group"
                 aria-label="طريقة عرض لوحة تحكم الورشة"
-                className="flex w-full gap-1 overflow-x-auto rounded-xl bg-[#F3F0E9] p-1 dark:bg-black/20 sm:w-auto"
+                className="grid w-full grid-cols-2 gap-1 rounded-xl bg-[#F3F0E9] p-1 dark:bg-black/20 sm:flex sm:w-auto sm:justify-start"
               >
                 <button
                   type="button"
                   id="seller-layout-sidebar-btn"
                   onClick={() => handleLayoutChange('sidebar')}
                   aria-pressed={layoutMode === 'sidebar'}
-                  className={`flex min-h-8 shrink-0 items-center justify-center gap-1 rounded-lg px-2.5 text-[10px] font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B47A35] ${layoutMode === 'sidebar' ? 'bg-white text-[#704322] shadow-sm dark:bg-white/10 dark:text-primary-hover' : 'text-[#817568] hover:text-[#704322] dark:text-white/50 dark:hover:text-white'}`}
-                  title="عرض الشريط الجانبي"
+                  className={`flex min-h-10 min-w-0 items-center justify-center gap-1 rounded-lg px-2 text-[10px] font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B47A35] sm:min-w-0 sm:flex-none sm:px-2.5 ${layoutMode === 'sidebar' ? 'bg-white text-[#704322] shadow-sm dark:bg-white/10 dark:text-primary-hover' : 'text-[#817568] hover:text-[#704322] dark:text-white/50 dark:hover:text-white'}`}
+                  title="قائمة جانبية"
                 >
-                  <PanelLeft className="h-3.5 w-3.5" /><span>جانبي</span>
+                  <PanelLeft className="h-3.5 w-3.5" /><span>قائمة</span>
                 </button>
                 <button
                   type="button"
                   id="seller-layout-rail-btn"
                   onClick={() => handleLayoutChange('compact-rail')}
                   aria-pressed={layoutMode === 'compact-rail'}
-                  className={`flex min-h-8 shrink-0 items-center justify-center gap-1 rounded-lg px-2.5 text-[10px] font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B47A35] ${layoutMode === 'compact-rail' ? 'bg-white text-[#704322] shadow-sm dark:bg-white/10 dark:text-primary-hover' : 'text-[#817568] hover:text-[#704322] dark:text-white/50 dark:hover:text-white'}`}
-                  title="عرض الشريط الرفيع"
+                  className={`flex min-h-10 min-w-0 items-center justify-center gap-1 rounded-lg px-2 text-[10px] font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B47A35] sm:min-w-0 sm:flex-none sm:px-2.5 ${layoutMode === 'compact-rail' ? 'bg-white text-[#704322] shadow-sm dark:bg-white/10 dark:text-primary-hover' : 'text-[#817568] hover:text-[#704322] dark:text-white/50 dark:hover:text-white'}`}
+                  title="أزرار عايمة"
                 >
-                  <Columns2 className="h-3.5 w-3.5" /><span>رفيع</span>
+                  <Columns2 className="h-3.5 w-3.5" /><span>عايم</span>
                 </button>
                 <button
                   type="button"
                   id="seller-layout-hub-btn"
                   onClick={() => handleLayoutChange('full-hub')}
                   aria-pressed={layoutMode === 'full-hub'}
-                  className={`flex min-h-8 shrink-0 items-center justify-center gap-1 rounded-lg px-2.5 text-[10px] font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B47A35] ${layoutMode === 'full-hub' ? 'bg-white text-[#704322] shadow-sm dark:bg-white/10 dark:text-primary-hover' : 'text-[#817568] hover:text-[#704322] dark:text-white/50 dark:hover:text-white'}`}
-                  title="عرض التبويب العريض"
+                  className={`flex min-h-10 min-w-0 items-center justify-center gap-1 rounded-lg px-2 text-[10px] font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B47A35] sm:min-w-0 sm:flex-none sm:px-2.5 ${layoutMode === 'full-hub' ? 'bg-white text-[#704322] shadow-sm dark:bg-white/10 dark:text-primary-hover' : 'text-[#817568] hover:text-[#704322] dark:text-white/50 dark:hover:text-white'}`}
+                  title="كل الأقسام في صفحة واحدة"
                 >
-                  <StretchHorizontal className="h-3.5 w-3.5" /><span>عريض</span>
+                  <StretchHorizontal className="h-3.5 w-3.5" /><span>الأقسام</span>
                 </button>
                 <button
                   type="button"
                   id="seller-layout-bento-btn"
                   onClick={() => handleLayoutChange('bento')}
                   aria-pressed={layoutMode === 'bento'}
-                  className={`flex min-h-8 shrink-0 items-center justify-center gap-1 rounded-lg px-2.5 text-[10px] font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B47A35] ${layoutMode === 'bento' ? 'bg-white text-[#704322] shadow-sm dark:bg-white/10 dark:text-primary-hover' : 'text-[#817568] hover:text-[#704322] dark:text-white/50 dark:hover:text-white'}`}
-                  title="عرض البطاقات"
+                  className={`flex min-h-10 min-w-0 items-center justify-center gap-1 rounded-lg px-2 text-[10px] font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B47A35] sm:min-w-0 sm:flex-none sm:px-2.5 ${layoutMode === 'bento' ? 'bg-white text-[#704322] shadow-sm dark:bg-white/10 dark:text-primary-hover' : 'text-[#817568] hover:text-[#704322] dark:text-white/50 dark:hover:text-white'}`}
+                  title="عرض الأقسام على شكل بطاقات"
                 >
                   <LayoutGrid className="h-3.5 w-3.5" /><span>بطاقات</span>
                 </button>
@@ -1401,31 +1440,11 @@ export const SellerDashboard: React.FC = () => {
         </div>
       </header>
 
-      <section className="flex flex-col gap-3 rounded-2xl border border-[#E6DFD2] bg-[#EAE4D9] px-4 py-3 dark:border-white/10 dark:bg-white/[0.04] sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-start gap-3">
-          <div className="mt-0.5 rounded-lg bg-white/70 p-2 text-[#8C5C2D] dark:bg-white/5 dark:text-primary-hover">
-            <Camera className="h-4 w-4" />
-          </div>
-          <div>
-            <h2 className="text-xs font-black">خلّي صفحة ورشتك ومنتجاتك أوضح للمشتري</h2>
-            <p className="mt-0.5 text-[11px] leading-5 text-[#766B5E] dark:text-cream/60">صور واضحة ووصف دقيق يساعدوا العملاء يثقوا في شغلك ويختاروا القطعة المناسبة.</p>
-          </div>
-        </div>
-        <button
-          type="button"
-          onClick={() => handleSelectTab('settings')}
-          className="inline-flex min-h-9 shrink-0 items-center justify-center gap-2 self-start rounded-lg border border-[#D8CBB7] bg-white/60 px-3 text-[11px] font-bold text-[#704322] transition hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-primary-hover sm:self-auto"
-        >
-          <Settings className="h-3.5 w-3.5" />
-          تحسين بيانات الورشة
-        </button>
-      </section>
-
       {/* Main Workplace Layout */}
       <div className={(layoutMode === 'sidebar' || layoutMode === 'compact-rail') ? "flex flex-col lg:flex-row gap-5 items-start" : "w-full space-y-6"}>
         {/* LAYOUT 1: SIDEBAR */}
         {layoutMode === 'sidebar' && (
-          <aside className="w-full shrink-0 space-y-4 rounded-[1.4rem] border border-[#E6DFD2] bg-white p-3 shadow-sm dark:border-white/10 dark:bg-[#211C17] lg:sticky lg:top-4 lg:z-20 lg:max-h-[calc(100vh-2rem)] lg:w-64 lg:overflow-y-auto xl:w-72">
+          <aside className="hidden w-full shrink-0 space-y-4 rounded-[1.4rem] border border-[#E6DFD2] bg-white p-3 shadow-sm dark:border-white/10 dark:bg-[#211C17] lg:sticky lg:top-4 lg:z-20 lg:block lg:max-h-[calc(100vh-2rem)] lg:w-64 lg:overflow-y-auto xl:w-72">
             <div className="flex items-center justify-between rounded-xl bg-[#F7F4EF] p-2 dark:bg-white/[0.04]">
               <div className="flex items-center gap-2 text-xs font-bold">
                 <Store className="h-4 w-4 text-[#9A6735] dark:text-primary-hover" />
@@ -1440,7 +1459,7 @@ export const SellerDashboard: React.FC = () => {
                 type="text"
                 value={navSearchQuery}
                 onChange={(e) => setNavSearchQuery(e.target.value)}
-                placeholder="بحث في أدوات الورشة..."
+                placeholder="دوّر على قسم..."
                 className="w-full rounded-xl border border-[#E9E3D9] bg-[#FBFAF8] py-2 pl-8 pr-8 text-xs text-[#51483F] outline-none transition placeholder:text-[#AA9E90] focus:border-[#B47A35] dark:border-white/10 dark:bg-black/15 dark:text-cream dark:placeholder:text-white/30"
               />
               {navSearchQuery && (
@@ -1517,7 +1536,7 @@ export const SellerDashboard: React.FC = () => {
                 className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#F1E7D9] py-2.5 text-xs font-bold text-[#704322] transition-all hover:bg-[#E9D8C1] dark:bg-white/[0.06] dark:text-primary-hover dark:hover:bg-white/10"
               >
                 <Plus className="h-4 w-4" />
-                <span>إضافة قطعة جديدة</span>
+                <span>أضف منتج</span>
               </button>
             </div>
           </aside>
@@ -1587,20 +1606,20 @@ export const SellerDashboard: React.FC = () => {
 
         {/* LAYOUT 3: FULL HUB */}
         {layoutMode === 'full-hub' && (
-          <div className="w-full bg-white/80 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-5 sm:p-6 space-y-5 shadow-xl">
+          <div className="w-full min-w-0 bg-white/80 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-4 sm:p-6 space-y-5 shadow-xl">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <StretchHorizontal className="w-5 h-5 text-primary dark:text-primary-hover" />
                   <h3 className="font-black text-base text-espresso dark:text-cream">
-                    مركز التحكم الموسع للورشة (Full-Width Hub)
+                    كل أقسام ورشتك
                   </h3>
                   <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-primary/15 text-primary dark:text-primary-hover">
-                    عرض عريض
+                    اختار القسم اللي محتاجه
                   </span>
                 </div>
                 <p className="text-xs text-black/60 dark:text-white/60">
-                  تصفح سريع لجميع أدوات الورشة وإدارة الطلبات والقطع الحرفية
+                  كل شغل ورشتك قدامك، اختار اللي عايز تتابعه
                 </p>
               </div>
 
@@ -1610,7 +1629,7 @@ export const SellerDashboard: React.FC = () => {
                   type="text"
                   value={navSearchQuery}
                   onChange={(e) => setNavSearchQuery(e.target.value)}
-                  placeholder="بحث سريع في كل أدوات الورشة..."
+                  placeholder="دوّر على قسم..."
                   className="w-full pr-8 pl-3 py-2 bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary text-espresso dark:text-cream"
                 />
                 {navSearchQuery && (
@@ -1634,7 +1653,7 @@ export const SellerDashboard: React.FC = () => {
                   : 'bg-black/5 dark:bg-cream/5 text-black/70 dark:text-white/70 hover:bg-primary/10 hover:text-primary'
                   }`}
               >
-                جميع الأدوات ({allNavItems.length})
+                كل الأقسام ({allNavItems.length})
               </button>
               {navSections.map((sec) => {
                 const isSelected = activeHubSection === sec.id;
@@ -1705,215 +1724,131 @@ export const SellerDashboard: React.FC = () => {
 
         {/* LAYOUT 4: BENTO */}
         {layoutMode === 'bento' && (
-          <div className="w-full bg-white/80 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-5 sm:p-6 space-y-5 shadow-xl">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-black/10 dark:border-white/10 pb-4">
+          <div className="w-full min-w-0 space-y-3 rounded-[1.5rem] border border-black/10 bg-white/80 p-3 shadow-xl backdrop-blur-xl dark:border-white/10 dark:bg-espresso-900/90 sm:space-y-4 sm:rounded-[2rem] sm:p-5">
+            <div className="flex items-center justify-between gap-2 border-b border-black/10 pb-3 dark:border-white/10">
               <div className="flex items-center gap-2">
-                <LayoutGrid className="w-5 h-5 text-primary dark:text-primary-hover" />
-                <h3 className="font-black text-base text-espresso dark:text-cream">
-                  شبكة البطاقات الذكية للورشة (Bento Matrix)
-                </h3>
-                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-primary/15 text-primary dark:text-primary-hover">
-                  نظرة شمولية
-                </span>
+                <LayoutGrid className="h-4 w-4 text-primary dark:text-primary-hover sm:h-5 sm:w-5" />
+                <h3 className="text-sm font-black text-espresso dark:text-cream sm:text-base">أقسام ورشتك</h3>
               </div>
               {currentActiveItem && (
-                <div className="flex items-center gap-2 text-xs bg-black/5 dark:bg-cream/5 px-3 py-1.5 rounded-xl border border-black/10 dark:border-white/10">
-                  <span className="text-black/50 dark:text-white/50">القسم المعروض بالأسفل:</span>
+                <div className="max-w-[48%] truncate rounded-full bg-black/5 px-2.5 py-1 text-[10px] dark:bg-cream/5 sm:text-xs">
+                  <span className="text-black/50 dark:text-white/50">مفتوح: </span>
                   <span className="font-bold text-primary dark:text-primary-hover">{currentActiveItem.label}</span>
                 </div>
               )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div
+            <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3">
+              <button
+                type="button"
                 onClick={() => handleSelectTab('products')}
-                className={`md:col-span-2 rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${activeTab === 'products'
+                className={`flex aspect-square min-w-0 flex-col items-stretch justify-between overflow-hidden rounded-2xl border p-3 text-right shadow-xs transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:rounded-3xl sm:p-4 ${activeTab === 'products'
                   ? 'bg-gradient-to-br from-[#6B3A1F] to-[#3B1E0E] text-white border-primary ring-2 ring-primary/30'
-                  : 'bg-white dark:bg-[#26160D] border-black/10 dark:border-white/10 hover:border-primary/50'
+                  : 'bg-white text-espresso border-black/10 hover:border-primary/50 dark:bg-[#26160D] dark:text-cream dark:border-white/10'
                   }`}
               >
-                <div className="flex items-start justify-between">
-                  <div className="space-y-1">
-                    <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${activeTab === 'products' ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300'
-                      }`}>
-                      قطع الصنعة المعروضة
-                    </span>
-                    <h4 className="font-black text-lg mt-1">إدارة واعتماد معروضات الورشة</h4>
-                    <p className={`text-xs max-w-sm ${activeTab === 'products' ? 'text-white/80' : 'text-black/60 dark:text-white/60'}`}>
-                      رفع قطع يدوية جديدة، تعديل الأسعار، ومتابعة اعتماد المنصة للتراث الصعيدي
-                    </p>
-                  </div>
-                  <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 ${activeTab === 'products' ? 'bg-white/20 text-white' : 'bg-amber-100 text-amber-800'
-                    }`}>
-                    <Package className="w-6 h-6" />
-                  </div>
-                </div>
-
-                <div className="mt-5 flex items-center gap-3">
-                  <div className={`px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 ${pendingProductsCount > 0
-                    ? 'bg-amber-500 text-white animate-pulse'
-                    : activeTab === 'products' ? 'bg-white/20 text-white' : 'bg-emerald-100 text-emerald-800'
-                    }`}>
-                    {pendingProductsCount > 0 ? (
-                      <>
-                        <AlertCircle className="w-3.5 h-3.5" />
-                        <span>{pendingProductsCount} قطعة قيد المراجعة</span>
-                      </>
-                    ) : (
-                      <>
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>جميع المعروضات معتمدة</span>
-                      </>
-                    )}
-                  </div>
-                  <span className={`text-xs ${activeTab === 'products' ? 'text-white/70' : 'text-black/50 dark:text-white/50'}`}>
-                    {sellerProducts.length} قطعة بالورشة
+                <div className="flex w-full items-start justify-between gap-1">
+                  <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${activeTab === 'products' ? 'bg-white/20 text-white' : 'bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300'}`}>
+                    <Package className="h-5 w-5" />
                   </span>
+                  <span className="max-w-[60%] truncate rounded-full bg-black/5 px-2 py-1 text-[10px] font-bold dark:bg-white/10">{sellerProducts.length}</span>
                 </div>
-              </div>
+                <div className="w-full">
+                  <h4 className="truncate text-sm font-black sm:text-base">منتجاتي</h4>
+                  <p className={`mt-1 truncate text-[10px] sm:text-xs ${activeTab === 'products' ? 'text-white/75' : 'text-black/55 dark:text-white/60'}`}>
+                    {pendingProductsCount > 0 ? `${pendingProductsCount} قيد المراجعة` : 'تابع قطع ورشتك'}
+                  </p>
+                </div>
+              </button>
 
-              <div
+              <button
+                type="button"
                 onClick={() => handleSelectTab('orders')}
-                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${activeTab === 'orders'
+                className={`flex aspect-square min-w-0 flex-col items-stretch justify-between overflow-hidden rounded-2xl border p-3 text-right shadow-xs transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:rounded-3xl sm:p-4 ${activeTab === 'orders'
                   ? 'bg-primary text-white border-primary ring-2 ring-primary/30'
-                  : 'bg-white dark:bg-[#26160D] border-black/10 dark:border-white/10 hover:border-primary/50'
+                  : 'bg-white text-espresso border-black/10 hover:border-primary/50 dark:bg-[#26160D] dark:text-cream dark:border-white/10'
                   }`}
               >
-                <div className="flex items-start justify-between">
-                  <div className="w-10 h-10 rounded-2xl bg-blue-100 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Truck className="w-5 h-5" />
-                  </div>
-                  {pendingOrdersCount > 0 && (
-                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-500 text-white animate-pulse">
-                      {pendingOrdersCount} للتجهيز
-                    </span>
-                  )}
-                </div>
-                <h4 className="font-black text-sm mt-3">طلبات الزبائن والشحن</h4>
-                <p className={`text-xs mt-1 ${activeTab === 'orders' ? 'text-white/80' : 'text-black/60 dark:text-white/60'}`}>
-                  تأكيد الشحن وتحديث بوليصة التوصيل
-                </p>
-                <div className="mt-4 pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs">
-                  <span className="font-bold">{totalOrdersCount} طلب إجمالي</span>
-                  <span className="text-[11px] text-primary dark:text-primary-hover font-bold">متابعة ←</span>
-                </div>
-              </div>
-
-              <div
-                onClick={() => handleSelectTab('inventory')}
-                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${activeTab === 'inventory'
-                  ? 'bg-primary text-white border-primary ring-2 ring-primary/30'
-                  : 'bg-white dark:bg-[#26160D] border-black/10 dark:border-white/10 hover:border-primary/50'
-                  }`}
-              >
-                <div className="flex items-start justify-between">
-                  <div className="w-10 h-10 rounded-2xl bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Boxes className="w-5 h-5" />
-                  </div>
-                  {lowStockCount > 0 && (
-                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-rose-500 text-white">
-                      {lowStockCount} أوشك
-                    </span>
-                  )}
-                </div>
-                <h4 className="font-black text-sm mt-3">المخزون والجرد</h4>
-                <p className={`text-xs mt-1 ${activeTab === 'inventory' ? 'text-white/80' : 'text-black/60 dark:text-white/60'}`}>
-                  حركات الدفعات وتنبيهات نفاد القطع
-                </p>
-                <div className="mt-4 pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs">
-                  <span className="font-bold">{sellerProducts.reduce((acc, p) => acc + p.stockCount, 0)} قطعة مخزنة</span>
-                  <span className="text-[11px] text-primary dark:text-primary-hover font-bold">جرد ←</span>
-                </div>
-              </div>
-
-              <div
-                onClick={() => handleSelectTab('payouts')}
-                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${activeTab === 'payouts'
-                  ? 'bg-primary text-white border-primary ring-2 ring-primary/30'
-                  : 'bg-white dark:bg-[#26160D] border-black/10 dark:border-white/10 hover:border-primary/50'
-                  }`}
-              >
-                <div className="flex items-start justify-between">
-                  <div className="w-10 h-10 rounded-2xl bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <CreditCard className="w-5 h-5" />
-                  </div>
-                  <span className="text-[10px] font-mono font-black text-emerald-600 dark:text-emerald-400">
-                    InstaPay / فودافون
+                <div className="flex w-full items-start justify-between gap-1">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-100 text-blue-800 dark:bg-blue-950/40 dark:text-blue-300">
+                    <Truck className="h-5 w-5" />
                   </span>
+                  {pendingOrdersCount > 0 && <span className="max-w-[60%] truncate rounded-full bg-amber-500 px-2 py-1 text-[10px] font-black text-white">{pendingOrdersCount} للتجهيز</span>}
                 </div>
-                <h4 className="font-black text-sm mt-3">أرباح ومستحقات الورشة</h4>
-                <p className="text-xs mt-1 font-mono font-bold text-base text-primary dark:text-primary-hover">
-                  {totalRevenue.toLocaleString('ar-EG')} ج.م
-                </p>
-                <div className="mt-4 pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs">
-                  <span className="text-black/60 dark:text-white/60">سحب الأرباح</span>
-                  <span className="text-[11px] text-primary dark:text-primary-hover font-bold">طلب صرف ←</span>
+                <div className="w-full">
+                  <h4 className="truncate text-sm font-black sm:text-base">طلبات الزباين</h4>
+                  <p className={`mt-1 truncate text-[10px] sm:text-xs ${activeTab === 'orders' ? 'text-white/75' : 'text-black/55 dark:text-white/60'}`}>{totalOrdersCount} طلب</p>
                 </div>
-              </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleSelectTab('inventory')}
+                className={`flex aspect-square min-w-0 flex-col items-stretch justify-between overflow-hidden rounded-2xl border p-3 text-right shadow-xs transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:rounded-3xl sm:p-4 ${activeTab === 'inventory'
+                  ? 'bg-primary text-white border-primary ring-2 ring-primary/30'
+                  : 'bg-white text-espresso border-black/10 hover:border-primary/50 dark:bg-[#26160D] dark:text-cream dark:border-white/10'
+                  }`}
+              >
+                <div className="flex w-full items-start justify-between gap-1">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300">
+                    <Boxes className="h-5 w-5" />
+                  </span>
+                  {lowStockCount > 0 && <span className="max-w-[60%] truncate rounded-full bg-rose-500 px-2 py-1 text-[10px] font-black text-white">{lowStockCount} قرب يخلص</span>}
+                </div>
+                <div className="w-full">
+                  <h4 className="truncate text-sm font-black sm:text-base">مخزونك</h4>
+                  <p className={`mt-1 truncate text-[10px] sm:text-xs ${activeTab === 'inventory' ? 'text-white/75' : 'text-black/55 dark:text-white/60'}`}>
+                    {sellerProducts.reduce((acc, p) => acc + p.stockCount, 0)} قطعة متاحة
+                  </p>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleSelectTab('payouts')}
+                className={`flex aspect-square min-w-0 flex-col items-stretch justify-between overflow-hidden rounded-2xl border p-3 text-right shadow-xs transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:rounded-3xl sm:p-4 ${activeTab === 'payouts'
+                  ? 'bg-primary text-white border-primary ring-2 ring-primary/30'
+                  : 'bg-white text-espresso border-black/10 hover:border-primary/50 dark:bg-[#26160D] dark:text-cream dark:border-white/10'
+                  }`}
+              >
+                <div className="flex w-full items-start justify-between gap-1">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300">
+                    <CreditCard className="h-5 w-5" />
+                  </span>
+                  <span className={`max-w-[60%] truncate text-[9px] font-bold ${activeTab === 'payouts' ? 'text-white/85' : 'text-emerald-700 dark:text-emerald-300'}`}>أرباحك</span>
+                </div>
+                <div className="w-full">
+                  <h4 className="truncate font-mono text-base font-black sm:text-lg">{totalRevenue.toLocaleString('ar-EG')} <span className="text-[10px]">ج.م</span></h4>
+                  <p className={`mt-1 truncate text-[10px] sm:text-xs ${activeTab === 'payouts' ? 'text-white/75' : 'text-black/55 dark:text-white/60'}`}>مبيعاتك وطلبات السحب</p>
+                </div>
+              </button>
             </div>
           </div>
         )}
 
         {/* MAIN WORKPLACE CONTENT PANE */}
-        <main id="seller-main-pane" className="min-w-0 flex-1 space-y-5">
+        <main id="seller-main-pane" className="w-full min-w-0 flex-1 scroll-mt-24 space-y-5">
           <div className="flex flex-col gap-4 rounded-[1.4rem] border border-[#E6DFD2] bg-white p-4 shadow-sm dark:border-white/10 dark:bg-[#211C17] sm:flex-row sm:items-center sm:justify-between">
             <div className="flex min-w-0 items-center gap-3">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#F3EBDD] text-[#8C5C2D] dark:bg-white/[0.06] dark:text-primary-hover">
                 <Store className="h-5 w-5" />
               </span>
               <div className="min-w-0">
-                <p className="text-[10px] font-bold text-[#9A8D7E] dark:text-white/40">أنت الآن في</p>
+                <p className="text-[10px] font-bold text-[#9A8D7E] dark:text-white/40">إنت فاتح</p>
                 <h2 className="truncate text-base font-black text-[#29231E] dark:text-cream">{currentActiveItem?.label || 'لوحة الورشة'}</h2>
-                <p className="mt-0.5 truncate text-[11px] text-[#817568] dark:text-white/50">{currentActiveItem?.sublabel || 'تابع نشاط ورشتك وأدِر تفاصيلها من هنا'}</p>
+                <p className="mt-0.5 truncate text-[11px] text-[#817568] dark:text-white/50">{currentActiveItem?.sublabel || 'كل شغل ورشتك هتلاقيه هنا'}</p>
               </div>
             </div>
-            <div className="flex gap-2 overflow-x-auto pb-0.5">
+            <div className="flex gap-2">
               <button
                 type="button"
-                id="seller-primary-add-card"
-                onClick={openAddProductModal}
-                className="flex min-h-9 shrink-0 cursor-pointer items-center gap-2 rounded-lg bg-[#704322] px-3 text-[11px] font-bold text-white transition hover:bg-[#563219]"
+                onClick={() => setIsMobileNavOpen(true)}
+                aria-controls="seller-mobile-navigation"
+                aria-expanded={isMobileNavOpen}
+                className="flex min-h-11 shrink-0 cursor-pointer items-center gap-2 rounded-xl border border-[#E8E1D6] bg-white px-4 text-xs font-bold text-[#51483F] transition hover:bg-[#F8F5F0] dark:border-white/10 dark:bg-white/5 dark:text-cream dark:hover:bg-white/10 lg:hidden"
               >
-                <Plus className="h-3.5 w-3.5" />
-                <span>إضافة منتج</span>
-              </button>
-              <button
-                type="button"
-                id="seller-primary-prods-card"
-                onClick={() => handleSelectTab('products')}
-                className={`flex min-h-9 shrink-0 cursor-pointer items-center gap-2 rounded-lg border px-3 text-[11px] font-bold transition ${activeTab === 'products'
-                  ? 'border-[#B47A35]/50 bg-[#F5EBDD] text-[#704322] dark:bg-white/10 dark:text-primary-hover'
-                  : 'border-[#E9E3D9] text-[#655A4E] hover:bg-[#F8F5F0] dark:border-white/10 dark:text-cream/70 dark:hover:bg-white/[0.06]'
-                  }`}
-              >
-                <Package className="h-3.5 w-3.5" />
-                <span>المنتجات</span>
-                <span className="rounded-full bg-black/[0.06] px-1.5 py-0.5 text-[9px] dark:bg-white/10">{sellerProducts.length}</span>
-              </button>
-              <button
-                type="button"
-                id="seller-primary-orders-card"
-                onClick={() => handleSelectTab('orders')}
-                className={`flex min-h-9 shrink-0 cursor-pointer items-center gap-2 rounded-lg border px-3 text-[11px] font-bold transition ${activeTab === 'orders'
-                  ? 'border-[#B47A35]/50 bg-[#F5EBDD] text-[#704322] dark:bg-white/10 dark:text-primary-hover'
-                  : 'border-[#E9E3D9] text-[#655A4E] hover:bg-[#F8F5F0] dark:border-white/10 dark:text-cream/70 dark:hover:bg-white/[0.06]'
-                  }`}
-              >
-                <Truck className="h-3.5 w-3.5" />
-                <span>الطلبات</span>
-                <span className="rounded-full bg-black/[0.06] px-1.5 py-0.5 text-[9px] dark:bg-white/10">{totalOrdersCount}</span>
-              </button>
-              <button
-                type="button"
-                id="seller-primary-account-card"
-                onClick={() => handleSelectTab('settings')}
-                className={`flex min-h-9 shrink-0 cursor-pointer items-center gap-2 rounded-lg border px-3 text-[11px] font-bold transition ${activeTab === 'settings'
-                  ? 'border-[#B47A35]/50 bg-[#F5EBDD] text-[#704322] dark:bg-white/10 dark:text-primary-hover'
-                  : 'border-[#E9E3D9] text-[#655A4E] hover:bg-[#F8F5F0] dark:border-white/10 dark:text-cream/70 dark:hover:bg-white/[0.06]'
-                  }`}
-              >
-                <Settings className="h-3.5 w-3.5" />
-                <span>الورشة</span>
+                <Menu className="h-4 w-4" />
+                <span>افتح الأقسام</span>
               </button>
             </div>
           </div>
@@ -1928,11 +1863,11 @@ export const SellerDashboard: React.FC = () => {
                   <div className="max-w-xl">
                     <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-bold text-[#F2D7A7]">
                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                      مساحة إدارة الورشة
+                      لوحة ورشتك
                     </span>
-                    <h2 className="mt-4 font-main text-2xl font-black sm:text-3xl">كل تفاصيل شغلك في مكان واحد</h2>
+                    <h2 className="mt-4 font-main text-2xl font-black sm:text-3xl">كل شغل ورشتك في مكان واحد</h2>
                     <p className="mt-2 text-sm leading-6 text-white/70">
-                      تابع المبيعات والطلبات ومعروضاتك، وخلي كل خطوة في إدارة الورشة واضحة وسهلة.
+                      تابع طلباتك ومنتجاتك وأرباحك من هنا، من غير ما تحتار.
                     </p>
                   </div>
                   <div className="flex shrink-0 items-center gap-2">
@@ -1942,7 +1877,7 @@ export const SellerDashboard: React.FC = () => {
                       className="inline-flex items-center gap-2 rounded-xl bg-[#C99444] px-4 py-2.5 text-xs font-black text-[#26160D] shadow-lg transition hover:bg-[#E2B86F]"
                     >
                       <Plus className="h-4 w-4" />
-                      أضف منتجًا
+                      أضف منتج
                     </button>
                     <RefreshDataButton
                       onRefresh={async () => {
@@ -1962,8 +1897,8 @@ export const SellerDashboard: React.FC = () => {
               <section aria-label="ملخص أداء الورشة">
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <div>
-                    <h3 className="font-black text-base text-espresso dark:text-cream">ملخص الورشة</h3>
-                    <p className="mt-0.5 text-[11px] text-black/50 dark:text-white/50">أرقامك الأساسية في لمحة سريعة</p>
+                    <h3 className="font-black text-base text-espresso dark:text-cream">أخبار ورشتك</h3>
+                    <p className="mt-0.5 text-[11px] text-black/50 dark:text-white/50">أهم أرقامك والحاجات اللي محتاجة متابعة</p>
                   </div>
                   {pendingOrdersCount > 0 && (
                     <button
@@ -1971,7 +1906,7 @@ export const SellerDashboard: React.FC = () => {
                       onClick={() => handleSelectTab('orders')}
                       className="rounded-full bg-amber-500/15 px-3 py-1.5 text-[11px] font-bold text-amber-800 transition hover:bg-amber-500/25 dark:text-amber-300"
                     >
-                      {pendingOrdersCount} طلب يحتاج متابعة
+                      {pendingOrdersCount} طلب محتاج تجهيز
                     </button>
                   )}
                 </div>
@@ -1980,7 +1915,7 @@ export const SellerDashboard: React.FC = () => {
                     <div className="absolute -left-7 -top-8 h-28 w-28 rounded-full border-[16px] border-white/5" />
                     <div className="relative flex h-full flex-col justify-between gap-5">
                       <div className="flex items-center justify-between gap-3">
-                        <span className="text-xs font-bold text-white/75">إجمالي المبيعات المحققة</span>
+                        <span className="text-xs font-bold text-white/75">مبيعاتك</span>
                         <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10">
                           <DollarSign className="h-4 w-4 text-emerald-200" />
                         </span>
@@ -1988,7 +1923,7 @@ export const SellerDashboard: React.FC = () => {
                       <div>
                         <div className="font-mono text-3xl font-black">{totalRevenue.toLocaleString('ar-EG')} <span className="text-sm">ج.م</span></div>
                         <p className="mt-1 text-[11px] font-medium text-white/65">
-                          {activeOrders.length > 0 ? `${orders.filter((o) => o.status === 'delivered').length} طلب مكتمل التسليم` : 'مبيعات موثقة من الورشة'}
+                          {activeOrders.length > 0 ? `${orders.filter((o) => o.status === 'delivered').length} طلب اتسلّم` : 'لسه مفيش مبيعات مسجلة'}
                         </p>
                       </div>
                     </div>
@@ -1996,31 +1931,31 @@ export const SellerDashboard: React.FC = () => {
 
                   <div className="rounded-2xl border border-black/10 bg-white/80 p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-white/10 dark:bg-espresso-900/90">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-black/55 dark:text-white/55">إجمالي الطلبات</span>
+                      <span className="text-xs font-bold text-black/55 dark:text-white/55">طلباتك</span>
                       <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-500/10 text-blue-700 dark:text-blue-300">
                         <Truck className="h-4 w-4" />
                       </span>
                     </div>
                     <div className="mt-4 font-mono text-2xl font-black text-espresso dark:text-cream">{totalOrdersCount.toLocaleString('ar-EG')}</div>
-                    <p className="mt-1 text-[11px] text-black/50 dark:text-white/50">طلب من مختلف المحافظات</p>
+                    <p className="mt-1 text-[11px] text-black/50 dark:text-white/50">من كل المحافظات</p>
                   </div>
 
                   <div className="rounded-2xl border border-black/10 bg-white/80 p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-white/10 dark:bg-espresso-900/90">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-black/55 dark:text-white/55">منتجات الورشة</span>
+                      <span className="text-xs font-bold text-black/55 dark:text-white/55">منتجاتك</span>
                       <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/10 text-amber-700 dark:text-amber-300">
                         <Package className="h-4 w-4" />
                       </span>
                     </div>
                     <div className="mt-4 font-mono text-2xl font-black text-espresso dark:text-cream">{sellerProducts.length.toLocaleString('ar-EG')}</div>
                     <p className="mt-1 text-[11px] text-black/50 dark:text-white/50">
-                      {sellerProducts.filter((p) => p.approvalStatus === 'approved').length.toLocaleString('ar-EG')} منتج منشور في السوق
+                      {sellerProducts.filter((p) => p.approvalStatus === 'approved').length.toLocaleString('ar-EG')} منتج ظاهر في السوق
                     </p>
                   </div>
 
                   <div className="rounded-2xl border border-black/10 bg-white/80 p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-white/10 dark:bg-espresso-900/90">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-black/55 dark:text-white/55">تقييم المشترين</span>
+                      <span className="text-xs font-bold text-black/55 dark:text-white/55">تقييم شغلك</span>
                       <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/10">
                         <Star className={`h-4 w-4 ${ratingStats.average ? 'fill-amber-500 text-amber-500' : 'text-stone-400'}`} />
                       </span>
@@ -2032,7 +1967,7 @@ export const SellerDashboard: React.FC = () => {
                           <span className="text-xs font-bold text-black/40 dark:text-white/40">/ 5</span>
                         </div>
                         <p className="mt-1 text-[11px] text-black/50 dark:text-white/50">
-                          من {ratingStats.count.toLocaleString('ar-EG')} تقييم موثق
+                          من {ratingStats.count.toLocaleString('ar-EG')} تقييم
                         </p>
                       </>
                     ) : (
@@ -2054,11 +1989,11 @@ export const SellerDashboard: React.FC = () => {
                   <span className="flex min-w-0 items-center gap-3">
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-700 dark:text-blue-300"><Truck className="h-5 w-5" /></span>
                     <span className="min-w-0">
-                      <span className="block text-xs font-black text-espresso dark:text-cream">الطلبات</span>
-                      <span className="mt-1 block text-[11px] text-black/50 dark:text-white/50">{pendingOrdersCount > 0 ? `${pendingOrdersCount} طلب بانتظار التجهيز` : 'لا توجد طلبات بانتظار التجهيز'}</span>
+                      <span className="block text-xs font-black text-espresso dark:text-cream">طلبات محتاجة تجهيز</span>
+                      <span className="mt-1 block text-[11px] text-black/50 dark:text-white/50">{pendingOrdersCount > 0 ? `${pendingOrdersCount} طلب مستنيك` : 'مفيش طلبات مستنية التجهيز'}</span>
                     </span>
                   </span>
-                  <span className="shrink-0 text-xs font-black text-primary transition group-hover:-translate-x-1">عرض ←</span>
+                  <span className="shrink-0 text-xs font-black text-primary transition group-hover:-translate-x-1">شوف ←</span>
                 </button>
                 <button
                   type="button"
@@ -2068,11 +2003,11 @@ export const SellerDashboard: React.FC = () => {
                   <span className="flex min-w-0 items-center gap-3">
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-700 dark:text-amber-300"><Package className="h-5 w-5" /></span>
                     <span className="min-w-0">
-                      <span className="block text-xs font-black text-espresso dark:text-cream">اعتماد المنتجات</span>
-                      <span className="mt-1 block text-[11px] text-black/50 dark:text-white/50">{pendingProductsCount > 0 ? `${pendingProductsCount} منتج قيد المراجعة` : 'معروضاتك محدثة'}</span>
+                      <span className="block text-xs font-black text-espresso dark:text-cream">حالة منتجاتك</span>
+                      <span className="mt-1 block text-[11px] text-black/50 dark:text-white/50">{pendingProductsCount > 0 ? `${pendingProductsCount} منتج بيتراجع` : 'منتجاتك محدثة'}</span>
                     </span>
                   </span>
-                  <span className="shrink-0 text-xs font-black text-primary transition group-hover:-translate-x-1">عرض ←</span>
+                  <span className="shrink-0 text-xs font-black text-primary transition group-hover:-translate-x-1">شوف ←</span>
                 </button>
                 <button
                   type="button"
@@ -2082,11 +2017,11 @@ export const SellerDashboard: React.FC = () => {
                   <span className="flex min-w-0 items-center gap-3">
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"><Boxes className="h-5 w-5" /></span>
                     <span className="min-w-0">
-                      <span className="block text-xs font-black text-espresso dark:text-cream">قيمة المخزون الحالي</span>
+                      <span className="block text-xs font-black text-espresso dark:text-cream">قيمة المخزون</span>
                       <span className="mt-1 block text-[11px] text-black/50 dark:text-white/50">{totalValuation.toLocaleString('ar-EG')} ج.م</span>
                     </span>
                   </span>
-                  <span className="shrink-0 text-xs font-black text-primary transition group-hover:-translate-x-1">الجرد ←</span>
+                  <span className="shrink-0 text-xs font-black text-primary transition group-hover:-translate-x-1">شوف ←</span>
                 </button>
               </section>
 
@@ -2118,16 +2053,16 @@ export const SellerDashboard: React.FC = () => {
             <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-lg backdrop-blur-xl space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <h3 className="font-bold text-xl text-espresso dark:text-cream font-cairo">كتالوج قطع الورشة ومتابعة دورة الاعتماد</h3>
+                  <h3 className="font-bold text-xl text-espresso dark:text-cream font-cairo">منتجات ورشتك</h3>
                   <p className="text-xs text-black/60 dark:text-white/60 mt-1 font-medium">
-                    جميع المنتجات تمر بدورة اعتماد: إنشاء مسودة أو تقديم للمراجعة ← فحص الإدارة ← نشر بالسوق العام
+                    ابعت المنتج للمراجعة، وبعد الموافقة هيظهر في السوق.
                   </p>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
                   <RefreshDataButton
                     onRefresh={refreshSellerProducts}
-                    label="تحديث المنتجات"
+                    label="حدّث المنتجات"
                   />
                   <button
                     type="button"
@@ -2136,7 +2071,7 @@ export const SellerDashboard: React.FC = () => {
                     className="px-5 py-2.5 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] text-xs font-bold rounded-xl shadow-md flex items-center gap-2 cursor-pointer transition-colors"
                   >
                     <Plus className="w-4 h-4" />
-                    <span>إضافة قطعة جديدة</span>
+                    <span>أضف منتج</span>
                   </button>
                 </div>
               </div>
@@ -2145,14 +2080,14 @@ export const SellerDashboard: React.FC = () => {
                 {sellerProducts.length === 0 ? (
                   <div className="text-center py-12 border border-dashed border-black/10 dark:border-white/10 bg-black/[0.02] dark:bg-cream/[0.02] rounded-[1.5rem]">
                     <Package className="w-10 h-10 text-black/40 dark:text-white/40 mx-auto mb-2 opacity-60" />
-                    <p className="text-sm font-bold text-espresso dark:text-cream">لا توجد منتجات مسجلة حتى الآن</p>
-                    <p className="text-xs text-black/60 dark:text-white/60 mt-1">ابدأ بإضافة أول قطعة تراثية من ورشتك</p>
+                    <p className="text-sm font-bold text-espresso dark:text-cream">لسه مفيش منتجات</p>
+                    <p className="text-xs text-black/60 dark:text-white/60 mt-1">ابدأ وأضف أول منتج من شغل ورشتك</p>
                     <button
                       type="button"
                       onClick={openAddProductModal}
                       className="mt-4 px-5 py-2.5 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] text-xs font-bold rounded-xl shadow-md cursor-pointer transition-colors"
                     >
-                      إضافة منتج الآن
+                      أضف منتج
                     </button>
                   </div>
                 ) : (
@@ -2194,7 +2129,7 @@ export const SellerDashboard: React.FC = () => {
                             className="px-3 py-1.5 bg-black/5 dark:bg-cream/5 hover:bg-black/10 dark:hover:bg-white/10 text-espresso dark:text-cream rounded-xl text-xs font-bold flex items-center gap-1.5 border border-black/10 dark:border-white/10 cursor-pointer transition-colors"
                           >
                             <Boxes className="w-3.5 h-3.5 text-primary" />
-                            <span>تعديل المخزون ({prod.stockCount})</span>
+                            <span>عدّل الكمية ({prod.stockCount})</span>
                           </button>
 
                           <button
@@ -2205,10 +2140,10 @@ export const SellerDashboard: React.FC = () => {
                                 ? 'bg-amber-700/10 hover:bg-amber-700 hover:text-white dark:bg-amber-400/10 dark:hover:bg-amber-500 text-amber-800 dark:text-amber-300 dark:hover:text-black border-amber-700/20 dark:border-amber-400/20'
                                 : 'bg-gradient-to-r from-amber-700 to-orange-600 hover:from-amber-800 hover:to-orange-700 text-white border-transparent shadow-xs'
                             }`}
-                            title="سجل صوتك وحكايتك لهذه القطعة"
+                            title="سجّل حكاية القطعة بصوتك"
                           >
                             <Mic className="w-3.5 h-3.5" />
-                            <span>{prod.audioUrl ? 'تعديل تسجيل الصوت' : 'سجل صوتك للقطعة'}</span>
+                            <span>{prod.audioUrl ? 'عدّل التسجيل' : 'احكي حكاية القطعة'}</span>
                           </button>
 
                           {(prod.approvalStatus === 'draft' || prod.approvalStatus === 'rejected') && (
@@ -2218,7 +2153,7 @@ export const SellerDashboard: React.FC = () => {
                               className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs cursor-pointer transition-colors"
                             >
                               <Send className="w-3.5 h-3.5" />
-                              <span>إرسال للمراجعة</span>
+                              <span>ابعتها للمراجعة</span>
                             </button>
                           )}
 
@@ -2261,7 +2196,7 @@ export const SellerDashboard: React.FC = () => {
             <div className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="bg-white/75 dark:bg-espresso-900/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
-                  <span className="text-xs text-black/60 dark:text-white/60 block mb-1 font-medium">إجمالي القطع في الورشة</span>
+                  <span className="text-xs text-black/60 dark:text-white/60 block mb-1 font-medium">كل القطع عندك</span>
                   <span className="text-2xl font-black text-espresso dark:text-cream font-mono">
                     {sellerProducts.reduce((acc, p) => acc + p.stockCount, 0)} قطعة
                   </span>
@@ -2269,7 +2204,7 @@ export const SellerDashboard: React.FC = () => {
                 </div>
 
                 <div className="bg-white/75 dark:bg-espresso-900/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
-                  <span className="text-xs text-black/60 dark:text-white/60 block mb-1 font-medium">قيمة المخزون الإجمالية</span>
+                  <span className="text-xs text-black/60 dark:text-white/60 block mb-1 font-medium">قيمة المخزون</span>
                   <span className="text-2xl font-black text-primary font-mono">
                     {totalValuation.toLocaleString()} ج.م
                   </span>
@@ -2289,16 +2224,16 @@ export const SellerDashboard: React.FC = () => {
                   <span className={`text-2xl font-black font-mono ${outOfStockCount > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-black/40 dark:text-white/40'}`}>
                     {outOfStockCount} منتج
                   </span>
-                  <span className="text-[10px] text-rose-700 dark:text-rose-400 font-bold block mt-1">تحتاج إنتاج دفعة جديدة بالورشة</span>
+                  <span className="text-[10px] text-rose-700 dark:text-rose-400 font-bold block mt-1">محتاجة تعمل منها كمية جديدة</span>
                 </div>
               </div>
 
               <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-lg backdrop-blur-xl space-y-5">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
-                    <h3 className="font-bold text-xl text-espresso dark:text-cream font-cairo">إدارة المخزون والتوريدات اليدوية</h3>
+                    <h3 className="font-bold text-xl text-espresso dark:text-cream font-cairo">مخزون ورشتك</h3>
                     <p className="text-xs text-black/60 dark:text-white/60 mt-1 font-medium">
-                      سجل حركة زيادة أو إنقاص القطع فور إتمام الصنعة بالورشة أو عند حرق دفعة جديدة
+                      عدّل الكمية كل ما تخلص قطعة جديدة أو تبيع من المخزون.
                     </p>
                   </div>
 
@@ -2309,7 +2244,7 @@ export const SellerDashboard: React.FC = () => {
                         refreshStockMovements()
                       ]);
                     }}
-                    label="مزامنة وتحديث المخزن"
+                    label="حدّث المخزون"
                   />
                 </div>
 
@@ -2317,12 +2252,12 @@ export const SellerDashboard: React.FC = () => {
                   <table className="w-full text-right text-xs">
                     <thead>
                       <tr className="border-b border-black/10 dark:border-white/10 text-black/60 dark:text-white/60 font-bold">
-                        <th className="pb-3 pr-2">المنتج والورشة</th>
-                        <th className="pb-3">التصنيف</th>
-                        <th className="pb-3">سعر القطعة</th>
-                        <th className="pb-3">الرصيد الحالي</th>
-                        <th className="pb-3">حالة الوفرة</th>
-                        <th className="pb-3 text-left pl-2">إجراءات التعديل</th>
+                        <th className="pb-3 pr-2">المنتج</th>
+                        <th className="pb-3">القسم</th>
+                        <th className="pb-3">السعر</th>
+                        <th className="pb-3">الكمية</th>
+                        <th className="pb-3">المتاح</th>
+                        <th className="pb-3 text-left pl-2">تعديل</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-black/10 dark:divide-white/10">
@@ -2411,19 +2346,19 @@ export const SellerDashboard: React.FC = () => {
                   <div>
                     <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 text-xs font-bold mb-2">
                       <Sparkles className="w-3.5 h-3.5 text-primary" />
-                      <span>واجهة عرض الورشة في قسم الورش والتعاونيات الحرفية المعتمدة</span>
+                      <span>إزاي ورشتك هتظهر للناس</span>
                     </div>
                     <h3 className="font-bold text-xl text-espresso dark:text-cream font-cairo">
-                      هوية وغلاف الورشة في منصة وه
+                      بيانات وصور ورشتك
                     </h3>
                     <p className="text-xs text-black/60 dark:text-white/60 mt-1 max-w-2xl leading-relaxed font-medium">
-                      خصص صورة الغلاف وشعار ورشتكم والبيانات التعريفية. تظهر هذه الصورة في صدارة بطاقة ورشتكم بالمنصة.
+                      اختار صورة وشعار للورشة، واكتب نبذة بسيطة. دول هيظهروا للناس في صفحة ورشتك.
                     </p>
                   </div>
                   <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
                     <RefreshDataButton
                       onRefresh={refreshSellers}
-                      label="تحديث بيانات الورشة"
+                      label="حدّث بيانات ورشتك"
                     />
                   </div>
                 </div>
@@ -2439,8 +2374,8 @@ export const SellerDashboard: React.FC = () => {
                           <Camera className="w-4 h-4" />
                         </div>
                         <div>
-                          <h4 className="font-bold text-sm text-espresso dark:text-cream">اختيار وتحديث صورة الغلاف</h4>
-                          <p className="text-[11px] text-black/60 dark:text-white/60">اختر من المعرض التراثي المعتمد أو ارفع صورة خاصة</p>
+                          <h4 className="font-bold text-sm text-espresso dark:text-cream">صورة غلاف ورشتك</h4>
+                          <p className="text-[11px] text-black/60 dark:text-white/60">اختار صورة من المعرض أو ارفع صورة من عندك</p>
                         </div>
                       </div>
                       {sellerCoverImage && (
@@ -2658,7 +2593,7 @@ export const SellerDashboard: React.FC = () => {
                     <form onSubmit={handleSaveWorkshopProfile} className="space-y-4">
                       <div>
                         <label className="block text-xs font-bold text-espresso dark:text-cream mb-1">
-                          اسم الورشة أو العلامة الحرفية *
+                          اسم الورشة أو البراند *
                         </label>
                         <input
                           type="text"
@@ -2705,7 +2640,7 @@ export const SellerDashboard: React.FC = () => {
 
                       <div>
                         <label className="block text-xs font-bold text-espresso dark:text-cream mb-1">
-                          نبذة قصيرة عن الورشة وما تقدمه
+                          احكي لنا عن ورشتك باختصار
                         </label>
                         <textarea
                           rows={3}
@@ -2730,13 +2665,13 @@ export const SellerDashboard: React.FC = () => {
                           className="w-full p-2.5 bg-white/60 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-espresso dark:text-cream rounded-xl text-xs outline-none focus:border-primary"
                         />
                         <p className="mt-1 text-[10px] text-espresso/60 dark:text-cream/60">
-                          اختيارية، وتوضح للزوار من متى بدأت الورشة أو الصنعة.
+                          لو تعرف، اكتب بدأت إمتى.
                         </p>
                       </div>
 
                       <div>
                         <label className="block text-xs font-bold text-espresso dark:text-cream mb-1">
-                          حكاية الصانع والورشة
+                          حكايتك وحكاية الورشة
                         </label>
                         <textarea
                           rows={5}
@@ -2790,7 +2725,7 @@ export const SellerDashboard: React.FC = () => {
                       <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3 mb-4">
                         <div className="flex items-center gap-2">
                           <Eye className="w-4 h-4 text-primary" />
-                          <h4 className="font-bold text-sm">معاينة حية لبطاقة الورشة</h4>
+                          <h4 className="font-bold text-sm">شكل صفحة ورشتك</h4>
                         </div>
                       </div>
 
@@ -2997,14 +2932,14 @@ export const SellerDashboard: React.FC = () => {
                 <div>
                   <div className="flex items-center gap-2">
                     <h3 className="font-bold text-xl text-espresso dark:text-cream font-cairo">
-                      مركز الدعم وبلاغات الإدارة للورش الحرفية
+                      محتاج مساعدة؟
                     </h3>
                     <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/20">
                       مباشر مع مسؤولي وه
                     </span>
                   </div>
                   <p className="text-xs text-black/60 dark:text-white/60 mt-1 font-medium">
-                    إذا واجهتك أي مشكلة في مستحقاتك، طلبياتك، نزاع مع مشتري، أو اعتماد منتجاتك، أرسل بلاغك للإدارة فوراً.
+                    لو في مشكلة في طلب أو فلوس أو منتج، ابعتلنا وهنساعدك.
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -3014,7 +2949,7 @@ export const SellerDashboard: React.FC = () => {
                     className="px-4 py-2.5 bg-black/5 dark:bg-white/10 hover:bg-black/10 text-xs font-bold rounded-xl transition-colors cursor-pointer flex items-center gap-1.5"
                   >
                     <Clock className="w-3.5 h-3.5" />
-                    <span>متابعة بلاغاتي وردود الإدارة</span>
+                    <span>تابع رسايلي</span>
                   </button>
                   <button
                     type="button"
@@ -3022,7 +2957,7 @@ export const SellerDashboard: React.FC = () => {
                     className="px-5 py-2.5 bg-primary hover:bg-[#7e5527] text-white text-xs font-bold rounded-xl shadow-md transition-colors cursor-pointer flex items-center gap-1.5"
                   >
                     <Plus className="w-4 h-4" />
-                    <span>تقديم بلاغ جديد</span>
+                    <span>ابعتلنا مشكلة</span>
                   </button>
                 </div>
               </div>
@@ -3109,7 +3044,7 @@ export const SellerDashboard: React.FC = () => {
                     عطل فني أو استفسار عام
                   </h4>
                   <p className="text-[11px] text-black/55 dark:text-white/55 leading-relaxed">
-                    خطأ في تحديث المخزون، مشكلة في رفع الصور، أو اقتراح لتطوير المنصة.
+                    مشكلة في المخزون أو الصور؟ أو عندك اقتراح؟ كلمنا.
                   </p>
                 </div>
               </div>
@@ -3118,7 +3053,7 @@ export const SellerDashboard: React.FC = () => {
               <div className="p-4 bg-primary/10 border border-primary/20 rounded-2xl flex items-start gap-3">
                 <CheckCircle2 className="w-5 h-5 text-primary dark:text-primary-hover shrink-0 mt-0.5" />
                 <div className="text-xs text-espresso dark:text-cream leading-relaxed">
-                  <strong>التزام إدارة منصة وه نحو شيوخ الصنعة والورش:</strong> يتم استلام جميع البلاغات في لوحة إدارة المنصة والتعامل معها بحيادية تامة. في حال وجود أي نزاع، نضمن فحص الطلب بدقة وحماية حقوق الورشة والمشتري على حد سواء.
+                  <strong>إحنا في وه بنحافظ على حقك:</strong> فريقنا بيراجع كل مشكلة بهدوء وحياد، وبيحاول يحافظ على حق الورشة والمشتري.
                 </div>
               </div>
             </div>
@@ -3143,7 +3078,7 @@ export const SellerDashboard: React.FC = () => {
             <form onSubmit={handleStockUpdateSubmit} className="space-y-4">
               <div>
                 <label className="block text-xs font-bold text-espresso dark:text-cream mb-1">
-                  الكمية الجديدة المتاحة بالورشة (قطع) *
+                  الكمية الجديدة (عدد القطع) *
                 </label>
                 <div className="flex items-center gap-2">
                   <button
@@ -3193,49 +3128,67 @@ export const SellerDashboard: React.FC = () => {
 
       {/* Product Add / Edit Modal */}
       {isProductModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white/95 dark:bg-espresso-900/95 rounded-[2rem] border border-black/10 dark:border-white/10 max-w-2xl w-full p-6 sm:p-8 space-y-5 shadow-2xl max-h-[90vh] overflow-y-auto backdrop-blur-2xl">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="seller-product-modal-title"
+          className="fixed inset-0 z-[120] flex items-start justify-center overflow-y-auto overscroll-contain bg-black/60 p-3 backdrop-blur-sm animate-in fade-in sm:items-center sm:p-4"
+        >
+          <div className="w-full max-w-2xl max-h-[calc(100dvh-1.5rem)] overflow-y-auto rounded-2xl border border-black/10 bg-white/95 p-4 shadow-2xl backdrop-blur-2xl dark:border-white/10 dark:bg-espresso-900/95 sm:max-h-[90vh] sm:rounded-[2rem] sm:p-8">
             <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
-              <h2 className="font-black text-xl text-espresso dark:text-cream font-main">
-                {editingProduct ? 'تعديل بيانات القطعة التراثية' : 'إضافة قطعة يدوية جديدة للورشة'}
+              <h2 id="seller-product-modal-title" className="font-black text-lg text-espresso dark:text-cream font-main sm:text-xl">
+                {editingProduct ? 'عدّل بيانات المنتج' : 'أضف قطعة جديدة'}
               </h2>
               <button
                 type="button"
                 onClick={() => setIsProductModalOpen(false)}
-                className="p-1 rounded-lg text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white cursor-pointer"
+                aria-label="اقفل نموذج المنتج"
+                className="flex h-10 w-10 items-center justify-center rounded-xl text-black/60 transition-colors hover:bg-black/5 hover:text-black dark:text-white/70 dark:hover:bg-white/10 dark:hover:text-white cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSaveProduct} className="space-y-4">
+            <form onSubmit={handleSaveProduct} className="mt-4 space-y-4" dir="rtl">
               <div>
-                <label className="block text-xs font-bold text-espresso dark:text-cream mb-1">اسم القطعة (بالعربية) *</label>
+                <label className="mb-1.5 block text-sm font-bold text-espresso dark:text-cream">اسم القطعة (بالعربية) *</label>
                 <input
                   type="text"
                   required
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full p-2.5 bg-white/60 dark:bg-cream/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary"
+                  className="min-h-11 w-full rounded-xl border border-black/15 bg-white/80 px-3 py-2.5 text-right text-sm text-espresso outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/25 dark:border-white/20 dark:bg-[#2B2119] dark:text-[#FFF9EE]"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-sm font-bold text-espresso dark:text-cream">الاسم بالإنجليزي <span className="font-normal text-black/50 dark:text-white/60">(اختياري)</span></label>
+                <input
+                  type="text"
+                  value={titleEn}
+                  onChange={(e) => setTitleEn(e.target.value)}
+                  dir="ltr"
+                  className="min-h-11 w-full rounded-xl border border-black/15 bg-white/80 px-3 py-2.5 text-left text-sm text-espresso outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/25 dark:border-white/20 dark:bg-[#2B2119] dark:text-[#FFF9EE]"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {/* التصنيف التراثي */}
                 <div>
-                  <label className="block text-xs font-bold text-espresso dark:text-cream mb-1">
+                  <label className="mb-1.5 block text-sm font-bold text-espresso dark:text-cream">
                     التصنيف التراثي *
                   </label>
                   <select
+                    required
                     value={categoryId}
                     onChange={(e) => setCategoryId(e.target.value)}
-                    className="w-full p-2.5 bg-white dark:bg-[#1f1610] text-espresso dark:text-cream border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary cursor-pointer transition-colors"
+                    className="min-h-11 w-full cursor-pointer rounded-xl border border-black/15 bg-white px-3 py-2.5 text-right text-sm text-espresso outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/25 dark:border-white/20 dark:bg-[#2B2119] dark:text-[#FFF9EE]"
                   >
                     {categories.map((c) => (
                       <option
                         key={c.id}
                         value={c.id}
-                        className="bg-white dark:bg-[#1f1610] text-espresso dark:text-cream"
+                        className="bg-white text-espresso dark:bg-[#2B2119] dark:text-[#FFF9EE]"
                       >
                         {c.name}
                       </option>
@@ -3245,69 +3198,151 @@ export const SellerDashboard: React.FC = () => {
 
                 {/* محافظة المنشأ الأصيلة (10 محافظات صعيدية) */}
                 <div>
-                  <label className="block text-xs font-bold text-espresso dark:text-cream mb-1">
-                    محافظة المنشأ الأصيلة
+                  <label className="mb-1.5 block text-sm font-bold text-espresso dark:text-cream">
+                    محافظة المنشأ *
                   </label>
                   <select
+                    required
                     value={governorate}
                     onChange={(e) => setGovernorate(e.target.value as Governorate)}
-                    className="w-full p-2.5 bg-white dark:bg-[#1f1610] text-espresso dark:text-cream border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary cursor-pointer transition-colors"
+                    className="min-h-11 w-full cursor-pointer rounded-xl border border-black/15 bg-white px-3 py-2.5 text-right text-sm text-espresso outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/25 dark:border-white/20 dark:bg-[#2B2119] dark:text-[#FFF9EE]"
                   >
-                    <option value="أسوان" className="bg-white dark:bg-[#1f1610] text-espresso dark:text-cream">أسوان</option>
-                    <option value="الأقصر" className="bg-white dark:bg-[#1f1610] text-espresso dark:text-cream">الأقصر</option>
-                    <option value="قنا" className="bg-white dark:bg-[#1f1610] text-espresso dark:text-cream">قنا</option>
-                    <option value="سوهاج" className="bg-white dark:bg-[#1f1610] text-espresso dark:text-cream">سوهاج</option>
-                    <option value="أسيوط" className="bg-white dark:bg-[#1f1610] text-espresso dark:text-cream">أسيوط</option>
-                    <option value="المنيا" className="bg-white dark:bg-[#1f1610] text-espresso dark:text-cream">المنيا</option>
-                    <option value="بني سويف" className="bg-white dark:bg-[#1f1610] text-espresso dark:text-cream">بني سويف</option>
-                    <option value="الفيوم" className="bg-white dark:bg-[#1f1610] text-espresso dark:text-cream">الفيوم</option>
-                    <option value="الوادى الجديد" className="bg-white dark:bg-[#1f1610] text-espresso dark:text-cream">الجيزة</option>
-                    <option value="البحر الاحمر" className="bg-white dark:bg-[#1f1610] text-espresso dark:text-cream">الوادي الجديد</option>
+                    <option value="أسوان" className="bg-white text-espresso dark:bg-[#2B2119] dark:text-[#FFF9EE]">أسوان</option>
+                    <option value="الأقصر" className="bg-white text-espresso dark:bg-[#2B2119] dark:text-[#FFF9EE]">الأقصر</option>
+                    <option value="قنا" className="bg-white text-espresso dark:bg-[#2B2119] dark:text-[#FFF9EE]">قنا</option>
+                    <option value="سوهاج" className="bg-white text-espresso dark:bg-[#2B2119] dark:text-[#FFF9EE]">سوهاج</option>
+                    <option value="أسيوط" className="bg-white text-espresso dark:bg-[#2B2119] dark:text-[#FFF9EE]">أسيوط</option>
+                    <option value="المنيا" className="bg-white text-espresso dark:bg-[#2B2119] dark:text-[#FFF9EE]">المنيا</option>
+                    <option value="بني سويف" className="bg-white text-espresso dark:bg-[#2B2119] dark:text-[#FFF9EE]">بني سويف</option>
+                    <option value="الفيوم" className="bg-white text-espresso dark:bg-[#2B2119] dark:text-[#FFF9EE]">الفيوم</option>
+                    <option value="الوادي الجديد" className="bg-white text-espresso dark:bg-[#2B2119] dark:text-[#FFF9EE]">الوادي الجديد</option>
+                    <option value="البحر الاحمر" className="bg-white text-espresso dark:bg-[#2B2119] dark:text-[#FFF9EE]">البحر الأحمر</option>
                   </select>
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-espresso dark:text-cream mb-1">السعر (ج.م) *</label>
+                  <label className="mb-1.5 block text-sm font-bold text-espresso dark:text-cream">السعر (ج.م) *</label>
                   <input
                     type="number"
                     required
                     min={1}
                     value={price}
-                    onChange={(e) => setPrice(Number(e.target.value))}
-                    className="w-full p-2.5 bg-white/60 dark:bg-cream/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary"
+                    onChange={(e) => setPrice(e.target.value === '' ? '' : Number(e.target.value))}
+                    className="min-h-11 w-full rounded-xl border border-black/15 bg-white/80 px-3 py-2.5 text-right text-sm text-espresso outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/25 dark:border-white/20 dark:bg-[#2B2119] dark:text-[#FFF9EE]"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-espresso dark:text-cream mb-1">السعر قبل الخصم</label>
+                  <label className="mb-1.5 block text-sm font-bold text-espresso dark:text-cream">السعر قبل الخصم <span className="font-normal text-black/50 dark:text-white/60">(اختياري)</span></label>
                   <input
                     type="number"
-                    min={0}
+                    min={Number(price) + 1}
                     value={originalPrice}
-                    onChange={(e) => setOriginalPrice(Number(e.target.value))}
-                    className="w-full p-2.5 bg-white/60 dark:bg-cream/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary"
+                    onChange={(e) => setOriginalPrice(e.target.value === '' ? '' : Number(e.target.value))}
+                    className="min-h-11 w-full rounded-xl border border-black/15 bg-white/80 px-3 py-2.5 text-right text-sm text-espresso outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/25 dark:border-white/20 dark:bg-[#2B2119] dark:text-[#FFF9EE]"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-espresso dark:text-cream mb-1">المخزون المتاح</label>
+                  <label className="mb-1.5 block text-sm font-bold text-espresso dark:text-cream">الكمية المتاحة *</label>
                   <input
                     type="number"
+                    required
                     min={0}
                     value={stockCount}
-                    onChange={(e) => setStockCount(Number(e.target.value))}
-                    className="w-full p-2.5 bg-white/60 dark:bg-cream/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary"
+                    onChange={(e) => setStockCount(e.target.value === '' ? '' : Number(e.target.value))}
+                    className="min-h-11 w-full rounded-xl border border-black/15 bg-white/80 px-3 py-2.5 text-right text-sm text-espresso outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/25 dark:border-white/20 dark:bg-[#2B2119] dark:text-[#FFF9EE]"
                   />
                 </div>
               </div>
 
+              <details className="rounded-2xl border border-primary/20 bg-primary/[0.04] p-3.5 dark:bg-primary/[0.06] sm:p-4">
+                <summary className="cursor-pointer rounded-xl text-sm font-black text-espresso marker:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:text-cream">
+                  تفاصيل تساعد الزبون <span className="font-normal text-black/50 dark:text-white/60">(اختياري - مش لازم تملاها كلها)</span>
+                  <span className="mt-1 block text-xs font-normal leading-relaxed text-black/60 dark:text-white/65">افتح لو حابب تضيف حكاية القطعة أو تفاصيلها.</span>
+                </summary>
+
+                <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div>
+                    <label className="mb-1.5 block text-xs font-bold text-espresso dark:text-cream">الخامة <span className="font-normal text-black/50 dark:text-white/60">(اختياري)</span></label>
+                    <input
+                      type="text"
+                      value={material}
+                      onChange={(e) => setMaterial(e.target.value)}
+                      placeholder="مثال: طمي نيلي، صوف طبيعي"
+                      className="min-h-11 w-full rounded-xl border border-black/15 bg-white/80 px-3 py-2.5 text-right text-sm text-espresso outline-none transition-colors placeholder:text-black/40 focus:border-primary focus:ring-2 focus:ring-primary/25 dark:border-white/20 dark:bg-[#2B2119] dark:text-[#FFF9EE] dark:placeholder:text-white/45"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1.5 block text-xs font-bold text-espresso dark:text-cream">طريقة الصنعة <span className="font-normal text-black/50 dark:text-white/60">(اختياري)</span></label>
+                    <input
+                      type="text"
+                      value={craftsmanship}
+                      onChange={(e) => setCraftsmanship(e.target.value)}
+                      placeholder="مثال: تشكيل يدوي على الدولاب"
+                      className="min-h-11 w-full rounded-xl border border-black/15 bg-white/80 px-3 py-2.5 text-right text-sm text-espresso outline-none transition-colors placeholder:text-black/40 focus:border-primary focus:ring-2 focus:ring-primary/25 dark:border-white/20 dark:bg-[#2B2119] dark:text-[#FFF9EE] dark:placeholder:text-white/45"
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="mb-1.5 block text-xs font-bold text-espresso dark:text-cream">وصف القطعة وحكايتها <span className="font-normal text-black/50 dark:text-white/60">(اختياري)</span></label>
+                    <textarea
+                      rows={3}
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      placeholder="احكي عن استخدام القطعة أو حكايتها أو أي تفصيلة تميزها..."
+                      className="w-full resize-y rounded-xl border border-black/15 bg-white/80 px-3 py-2.5 text-right text-sm text-espresso outline-none transition-colors placeholder:text-black/40 focus:border-primary focus:ring-2 focus:ring-primary/25 dark:border-white/20 dark:bg-[#2B2119] dark:text-[#FFF9EE] dark:placeholder:text-white/45"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1.5 block text-xs font-bold text-espresso dark:text-cream">الأبعاد والمقاس <span className="font-normal text-black/50 dark:text-white/60">(اختياري)</span></label>
+                    <input
+                      type="text"
+                      value={dimensions}
+                      onChange={(e) => setDimensions(e.target.value)}
+                      placeholder="مثال: 30 × 20 سم"
+                      className="min-h-11 w-full rounded-xl border border-black/15 bg-white/80 px-3 py-2.5 text-right text-sm text-espresso outline-none transition-colors placeholder:text-black/40 focus:border-primary focus:ring-2 focus:ring-primary/25 dark:border-white/20 dark:bg-[#2B2119] dark:text-[#FFF9EE] dark:placeholder:text-white/45"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1.5 block text-xs font-bold text-espresso dark:text-cream">الوزن التقريبي <span className="font-normal text-black/50 dark:text-white/60">(اختياري)</span></label>
+                    <input
+                      type="text"
+                      value={weight}
+                      onChange={(e) => setWeight(e.target.value)}
+                      placeholder="مثال: 1.2 كجم"
+                      className="min-h-11 w-full rounded-xl border border-black/15 bg-white/80 px-3 py-2.5 text-right text-sm text-espresso outline-none transition-colors placeholder:text-black/40 focus:border-primary focus:ring-2 focus:ring-primary/25 dark:border-white/20 dark:bg-[#2B2119] dark:text-[#FFF9EE] dark:placeholder:text-white/45"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1.5 block text-xs font-bold text-espresso dark:text-cream">وقت التجهيز لو هتتصنع بعد الطلب <span className="font-normal text-black/50 dark:text-white/60">(اختياري)</span></label>
+                    <input
+                      type="text"
+                      value={estimatedMakingTime}
+                      onChange={(e) => setEstimatedMakingTime(e.target.value)}
+                      placeholder="مثال: 3 أيام"
+                      className="min-h-11 w-full rounded-xl border border-black/15 bg-white/80 px-3 py-2.5 text-right text-sm text-espresso outline-none transition-colors placeholder:text-black/40 focus:border-primary focus:ring-2 focus:ring-primary/25 dark:border-white/20 dark:bg-[#2B2119] dark:text-[#FFF9EE] dark:placeholder:text-white/45"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1.5 block text-xs font-bold text-espresso dark:text-cream">طريقة العناية بالقطعة <span className="font-normal text-black/50 dark:text-white/60">(اختياري)</span></label>
+                    <input
+                      type="text"
+                      value={careInstructions}
+                      onChange={(e) => setCareInstructions(e.target.value)}
+                      placeholder="مثال: تتغسل يدويًا من غير منظفات قوية"
+                      className="min-h-11 w-full rounded-xl border border-black/15 bg-white/80 px-3 py-2.5 text-right text-sm text-espresso outline-none transition-colors placeholder:text-black/40 focus:border-primary focus:ring-2 focus:ring-primary/25 dark:border-white/20 dark:bg-[#2B2119] dark:text-[#FFF9EE] dark:placeholder:text-white/45"
+                    />
+                  </div>
+                </div>
+              </details>
+
               {/* Product Images Dropzone */}
               <div className="space-y-3 pt-2">
-                <div className="flex items-center justify-between">
-                  <label className="block text-xs font-bold text-espresso dark:text-cream">
-                    صور المنتج التراثي * <span className="text-rose-500 font-bold">(إلزامية - صورة واحدة على الأقل)</span>
+                <div className="flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between">
+                  <label className="block text-sm font-bold text-espresso dark:text-cream">
+                    صور المنتج التراثي * <span className="font-bold text-rose-600 dark:text-rose-300">(إلزامية - صورة واحدة على الأقل)</span>
                   </label>
                   <span className={`text-[11px] font-bold ${existingImages.length + selectedImages.length === 0
-                    ? 'text-rose-500'
+                    ? 'text-rose-600 dark:text-rose-300'
                     : 'text-primary dark:text-primary-hover'
                     }`}>
                     ({existingImages.length + selectedImages.length} من 5 صور كحد أقصى)
@@ -3316,7 +3351,7 @@ export const SellerDashboard: React.FC = () => {
 
                 {uploadError && (
                   <div className="p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 rounded-xl text-rose-700 dark:text-rose-300 text-xs flex items-center gap-2 animate-in fade-in">
-                    <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+                    <AlertCircle className="w-4 h-4 shrink-0 text-rose-600 dark:text-rose-300" />
                     <span>{uploadError}</span>
                   </div>
                 )}
@@ -3327,7 +3362,7 @@ export const SellerDashboard: React.FC = () => {
                     onDrop={handleDropzoneDrop}
                     onDragOver={handleDropzoneDragOver}
                     onDragLeave={handleDropzoneDragLeave}
-                    className={`relative border-2 border-dashed rounded-2xl p-6 text-center transition-all ${isDragOverDropzone
+                    className={`relative border-2 border-dashed rounded-2xl p-4 text-center transition-all sm:p-6 ${isDragOverDropzone
                       ? 'border-primary bg-primary/10 scale-[1.01]'
                       : existingImages.length + selectedImages.length === 0
                         ? 'border-black/20 dark:border-white/20 hover:border-primary bg-black/[0.02] dark:bg-cream/[0.02]'
@@ -3348,9 +3383,9 @@ export const SellerDashboard: React.FC = () => {
                       </div>
                       <div>
                         <p className="text-xs sm:text-sm font-bold text-espresso dark:text-cream">
-                          اسحب الصور وأفلتها هنا، أو <span className="text-primary underline font-black">تصفح من جهازك</span>
+                          اسحب الصور هنا، أو <span className="text-primary underline font-black">اختارها من جهازك</span>
                         </p>
-                        <p className="text-[11px] text-black/50 dark:text-white/50 mt-1">
+                        <p className="text-[11px] text-black/60 dark:text-white/70 mt-1">
                           صيغ مدعومة: JPG، PNG، WebP (حتى 5 ميجابايت لكل صورة، 5 صور كحد أقصى)
                         </p>
                       </div>
@@ -3432,7 +3467,7 @@ export const SellerDashboard: React.FC = () => {
                       <p className="text-[11px] text-secondary dark:text-cream/70">
                         {editingProduct.audioUrl
                           ? 'هذه القطعة تحتوي على تسجيل صوتي موثق يظهر لكل الزوار.'
-                          : 'لم يتم تسجيل صوتك لهذه القطعة بعد. سجله الآن ليظهر لكل زوار المنصة.'}
+                          : 'لسه مسجلتش حكاية المنتج. سجّلها بصوتك عشان الناس تسمعها.'}
                       </p>
                     </div>
                   </div>
@@ -3448,18 +3483,18 @@ export const SellerDashboard: React.FC = () => {
                 </div>
               )}
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-black/10 dark:border-white/10">
+              <div className="flex flex-col-reverse items-stretch justify-end gap-2 border-t border-black/10 pt-3 dark:border-white/10 sm:flex-row sm:items-center sm:gap-3">
                 <button
                   type="button"
                   onClick={() => setIsProductModalOpen(false)}
-                  className="px-5 py-3 text-xs font-bold cursor-pointer"
+                  className="min-h-11 rounded-xl px-5 py-3 text-sm font-bold text-espresso transition-colors hover:bg-black/5 dark:text-cream dark:hover:bg-white/10 cursor-pointer sm:text-xs"
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting || isUploadingImages}
-                  className="px-7 py-3 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] text-xs font-bold rounded-2xl shadow-md cursor-pointer"
+                  className="min-h-11 rounded-xl bg-[#6B3A1F] px-7 py-3 text-sm font-bold text-[#FFF9EE] shadow-md transition-colors hover:bg-[#3B1E0E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-hover disabled:cursor-not-allowed disabled:opacity-60 dark:hover:bg-[#C99444] cursor-pointer sm:rounded-2xl sm:text-xs"
                 >
                   {isSubmitting ? 'جاري الحفظ...' : editingProduct ? 'حفظ التعديلات' : 'إرسال للمراجعة'}
                 </button>
@@ -3473,7 +3508,7 @@ export const SellerDashboard: React.FC = () => {
       {isPayoutModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <div className="bg-white/95 dark:bg-espresso-900/95 rounded-[2rem] border border-black/10 dark:border-white/10 max-w-md w-full p-6 space-y-4 shadow-2xl backdrop-blur-2xl">
-            <h2 className="font-black text-xl text-espresso dark:text-cream font-main">طلب سحب أرباح الورشة</h2>
+            <h2 className="font-black text-xl text-espresso dark:text-cream font-main">اطلب سحب أرباحك</h2>
             <form onSubmit={handlePayoutSubmit} className="space-y-3">
               <div>
                 <label className="block text-xs font-bold text-espresso dark:text-cream mb-1">المبلغ المطلوب (ج.م)</label>
@@ -3565,52 +3600,140 @@ export const SellerDashboard: React.FC = () => {
         isSellerMode={true}
       />
 
+      {layoutMode === 'compact-rail' && (
+        <nav
+          aria-label="تنقل سريع عائم للورشة"
+          className="fixed bottom-[calc(6.25rem+env(safe-area-inset-bottom))] left-1/2 z-40 flex max-w-[calc(100vw-1.5rem)] -translate-x-1/2 items-center gap-1 overflow-x-auto rounded-full border border-[#B47A35]/50 bg-[#211C17]/95 px-2 py-1.5 text-white shadow-2xl backdrop-blur-xl lg:hidden"
+        >
+          {mobileQuickTabs.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.id;
+
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => handleSelectTab(item.id)}
+                aria-label={mobileQuickTabLabels[item.id]}
+                aria-current={isActive ? 'page' : undefined}
+                title={mobileQuickTabLabels[item.id]}
+                className={`relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D7A75C] ${
+                  isActive ? 'bg-[#B47A35] text-white shadow-sm' : 'text-white/75 hover:bg-white/10 hover:text-white'
+                }`}
+              >
+                <Icon className="h-4 w-4" />
+                {typeof item.badge === 'number' && item.badge > 0 && (
+                  <span className="absolute right-1 top-1 h-2.5 w-2.5 rounded-full bg-amber-400 ring-2 ring-[#211C17]" />
+                )}
+              </button>
+            );
+          })}
+          <span aria-hidden="true" className="mx-0.5 h-5 w-px shrink-0 bg-white/20" />
+          <button
+            type="button"
+            onClick={() => setIsMobileNavOpen(true)}
+            aria-label="كل أقسام ورشتك"
+            aria-expanded={isMobileNavOpen}
+            aria-controls="seller-mobile-navigation"
+            title="كل الأقسام"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D7A75C]"
+          >
+            <Menu className="h-4 w-4" />
+          </button>
+        </nav>
+      )}
+
       {/* Mobile Navigation Drawer */}
       {isMobileNavOpen && (
-        <div className="fixed inset-0 z-50 flex lg:hidden bg-black/60 backdrop-blur-sm animate-in fade-in">
-          <div className="fixed inset-0" onClick={() => setIsMobileNavOpen(false)} />
-          <div className="relative mr-auto w-4/5 max-w-xs h-full bg-white/95 dark:bg-espresso-900/95 p-5 shadow-2xl flex flex-col gap-4 border-l border-black/10 dark:border-white/10 z-10 backdrop-blur-2xl overflow-y-auto">
+        <div className="fixed inset-0 z-[110] flex lg:hidden bg-black/60 backdrop-blur-sm animate-in fade-in">
+          <button
+            type="button"
+            aria-label="اقفل قائمة الأقسام"
+            onClick={() => setIsMobileNavOpen(false)}
+            className="fixed inset-0 cursor-default"
+          />
+          <div
+            id="seller-mobile-navigation"
+            role="dialog"
+            aria-modal="true"
+            aria-label="اختار هتشتغل على إيه"
+            className="relative mr-auto flex h-full w-[min(88vw,22rem)] flex-col gap-4 overflow-y-auto border-l border-black/10 bg-white/95 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-2xl backdrop-blur-2xl dark:border-white/10 dark:bg-espresso-900/95 z-10"
+          >
             <div className="flex items-center justify-between pb-3 border-b border-black/10 dark:border-white/10">
               <div className="flex items-center gap-2 font-bold text-sm text-espresso dark:text-cream">
                 <Store className="w-4 h-4 text-primary" />
-                <span>أقسام لوحة الورشة</span>
+                <span>اختار هتشتغل على إيه</span>
               </div>
               <button
                 type="button"
                 onClick={() => setIsMobileNavOpen(false)}
-                className="p-1 rounded-lg text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white cursor-pointer"
+                aria-label="اقفل قائمة الأقسام"
+                className="flex h-11 w-11 items-center justify-center rounded-xl text-black/50 transition-colors hover:bg-black/5 hover:text-black dark:text-white/60 dark:hover:bg-white/10 dark:hover:text-white cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="space-y-1 flex-1">
-              {allNavItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = activeTab === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => handleSelectTab(item.id)}
-                    className={`w-full p-3 rounded-xl flex items-center justify-between text-right text-xs font-bold transition-all cursor-pointer ${isActive
-                      ? 'bg-primary text-white shadow-xs'
-                      : 'text-espresso dark:text-cream hover:bg-primary/10 hover:text-primary'
-                      }`}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-primary'}`} />
-                      <span>{item.label}</span>
-                    </div>
-                    {item.badge !== undefined && (
-                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${isActive ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-950/50 text-amber-900 dark:text-amber-300'
-                        }`}>
-                        {item.badge}
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
+            <label className="relative block">
+              <Search className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-primary dark:text-primary-hover" />
+              <input
+                type="search"
+                value={navSearchQuery}
+                onChange={(e) => setNavSearchQuery(e.target.value)}
+                placeholder="دوّر على القسم اللي محتاجه..."
+                aria-label="دوّر على قسم"
+                className="min-h-11 w-full rounded-xl border border-black/10 bg-black/[0.03] py-2 pl-3 pr-10 text-sm text-espresso outline-none placeholder:text-black/40 focus:border-primary dark:border-white/10 dark:bg-white/[0.05] dark:text-cream dark:placeholder:text-white/40"
+              />
+            </label>
+
+            <div className="flex-1 space-y-5">
+              {filteredSections.length === 0 ? (
+                <p className="rounded-xl bg-black/[0.03] p-4 text-center text-sm text-black/60 dark:bg-white/[0.05] dark:text-white/60">
+                  ملقيناش القسم ده. جرّب كلمة تانية.
+                </p>
+              ) : filteredSections.map((section) => (
+                <section key={section.id} aria-label={section.title} className="space-y-1.5">
+                  <div className="px-2 text-[11px] font-black text-[#9A8D7E] dark:text-white/50">
+                    {section.title}
+                  </div>
+                  {section.items.map((item) => {
+                    const Icon = item.icon;
+                    const isActive = activeTab === item.id;
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => handleSelectTab(item.id)}
+                        aria-current={isActive ? 'page' : undefined}
+                        className={`flex min-h-12 w-full items-center justify-between rounded-xl p-3 text-right text-sm font-bold transition-all cursor-pointer ${
+                          isActive
+                            ? 'bg-primary text-white shadow-xs'
+                            : 'text-espresso hover:bg-primary/10 hover:text-primary dark:text-cream dark:hover:text-primary-hover'
+                        }`}
+                      >
+                        <div className="flex min-w-0 items-center gap-2.5">
+                          <Icon className={`h-4 w-4 shrink-0 ${isActive ? 'text-white' : 'text-primary dark:text-primary-hover'}`} />
+                          <span className="min-w-0">
+                            <span className="block truncate">{item.label}</span>
+                            {item.sublabel && (
+                              <span className={`mt-0.5 block truncate text-[10px] font-normal ${isActive ? 'text-white/75' : 'text-black/50 dark:text-white/50'}`}>
+                                {item.sublabel}
+                              </span>
+                            )}
+                          </span>
+                        </div>
+                        {item.badge !== undefined && (
+                          <span className={`mr-2 shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                            isActive ? 'bg-white/20 text-white' : 'bg-amber-100 text-amber-900 dark:bg-amber-950/50 dark:text-amber-300'
+                          }`}>
+                            {item.badge}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </section>
+              ))}
             </div>
           </div>
         </div>

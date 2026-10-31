@@ -325,7 +325,7 @@ export async function createProduct(
     rating: 0,
     reviewCount: 0,
     inStock: data.inStock ?? true,
-    stockCount: Number(data.stockCount) || 10,
+    stockCount: Number.isFinite(Number(data.stockCount)) ? Number(data.stockCount) : 10,
     images: data.images && data.images.length > 0 ? data.images : [],
     description: data.description?.trim() || '',
     specifications: {
@@ -335,7 +335,7 @@ export async function createProduct(
       dimensions: data.specifications?.dimensions || '',
       weight: data.specifications?.weight || '',
       careInstructions: data.specifications?.careInstructions || '',
-      estimatedMakingTime: data.specifications?.estimatedMakingTime || '٣ أيام'
+      estimatedMakingTime: data.specifications?.estimatedMakingTime || ''
     },
     tags: data.tags || ['تراث_صعيدي', 'يدوي', sellerGovernorate],
     isHandmade: data.isHandmade ?? true,

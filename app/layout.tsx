@@ -45,8 +45,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ar" dir="rtl">
+    <html lang="ar" dir="rtl" suppressHydrationWarning>
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try {
+              var savedTheme = localStorage.getItem('elsa3ed_theme');
+              if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                document.documentElement.setAttribute('data-theme', 'dark');
+              }
+            } catch (error) {
+              console.warn('[Theme] Could not restore the saved theme:', error);
+            }`,
+          }}
+        />
         <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
         <link rel="preload" as="image" href="https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png" type="image/png" />
@@ -118,6 +131,23 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-[#FFF9EE] dark:bg-[#1B1009] text-[#3B1E0E] dark:text-[#FFF9EE] antialiased selection:bg-[#C99444]/30 selection:text-[#3B1E0E] dark:selection:text-[#FFF9EE] font-cairo">
+        <div id="wah-initial-loader" role="status" aria-label="جاري تحميل وه">
+          <div className="wah-loader-content">
+            <div className="wah-loader-emblem">
+              <span className="wah-loader-orbit wah-loader-orbit-outer" aria-hidden="true" />
+              <span className="wah-loader-orbit wah-loader-orbit-inner" aria-hidden="true" />
+              <img src="/mascot/logo.png" alt="" width="112" height="112" fetchPriority="high" />
+              <span className="wah-loader-spark wah-loader-spark-one" aria-hidden="true" />
+              <span className="wah-loader-spark wah-loader-spark-two" aria-hidden="true" />
+            </div>
+            <p className="wah-loader-kicker">من قلب الصعيد</p>
+            <h1>بنحضرلك حكاية جديدة</h1>
+            <p className="wah-loader-caption">وه.. الحكاية ورا كل حاجة</p>
+            <div className="wah-loader-progress" aria-hidden="true">
+              <span />
+            </div>
+          </div>
+        </div>
         {children}
       </body>
     </html>

@@ -9,7 +9,7 @@ export const HomeMarketSection: React.FC = () => {
   return (
     <section
       style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 650px' }}
-      className="relative mx-auto max-w-[1600px] select-none overflow-hidden px-5 py-8 text-foreground sm:px-8 lg:px-12"
+      className="relative mx-auto max-w-[1600px] select-none overflow-hidden px-4 py-5 text-foreground sm:px-8 sm:py-8 lg:px-12"
     >
       <div
         className="pointer-events-none absolute inset-0 z-0 opacity-[0.04] mix-blend-screen"
@@ -24,23 +24,23 @@ export const HomeMarketSection: React.FC = () => {
         aria-hidden="true"
       />
 
-      <div className="relative z-10 mb-12 sm:mb-16">
-        <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
+      <div className="relative z-10 mb-6 sm:mb-16">
+        <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
           <div>
-            <div className="mb-6 flex items-center gap-3 text-[10px] font-black tracking-[0.28em] text-primary dark:text-primary-hover">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/10">
-                <ShoppingBasket size={14} className="text-accent" />
+            <div className="mb-3 flex items-center gap-2 text-[9px] font-black tracking-[0.2em] text-primary dark:text-primary-hover sm:mb-6 sm:gap-3 sm:text-[10px] sm:tracking-[0.28em]">
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-accent/10 sm:h-8 sm:w-8">
+                <ShoppingBasket size={13} className="text-accent sm:h-[14px] sm:w-[14px]" />
               </span>
               BEST SELLERS / الأكتر طلبًا وإقبالًا
             </div>
 
-            <h1 className="flex max-w-6xl flex-col items-start gap-2 text-4xl font-black leading-[0.95] tracking-tight xs:text-5xl sm:text-6xl md:text-7xl lg:text-7xl xl:text-[7.5rem]">
+            <h1 className="flex max-w-6xl flex-col items-start gap-1 text-3xl font-black leading-[0.95] tracking-tight xs:text-4xl sm:gap-2 sm:text-6xl md:text-7xl lg:text-7xl xl:text-[7.5rem]">
               <span>سوق</span>
               <span className="inline-flex items-center gap-3 sm:gap-5">
                 <span className="text-primary dark:text-primary-hover">وه</span>
-                <span className="relative inline-flex h-24 w-24 rotate-[-7deg] items-center justify-center transition-all duration-500 hover:rotate-0 hover:scale-110 sm:h-32 sm:w-32 lg:h-35 lg:w-32">
-                  <span className="absolute left-1/2 top-1 h-12 w-14 -translate-x-1/2 rounded-t-full border-[5px] border-b-0 border-[#704323] dark:border-[#D6A56B] sm:h-16 sm:w-20 sm:border-[7px]" />
-                  <span className="absolute bottom-4 left-2 right-2 h-14 overflow-hidden rounded-b-2xl border-[5px] border-[#704323] bg-gradient-to-br from-[#D6A56B] via-[#B77A45] to-[#80502E] shadow-[inset_0_3px_5px_#ffffff55,0_7px_0_#59351F,0_12px_15px_#00000030] sm:h-20 sm:border-[7px]">
+                <span className="relative inline-flex h-16 w-16 rotate-[-7deg] items-center justify-center transition-all duration-500 hover:rotate-0 hover:scale-110 sm:h-32 sm:w-32 lg:h-35 lg:w-32">
+                  <span className="absolute left-1/2 top-1 h-8 w-10 -translate-x-1/2 rounded-t-full border-[4px] border-b-0 border-[#704323] dark:border-[#D6A56B] sm:h-16 sm:w-20 sm:border-[7px]" />
+                  <span className="absolute bottom-2.5 left-1.5 right-1.5 h-10 overflow-hidden rounded-b-xl border-[4px] border-[#704323] bg-gradient-to-br from-[#D6A56B] via-[#B77A45] to-[#80502E] shadow-[inset_0_3px_5px_#ffffff55,0_7px_0_#59351F,0_12px_15px_#00000030] sm:bottom-4 sm:left-2 sm:right-2 sm:h-14 sm:rounded-b-2xl sm:border-[5px]">
                     <span className="absolute inset-0 grid grid-cols-4">
                       {[1, 2, 3, 4].map((item) => (
                         <span key={item} className="border-r-[3px] border-[#704323]/60" />
@@ -60,12 +60,12 @@ export const HomeMarketSection: React.FC = () => {
               </span>
             </h1>
 
-            <div className="mt-8 grid max-w-3xl items-start gap-6 sm:grid-cols-[80px_1fr]">
+            <div className="mt-4 grid max-w-3xl items-start gap-2 sm:mt-8 sm:gap-6 sm:grid-cols-[80px_1fr]">
               <div className="hidden sm:block">
                 <div className="text-[10px] font-black tracking-[0.2em] text-foreground-disabled">منتجات وه</div>
                 <div className="mt-3 h-px w-10 bg-accent" />
               </div>
-              <p className="max-w-2xl text-sm font-medium leading-7 text-foreground-secondary sm:text-base sm:leading-8">
+              <p className="max-w-2xl text-xs font-medium leading-6 text-foreground-secondary sm:text-base sm:leading-8">
                 حاجات ناس كتير جربوها وحبوها، وبتحكي عن تراث الصعيد وأصالته
               </p>
             </div>
@@ -85,7 +85,7 @@ export const HomeMarketSection: React.FC = () => {
       </div>
 
       <div className="relative z-10">
-        <ProductGrid limit={8} />
+        <ProductGrid limit={8} mobileLimit={4} compactCards />
       </div>
     </section>
   );

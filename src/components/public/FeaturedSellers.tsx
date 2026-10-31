@@ -3,7 +3,6 @@ import { useApp } from '../../context/AppContext';
 import { Star, MapPin, CheckCircle2, ArrowLeft, Sparkles } from 'lucide-react';
 import { motion } from 'motion/react';
 import { WAHBadge } from '../../design-system/WAHBadge';
-import { HeritageCornerStamp } from '../common/HeritageCornerStamp';
 
 export const FeaturedSellers: React.FC = () => {
   const { sellers, products, navigateToSeller, setActivePage } = useApp();
@@ -104,15 +103,12 @@ export const FeaturedSellers: React.FC = () => {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-              <div className="absolute top-3 right-3">
-                <WAHBadge variant="terracotta" size="sm" icon={<MapPin className="w-3 h-3 text-white" />}>
-                  محافظة {seller.governorate}
-                </WAHBadge>
-              </div>
-
-              {/* Heritage Hallmark Seal on Card "صناعة" */}
-              <HeritageCornerStamp position="top-left" size={30} badgeLabel="صنعة" className="z-10" />
-            </div>
+<div className="absolute top-3 right-3">
+  <div className="flex items-center gap-1.5 rounded-full bg-black/40 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-md border border-white/20 shadow-sm">
+    <MapPin className="w-3.5 h-3.5 text-primary-hover" />
+    <span>محافظة {seller.governorate}</span>
+  </div>
+</div>            </div>
 
             {/* Avatar & Content */}
             <div className="p-5 pt-0 flex-1 flex flex-col justify-between relative">

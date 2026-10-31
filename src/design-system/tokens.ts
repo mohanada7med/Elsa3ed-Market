@@ -9,6 +9,7 @@ export const WAH_TOKENS = {
     light: {
       // Core Brand & Palette
       primary: '#6B3A1F', // Medium Brown (Primary Buttons & UI)
+      primaryText: '#6B3A1F',
       primaryHover: '#3B1E0E', // Dark Brown
       primaryActive: '#26160D',
       primaryLight: 'rgba(107, 58, 31, 0.12)',
@@ -72,6 +73,7 @@ export const WAH_TOKENS = {
     dark: {
       // Core Brand & Palette
       primary: '#6B3A1F', // Medium Brown
+      primaryText: '#E0C79B',
       primaryHover: '#3B1E0E',
       primaryActive: '#4A2715',
       primaryLight: 'rgba(107, 58, 31, 0.25)',
@@ -99,13 +101,13 @@ export const WAH_TOKENS = {
       // Semantic Foregrounds / Typography (Legible warm tones)
       foreground: '#FFF9EE', // Cream / Off-white text
       foregroundSecondary: '#D6C6B1', // Secondary Neutral text
-      foregroundMuted: '#8C6F53', // Brown Gray muted text
-      foregroundDisabled: 'rgba(214, 198, 177, 0.40)',
+      foregroundMuted: '#C7B59D',
+      foregroundDisabled: 'rgba(214, 198, 177, 0.70)',
 
       // Legacy Aliases
       text: '#FFF9EE',
-      textMuted: '#8C6F53',
-      textSubtle: 'rgba(214, 198, 177, 0.40)',
+      textMuted: '#C7B59D',
+      textSubtle: 'rgba(214, 198, 177, 0.70)',
 
       // Semantic Borders
       border: '#6B3A1F', // Medium Brown borders

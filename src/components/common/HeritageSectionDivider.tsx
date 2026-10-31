@@ -2,87 +2,104 @@ import React from 'react';
 
 export interface HeritageSectionDividerProps {
   className?: string;
-  variant?: 'ribbon' | 'flanked' | 'dots';
-  opacity?: number;
+  variant?: 'diamond' | 'dots' | 'frame' | 'wave';
   label?: string;
 }
 
-/**
- * HeritageSectionDivider — Official WAH Section Divider
- * Uses authentic WAH pattern (pat1.svg) to create elegant transitions between sections
- * (المحافظات → الأماكن → الحكاوي → السوق)
- */
 export const HeritageSectionDivider: React.FC<HeritageSectionDividerProps> = ({
   className = '',
-  variant = 'flanked',
-  opacity = 0.65,
+  variant = 'diamond',
   label
 }) => {
-  if (variant === 'ribbon') {
+  // 1. تصميم الجوهرة المزخرفة (Diamond Medallion)
+  if (variant === 'diamond') {
     return (
-      <div
-        className={`w-full py-4 flex items-center justify-center overflow-hidden pointer-events-none select-none ${className}`}
-        style={{ opacity }}
-        aria-hidden="true"
-      >
-        <div
-          className="w-full max-w-[1400px] h-3 sm:h-3.5"
-          style={{
-            backgroundImage: "url('/pattern/pat1.svg')",
-            backgroundRepeat: 'repeat-x',
-            backgroundSize: '16px 100%',
-            maskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)',
-            WebkitMaskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)'
-          }}
-        />
+      <div className={`w-full my-3 sm:my-4 flex items-center justify-center gap-4 max-w-4xl mx-auto px-4 pointer-events-none select-none ${className}`} aria-hidden="true">
+        <div className="flex-1 h-px bg-[linear-gradient(90deg,transparent,#C99444)] opacity-50" />
+        
+        <div className="shrink-0 flex items-center gap-2.5 px-4 py-1 rounded-full border border-[#C99444]/40 bg-surface/90 shadow-sm backdrop-blur-sm">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#C99444]" />
+          <div className="w-2.5 h-2.5 rotate-45 bg-[#C99444] shadow-xs" />
+          {label && (
+            <span className="text-[10px] font-black tracking-[0.2em] text-primary dark:text-[#E0C79B] px-1">
+              {label}
+            </span>
+          )}
+          <div className="w-2.5 h-2.5 rotate-45 bg-[#C99444] shadow-xs" />
+          <span className="w-1.5 h-1.5 rounded-full bg-[#C99444]" />
+        </div>
+
+        <div className="flex-1 h-px bg-[linear-gradient(270deg,transparent,#C99444)] opacity-50" />
       </div>
     );
   }
 
-  // Flanked with center heritage icon / label
-  return (
-    <div
-      className={`w-full py-6 sm:py-8 flex items-center justify-center gap-4 max-w-[1500px] mx-auto px-6 overflow-hidden pointer-events-none select-none ${className}`}
-      aria-hidden="true"
-    >
-      {/* Right arm pattern */}
-      <div
-        className="flex-1 h-2.5 sm:h-3"
-        style={{
-          opacity,
-          backgroundImage: "url('/pattern/pat1.svg')",
-          backgroundRepeat: 'repeat-x',
-          backgroundSize: '15px 100%',
-          maskImage: 'linear-gradient(to left, black 40%, transparent)',
-          WebkitMaskImage: 'linear-gradient(to left, black 40%, transparent)'
-        }}
-      />
-
-      {/* Center Medallion */}
-      <div className="shrink-0 flex items-center gap-2 px-3 py-1 rounded-full border border-[#C99444]/30 bg-cream/80 dark:bg-espresso-900/80 shadow-xs backdrop-blur-xs">
-        <span className="w-1.5 h-1.5 rotate-45 bg-[#C99444] rounded-[1px]" />
-        {label ? (
-          <span className="text-[11px] font-bold text-[#6B3A1F] dark:text-[#E0C79B] tracking-wider px-1">
+  // 2. تصميم "النقاط المتتالية المتلاشية" (Faded Dots)
+  if (variant === 'dots') {
+    return (
+      <div className={`w-full my-3 sm:my-4 flex flex-col items-center justify-center gap-2 max-w-4xl mx-auto px-4 pointer-events-none select-none ${className}`} aria-hidden="true">
+        <div className="flex items-center gap-3 w-full justify-center">
+          <div className="flex-1 h-px bg-[linear-gradient(90deg,transparent,rgba(201,148,68,0.3))]" />
+          <div className="flex items-center gap-1.5">
+            <span className="w-1 h-1 rounded-full bg-[#C99444]/40" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#C99444]/70" />
+            <span className="w-2 h-2 rounded-full bg-[#C99444]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#C99444]/70" />
+            <span className="w-1 h-1 rounded-full bg-[#C99444]/40" />
+          </div>
+          <div className="flex-1 h-px bg-[linear-gradient(270deg,transparent,rgba(201,148,68,0.3))]" />
+        </div>
+        {label && (
+          <span className="text-[10px] font-bold tracking-widest text-primary dark:text-[#E0C79B]/80">
             {label}
           </span>
-        ) : (
-          <span className="w-2 h-2 rotate-45 border border-[#C99444] bg-[#6B3A1F]/20 rounded-[1px]" />
         )}
-        <span className="w-1.5 h-1.5 rotate-45 bg-[#C99444] rounded-[1px]" />
+      </div>
+    );
+  }
+
+  // 3. تصميم "الإطار المحفور الكلاسيكي" (Engraved Frame)
+  if (variant === 'frame') {
+    return (
+      <div className={`w-full my-3 sm:my-4 flex items-center justify-center gap-3 max-w-4xl mx-auto px-4 pointer-events-none select-none ${className}`} aria-hidden="true">
+        <div className="flex-1 h-[2px] bg-[linear-gradient(90deg,transparent,#C99444/60)] rounded-full" />
+        
+        <div className="shrink-0 px-5 py-1 rounded-lg border border-[#C99444]/30 bg-surface/60 backdrop-blur-xs flex items-center gap-2">
+          <span className="w-1 h-3 bg-[#C99444] rounded-xs" />
+          {label ? (
+            <span className="text-[10px] font-black tracking-widest text-primary dark:text-[#E0C79B]">
+              {label}
+            </span>
+          ) : (
+            <span className="text-[10px] text-[#C99444]">✦</span>
+          )}
+          <span className="w-1 h-3 bg-[#C99444] rounded-xs" />
+        </div>
+
+        <div className="flex-1 h-[2px] bg-[linear-gradient(270deg,transparent,#C99444/60)] rounded-full" />
+      </div>
+    );
+  }
+
+  // 4. تصميم "الموجة التراثية الهادئة" (افتراضي - Wave Motif)
+  return (
+    <div
+      className={`w-full my-3 sm:my-4 flex items-center justify-center gap-3 max-w-4xl mx-auto px-4 pointer-events-none select-none ${className}`}
+      aria-hidden="true"
+    >
+      <div className="flex-1 h-px bg-[linear-gradient(90deg,transparent,rgba(201,148,68,0.4))]" />
+
+      <div className="shrink-0 flex items-center gap-2 px-3.5 py-1 rounded-full border border-[#C99444]/25 bg-surface/80 shadow-xs">
+        <span className="text-xs text-[#C99444]">❖</span>
+        {label && (
+          <span className="text-[10px] font-black tracking-widest text-primary dark:text-[#E0C79B]">
+            {label}
+          </span>
+        )}
+        <span className="text-xs text-[#C99444]">❖</span>
       </div>
 
-      {/* Left arm pattern */}
-      <div
-        className="flex-1 h-2.5 sm:h-3"
-        style={{
-          opacity,
-          backgroundImage: "url('/pattern/pat1.svg')",
-          backgroundRepeat: 'repeat-x',
-          backgroundSize: '15px 100%',
-          maskImage: 'linear-gradient(to right, black 40%, transparent)',
-          WebkitMaskImage: 'linear-gradient(to right, black 40%, transparent)'
-        }}
-      />
+      <div className="flex-1 h-px bg-[linear-gradient(270deg,transparent,rgba(201,148,68,0.4))]" />
     </div>
   );
 };

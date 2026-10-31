@@ -19,7 +19,6 @@ import { WAHEmptyState } from '../../design-system/WAHEmptyState';
 import { PlaceEditorModal } from './PlaceEditorModal';
 import FloatingDock from '../common/FloatingDock';
 import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner';
-import { HeritageCornerStamp } from '../common/HeritageCornerStamp';
 
 const CATEGORY_MAP: Record<string, string[]> = {
   فرعوني: ['temple', 'tomb', 'pharaonic', 'فرعوني'],

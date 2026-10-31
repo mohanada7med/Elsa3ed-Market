@@ -54,7 +54,6 @@ import { ProductDetailsView } from './components/products/ProductDetailsView';
 import { CategoriesPage } from './components/pages/CategoriesPage';
 import { SellersDirectoryPage } from './components/pages/SellersDirectoryPage';
 import { FavoritesPage } from './components/pages/FavoritesPage';
-import { AboutSection } from './components/public/AboutSection';
 import { CartPage } from './components/pages/CartPage';
 import { ForbiddenPage } from './components/pages/ForbiddenPage';
 import { NotFoundPage } from './components/pages/NotFoundPage';
@@ -651,12 +650,7 @@ const MainContent: React.FC = () => {
 
               {activePage === 'reset-password' && <ResetPasswordPage />}
 
-              {activePage === 'about' && (
-                <div className="py-8">
-                  <AboutSection />
-                </div>
-              )}
-
+              
               {activePage === 'wholesale' && (
                 <React.Suspense fallback={<LazySectionFallback />}>
                   <WholesalePage />
@@ -747,6 +741,10 @@ const MainContent: React.FC = () => {
 };
 
 export function App() {
+  useEffect(() => {
+    document.documentElement.classList.add('app-ready');
+  }, []);
+
   return (
     <ErrorBoundary>
       <AppProvider>

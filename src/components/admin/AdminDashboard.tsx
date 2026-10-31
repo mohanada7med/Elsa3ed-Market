@@ -1704,14 +1704,14 @@ export const AdminDashboard: React.FC = () => {
             {/* Layout Mode Switcher */}
             <div
               id="admin-layout-switcher"
-              className="flex items-center bg-background-secondary border border-border-subtle rounded-xl p-1 gap-1"
+              className="flex w-full sm:w-auto items-center justify-between sm:justify-start bg-background-secondary border border-border-subtle rounded-xl p-1 gap-1"
               title="تغيير مظهر وعرض لوحة الإدارة"
             >
               <button
                 type="button"
                 id="admin-layout-sidebar-btn"
                 onClick={() => handleLayoutChange('sidebar')}
-                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${layoutMode === 'sidebar'
+                className={`min-h-10 min-w-10 flex-1 sm:flex-none justify-center px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${layoutMode === 'sidebar'
                   ? 'bg-surface text-primary dark:text-accent shadow-sm'
                   : 'text-foreground-secondary hover:text-primary dark:hover:text-accent hover:bg-surface'
                   }`}
@@ -1719,13 +1719,14 @@ export const AdminDashboard: React.FC = () => {
               >
                 <PanelLeft className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">شريط جانبي</span>
+                <span className="sm:hidden">جانبي</span>
               </button>
 
               <button
                 type="button"
                 id="admin-layout-rail-btn"
                 onClick={() => handleLayoutChange('compact-rail')}
-                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${layoutMode === 'compact-rail'
+                className={`min-h-10 min-w-10 flex-1 sm:flex-none justify-center px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${layoutMode === 'compact-rail'
                   ? 'bg-surface text-primary dark:text-accent shadow-sm'
                   : 'text-foreground-secondary hover:text-primary dark:hover:text-accent hover:bg-surface'
                   }`}
@@ -1733,13 +1734,14 @@ export const AdminDashboard: React.FC = () => {
               >
                 <Columns2 className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">شريط رفيع</span>
+                <span className="sm:hidden">رفيع</span>
               </button>
 
               <button
                 type="button"
                 id="admin-layout-hub-btn"
                 onClick={() => handleLayoutChange('full-hub')}
-                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${layoutMode === 'full-hub'
+                className={`min-h-10 min-w-10 flex-1 sm:flex-none justify-center px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${layoutMode === 'full-hub'
                   ? 'bg-surface text-primary dark:text-accent shadow-sm'
                   : 'text-foreground-secondary hover:text-primary dark:hover:text-accent hover:bg-surface'
                   }`}
@@ -1747,13 +1749,14 @@ export const AdminDashboard: React.FC = () => {
               >
                 <StretchHorizontal className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">تبويب عريض</span>
+                <span className="sm:hidden">عريض</span>
               </button>
 
               <button
                 type="button"
                 id="admin-layout-bento-btn"
                 onClick={() => handleLayoutChange('bento')}
-                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${layoutMode === 'bento'
+                className={`min-h-10 min-w-10 flex-1 sm:flex-none justify-center px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${layoutMode === 'bento'
                   ? 'bg-surface text-primary dark:text-accent shadow-sm'
                   : 'text-foreground-secondary hover:text-primary dark:hover:text-accent hover:bg-surface'
                   }`}
@@ -1761,6 +1764,7 @@ export const AdminDashboard: React.FC = () => {
               >
                 <LayoutGrid className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">بطاقات Bento</span>
+                <span className="sm:hidden">بطاقات</span>
               </button>
             </div>
 
@@ -1886,7 +1890,7 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Fast Swipeable Pills for Top Tools */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar -mx-1 px-1">
+        <div className="flex snap-x snap-mandatory items-center gap-2 overflow-x-auto pb-1 no-scrollbar -mx-1 px-1">
           {quickPillTabs.map((item) => {
             const isActive = activeTab === item.id;
             const Icon = item.icon;
@@ -1895,7 +1899,7 @@ export const AdminDashboard: React.FC = () => {
                 key={item.id}
                 type="button"
                 onClick={() => handleSelectTab(item.id)}
-                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer ${isActive
+                className={`min-h-11 snap-start px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer ${isActive
                   ? 'bg-primary text-white shadow-md shadow-primary/25'
                   : 'bg-background text-foreground hover:bg-primary/10 border border-border-subtle'
                   }`}
@@ -1931,7 +1935,7 @@ export const AdminDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsMobileNavOpen(false)}
-                className="w-8 h-8 rounded-xl bg-black/5 dark:bg-cream/5 hover:bg-black/10 text-gray-500 flex items-center justify-center cursor-pointer transition-colors"
+                className="h-10 w-10 rounded-xl bg-black/5 dark:bg-cream/5 hover:bg-black/10 text-gray-500 flex items-center justify-center cursor-pointer transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -1973,7 +1977,7 @@ export const AdminDashboard: React.FC = () => {
                               setIsMobileNavOpen(false);
                               if (item.action) item.action();
                             }}
-                            className="w-full p-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between text-right bg-warning/10 text-warning border border-warning/30 cursor-pointer"
+                            className="min-h-12 w-full p-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between text-right bg-warning/10 text-warning border border-warning/30 cursor-pointer"
                           >
                             <div className="flex items-center gap-2.5 min-w-0">
                               <Icon className="w-4 h-4 text-amber-600 shrink-0" />
@@ -1995,7 +1999,7 @@ export const AdminDashboard: React.FC = () => {
                           type="button"
                           id={item.elementId}
                           onClick={() => handleSelectTab(item.id as typeof activeTab)}
-                          className={`w-full p-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between text-right cursor-pointer ${isActive
+                          className={`min-h-12 w-full p-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between text-right cursor-pointer ${isActive
                             ? 'bg-primary text-white shadow-md'
                             : 'bg-transparent hover:bg-primary/10 text-foreground'
                             }`}
@@ -4949,7 +4953,7 @@ export const AdminDashboard: React.FC = () => {
                       id="admin-users-role-filter"
                       value={userRoleFilter}
                       onChange={(e) => setUserRoleFilter(e.target.value)}
-                      className="bg-transparent text-xs font-medium outline-none py-1.5 cursor-pointer text-foreground"
+                      className="bg-transparent text-xs font-medium outline-none py-1.5 cursor-pointer text-foreground dark:[color-scheme:dark]"
                     >
                       <option value="all">كل الأدوار</option>
                       <option value="buyer">المشترين</option>
@@ -4964,7 +4968,7 @@ export const AdminDashboard: React.FC = () => {
                       id="admin-users-status-filter"
                       value={userStatusFilter}
                       onChange={(e) => setUserStatusFilter(e.target.value)}
-                      className="bg-transparent text-xs font-medium outline-none py-1.5 cursor-pointer text-foreground"
+                      className="bg-transparent text-xs font-medium outline-none py-1.5 cursor-pointer text-foreground dark:[color-scheme:dark]"
                     >
                       <option value="all">كل الحالات</option>
                       <option value="active">الحسابات الشغالة بس</option>
@@ -4978,7 +4982,7 @@ export const AdminDashboard: React.FC = () => {
                       id="admin-users-gov-filter"
                       value={userGovernorateFilter}
                       onChange={(e) => setUserGovernorateFilter(e.target.value)}
-                      className="bg-transparent text-xs font-medium outline-none py-1.5 cursor-pointer text-foreground"
+                      className="bg-transparent text-xs font-medium outline-none py-1.5 cursor-pointer text-foreground dark:[color-scheme:dark]"
                     >
                       <option value="all">كل المحافظات</option>
                       <option value="قنا">قنا</option>
@@ -5023,7 +5027,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
 
               {/* Users Table */}
-              <div className="bg-surface backdrop-blur-xl rounded-2xl border border-border shadow-sm overflow-hidden text-foreground">
+              <div className="hidden bg-surface backdrop-blur-xl rounded-2xl border border-border shadow-sm overflow-hidden text-foreground sm:block">
                 <div className="wah-table-container overflow-x-auto">
                   <table className="w-full text-right text-xs">
                     <thead className="bg-background-secondary border-b border-border text-foreground-secondary">
@@ -5075,7 +5079,7 @@ export const AdminDashboard: React.FC = () => {
                                     <div className="flex items-center gap-1.5">
                                       <span className="font-bold text-foreground truncate">{u.name}</span>
                                       {isCurrentAdmin && (
-                                        <span className="bg-amber-100 text-primary dark:text-primary-hover text-[9px] font-bold px-1.5 py-0.2 rounded-full">
+                                        <span className="bg-amber-100 text-primary dark:bg-amber-950/60 dark:text-amber-300 text-[9px] font-bold px-1.5 py-0.2 rounded-full">
                                           أنت
                                         </span>
                                       )}
@@ -5124,7 +5128,7 @@ export const AdminDashboard: React.FC = () => {
                                     title="تفاصيل الحساب"
                                     className="p-2 bg-black/5 dark:bg-cream/5 hover:bg-black/10 dark:hover:bg-white/10 text-foreground border border-border rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
                                   >
-                                    <Eye className="w-3.5 h-3.5 text-gray-600" />
+                                    <Eye className="w-3.5 h-3.5 text-gray-600 dark:text-cream" />
                                     <span className="hidden xl:inline">تفاصيل</span>
                                   </button>
 
@@ -5134,9 +5138,9 @@ export const AdminDashboard: React.FC = () => {
                                     id={`edit-user-${u.id}`}
                                     onClick={() => handleOpenEditUser(u)}
                                     title="تعديل الحساب"
-                                    className="p-2 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                                    className="p-2 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 dark:bg-blue-950/50 dark:hover:bg-blue-900/60 dark:text-blue-300 dark:border-blue-900 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
                                   >
-                                    <Edit2 className="w-3.5 h-3.5 text-blue-600" />
+                                    <Edit2 className="w-3.5 h-3.5 text-blue-600 dark:text-blue-300" />
                                     <span className="hidden xl:inline">تعديل</span>
                                   </button>
 
@@ -5146,9 +5150,9 @@ export const AdminDashboard: React.FC = () => {
                                     id={`reset-pwd-${u.id}`}
                                     onClick={() => handleOpenResetPassword(u)}
                                     title="تغيير كلمة السر"
-                                    className="p-2 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                                    className="p-2 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 dark:bg-amber-950/50 dark:hover:bg-amber-900/60 dark:text-amber-300 dark:border-amber-900 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
                                   >
-                                    <Key className="w-3.5 h-3.5 text-amber-600" />
+                                    <Key className="w-3.5 h-3.5 text-amber-600 dark:text-amber-300" />
                                     <span className="hidden xl:inline">الباسورد</span>
                                   </button>
 
@@ -5161,8 +5165,8 @@ export const AdminDashboard: React.FC = () => {
                                       disabled={isTogglingStatus === u.id}
                                       title={isSuspended ? 'تفعيل الحساب' : 'وقف الحساب مؤقتاً'}
                                       className={`p-2 border rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${isSuspended
-                                        ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200'
-                                        : 'bg-orange-50 hover:bg-orange-100 text-orange-700 border-orange-200'
+                                        ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:hover:bg-emerald-900/60 dark:text-emerald-300 dark:border-emerald-900'
+                                        : 'bg-orange-50 hover:bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-950/50 dark:hover:bg-orange-900/60 dark:text-orange-300 dark:border-orange-900'
                                         }`}
                                     >
                                       {isTogglingStatus === u.id ? (
@@ -5180,7 +5184,7 @@ export const AdminDashboard: React.FC = () => {
                                   {isCurrentAdmin ? (
                                     <span
                                       title="حسابك الشخصي (ما ينفعش تحذف نفسك)"
-                                      className="p-2 bg-gray-100 text-gray-400 border border-gray-200 rounded-xl text-xs font-bold cursor-not-allowed"
+                                      className="p-2 bg-gray-100 text-gray-400 border border-gray-200 dark:bg-surface-subtle dark:text-foreground-muted dark:border-border rounded-xl text-xs font-bold cursor-not-allowed"
                                     >
                                       <Lock className="w-3.5 h-3.5" />
                                     </span>
@@ -5190,7 +5194,7 @@ export const AdminDashboard: React.FC = () => {
                                       id={`delete-user-${u.id}`}
                                       onClick={() => setSelectedUserForDelete(u)}
                                       title="حذف الحساب نهائياً"
-                                      className="p-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                                      className="p-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 dark:bg-rose-950/50 dark:hover:bg-rose-900/60 dark:text-rose-300 dark:border-rose-900 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
                                     >
                                       <Trash2 className="w-3.5 h-3.5" />
                                       <span className="hidden xl:inline">حذف</span>
@@ -5205,6 +5209,150 @@ export const AdminDashboard: React.FC = () => {
                     </tbody>
                   </table>
                 </div>
+              </div>
+
+              <div className="space-y-3 pb-24 sm:hidden">
+                {isLoadingUsers ? (
+                  <div className="rounded-2xl border border-border bg-surface p-8 text-center text-sm text-foreground-secondary">
+                    <RefreshCw className="mx-auto mb-2 h-6 w-6 animate-spin text-primary dark:text-accent" />
+                    بنحمّل بيانات المستخدمين...
+                  </div>
+                ) : adminUsers.length === 0 ? (
+                  <div className="rounded-2xl border border-border bg-surface p-8 text-center text-sm text-foreground-secondary">
+                    مفيش حسابات متطابقة مع البحث والفلتر.
+                  </div>
+                ) : (
+                  adminUsers.map((u) => {
+                    const isCurrentAdmin = currentUser.id === u.id;
+                    const isSuspended = u.status === 'suspended' || u.status === 'blocked';
+
+                    return (
+                      <article key={u.id} className="space-y-3 rounded-2xl border border-border bg-surface p-3.5 shadow-sm">
+                        <div className="flex min-w-0 items-center gap-3">
+                          <div className="relative shrink-0">
+                            <img
+                              src={u.profileImage?.secureUrl || u.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1788710904/user.jpg'}
+                              alt={u.name}
+                              className="h-12 w-12 rounded-xl border border-border object-cover"
+                            />
+                            <span
+                              className={`absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-surface ${isSuspended ? 'bg-rose-500' : 'bg-emerald-500'}`}
+                              title={isSuspended ? 'حساب متوقف' : 'حساب شغال'}
+                            />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex min-w-0 items-center gap-1.5">
+                              <h3 className="truncate text-sm font-bold text-foreground">{u.name}</h3>
+                              {isCurrentAdmin && (
+                                <span className="shrink-0 rounded-full bg-amber-100 px-1.5 py-0.5 text-[9px] font-bold text-primary dark:bg-amber-950/60 dark:text-amber-300">
+                                  أنت
+                                </span>
+                              )}
+                            </div>
+                            <p className="truncate text-[11px] text-foreground-secondary" dir="ltr">
+                              {u.username ? `@${u.username}` : 'من غير اسم مستخدم'}
+                            </p>
+                            {u.email && (
+                              <p className="truncate text-[10px] text-foreground-muted" dir="ltr">{u.email}</p>
+                            )}
+                          </div>
+                          <span className={`shrink-0 rounded-full border px-2 py-1 text-[10px] font-bold ${
+                            isSuspended
+                              ? 'border-rose-200 bg-rose-100 text-rose-800 dark:border-rose-800 dark:bg-rose-950/60 dark:text-rose-300'
+                              : 'border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
+                          }`}>
+                            {isSuspended ? 'متوقف' : 'شغال'}
+                          </span>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className={`rounded-full border px-2.5 py-1 text-[10px] font-bold ${
+                            u.role === 'admin'
+                              ? 'border-purple-200 bg-purple-100 text-purple-800 dark:border-purple-800 dark:bg-purple-950/60 dark:text-purple-300'
+                              : u.role === 'seller'
+                                ? 'border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-800 dark:bg-amber-950/60 dark:text-amber-300'
+                                : 'border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-800 dark:bg-blue-950/60 dark:text-blue-300'
+                          }`}>
+                            {u.role === 'admin' ? 'مسؤول منصة' : u.role === 'seller' ? 'ورشة وصنايعي' : 'مشتري موثق'}
+                          </span>
+                          <span className="text-[11px] text-foreground-secondary">{u.governorate || 'المحافظة غير محددة'}</span>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 rounded-xl bg-background-secondary p-2.5 text-[11px]">
+                          <div className="min-w-0">
+                            <span className="mb-0.5 block text-foreground-muted">الموبايل</span>
+                            <span className="block truncate font-mono text-foreground" dir="ltr">{u.phone || '---'}</span>
+                          </div>
+                          <div className="min-w-0">
+                            <span className="mb-0.5 block text-foreground-muted">تاريخ الانضمام</span>
+                            <span className="block truncate text-foreground">
+                              {u.createdAt ? new Date(u.createdAt).toLocaleDateString('ar-EG') : '---'}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-2 border-t border-border-subtle pt-3">
+                          <button
+                            type="button"
+                            onClick={() => openUserDetails(u.id)}
+                            className="flex min-h-11 items-center justify-center gap-1.5 rounded-xl border border-border bg-background text-xs font-bold text-foreground transition-colors hover:bg-surface-hover"
+                          >
+                            <Eye className="h-4 w-4" />
+                            تفاصيل
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleOpenEditUser(u)}
+                            className="flex min-h-11 items-center justify-center gap-1.5 rounded-xl border border-blue-200 bg-blue-50 text-xs font-bold text-blue-700 transition-colors hover:bg-blue-100 dark:border-blue-900 dark:bg-blue-950/50 dark:text-blue-300 dark:hover:bg-blue-900/60"
+                          >
+                            <Edit2 className="h-4 w-4" />
+                            تعديل
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleOpenResetPassword(u)}
+                            className="flex min-h-11 items-center justify-center gap-1.5 rounded-xl border border-amber-200 bg-amber-50 text-xs font-bold text-amber-700 transition-colors hover:bg-amber-100 dark:border-amber-900 dark:bg-amber-950/50 dark:text-amber-300 dark:hover:bg-amber-900/60"
+                          >
+                            <Key className="h-4 w-4" />
+                            كلمة السر
+                          </button>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          {isCurrentAdmin ? (
+                            <span className="flex min-h-11 items-center justify-center gap-1.5 rounded-xl border border-border bg-surface-subtle text-xs font-bold text-foreground-muted">
+                              <Lock className="h-4 w-4" />
+                              حسابك
+                            </span>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => handleToggleUserStatus(u)}
+                              disabled={isTogglingStatus === u.id}
+                              className={`flex min-h-11 items-center justify-center gap-1.5 rounded-xl border text-xs font-bold transition-colors disabled:opacity-50 ${
+                                isSuspended
+                                  ? 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-900 dark:bg-emerald-950/50 dark:text-emerald-300 dark:hover:bg-emerald-900/60'
+                                  : 'border-orange-200 bg-orange-50 text-orange-700 hover:bg-orange-100 dark:border-orange-900 dark:bg-orange-950/50 dark:text-orange-300 dark:hover:bg-orange-900/60'
+                              }`}
+                            >
+                              {isTogglingStatus === u.id ? <RefreshCw className="h-4 w-4 animate-spin" /> : isSuspended ? <UserCheck className="h-4 w-4" /> : <UserX className="h-4 w-4" />}
+                              {isSuspended ? 'تفعيل الحساب' : 'إيقاف الحساب'}
+                            </button>
+                          )}
+                          {!isCurrentAdmin && (
+                            <button
+                              type="button"
+                              onClick={() => setSelectedUserForDelete(u)}
+                              className="flex min-h-11 items-center justify-center gap-1.5 rounded-xl border border-rose-200 bg-rose-50 text-xs font-bold text-rose-700 transition-colors hover:bg-rose-100 dark:border-rose-900 dark:bg-rose-950/50 dark:text-rose-300 dark:hover:bg-rose-900/60"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                              حذف الحساب
+                            </button>
+                          )}
+                        </div>
+                      </article>
+                    );
+                  })
+                )}
               </div>
             </div>
           )}
@@ -6012,13 +6160,13 @@ export const AdminDashboard: React.FC = () => {
           <div className="bg-surface backdrop-blur-2xl rounded-[2rem] border border-border max-w-lg w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto text-foreground">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h3 className="font-bold text-base text-foreground flex items-center gap-2">
-                <Edit2 className="w-5 h-5 text-blue-600" />
+                <Edit2 className="w-5 h-5 text-blue-600 dark:text-blue-300" />
                 <span>تعديل بيانات حساب: {selectedUserForEdit.name}</span>
               </h3>
               <button
                 type="button"
                 onClick={() => setSelectedUserForEdit(null)}
-                className="p-1 rounded-lg text-gray-400 hover:text-gray-600 cursor-pointer"
+                className="p-1 rounded-lg text-gray-400 hover:text-gray-600 dark:text-foreground-secondary dark:hover:text-foreground cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -6033,7 +6181,7 @@ export const AdminDashboard: React.FC = () => {
                     required
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
-                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl outline-none focus:border-primary"
+                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-foreground placeholder:text-foreground-muted outline-none focus:border-primary"
                   />
                 </div>
                 <div>
@@ -6043,7 +6191,7 @@ export const AdminDashboard: React.FC = () => {
                     required
                     value={editUsername}
                     onChange={(e) => setEditUsername(e.target.value)}
-                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl outline-none focus:border-primary font-mono text-left"
+                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-foreground placeholder:text-foreground-muted outline-none focus:border-primary font-mono text-left"
                     dir="ltr"
                   />
                 </div>
@@ -6057,7 +6205,7 @@ export const AdminDashboard: React.FC = () => {
                     required
                     value={editPhone}
                     onChange={(e) => setEditPhone(e.target.value)}
-                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl outline-none focus:border-primary font-mono text-left"
+                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-foreground placeholder:text-foreground-muted outline-none focus:border-primary font-mono text-left"
                     dir="ltr"
                   />
                 </div>
@@ -6067,7 +6215,7 @@ export const AdminDashboard: React.FC = () => {
                     type="email"
                     value={editEmail}
                     onChange={(e) => setEditEmail(e.target.value)}
-                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl outline-none focus:border-primary text-left"
+                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-foreground placeholder:text-foreground-muted outline-none focus:border-primary text-left"
                     dir="ltr"
                   />
                 </div>
@@ -6080,7 +6228,7 @@ export const AdminDashboard: React.FC = () => {
                     value={editRole}
                     disabled={currentUser.id === selectedUserForEdit.id}
                     onChange={(e) => setEditRole(e.target.value as any)}
-                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl outline-none focus:border-primary font-bold"
+                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-foreground outline-none focus:border-primary font-bold dark:[color-scheme:dark]"
                   >
                     <option value="buyer">مشتري</option>
                     <option value="seller">ورشة وصنايعي</option>
@@ -6093,7 +6241,7 @@ export const AdminDashboard: React.FC = () => {
                     value={editStatus}
                     disabled={currentUser.id === selectedUserForEdit.id}
                     onChange={(e) => setEditStatus(e.target.value as any)}
-                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl outline-none focus:border-primary font-bold"
+                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-foreground outline-none focus:border-primary font-bold dark:[color-scheme:dark]"
                   >
                     <option value="active">شغال (نشط)</option>
                     <option value="suspended">متوقف مؤقتاً</option>
@@ -6104,7 +6252,7 @@ export const AdminDashboard: React.FC = () => {
                   <select
                     value={editGovernorate}
                     onChange={(e) => setEditGovernorate(e.target.value)}
-                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl outline-none focus:border-primary"
+                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-foreground outline-none focus:border-primary dark:[color-scheme:dark]"
                   >
                     <option value="قنا">قنا</option>
                     <option value="سوهاج">سوهاج</option>
@@ -6122,27 +6270,27 @@ export const AdminDashboard: React.FC = () => {
               </div>
 
               {editRole === 'seller' && (
-                <div className="p-3.5 bg-amber-50 rounded-2xl border border-amber-200 space-y-3">
-                  <span className="font-bold text-amber-900 block">بيانات ورشة الصنايعي:</span>
+                <div className="p-3.5 bg-amber-50 dark:bg-amber-950/40 rounded-2xl border border-amber-200 dark:border-amber-800 space-y-3">
+                  <span className="font-bold text-amber-900 dark:text-amber-200 block">بيانات ورشة الصنايعي:</span>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[11px] font-bold text-amber-950 mb-1">اسم الورشة أو البراند *</label>
+                      <label className="block text-[11px] font-bold text-amber-950 dark:text-amber-200 mb-1">اسم الورشة أو البراند *</label>
                       <input
                         type="text"
                         value={editWorkshopName}
                         onChange={(e) => setEditWorkshopName(e.target.value)}
                         placeholder="مثال: ورشة الفخار الأصيل"
-                        className="w-full p-2 bg-white border border-amber-200 rounded-xl outline-none"
+                        className="w-full p-2 bg-white dark:bg-background text-foreground placeholder:text-foreground-muted border border-amber-200 dark:border-amber-800 rounded-xl outline-none"
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] font-bold text-amber-950 mb-1">تخصص الصنعة</label>
+                      <label className="block text-[11px] font-bold text-amber-950 dark:text-amber-200 mb-1">تخصص الصنعة</label>
                       <input
                         type="text"
                         value={editSpecialty}
                         onChange={(e) => setEditSpecialty(e.target.value)}
                         placeholder="مثال: الفخار والجريد"
-                        className="w-full p-2 bg-white border border-amber-200 rounded-xl outline-none"
+                        className="w-full p-2 bg-white dark:bg-background text-foreground placeholder:text-foreground-muted border border-amber-200 dark:border-amber-800 rounded-xl outline-none"
                       />
                     </div>
                   </div>
@@ -6154,7 +6302,7 @@ export const AdminDashboard: React.FC = () => {
                   type="button"
                   onClick={() => setSelectedUserForEdit(null)}
                   disabled={isUpdatingUser}
-                  className="px-4 py-2 text-xs font-bold text-black/60 dark:text-white/60 hover:bg-gray-100 rounded-xl cursor-pointer"
+                  className="px-4 py-2 text-xs font-bold text-foreground-secondary hover:bg-surface-hover rounded-xl cursor-pointer"
                 >
                   إلغاء
                 </button>
@@ -6194,16 +6342,16 @@ export const AdminDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setSelectedUserForResetPassword(null)}
-                className="p-1 rounded-lg text-gray-400 hover:text-gray-600 cursor-pointer"
+                className="p-1 rounded-lg text-gray-400 hover:text-gray-600 dark:text-foreground-secondary dark:hover:text-foreground cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="p-3 bg-black/5 dark:bg-cream/5 rounded-xl border border-border text-xs">
-              <span className="text-gray-500 block mb-0.5">الحساب المطلوب:</span>
+              <span className="text-foreground-secondary block mb-0.5">الحساب المطلوب:</span>
               <span className="font-bold text-foreground">{selectedUserForResetPassword.name}</span>
-              <span className="text-gray-500 font-mono text-[11px] block">@{selectedUserForResetPassword.username}</span>
+              <span className="text-foreground-secondary font-mono text-[11px] block">@{selectedUserForResetPassword.username}</span>
             </div>
 
             <form onSubmit={handleConfirmResetPassword} className="space-y-3 text-xs">
@@ -6215,7 +6363,7 @@ export const AdminDashboard: React.FC = () => {
                   value={newPasswordInput}
                   onChange={(e) => setNewPasswordInput(e.target.value)}
                   placeholder="اكتب الباسورد الجديد هنا..."
-                  className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl outline-none focus:border-primary font-mono text-left"
+                  className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-foreground placeholder:text-foreground-muted outline-none focus:border-primary font-mono text-left"
                   dir="ltr"
                 />
               </div>
@@ -6238,7 +6386,7 @@ export const AdminDashboard: React.FC = () => {
                   type="button"
                   onClick={() => setSelectedUserForResetPassword(null)}
                   disabled={isResettingPassword}
-                  className="px-4 py-2 text-xs font-bold text-black/60 dark:text-white/60 hover:bg-gray-100 rounded-xl cursor-pointer"
+                  className="px-4 py-2 text-xs font-bold text-foreground-secondary hover:bg-surface-hover rounded-xl cursor-pointer"
                 >
                   إلغاء
                 </button>
@@ -6293,7 +6441,7 @@ export const AdminDashboard: React.FC = () => {
                     onClick={() => setNewUserRole('buyer')}
                     className={`py-2 px-3 rounded-xl font-bold border transition-all text-center cursor-pointer ${newUserRole === 'buyer'
                       ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
-                      : 'bg-black/5 dark:bg-cream/5 text-black/60 dark:text-white/60 border-border'
+                      : 'bg-black/5 dark:bg-cream/5 text-foreground-secondary border-border'
                       }`}
                   >
                     مشتري موثق
@@ -6303,7 +6451,7 @@ export const AdminDashboard: React.FC = () => {
                     onClick={() => setNewUserRole('seller')}
                     className={`py-2 px-3 rounded-xl font-bold border transition-all text-center cursor-pointer ${newUserRole === 'seller'
                       ? 'bg-amber-600 text-white border-amber-600 shadow-xs'
-                      : 'bg-black/5 dark:bg-cream/5 text-black/60 dark:text-white/60 border-border'
+                      : 'bg-black/5 dark:bg-cream/5 text-foreground-secondary border-border'
                       }`}
                   >
                     ورشة وصنايعي
@@ -6313,7 +6461,7 @@ export const AdminDashboard: React.FC = () => {
                     onClick={() => setNewUserRole('admin')}
                     className={`py-2 px-3 rounded-xl font-bold border transition-all text-center cursor-pointer ${newUserRole === 'admin'
                       ? 'bg-purple-600 text-white border-purple-600 shadow-xs'
-                      : 'bg-black/5 dark:bg-cream/5 text-black/60 dark:text-white/60 border-border'
+                      : 'bg-black/5 dark:bg-cream/5 text-foreground-secondary border-border'
                       }`}
                   >
                     مسؤول منصة
@@ -6330,7 +6478,7 @@ export const AdminDashboard: React.FC = () => {
                     value={newUserName}
                     onChange={(e) => setNewUserName(e.target.value)}
                     placeholder="مثال: أحمد عبد الله"
-                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl outline-none focus:border-primary"
+                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-foreground placeholder:text-foreground-muted outline-none focus:border-primary"
                   />
                 </div>
                 <div>
@@ -6341,7 +6489,7 @@ export const AdminDashboard: React.FC = () => {
                     value={newUserUsername}
                     onChange={(e) => setNewUserUsername(e.target.value)}
                     placeholder="ahmed_abdallah"
-                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl outline-none focus:border-primary font-mono text-left"
+                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-foreground placeholder:text-foreground-muted outline-none focus:border-primary font-mono text-left"
                     dir="ltr"
                   />
                 </div>
@@ -6356,7 +6504,7 @@ export const AdminDashboard: React.FC = () => {
                     value={newUserPhone}
                     onChange={(e) => setNewUserPhone(e.target.value)}
                     placeholder="01012345678"
-                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl outline-none focus:border-primary font-mono text-left"
+                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-foreground placeholder:text-foreground-muted outline-none focus:border-primary font-mono text-left"
                     dir="ltr"
                   />
                 </div>
@@ -6367,7 +6515,7 @@ export const AdminDashboard: React.FC = () => {
                     value={newUserEmail}
                     onChange={(e) => setNewUserEmail(e.target.value)}
                     placeholder="user@example.com"
-                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl outline-none focus:border-primary text-left"
+                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-foreground placeholder:text-foreground-muted outline-none focus:border-primary text-left"
                     dir="ltr"
                   />
                 </div>
@@ -6382,7 +6530,7 @@ export const AdminDashboard: React.FC = () => {
                     value={newUserPassword}
                     onChange={(e) => setNewUserPassword(e.target.value)}
                     placeholder="مش أقل من 6 حروف أو أرقام..."
-                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl outline-none focus:border-primary"
+                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-foreground placeholder:text-foreground-muted outline-none focus:border-primary"
                   />
                 </div>
                 <div>
@@ -6390,7 +6538,7 @@ export const AdminDashboard: React.FC = () => {
                   <select
                     value={newUserGovernorate}
                     onChange={(e) => setNewUserGovernorate(e.target.value)}
-                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl outline-none focus:border-primary"
+                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-foreground outline-none focus:border-primary dark:[color-scheme:dark]"
                   >
                     <option value="قنا">قنا</option>
                     <option value="سوهاج">سوهاج</option>
@@ -6408,28 +6556,28 @@ export const AdminDashboard: React.FC = () => {
               </div>
 
               {newUserRole === 'seller' && (
-                <div className="p-3.5 bg-amber-50 rounded-2xl border border-amber-200 space-y-2.5">
-                  <span className="font-bold text-amber-900 block">بيانات ورشة الصنايعي:</span>
+                <div className="p-3.5 bg-amber-50 dark:bg-amber-950/40 rounded-2xl border border-amber-200 dark:border-amber-800 space-y-2.5">
+                  <span className="font-bold text-amber-900 dark:text-amber-200 block">بيانات ورشة الصنايعي:</span>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     <div>
-                      <label className="block text-[11px] font-bold text-amber-950 mb-1">اسم الورشة *</label>
+                      <label className="block text-[11px] font-bold text-amber-950 dark:text-amber-200 mb-1">اسم الورشة *</label>
                       <input
                         type="text"
                         required
                         value={newUserWorkshopName}
                         onChange={(e) => setNewUserWorkshopName(e.target.value)}
                         placeholder="مثال: ورشة النوبية للأعمال اليدوية"
-                        className="w-full p-2 bg-white border border-amber-200 rounded-xl outline-none"
+                        className="w-full p-2 bg-white dark:bg-background text-foreground placeholder:text-foreground-muted border border-amber-200 dark:border-amber-800 rounded-xl outline-none"
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] font-bold text-amber-950 mb-1">تخصص الصنعة</label>
+                      <label className="block text-[11px] font-bold text-amber-950 dark:text-amber-200 mb-1">تخصص الصنعة</label>
                       <input
                         type="text"
                         value={newUserSpecialty}
                         onChange={(e) => setNewUserSpecialty(e.target.value)}
                         placeholder="مثال: خزف، خوص، نول"
-                        className="w-full p-2 bg-white border border-amber-200 rounded-xl outline-none"
+                        className="w-full p-2 bg-white dark:bg-background text-foreground placeholder:text-foreground-muted border border-amber-200 dark:border-amber-800 rounded-xl outline-none"
                       />
                     </div>
                   </div>
@@ -6441,7 +6589,7 @@ export const AdminDashboard: React.FC = () => {
                   type="button"
                   onClick={() => setIsCreateUserModalOpen(false)}
                   disabled={isCreatingUser}
-                  className="px-4 py-2 text-xs font-bold text-black/60 dark:text-white/60 hover:bg-gray-100 rounded-xl cursor-pointer"
+                  className="px-4 py-2 text-xs font-bold text-foreground-secondary hover:bg-surface-hover rounded-xl cursor-pointer"
                 >
                   إلغاء
                 </button>
@@ -6472,24 +6620,24 @@ export const AdminDashboard: React.FC = () => {
       {/* Delete User Confirmation Modal */}
       {selectedUserForDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in overflow-y-auto">
-          <div className="bg-white rounded-3xl border border-rose-200 max-w-md w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto">
+          <div className="bg-surface text-foreground rounded-3xl border border-rose-200 dark:border-rose-900 max-w-md w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto">
             <div className="flex items-center gap-3 text-rose-700 border-b border-rose-100 pb-3">
               <div className="w-10 h-10 rounded-xl bg-rose-100 flex items-center justify-center shrink-0">
                 <AlertCircle className="w-6 h-6 text-rose-600" />
               </div>
               <div>
-                <h3 className="font-bold text-base text-gray-900">تأكيد مسح الحساب نهائياً</h3>
+                <h3 className="font-bold text-base text-foreground">تأكيد مسح الحساب نهائياً</h3>
                 <p className="text-xs text-rose-600 font-medium">خطوة حاسمة وما ينفعش ترجع فيها</p>
               </div>
             </div>
 
-            <p className="text-xs text-gray-700 leading-relaxed">
-              متأكد إنك عاوز تمسح حساب <strong className="text-gray-900">{selectedUserForDelete.name}</strong> ({selectedUserForDelete.email})؟
+            <p className="text-xs text-foreground-secondary leading-relaxed">
+              متأكد إنك عاوز تمسح حساب <strong className="text-foreground">{selectedUserForDelete.name}</strong> ({selectedUserForDelete.email})؟
             </p>
 
-            <div className="p-3.5 bg-rose-50 rounded-2xl border border-rose-200 text-xs space-y-1.5 text-rose-900">
+            <div className="p-3.5 bg-rose-50 dark:bg-rose-950/40 rounded-2xl border border-rose-200 dark:border-rose-900 text-xs space-y-1.5 text-rose-900 dark:text-rose-200">
               <p className="font-bold">الخطوة دي هتعمل فوراً الآتي:</p>
-              <ul className="list-disc list-inside space-y-1 text-[11px] text-rose-800">
+              <ul className="list-disc list-inside space-y-1 text-[11px] text-rose-800 dark:text-rose-300">
                 <li>مسح صورة الحساب من الكلاود.</li>
                 {selectedUserForDelete.role === 'seller' ? (
                   <>
@@ -6511,7 +6659,7 @@ export const AdminDashboard: React.FC = () => {
                 type="button"
                 onClick={() => setSelectedUserForDelete(null)}
                 disabled={isDeletingUser}
-                className="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-xl transition-all"
+                className="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-surface-subtle dark:hover:bg-surface-hover dark:text-foreground text-xs font-bold rounded-xl transition-all"
               >
                 إلغاء
               </button>

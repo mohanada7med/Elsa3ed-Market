@@ -225,11 +225,17 @@ const ProductCard: React.FC<{
   index: number;
   onOpen: (product: ProductLike) => void;
   onNavigate: (product: ProductLike) => void;
+  compact?: boolean;
+  centerOnMobile?: boolean;
+  hideOnMobile?: boolean;
 }> = ({
   product,
   index,
   onOpen,
   onNavigate,
+  compact = false,
+  centerOnMobile = false,
+  hideOnMobile = false,
 }) => {
     const { addToCart, setIsCartDrawerOpen, addToFavorites, removeFromFavorites, isFavorite } = useApp();
     const [imageIndex, setImageIndex] =
@@ -322,31 +328,33 @@ const ProductCard: React.FC<{
         onClick={() =>
           onNavigate(product)
         }
-        className="
+        className={`
         group
         relative
         cursor-pointer
         overflow-hidden
-        rounded-[1.75rem]
+        ${centerOnMobile ? 'col-span-2 w-1/2 justify-self-center sm:col-span-1 sm:w-full' : ''}
+        ${hideOnMobile ? 'hidden sm:block' : ''}
+        ${compact ? 'rounded-[1.25rem] sm:rounded-[1.5rem]' : 'rounded-[1.75rem]'}
         border
         border-black/[0.07]
         bg-[#F8EBD7] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_30px_80px_rgba(59,30,14,0.14)] dark:border-[#6B3A1F] dark:bg-[#3B1E0E]
         dark:hover:shadow-black/40
-      "
+      `}
       >
         {/* =================================================
           IMAGE
       ================================================= */}
 
         <div
-          className="
+          className={`
           relative
-          aspect-square
+          ${compact ? 'aspect-[3/2] lg:aspect-[4/3]' : 'aspect-square'}
           overflow-hidden
           bg-[#F5EFE5]
 
           dark:bg-[#27211C]
-        "
+        `}
         >
           <img
             src={
@@ -389,33 +397,42 @@ const ProductCard: React.FC<{
           "
           />
 
+          {compact && (
+            <div className="absolute inset-x-0 bottom-0 z-[1] bg-gradient-to-t from-black/85 via-black/45 to-transparent px-2.5 pb-2.5 pt-8 sm:px-3 sm:pb-3">
+              {category && (
+                <span className="mb-1 block truncate text-[8px] font-bold text-primary-hover sm:text-[9px]">
+                  {category}
+                </span>
+              )}
+              <h3 className="line-clamp-2 text-xs font-black leading-snug text-white sm:text-sm">
+                {title}
+              </h3>
+            </div>
+          )}
+
           {/* Badges */}
 
           <div
-            className="
+            className={`
             absolute
-            right-4
-            top-4
+            ${compact ? 'right-2 top-2 gap-1 sm:right-3 sm:top-3' : 'right-4 top-4 gap-2'}
             flex
             flex-wrap
-            gap-2
-          "
+          `}
           >
             {featured && (
               <span
-                className="
+                className={`
                 flex
                 items-center
-                gap-1.5
+                gap-1
                 rounded-full
                 bg-[#C99444]
-                px-3
-                py-1.5
-                text-[9px]
+                ${compact ? 'px-2 py-1 text-[8px] sm:px-2.5 sm:text-[9px]' : 'px-3 py-1.5 text-[9px]'}
                 font-black
                 text-espresso
                 shadow-lg
-              "
+              `}
               >
                 <Sparkles size={10} />
                 مميز
@@ -424,16 +441,14 @@ const ProductCard: React.FC<{
 
             {discount !== null && (
               <span
-                className="
+                className={`
                 rounded-full
                 bg-[#a74a32]
-                px-3
-                py-1.5
-                text-[9px]
+                ${compact ? 'px-2 py-1 text-[8px] sm:px-2.5 sm:text-[9px]' : 'px-3 py-1.5 text-[9px]'}
                 font-black
                 text-white
                 shadow-lg
-              "
+              `}
               >
                 خصم {discount}%
               </span>
@@ -455,13 +470,10 @@ const ProductCard: React.FC<{
                 }
               }
             }}
-            className="
+            className={`
             absolute
-            left-4
-            top-4
+            ${compact ? 'left-2 top-2 h-10 w-10 sm:left-3 sm:top-3' : 'left-4 top-4 h-10 w-10'}
             flex
-            h-10
-            w-10
             items-center
             justify-center
             rounded-full
@@ -477,7 +489,7 @@ const ProductCard: React.FC<{
             dark:text-white
 
             cursor-pointer
-          "
+          `}
           >
             <Heart
               size={16}
@@ -493,15 +505,13 @@ const ProductCard: React.FC<{
           {/* Product Number */}
 
           <div
-            className="
+            className={`
             absolute
-            bottom-4
-            right-5
-            text-[9px]
+            ${compact ? 'hidden' : 'bottom-4 right-5 text-[9px]'}
             font-black
             tracking-[0.2em]
             text-white/65
-          "
+          `}
           >
             #{String(index + 1).padStart(2, '0')}
           </div>
@@ -515,17 +525,14 @@ const ProductCard: React.FC<{
 
               onOpen(product);
             }}
-            className="
+            className={`
             absolute
-            bottom-4
-            left-4
+            ${compact ? 'hidden' : 'bottom-4 left-4 px-4 py-2.5'}
             flex
             items-center
             gap-2
             rounded-full
             bg-white/90
-            px-4
-            py-2.5
             text-[9px]
             font-black
             text-espresso
@@ -543,7 +550,7 @@ const ProductCard: React.FC<{
             dark:text-white
 
             cursor-pointer
-          "
+          `}
           >
             <Eye size={13} />
             عرض سريع
@@ -553,14 +560,14 @@ const ProductCard: React.FC<{
 
           {images.length > 1 && (
             <div
-              className="
+              className={`
               absolute
-              bottom-16
+              ${compact ? 'top-3 bottom-auto' : 'bottom-16'}
               left-1/2
               flex
               -translate-x-1/2
               gap-1.5
-            "
+            `}
             >
               {images
                 .slice(0, 5)
@@ -595,31 +602,30 @@ const ProductCard: React.FC<{
           CONTENT
       ================================================= */}
 
-        <div className="p-5 sm:p-6">
+        <div className={compact ? 'flex flex-1 items-center p-2 sm:px-3 sm:py-2.5' : 'p-5 sm:p-6'}>
           {/* Category + Rating */}
 
-          <div
-            className="
+          {!compact && <div
+            className={`
             flex
             min-h-5
             items-center
             justify-between
-            gap-3
-          "
+            ${compact ? 'gap-1' : 'gap-3'}
+          `}
           >
             {category ? (
               <div
-                className="
+                className={`
                 flex
                 min-w-0
                 items-center
-                gap-1.5
-                text-[9px]
+                ${compact ? 'gap-1 text-[8px] sm:text-[9px]' : 'gap-1.5 text-[9px]'}
                 font-black
                 text-primary
 
                 dark:text-primary-hover
-              "
+              `}
               >
                 <Tag
                   size={11}
@@ -669,48 +675,42 @@ const ProductCard: React.FC<{
                 )}
               </div>
             )}
-          </div>
+          </div>}
 
           {/* Title */}
 
-          <h3
-            className="
-            mt-3
-            line-clamp-2
-            min-h-[3.4rem]
-            text-xl
-            font-black
-            leading-[1.1]
-            tracking-[-0.045em]
-
-            sm:text-2xl
-          "
+          {!compact && <h3
+          className={`
+          mt-3 line-clamp-2 min-h-[3.4rem] text-xl leading-[1.1] sm:text-2xl
+          font-black
+          tracking-[-0.045em]
+          `}
           >
-            {title}
-          </h3>
+          {title}
+          </h3>}
 
           {/* Seller + Location */}
 
-          {(seller || location) && (
+          {!compact && (seller || location) && (
             <div
-              className="
-              mt-4
+              className={`
+              ${compact ? 'mt-2' : 'mt-4'}
               flex
               flex-col
               gap-2
-            "
+            `}
             >
               {seller && (
                 <div
-                  className="
+                  className={`
                   flex
                   min-w-0
                   items-center
-                  gap-2
-                  text-[10px]
+                  gap-1.5
+                  ${compact ? 'text-[9px]' : 'text-[10px]'}
                   font-bold
                   text-[#8C6F53] dark:text-[#D6C6B1]
-                "
+                `}
                 >
                   <Store
                     size={12}
@@ -738,7 +738,7 @@ const ProductCard: React.FC<{
                 </div>
               )}
 
-              {location && (
+              {location && !compact && (
                 <div
                   className="
                   flex
@@ -765,28 +765,28 @@ const ProductCard: React.FC<{
 
           {/* Divider */}
 
-          <div
-            className="
+          {!compact && <div
+            className={`
             my-5
             h-px
             bg-black/[0.07]
 
             dark:bg-cream/[0.07]
-          "
-          />
+          `}
+          />}
 
           {/* Price + Cart */}
 
           <div
-            className="
+            className={`
             flex
-            items-end
+            ${compact ? 'w-full items-center' : 'items-end'}
             justify-between
             gap-3
-          "
+          `}
           >
             <div>
-              <div
+              {!compact && <div
                 className="
                 text-[8px]
                 font-black
@@ -795,7 +795,7 @@ const ProductCard: React.FC<{
               "
               >
                 السعر
-              </div>
+              </div>}
 
               <div
                 className="
@@ -806,14 +806,14 @@ const ProductCard: React.FC<{
               "
               >
                 <span
-                  className="
-                  text-2xl
+                  className={`
+                  ${compact ? 'text-base sm:text-lg' : 'text-2xl'}
                   font-black
                   tracking-[-0.05em]
                   text-primary
 
                   dark:text-primary-hover
-                "
+                `}
                 >
                   {formatPrice(price)}
                 </span>
@@ -859,18 +859,16 @@ const ProductCard: React.FC<{
                 addToCart(product as any, 1);
                 setIsCartDrawerOpen(true);
               }}
-              className="
+              className={`
               flex
-              h-12
-              w-12
+              ${compact ? 'h-10 w-10 rounded-xl' : 'h-12 w-12 rounded-2xl'}
               shrink-0
               items-center
               justify-center
-              rounded-2xl
               bg-[#6B3A1F] text-[#FFF9EE] transition-all hover:scale-105 hover:bg-[#3B1E0E] disabled:cursor-not-allowed disabled:opacity-40 dark:bg-[#6B3A1F] dark:text-[#FFF9EE] dark:hover:bg-[#C99444]
 
               cursor-pointer
-            "
+            `}
             >
               <ShoppingBag size={17} />
             </button>
@@ -878,7 +876,7 @@ const ProductCard: React.FC<{
 
           {/* Stock / Shipping */}
 
-          <div
+          {!compact && <div
             className="
             mt-5
             flex
@@ -925,7 +923,7 @@ const ProductCard: React.FC<{
               <Truck size={11} />
               شحن متاح
             </span>
-          </div>
+          </div>}
         </div>
       </article>
     );
@@ -1442,9 +1440,11 @@ const QuickView: React.FC<{
 interface ProductGridProps {
   customProducts?: ProductLike[];
   limit?: number;
+  compactCards?: boolean;
+  mobileLimit?: number;
 }
 
-export const ProductGrid: React.FC<ProductGridProps> = ({ customProducts, limit }) => {
+export const ProductGrid: React.FC<ProductGridProps> = ({ customProducts, limit, compactCards = false, mobileLimit }) => {
   const {
     products,
     searchQuery,
@@ -1852,18 +1852,12 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ customProducts, limit 
       {/* Products */}
 
       <div
-        className="
+        className={`
           grid
-          grid-cols-1
-          gap-3
-          sm:gap-5
-
-          min-[380px]:grid-cols-2
-
-          lg:grid-cols-3
-
-          2xl:grid-cols-4
-        "
+          ${compactCards
+            ? 'grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-5 lg:grid-cols-3 2xl:grid-cols-3'
+            : 'grid-cols-1 gap-3 sm:gap-5 min-[380px]:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4'}
+        `}
       >
         {visibleProducts.map(
           (product, index) => (
@@ -1887,6 +1881,13 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ customProducts, limit 
               onNavigate={
                 navigateToProduct
               }
+              compact={compactCards}
+              centerOnMobile={
+                compactCards &&
+                visibleProducts.length % 2 === 1 &&
+                index === visibleProducts.length - 1
+              }
+              hideOnMobile={compactCards && mobileLimit !== undefined && index >= mobileLimit}
             />
           )
         )}

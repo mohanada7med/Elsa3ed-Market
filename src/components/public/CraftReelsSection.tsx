@@ -606,8 +606,8 @@ export const CraftReelsSection: React.FC = () => {
 
   const getCardStyle = (diff: number) => {
     const isSmall = isMobile;
-    const spacing = isSmall ? 220 : 340;
-    const farSpacing = isSmall ? 360 : 560;
+    const spacing = isSmall ? 180 : 340;
+    const farSpacing = isSmall ? 300 : 560;
 
     switch (diff) {
       case 0:
@@ -682,7 +682,7 @@ export const CraftReelsSection: React.FC = () => {
       ref={sectionRef}
       dir="rtl"
       className="
-        relative overflow-hidden py-12 sm:py-20
+        relative overflow-hidden py-8 sm:py-20
         bg-[#FBF6ED] dark:bg-[#110B07]
         text-[#2D180C] dark:text-[#FFF9EE]
         select-none touch-pan-y
@@ -724,23 +724,13 @@ export const CraftReelsSection: React.FC = () => {
         />
       </div>
 
-      <div className="relative z-10 max-w-[1550px] mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 max-w-[1550px] mx-auto px-3 sm:px-6 lg:px-8">
         {/* ================= HEADER SECTION ================= */}
-        <div className="relative z-10 mb-8 sm:mb-14">
-          <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
+        <div className="relative z-10 mb-5 sm:mb-14">
+          <div className="grid gap-4 sm:gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
             <div>
-              {/* Pulsing Live Badge */}
-              <div className="mb-4 inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[#C99444]/15 border border-[#C99444]/35 dark:border-[#C99444]/30 backdrop-blur-md">
-                <span className="relative flex h-2.5 w-2.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E66A2E] opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#E66A2E]" />
-                </span>
-                <span className="text-[11px] font-black tracking-wider text-[#7A4B1A] dark:text-[#C99444]">
-                  استوديو الصعيد | وثائقيات حية من قلب الورش
-                </span>
-              </div>
 
-              <h1 className="max-w-6xl text-5xl sm:text-7xl lg:text-[8rem] font-black leading-[0.95] tracking-tight">
+              <h1 className="max-w-6xl text-4xl sm:text-7xl lg:text-[8rem] font-black leading-[0.95] tracking-tight">
                 <span className="block">ريلز</span>
 
                 <span className="flex items-center gap-3 sm:gap-5">
@@ -749,14 +739,14 @@ export const CraftReelsSection: React.FC = () => {
                   </span>
 
                   {/* Vintage Camera */}
-                  <span className="group relative mt-3 inline-flex h-[48px] w-[65px] items-center justify-center sm:h-[65px] sm:w-[88px] lg:h-[82px] lg:w-[112px]">
+                  <span className="group relative mt-2 inline-flex h-[38px] w-[52px] items-center justify-center sm:mt-3 sm:h-[65px] sm:w-[88px] lg:h-[82px] lg:w-[112px]">
 
                     {/* Camera Flash */}
                     <span className="absolute -top-3 right-4 h-2 w-3 rounded-full bg-accent/60 blur-[2px] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
                     {/* Camera Body */}
                     <span className="
-        relative flex h-[34px] w-[58px] items-center justify-center
+        relative flex h-[28px] w-[48px] items-center justify-center
         rounded-xl border-2 border-[#754426]
         bg-gradient-to-br from-[#D9B477] via-[#B77B49] to-[#754426]
         shadow-[0_8px_18px_rgba(36,30,26,0.2)]
@@ -771,13 +761,13 @@ export const CraftReelsSection: React.FC = () => {
 
                       {/* Lens Outer Ring */}
                       <span className="
-          relative flex h-7 w-7 items-center justify-center
+          relative flex h-6 w-6 items-center justify-center
           rounded-full border-[3px] border-[#E8C17C]
           bg-[#241E1A] shadow-inner
           sm:h-9 sm:w-9 lg:h-11 lg:w-11
         ">
                         {/* Lens Glass */}
-                        <span className="flex h-4 w-4 items-center justify-center rounded-full border border-sky-300/40 bg-gradient-to-br from-sky-300/60 via-[#243B53] to-black sm:h-5 sm:w-5 lg:h-6 lg:w-6">
+                        <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-sky-300/40 bg-gradient-to-br from-sky-300/60 via-[#243B53] to-black sm:h-5 sm:w-5 lg:h-6 lg:w-6">
                           <span className="h-1.5 w-1.5 rounded-full bg-white/80 blur-[1px]" />
                         </span>
                       </span>
@@ -794,12 +784,12 @@ export const CraftReelsSection: React.FC = () => {
                   </span>
                 </span>
               </h1>
-              <p className="mt-4 max-w-2xl text-xs sm:text-sm text-[#6B4B35] dark:text-stone-300 leading-relaxed font-medium">
+              <p className="mt-3 line-clamp-2 max-w-2xl text-[11px] sm:mt-4 sm:text-sm text-[#6B4B35] dark:text-stone-300 leading-relaxed font-medium">
                 اكتشف الصعيد من أماكنه وحكاياته، لورش صنايعيته وحرفه وأكلاته، واتعرّف على تراثه وأهله بكل تفاصيله.              </p>
 
               {/* Accurate Category Filter Pills */}
               {availableCategories.length > 0 && (
-                <div className="mt-6 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+                <div className="mt-4 flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none sm:mt-6 sm:gap-2">
                   <button
                     type="button"
                     onClick={() => {
@@ -807,7 +797,7 @@ export const CraftReelsSection: React.FC = () => {
                       setActiveIndex(0);
                     }}
                     className={`
-                      px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer
+                      px-3 py-1 rounded-full text-[10px] font-bold whitespace-nowrap transition-all cursor-pointer sm:px-3.5 sm:py-1.5 sm:text-xs
                       ${activeCategory === 'all'
                         ? 'bg-[#C99444] text-[#1B1009] shadow-md shadow-[#C99444]/30'
                         : 'bg-white/90 hover:bg-white text-[#5C3A21] border border-[#E0C79B] shadow-sm dark:bg-white/5 dark:hover:bg-white/10 dark:text-stone-300 dark:border-white/10 dark:shadow-none'
@@ -828,7 +818,7 @@ export const CraftReelsSection: React.FC = () => {
                           setActiveIndex(0);
                         }}
                         className={`
-                          px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer
+                          px-3 py-1 rounded-full text-[10px] font-bold whitespace-nowrap transition-all cursor-pointer sm:px-3.5 sm:py-1.5 sm:text-xs
                           ${activeCategory === cat
                             ? 'bg-[#C99444] text-[#1B1009] shadow-md shadow-[#C99444]/30'
                             : 'bg-white/90 hover:bg-white text-[#5C3A21] border border-[#E0C79B] shadow-sm dark:bg-white/5 dark:hover:bg-white/10 dark:text-stone-300 dark:border-white/10 dark:shadow-none'
@@ -851,7 +841,7 @@ export const CraftReelsSection: React.FC = () => {
                   aria-label="الحكاية السابقة"
                   onClick={goPrev}
                   className="
-                    w-11 h-11 rounded-full
+                    w-9 h-9 sm:w-11 sm:h-11 rounded-full
                     bg-white hover:bg-[#C99444] text-[#2D180C] hover:text-[#1B1009] border border-[#E0C79B] shadow-sm hover:border-[#C99444]
                     dark:bg-white/10 dark:hover:bg-[#C99444] dark:text-white dark:hover:text-[#1B1009] dark:border-white/15 dark:hover:border-[#C99444]
                     transition-all active:scale-90 flex items-center justify-center
@@ -867,7 +857,7 @@ export const CraftReelsSection: React.FC = () => {
                   aria-label="الحكاية التالية"
                   onClick={goNext}
                   className="
-                    w-11 h-11 rounded-full
+                    w-9 h-9 sm:w-11 sm:h-11 rounded-full
                     bg-white hover:bg-[#C99444] text-[#2D180C] hover:text-[#1B1009] border border-[#E0C79B] shadow-sm hover:border-[#C99444]
                     dark:bg-white/10 dark:hover:bg-[#C99444] dark:text-white dark:hover:text-[#1B1009] dark:border-white/15 dark:hover:border-[#C99444]
                     transition-all active:scale-90 flex items-center justify-center
@@ -901,7 +891,7 @@ export const CraftReelsSection: React.FC = () => {
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
           className="
-            relative h-[510px] xs:h-[550px] sm:h-[630px] md:h-[660px]
+            relative h-[390px] xs:h-[410px] sm:h-[630px] md:h-[660px]
             w-full flex items-center justify-center
             overflow-hidden sm:overflow-visible my-2
           "
@@ -935,9 +925,9 @@ export const CraftReelsSection: React.FC = () => {
                     touchAction: 'pan-y'
                   }}
                   className={`
-                    w-[280px] xs:w-[310px] sm:w-[360px] md:w-[375px]
-                    h-[480px] xs:h-[520px] sm:h-[590px] md:h-[620px]
-                    rounded-[28px] sm:rounded-[36px]
+                    w-[230px] xs:w-[245px] sm:w-[360px] md:w-[375px]
+                    h-[355px] xs:h-[375px] sm:h-[590px] md:h-[620px]
+                    rounded-[22px] sm:rounded-[36px]
                     overflow-hidden select-none
                     border transition-[border-color,box-shadow] duration-300
                     ${isCurrent
@@ -1354,78 +1344,6 @@ export const CraftReelsSection: React.FC = () => {
         </div>
 
         {/* ================= BOTTOM THUMBNAIL SELECTOR & CONTROLS ================= */}
-        <div className="
-          mt-6 sm:mt-10 pt-5 sm:pt-6
-          border-t border-[#E0C79B]/80 dark:border-[#3B1E0E]/60
-          flex flex-col sm:flex-row
-          items-center justify-between gap-4
-          transition-colors duration-300
-        ">
-          {/* Active Reel Counter */}
-          <div className="flex items-center justify-between w-full sm:w-auto px-1 sm:px-0">
-            <div className="flex items-center gap-2">
-              <span className="text-xl sm:text-2xl font-black text-[#C99444]">
-                {String(activeIndex + 1).padStart(2, '0')}
-              </span>
-              <span className="text-xs text-[#8C6F53] dark:text-stone-500">/</span>
-              <span className="text-xs font-bold text-[#6B4B35] dark:text-stone-400">
-                {String(filteredReels.length).padStart(2, '0')} حكاية موثقة
-              </span>
-            </div>
-
-            <span className="sm:hidden text-[11px] text-[#6B4B35] dark:text-stone-400 font-medium">
-              اسحب للتنقل
-            </span>
-          </div>
-
-          {/* Mini Thumbnail Strip */}
-          <div className="
-            flex items-center gap-2.5 overflow-x-auto
-            w-full sm:w-auto py-1.5 scrollbar-none
-          ">
-            {filteredReels.map((reel, i) => (
-              <button
-                key={reel.id}
-                type="button"
-                aria-label={`الانتقال للحكاية ${i + 1}: ${reel.title}`}
-                onClick={() => goTo(i)}
-                className={`
-                  relative shrink-0 h-12 w-16 sm:h-14 sm:w-20
-                  rounded-xl overflow-hidden cursor-pointer
-                  border transition-all duration-200
-                  ${i === activeIndex
-                    ? 'border-[#C99444] ring-2 ring-[#C99444]/40 scale-105 opacity-100 shadow-md shadow-[#C99444]/25'
-                    : 'border-[#E0C79B]/80 opacity-75 hover:opacity-100 shadow-sm dark:border-white/15 dark:opacity-50 dark:hover:opacity-90 dark:shadow-none'
-                  }
-                `}
-              >
-                <img
-                  src={getPoster(reel, 200)}
-                  alt={reel.title}
-                  loading="lazy"
-                  draggable={false}
-                  className="w-full h-full object-cover"
-                />
-                {i === activeIndex && (
-                  <span className="absolute bottom-0 inset-x-0 py-0.5 bg-[#C99444] text-[#1B1009] text-[9px] font-black text-center">
-                    شغال
-                  </span>
-                )}
-              </button>
-            ))}
-          </div>
-
-          {/* Keyboard & Swipe Hint on Desktop */}
-          <div className="hidden lg:flex items-center gap-2 text-[11px] text-[#6B4B35] dark:text-stone-400 font-medium">
-            <span className="px-1.5 py-0.5 rounded bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/10 text-[#3B1E0E] dark:text-stone-300 font-mono text-[10px]">
-              ←
-            </span>
-            <span className="px-1.5 py-0.5 rounded bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/10 text-[#3B1E0E] dark:text-stone-300 font-mono text-[10px]">
-              →
-            </span>
-            <span>للتنقل بالأسهم • اضغط مسافة للإيقاف</span>
-          </div>
-        </div>
       </div>
 
       {/* FULLSCREEN REEL MODAL */}

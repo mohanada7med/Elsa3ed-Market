@@ -2,7 +2,6 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { MapPin, ArrowLeft, Clock, Sparkles } from 'lucide-react';
 import { WAHBadge } from '../WAHBadge';
-import { HeritageCornerStamp } from '../../components/common/HeritageCornerStamp';
 
 interface WAHEditorialCardProps {
   id?: string;
@@ -70,8 +69,6 @@ export const WAHEditorialCard: React.FC<WAHEditorialCardProps> = ({
           )}
         </div>
 
-        {/* ختم تراثي أصيل في الركن */}
-        <HeritageCornerStamp position="top-left" size={34} />
 
         {/* Governorate Bottom Tag */}
         {governorate && (
