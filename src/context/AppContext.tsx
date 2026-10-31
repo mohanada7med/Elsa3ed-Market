@@ -248,6 +248,8 @@ interface AppContextType {
     email?: string;
     bio?: string;
     story?: string;
+    offerings?: string;
+    craftSinceYear?: number | null;
     avatar?: string;
     coverImage?: string;
     payoutMethod?: string;

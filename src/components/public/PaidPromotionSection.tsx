@@ -243,9 +243,7 @@ export const PaidPromotionSection: React.FC<PaidPromotionSectionProps> = ({
           <div className="absolute -left-24 -top-28 h-80 w-80 rounded-full border border-primary/15 dark:border-primary-hover/10" />
           <div className="absolute -left-16 -top-20 h-64 w-64 rounded-full border border-primary/15 dark:border-primary-hover/10" />
           <div className="absolute bottom-0 right-[35%] h-40 w-40 rounded-full bg-primary/[0.07] blur-3xl dark:bg-primary-hover/[0.08]" />
-          <span className="absolute bottom-4 left-8 font-serif text-[130px] font-black leading-none text-primary/[0.06] dark:text-primary-hover/[0.05]">
-            W
-          </span>
+          
         </div>
 
         <div className="relative grid min-h-[390px] lg:grid-cols-[1fr_0.9fr]">
@@ -396,17 +394,9 @@ export const PaidPromotionSection: React.FC<PaidPromotionSectionProps> = ({
 
             {/* Bottom name */}
             <div className="absolute bottom-6 right-6 left-6 text-white">
-              <p className="text-[10px] font-black tracking-widest text-white/70">
-                MEET THE MAKER
-              </p>
               <p className="mt-1 text-xl font-black">
                 {sellerName}
               </p>
-            </div>
-
-            {/* Decorative number */}
-            <div className="absolute left-5 top-5 font-serif text-sm font-black tracking-widest text-white/80">
-              NO. 01
             </div>
           </div>
         </div>

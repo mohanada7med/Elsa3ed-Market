@@ -103,6 +103,10 @@ export interface Seller {
   coverImage: string;
   bio: string;
   story: string;
+  offerings?: string;
+  craftSinceYear?: number | null;
+  introAudioUrl?: string | null;
+  introAudioDuration?: number | null;
   verified: boolean;
   joinedDate: string;
   phone: string;

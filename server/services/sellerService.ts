@@ -183,11 +183,23 @@ export async function updateSellerProfile(
 ): Promise<SellerDocument> {
   const sellerId = sellerUser.sellerId || sellerUser.id;
 
+  if (
+    updates.craftSinceYear !== undefined &&
+    updates.craftSinceYear !== null &&
+    (!Number.isInteger(updates.craftSinceYear) ||
+      updates.craftSinceYear < 1800 ||
+      updates.craftSinceYear > new Date().getFullYear())
+  ) {
+    throw new Error('سنة بداية الحرفة غير صحيحة');
+  }
+
   const safeUpdates: Partial<SellerDocument> = {
     brandName: updates.brandName?.trim(),
     name: updates.name?.trim(),
     bio: updates.bio?.trim(),
     story: updates.story?.trim(),
+    offerings: updates.offerings?.trim(),
+    craftSinceYear: updates.craftSinceYear,
     avatar: updates.avatar?.trim(),
     coverImage: updates.coverImage?.trim(),
     phone: updates.phone?.trim(),
@@ -236,6 +248,62 @@ export async function updateSellerProfile(
   });
 
   return seller!;
+}
+
+export async function saveSellerIntroAudio(
+  sellerUser: AuthenticatedUser,
+  audioUrl: string,
+  duration: number
+): Promise<void> {
+  if (sellerUser.role !== 'seller') {
+    throw new Error('التسجيل التعريفي متاح لصاحب الورشة فقط');
+  }
+  if (!Number.isFinite(duration) || duration <= 0 || duration > 120) {
+    throw new Error('مدة التسجيل يجب أن تكون بين ثانية و120 ثانية');
+  }
+
+  const requestedSellerId = sellerUser.sellerId || sellerUser.id;
+  const updates = {
+    introAudioUrl: audioUrl,
+    introAudioDuration: Math.round(duration)
+  };
+  const { db, isMongo } = await getDatabase();
+  let sellerRecord: SellerDocument | null = null;
+
+  if (isMongo && db) {
+    sellerRecord = await db.collection('sellers').findOne({
+      $or: [{ id: sellerUser.id }, { userId: sellerUser.id }]
+    }) as unknown as SellerDocument | null;
+    if (!sellerRecord && requestedSellerId !== sellerUser.id) {
+      sellerRecord = await db.collection('sellers').findOne({
+        id: requestedSellerId
+      }) as unknown as SellerDocument | null;
+    }
+  }
+
+  if (!sellerRecord) {
+    sellerRecord = memoryDb.sellers.find(
+      (seller) => seller.id === sellerUser.id || seller.userId === sellerUser.id
+    ) as unknown as SellerDocument | null;
+    if (!sellerRecord && requestedSellerId !== sellerUser.id) {
+      sellerRecord = memoryDb.sellers.find(
+        (seller) => seller.id === requestedSellerId
+      ) as unknown as SellerDocument | null;
+    }
+  }
+
+  if (!sellerRecord || (sellerRecord.userId && sellerRecord.userId !== sellerUser.id)) {
+    throw new Error('لم يتم العثور على ورشة مرتبطة بحسابك');
+  }
+
+  const ownedSeller = sellerRecord;
+  if (isMongo && db) {
+    await db.collection('sellers').updateOne({ id: ownedSeller.id }, { $set: updates });
+  }
+  const memorySeller = memoryDb.sellers.find((seller) => seller.id === ownedSeller.id);
+  if (memorySeller) Object.assign(memorySeller, updates);
+
+  cacheService.invalidateSellers(ownedSeller.id);
 }
 
 /**

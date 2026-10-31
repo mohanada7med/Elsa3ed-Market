@@ -273,7 +273,7 @@
   --surface-muted: rgba(255, 249, 238, 0.08);
   --foreground: #FFF9EE;
   --foreground-secondary: #D6C6B1;
-  --foreground-muted: #8C6F53;
+  --foreground-muted: #C7B59D;
   --foreground-disabled: rgba(214, 198, 177, 0.40);
   --border: #6B3A1F;
   --border-subtle: rgba(107, 58, 31, 0.45);
@@ -301,7 +301,7 @@
   --input-background: #26160D;
   --input-border: #6B3A1F;
   --input-border-focus: #C99444;
-  --input-placeholder: rgba(214, 198, 177, 0.50);
+  --input-placeholder: rgba(214, 198, 177, 0.70);
   --card-background: #3B1E0E;
   --card-border: #6B3A1F;
   --card-border-hover: #C99444;

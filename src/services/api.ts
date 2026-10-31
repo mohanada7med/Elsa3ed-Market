@@ -2336,6 +2336,22 @@ export const api = {
     return json.data;
   },
 
+  async saveSellerIntroAudio(
+    user: { id: string; role: string; sellerId?: string },
+    payload: { audioData: string; duration: number }
+  ): Promise<{ audioUrl: string; duration: number }> {
+    const res = await fetch(`${API_BASE}/seller/profile/intro-audio`, {
+      method: 'POST',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(payload)
+    });
+    const json: ApiResponse<{ audioUrl: string; duration: number }> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في حفظ التسجيل التعريفي');
+    }
+    return json.data;
+  },
+
   async uploadSellerCoverImage(
     user: { id: string; role: string; sellerId?: string },
     imageDataUri: string,

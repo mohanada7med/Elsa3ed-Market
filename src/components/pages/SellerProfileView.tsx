@@ -17,17 +17,20 @@ import {
   Layers,
   ArrowDownLeft,
   ShoppingBag,
-  ShieldCheck,
   Heart,
   WandSparkles,
+  Quote,
+  Edit2,
 } from 'lucide-react';
 import { UncleWahInteractiveGuide } from '../common/UncleWahInteractiveGuide';
 import { updatePageSEO, generateStoreSchema } from '../../utils/seo';
 import { api } from '../../services/api';
+import { SellerIntroAudioCard } from '../seller/SellerIntroAudioCard';
 
 export const SellerProfileView: React.FC = () => {
   const {
     sellers,
+    refreshSellers,
     selectedSellerId,
     products,
     setActivePage,
@@ -69,6 +72,7 @@ export const SellerProfileView: React.FC = () => {
   const [liked, setLiked] = useState(false);
   const [followState, setFollowState] = useState({ following: false, followersCount: 0 });
   const [isFollowLoading, setIsFollowLoading] = useState(false);
+  const [introAudio, setIntroAudio] = useState<{ audioUrl: string; duration: number } | null>(null);
   const [visibleSections, setVisibleSections] = useState<
     Record<string, boolean>
   >({});
@@ -144,6 +148,16 @@ export const SellerProfileView: React.FC = () => {
   }, []);
 
   const seller = matchedSeller || directSeller;
+  const isOwnSellerProfile = Boolean(
+    seller &&
+    isAuthenticated &&
+    currentUser.role === 'seller' &&
+    (
+      currentUser.id === seller.id ||
+      currentUser.id === seller.userId ||
+      currentUser.sellerId === seller.id
+    )
+  );
 
   useEffect(() => {
     if (!seller?.id || !isAuthenticated || currentUser.role !== 'buyer') {
@@ -307,6 +321,9 @@ export const SellerProfileView: React.FC = () => {
   const joinedYear = String(
     seller.joinedDate || '2023'
   ).slice(0, 4);
+  const craftYears = seller.craftSinceYear
+    ? Math.max(0, new Date().getFullYear() - seller.craftSinceYear)
+    : null;
 
   const handleShare = () => {
     const shareUrl = `${window.location.origin}/sellers/${encodeURIComponent(
@@ -405,6 +422,18 @@ export const SellerProfileView: React.FC = () => {
                 مشاركة
               </span>
             </button>
+            {isOwnSellerProfile && (
+              <button
+                type="button"
+                onClick={() => setActivePage('seller-account')}
+                className="h-10 px-3.5 sm:px-4 rounded-xl bg-primary text-white hover:bg-primary-hover inline-flex items-center gap-2 transition-all duration-300 hover:-translate-y-0.5"
+              >
+                <Edit2 className="w-4 h-4" />
+                <span className="hidden sm:inline text-[11px] font-black">
+                  تعديل البروفايل
+                </span>
+              </button>
+            )}
             <button
               type="button"
               onClick={handleShareOnWhatsApp}
@@ -527,26 +556,29 @@ export const SellerProfileView: React.FC = () => {
                     'ورشة متخصصة في المشغولات الصعيدية التراثية المتوارثة أباً عن جد؛ نصنع بعناية ونوصل الحكاية من يد الصانع لباب بيتك.'}
                 </p>
 
-                {(currentUser.role === 'buyer' || !isAuthenticated) && (
-                  <button
-                    type="button"
-                    onClick={handleFollowSeller}
-                    disabled={isFollowLoading}
-                    className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-xl border border-white/25 bg-white/10 px-4 py-2.5 text-xs font-black text-white backdrop-blur-md transition-all hover:bg-white/20 disabled:cursor-wait disabled:opacity-60"
-                  >
-                    <Heart className={`h-4 w-4 ${followState.following ? 'fill-current text-rose-300' : ''}`} />
-                    {isFollowLoading
-                      ? 'لحظة...'
-                      : followState.following
-                        ? 'إلغاء متابعة الورشة'
-                        : 'تابع الورشة'}
-                    {followState.followersCount > 0 && (
-                      <span className="rounded-full bg-black/20 px-2 py-0.5 text-[10px]">
-                        {followState.followersCount}
-                      </span>
-                    )}
-                  </button>
-                )}
+                <div className="mt-5 flex flex-wrap items-center gap-3">
+                  {(currentUser.role === 'buyer' || !isAuthenticated) && (
+                    <button
+                      type="button"
+                      onClick={handleFollowSeller}
+                      disabled={isFollowLoading}
+                      className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-white/25 bg-white/10 px-4 py-2.5 text-xs font-black text-white backdrop-blur-md transition-all hover:bg-white/20 disabled:cursor-wait disabled:opacity-60"
+                    >
+                      <Heart className={`h-4 w-4 ${followState.following ? 'fill-current text-rose-300' : ''}`} />
+                      {isFollowLoading
+                        ? 'لحظة...'
+                        : followState.following
+                          ? 'إلغاء متابعة الورشة'
+                          : 'تابع الورشة'}
+                      {followState.followersCount > 0 && (
+                        <span className="rounded-full bg-black/20 px-2 py-0.5 text-[10px]">
+                          {followState.followersCount}
+                        </span>
+                      )}
+                    </button>
+                  )}
+
+                </div>
 
                 {/* STATS */}
 
@@ -593,6 +625,62 @@ export const SellerProfileView: React.FC = () => {
           </div>
         </section>
 
+        <section className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-[1.05fr_0.95fr]">
+          <article className="relative overflow-hidden rounded-[2rem] border border-border-subtle bg-surface-subtle p-6 sm:p-9">
+            <div className="absolute -left-16 -top-16 h-48 w-48 rounded-full bg-primary/10 blur-3xl" />
+            <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center">
+              <img
+                src={avatarImg}
+                alt={`صورة الصانع ${seller.name || brandTitle}`}
+                className="h-28 w-28 shrink-0 rounded-[1.75rem] border-4 border-background object-cover shadow-xl sm:h-36 sm:w-36"
+              />
+              <div>
+                <div className="mb-2 inline-flex items-center gap-2 text-xs font-black text-primary">
+                  <Award className="h-4 w-4" />
+                  الصانع وراء كل قطعة
+                </div>
+                <h2 className="text-2xl font-black sm:text-3xl">
+                  {seller.name || brandTitle}
+                </h2>
+                <p className="mt-2 text-sm font-bold text-foreground-muted">
+                  {seller.specialty || 'صانع وحرفي'} · {seller.governorate || 'صعيد مصر'}
+                </p>
+                {craftYears !== null && (
+                  <p className="mt-4 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-xs font-black text-primary">
+                    <Sparkles className="h-4 w-4" />
+                    {seller.craftSinceYear} — خبرة {craftYears} سنة
+                  </p>
+                )}
+              </div>
+            </div>
+            {seller.bio && (
+              <p className="relative mt-7 border-t border-border-subtle pt-5 text-sm leading-8 text-foreground-muted">
+                {seller.bio}
+              </p>
+            )}
+          </article>
+
+          <article className="relative overflow-hidden rounded-[2rem] border border-primary/15 bg-primary/[0.06] p-6 sm:p-9">
+            <div className="inline-flex items-center gap-2 text-xs font-black text-primary">
+              <Layers className="h-4 w-4" />
+              شغل الورشة
+            </div>
+            <h2 className="mt-3 text-2xl font-black sm:text-3xl">
+              إيه اللي بنقدمه؟
+            </h2>
+            <p className="mt-4 whitespace-pre-line text-sm leading-8 text-foreground-muted">
+              {seller.offerings || seller.specialty || `منتجات ${brandTitle} اليدوية، بتفاصيلها وخاماتها الأصيلة.`}
+            </p>
+            <div className="mt-6 flex flex-wrap gap-2">
+              {[seller.specialty, seller.governorate].filter(Boolean).map((tag) => (
+                <span key={tag} className="rounded-full border border-border-subtle bg-background/70 px-3 py-1.5 text-xs font-bold">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </article>
+        </section>
+
         {/* =========================================================
             INFO STRIP
         ========================================================= */}
@@ -606,7 +694,7 @@ export const SellerProfileView: React.FC = () => {
             : 'opacity-0 translate-y-8'
             }`}
         >
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
             <div className="group rounded-2xl border border-border-subtle bg-surface-subtle p-4 sm:p-5 hover:border-primary/30 transition-all duration-300 hover:-translate-y-1">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -624,18 +712,37 @@ export const SellerProfileView: React.FC = () => {
               </div>
             </div>
 
+            {seller.craftSinceYear && (
+              <div className="group rounded-2xl border border-border-subtle bg-surface-subtle p-4 sm:p-5 hover:border-primary/30 transition-all duration-300 hover:-translate-y-1">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Sparkles className="w-4.5 h-4.5" />
+                  </div>
+
+                  <div>
+                    <span className="block text-[9px] text-foreground-disabled font-bold">
+                      بداية الحرفة
+                    </span>
+                    <span className="block mt-0.5 text-xs font-black">
+                      منذ {seller.craftSinceYear} · {craftYears} سنة خبرة
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="group rounded-2xl border border-border-subtle bg-surface-subtle p-4 sm:p-5 hover:border-primary/30 transition-all duration-300 hover:-translate-y-1">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <ShieldCheck className="w-4.5 h-4.5" />
+                  <Sparkles className="w-4.5 h-4.5" />
                 </div>
 
                 <div>
                   <span className="block text-[9px] text-foreground-disabled font-bold">
-                    الجودة
+                    الصنعة
                   </span>
                   <span className="block mt-0.5 text-xs font-black">
-                    إنتاج يدوي أصيل
+                    {seller.specialty || 'مشغولات يدوية'}
                   </span>
                 </div>
               </div>
@@ -771,30 +878,58 @@ export const SellerProfileView: React.FC = () => {
               <div>
                 <div className="inline-flex items-center gap-2 text-primary text-[10px] font-black mb-3">
                   <Layers className="w-4 h-4" />
-                  أصل الصنعة
+                  حكاية الصانع والورشة
                 </div>
 
                 <h2 className="text-2xl sm:text-3xl font-main font-black">
-                  مش مجرد ورشة...
+                  {seller.story ? 'حكاية بدأت بإيدين بتحب الصنعة...' : 'مش مجرد ورشة...'}
                   <br />
                   <br />
                   <span className="text-primary dark:text-primary-hover">
-                    دي حكاية بتكمل.
+                    {seller.story ? 'وكل قطعة فصل جديد.' : 'دي حكاية بتكمل.'}
                   </span>
                 </h2>
 
-                <p className="mt-4 max-w-2xl text-xs sm:text-sm text-foreground-muted leading-7">
-                  {seller.bio ||
-                    'صنعة اتوارثت من جيل لجيل، ولسه مستمرة بإيدين بتحب اللي بتعمله وتحافظ على روح المكان.'}
-                </p>
+                {seller.story ? (
+                  <p className="mt-5 max-w-3xl whitespace-pre-line text-sm sm:text-base text-foreground-muted leading-8">
+                    {seller.story}
+                  </p>
+                ) : (
+                  <p className="mt-5 max-w-2xl text-xs sm:text-sm text-foreground-muted leading-7">
+                    كل قطعة في الورشة وراها وقت ومهارة واختيار للخامة. اكتشف شغل {brandTitle} وتعرّف على الصنعة من خلال المنتجات والحكايات المصورة.
+                  </p>
+                )}
+
+                <div className="mt-6 flex items-center gap-3 text-xs font-black text-foreground-muted">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <Quote className="h-4 w-4" />
+                  </span>
+                  {seller.name || brandTitle} · صانع {seller.specialty || 'حرف يدوية'}
+                </div>
               </div>
 
-              <div className="hidden sm:flex w-28 h-28 rounded-full border border-primary/20 bg-primary/5 items-center justify-center">
-                <Award className="w-12 h-12 text-primary" />
+              <div className="hidden sm:flex h-48 w-48 items-center justify-center rounded-full border border-primary/20 bg-primary/5 p-3">
+                <img src={avatarImg} alt="" className="h-full w-full rounded-full object-cover" />
               </div>
             </div>
           </div>
         </section>
+
+        <SellerIntroAudioCard
+          audioUrl={introAudio?.audioUrl || seller.introAudioUrl}
+          duration={introAudio?.duration || seller.introAudioDuration}
+          isOwner={isOwnSellerProfile}
+          user={{
+            id: currentUser.id,
+            role: currentUser.role,
+            sellerId: currentUser.sellerId
+          }}
+          onSaved={(audio) => {
+            setIntroAudio(audio);
+            refreshSellers();
+            addToast('تم نشر صوتك التعريفي', 'أصبح بإمكان الزوار التعرف عليك وعلى حرفتك بصوتك', 'success');
+          }}
+        />
 
         {/* =========================================================
             CONTACT FOOTER

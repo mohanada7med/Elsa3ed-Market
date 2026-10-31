@@ -23,7 +23,8 @@ import {
 import {
   getSellerDashboardStats,
   getSellerAnalytics,
-  updateSellerProfile
+  updateSellerProfile,
+  saveSellerIntroAudio
 } from '../services/sellerService.ts';
 import {
   createSellerPayoutRequest,
@@ -85,6 +86,8 @@ router.get('/status', requireAuth, async (req: AuthenticatedRequest, res: Respon
         email: sellerDoc.email,
         bio: sellerDoc.bio,
         story: sellerDoc.story,
+        offerings: sellerDoc.offerings,
+        craftSinceYear: sellerDoc.craftSinceYear,
         avatar: sellerDoc.avatar,
         coverImage: sellerDoc.coverImage,
         rejectionReason: sellerDoc.rejectionReason,
@@ -415,6 +418,71 @@ router.get('/inventory/movements', async (req: AuthenticatedRequest, res: Respon
 });
 
 // ==================== STORE PROFILE ====================
+
+// POST /api/seller/profile/intro-audio - Save an owner's spoken workshop introduction
+router.post('/profile/intro-audio', requireSeller, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    if (!req.user || req.user.role !== 'seller') {
+      return res.status(403).json({
+        success: false,
+        error: 'التسجيل التعريفي متاح لصاحب الورشة فقط',
+        code: 'SELLER_OWNER_ONLY'
+      });
+    }
+
+    const { audioData, duration } = req.body as { audioData?: unknown; duration?: unknown };
+    if (
+      typeof audioData !== 'string' ||
+      !/^data:audio\/[a-z0-9.+-]+;base64,/i.test(audioData) ||
+      audioData.length > 17 * 1024 * 1024
+    ) {
+      return res.status(400).json({
+        success: false,
+        error: 'ملف التسجيل غير صالح أو أكبر من الحد المسموح',
+        code: 'INVALID_AUDIO'
+      });
+    }
+
+    const numericDuration = Number(duration);
+    if (!Number.isFinite(numericDuration) || numericDuration <= 0 || numericDuration > 120) {
+      return res.status(400).json({
+        success: false,
+        error: 'مدة التسجيل يجب أن تكون بين ثانية و120 ثانية',
+        code: 'INVALID_AUDIO_DURATION'
+      });
+    }
+
+    const sellerId = req.user.sellerId || req.user.id;
+    const mimeType = audioData.slice(5, audioData.indexOf(';'));
+    const extension = mimeType.startsWith('audio/mp4')
+      ? 'm4a'
+      : mimeType.startsWith('audio/ogg')
+        ? 'ogg'
+        : 'webm';
+    const upload = await storageService.upload({
+      data: audioData,
+      filename: `workshop_intro_${sellerId}.${extension}`,
+      mimeType,
+      folder: 'sellers',
+      ownerId: sellerId,
+      resourceType: 'auto'
+    });
+    await saveSellerIntroAudio(req.user, upload.url, numericDuration);
+
+    res.json({
+      success: true,
+      message: 'تم حفظ التسجيل التعريفي للورشة',
+      data: { audioUrl: upload.url, duration: Math.round(numericDuration) }
+    });
+  } catch (error) {
+    console.error('[SellerRoutes] Failed to save workshop introduction audio:', error);
+    res.status(400).json({
+      success: false,
+      error: (error as Error).message || 'تعذر حفظ التسجيل التعريفي',
+      code: 'INTRO_AUDIO_ERROR'
+    });
+  }
+});
 
 // PUT /api/seller/profile - Update store information
 router.put('/profile', async (req: AuthenticatedRequest, res: Response) => {

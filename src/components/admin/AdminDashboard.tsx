@@ -1404,7 +1404,7 @@ export const AdminDashboard: React.FC = () => {
     }
   };
 
-  const [activeHubSection, setActiveHubSection] = useState<string>('control');
+  const [activeHubSection, setActiveHubSection] = useState<string>('all');
 
   const pendingPasswordResetsCount = passwordResets.filter((r) => r.status === 'pending').length;
 
@@ -1442,12 +1442,12 @@ export const AdminDashboard: React.FC = () => {
   const navSections: AdminNavSection[] = [
     {
       id: 'control',
-      title: 'الرئيسية والمتابعة',
+      title: 'مركز المتابعة',
       items: [
         {
           id: 'overview' as const,
-          label: 'المؤشرات والتحليلات',
-          sublabel: 'إحصائيات المبيعات والأداء الحي',
+          label: 'نظرة عامة',
+          sublabel: 'ملخص أداء المنصة ومؤشراتها',
           icon: TrendingUp,
           elementId: 'admin-tab-overview'
         },
@@ -1469,7 +1469,7 @@ export const AdminDashboard: React.FC = () => {
     },
     {
       id: 'commerce',
-      title: 'سوق وه والتجارة',
+      title: 'إدارة السوق والطلبات',
       items: [
         {
           id: 'approvals' as const,
@@ -1496,47 +1496,58 @@ export const AdminDashboard: React.FC = () => {
           icon: Truck,
           elementId: 'admin-tab-orders'
         },
+      ]
+    },
+    {
+      id: 'finance',
+      title: 'الماليات والتشغيل',
+      items: [
         {
           id: 'payouts' as const,
-          label: 'طلبات صرف المستحقات',
-          sublabel: 'تسويات أرباح ومستحقات الورش',
+          label: 'صرف مستحقات الورش',
+          sublabel: 'تسويات الأرباح وطلبات الصرف',
           icon: CreditCard,
           elementId: 'admin-tab-payouts'
         },
         {
-          id: 'coupons' as const,
-          label: 'أكواد وقسائم الخصم',
-          sublabel: 'العروض التسويقية والحملات',
-          icon: Tag,
-          elementId: 'admin-tab-coupons'
-        },
-        {
-          id: 'promotion-requests' as const,
-          label: 'طلبات مساحة الترشيح',
-          sublabel: 'تأكيد الاشتراك واختيار المحتوى ومدته',
-          icon: Sparkles,
-          elementId: 'admin-tab-promotion-requests'
-        },
-        {
           id: 'payment-settings' as const,
-          label: 'إعدادات الدفع الرقمي',
-          sublabel: 'InstaPay ومحافظ كاش',
+          label: 'إعدادات الدفع',
+          sublabel: 'InstaPay والمحافظ الإلكترونية',
           icon: Wallet,
           elementId: 'admin-tab-payment-settings'
         },
         {
           id: 'shipping-settings' as const,
-          label: 'إعدادات الشحن وشركات التوصيل',
-          sublabel: 'إدارة شركات الشحن المعتمدة والأسعار',
+          label: 'الشحن والتوصيل',
+          sublabel: 'شركات الشحن والأسعار',
           icon: Truck,
           elementId: 'admin-tab-shipping-settings'
         }
       ]
-
+    },
+    {
+      id: 'growth',
+      title: 'التسويق والنمو',
+      items: [
+        {
+          id: 'coupons' as const,
+          label: 'القسائم والعروض',
+          sublabel: 'أكواد الخصم والحملات',
+          icon: Tag,
+          elementId: 'admin-tab-coupons'
+        },
+        {
+          id: 'promotion-requests' as const,
+          label: 'مساحات الترشيح المدفوعة',
+          sublabel: 'إدارة الاشتراكات ومحتوى الظهور',
+          icon: Sparkles,
+          elementId: 'admin-tab-promotion-requests'
+        }
+      ]
     },
     {
       id: 'heritage',
-      title: 'المحتوى والتراث',
+      title: 'المحتوى والهوية التراثية',
       items: [
         {
           id: 'categories' as const,
@@ -1580,7 +1591,7 @@ export const AdminDashboard: React.FC = () => {
     },
     {
       id: 'users-security',
-      title: 'المستخدمون والأمان',
+      title: 'الحسابات والأمان والدعم',
       items: [
         {
           id: 'users' as const,
@@ -1639,16 +1650,17 @@ export const AdminDashboard: React.FC = () => {
   })).filter((section) => section.items.length > 0);
 
   return (
-    <div className="max-w-[1680px] mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-8 space-y-6">
+    <div dir="rtl" className="min-h-screen bg-background px-3 py-5 text-foreground transition-colors duration-300 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1680px] space-y-5">
       {/* =====================================================
           ADMIN COMMAND HEADER
           ===================================================== */}
-      <div className="bg-espresso dark:bg-background rounded-[2rem] p-5 sm:p-7 text-white shadow-xl border border-primary/20 dark:border-white/10 space-y-5">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="overflow-hidden rounded-[1.5rem] border border-border-subtle bg-surface text-foreground shadow-sm">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 sm:p-5">
           {/* Admin Identity */}
           <div className="flex items-center gap-3.5 sm:gap-4">
             <div className="relative">
-              <div className="w-13 h-13 sm:w-15 sm:h-15 rounded-2xl overflow-hidden bg-primary/30 border-2 border-primary/60 flex items-center justify-center text-primary dark:text-primary-hover shrink-0 shadow-inner">
+              <div className="w-13 h-13 sm:w-15 sm:h-15 rounded-2xl overflow-hidden bg-primary/10 border border-primary/20 flex items-center justify-center text-primary dark:text-accent shrink-0">
                 {currentUser.profileImage?.secureUrl || currentUser.avatar ? (
                   <img
                     src={currentUser.profileImage?.secureUrl || currentUser.avatar}
@@ -1656,30 +1668,30 @@ export const AdminDashboard: React.FC = () => {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <ShieldAlert className="w-8 h-8 text-primary-hover" />
+                  <ShieldAlert className="w-8 h-8 text-primary dark:text-accent" />
                 )}
               </div>
-              <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-espresso rounded-full" title="متصل بالنظام" />
+              <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-surface rounded-full" title="متصل بالنظام" />
             </div>
 
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-lg sm:text-2xl font-black font-main tracking-tight text-cream">
+                <h1 className="text-lg sm:text-2xl font-black font-main tracking-tight text-[#29231E] dark:text-cream">
                   لوحة الإدارة المركزية
                 </h1>
-                <span className="bg-primary text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-xs">
+                <span className="bg-primary/10 text-primary dark:text-accent text-[10px] font-black px-2.5 py-0.5 rounded-full">
                   مدير النظام العام
                 </span>
               </div>
 
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-xs text-white/70">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-xs text-foreground-secondary">
                 <span>مرحباً، {currentUser.name || 'مدير المنظومة'}</span>
-                <span className="text-white/30">•</span>
+                <span className="text-foreground-muted">•</span>
                 <button
                   type="button"
                   id="admin-profile-settings-btn"
                   onClick={() => setActivePage('buyer-account')}
-                  className="text-amber-300 hover:text-accent-hover underline font-medium cursor-pointer transition-colors"
+                  className="text-primary dark:text-accent hover:text-primary-hover underline font-medium cursor-pointer transition-colors"
                 >
                   تعديل الملف الشخصي
                 </button>
@@ -1692,7 +1704,7 @@ export const AdminDashboard: React.FC = () => {
             {/* Layout Mode Switcher */}
             <div
               id="admin-layout-switcher"
-              className="flex items-center bg-black/30 dark:bg-black/50 border border-white/10 rounded-xl p-1 gap-1 shadow-inner"
+              className="flex items-center bg-background-secondary border border-border-subtle rounded-xl p-1 gap-1"
               title="تغيير مظهر وعرض لوحة الإدارة"
             >
               <button
@@ -1700,8 +1712,8 @@ export const AdminDashboard: React.FC = () => {
                 id="admin-layout-sidebar-btn"
                 onClick={() => handleLayoutChange('sidebar')}
                 className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${layoutMode === 'sidebar'
-                  ? 'bg-primary text-white shadow-xs'
-                  : 'text-white/70 hover:text-white hover:bg-white/10'
+                  ? 'bg-surface text-primary dark:text-accent shadow-sm'
+                  : 'text-foreground-secondary hover:text-primary dark:hover:text-accent hover:bg-surface'
                   }`}
                 title="عرض الشريط الجانبي (Sidebar)"
               >
@@ -1714,8 +1726,8 @@ export const AdminDashboard: React.FC = () => {
                 id="admin-layout-rail-btn"
                 onClick={() => handleLayoutChange('compact-rail')}
                 className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${layoutMode === 'compact-rail'
-                  ? 'bg-primary text-white shadow-xs'
-                  : 'text-white/70 hover:text-white hover:bg-white/10'
+                  ? 'bg-surface text-primary dark:text-accent shadow-sm'
+                  : 'text-foreground-secondary hover:text-primary dark:hover:text-accent hover:bg-surface'
                   }`}
                 title="عرض الشريط الذكي الرفيع (Compact Iconic Rail)"
               >
@@ -1728,8 +1740,8 @@ export const AdminDashboard: React.FC = () => {
                 id="admin-layout-hub-btn"
                 onClick={() => handleLayoutChange('full-hub')}
                 className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${layoutMode === 'full-hub'
-                  ? 'bg-primary text-white shadow-xs'
-                  : 'text-white/70 hover:text-white hover:bg-white/10'
+                  ? 'bg-surface text-primary dark:text-accent shadow-sm'
+                  : 'text-foreground-secondary hover:text-primary dark:hover:text-accent hover:bg-surface'
                   }`}
                 title="عرض التبويب العريض (Full-Width Hub)"
               >
@@ -1742,8 +1754,8 @@ export const AdminDashboard: React.FC = () => {
                 id="admin-layout-bento-btn"
                 onClick={() => handleLayoutChange('bento')}
                 className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${layoutMode === 'bento'
-                  ? 'bg-primary text-white shadow-xs'
-                  : 'text-white/70 hover:text-white hover:bg-white/10'
+                  ? 'bg-surface text-primary dark:text-accent shadow-sm'
+                  : 'text-foreground-secondary hover:text-primary dark:hover:text-accent hover:bg-surface'
                   }`}
                 title="عرض البطاقات السريعة (Bento Grid)"
               >
@@ -1770,7 +1782,7 @@ export const AdminDashboard: React.FC = () => {
             <button
               type="button"
               onClick={() => setActivePage('products')}
-              className="px-4 py-2 bg-white/10 hover:bg-white/15 text-white text-xs font-bold rounded-xl border border-white/10 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+              className="px-4 py-2 bg-background-secondary hover:bg-surface-active text-foreground text-xs font-bold rounded-xl border border-border-subtle transition-all flex items-center gap-1.5 cursor-pointer"
             >
               <span>سوق وه</span>
               <ExternalLink className="w-3.5 h-3.5 text-accent" />
@@ -1792,21 +1804,21 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Real-time System Status & Alert Chips */}
-        <div className="pt-3 border-t border-white/10 flex flex-wrap items-center gap-2 text-xs">
-          <span className="text-white/60 text-[11px] font-medium hidden sm:inline">حالة العمليات:</span>
+        <div className="border-t border-[#EEE8DF] bg-[#FBFAF8] px-4 py-3 dark:border-white/10 dark:bg-black/10 flex flex-wrap items-center gap-2 text-xs">
+          <span className="text-[#817568] dark:text-white/50 text-[11px] font-bold hidden sm:inline">بحاجة لمتابعتك:</span>
 
           {pendingProducts.length > 0 ? (
             <button
               type="button"
               onClick={() => handleSelectTab('approvals')}
-              className="bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 px-3 py-1.5 rounded-xl flex items-center gap-2 text-accent text-xs font-bold transition-all cursor-pointer"
+              className="bg-amber-50 hover:bg-amber-100 border border-amber-200 px-3 py-1.5 rounded-xl flex items-center gap-2 text-amber-800 dark:bg-amber-500/10 dark:hover:bg-amber-500/20 dark:border-amber-500/30 dark:text-amber-200 text-xs font-bold transition-all cursor-pointer"
             >
               <Package className="w-3.5 h-3.5 text-primary-hover" />
               <span>{pendingProducts.length} منتج بانتظار الفحص</span>
               <ArrowLeft className="w-3 h-3 text-primary-hover" />
             </button>
           ) : (
-            <span className="bg-white/5 border border-white/10 px-3 py-1 rounded-xl text-white/70 text-[11px] flex items-center gap-1.5">
+            <span className="bg-emerald-50 border border-emerald-100 px-3 py-1 rounded-xl text-emerald-800 dark:bg-emerald-500/10 dark:border-emerald-500/20 dark:text-emerald-200 text-[11px] flex items-center gap-1.5">
               <CheckCircle2 className="w-3 h-3 text-emerald-400" />
               <span>كافة المعروضات معتمدة</span>
             </span>
@@ -1816,7 +1828,7 @@ export const AdminDashboard: React.FC = () => {
             <button
               type="button"
               onClick={() => handleSelectTab('sellers')}
-              className="bg-orange-500/20 hover:bg-orange-500/30 border border-orange-500/40 px-3 py-1.5 rounded-xl flex items-center gap-2 text-orange-200 text-xs font-bold transition-all cursor-pointer"
+              className="bg-orange-50 hover:bg-orange-100 border border-orange-200 px-3 py-1.5 rounded-xl flex items-center gap-2 text-orange-800 dark:bg-orange-500/10 dark:hover:bg-orange-500/20 dark:border-orange-500/30 dark:text-orange-200 text-xs font-bold transition-all cursor-pointer"
             >
               <Store className="w-3.5 h-3.5 text-orange-400 animate-pulse" />
               <span>{pendingSellersCount} طلب انضمام ورشة</span>
@@ -1828,7 +1840,7 @@ export const AdminDashboard: React.FC = () => {
             <button
               type="button"
               onClick={() => handleSelectTab('password-resets')}
-              className="bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/40 px-3 py-1.5 rounded-xl flex items-center gap-2 text-rose-200 text-xs font-bold transition-all cursor-pointer"
+              className="bg-rose-50 hover:bg-rose-100 border border-rose-200 px-3 py-1.5 rounded-xl flex items-center gap-2 text-rose-800 dark:bg-rose-500/10 dark:hover:bg-rose-500/20 dark:border-rose-500/30 dark:text-rose-200 text-xs font-bold transition-all cursor-pointer"
             >
               <KeyRound className="w-3.5 h-3.5 text-rose-400 animate-pulse" />
               <span>{pendingPasswordResetsCount} استعادة كلمة سر</span>
@@ -1836,7 +1848,7 @@ export const AdminDashboard: React.FC = () => {
             </button>
           )}
 
-          <div className="mr-auto hidden sm:flex items-center gap-2 text-[11px] text-white/50">
+          <div className="mr-auto hidden sm:flex items-center gap-2 text-[11px] text-[#948778] dark:text-white/40">
             <span className="w-2 h-2 rounded-full bg-emerald-400" />
             <span>نظام الحرف اليدوية نشط ومؤمن</span>
           </div>
@@ -1993,14 +2005,14 @@ export const AdminDashboard: React.FC = () => {
                             <div className="min-w-0">
                               <div className="truncate">{item.label}</div>
                               {item.sublabel && (
-                                <div className={`text-[10px] truncate ${isActive ? 'text-white/80' : 'text-black/50 dark:text-white/50'}`}>
+                                <div className={`text-[10px] truncate ${isActive ? 'text-white/75' : 'text-[#9A8D7E] dark:text-white/40'}`}>
                                   {item.sublabel}
                                 </div>
                               )}
                             </div>
                           </div>
                           {typeof item.badge === 'number' && item.badge > 0 && (
-                            <span className={`text-[10px] font-black px-2 py-0.5 rounded-full shrink-0 ${isActive ? 'bg-white text-primary' : 'bg-amber-500 text-white animate-pulse'
+                            <span className={`text-[10px] font-black px-2 py-0.5 rounded-full shrink-0 ${isActive ? 'bg-white text-primary' : 'bg-primary/10 text-primary'
                               }`}>
                               {item.badge}
                             </span>
@@ -2024,16 +2036,23 @@ export const AdminDashboard: React.FC = () => {
             LAYOUT 1: DESKTOP STICKY SIDEBAR (lg:)
             ===================================================== */}
         {layoutMode === 'sidebar' && (
-          <aside className="hidden lg:flex flex-col w-72 xl:w-80 shrink-0 sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto rounded-3xl p-4 bg-background border border-border-subtle shadow-sm space-y-4">
+          <aside className="hidden lg:flex flex-col w-72 xl:w-80 shrink-0 sticky top-5 max-h-[calc(100vh-2.5rem)] overflow-y-auto rounded-[1.4rem] p-3 bg-surface border border-border-subtle shadow-sm space-y-4">
+            <div className="flex items-center justify-between rounded-xl bg-background-secondary px-3 py-2.5">
+              <div>
+                <h2 className="text-xs font-black text-foreground">أقسام الإدارة</h2>
+                <p className="mt-0.5 text-[10px] text-foreground-muted">الأدوات مرتبة حسب مجال العمل</p>
+              </div>
+              <span className="rounded-full bg-surface px-2 py-1 text-[10px] font-bold text-primary dark:text-accent shadow-sm">{navSections.length} مجالات</span>
+            </div>
             {/* Quick Search */}
             <div className="relative">
-              <Search className="w-3.5 h-3.5 text-primary absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <Search className="w-3.5 h-3.5 text-primary dark:text-accent absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
                 type="text"
                 value={navSearchQuery}
                 onChange={(e) => setNavSearchQuery(e.target.value)}
                 placeholder="بحث في أدوات الإدارة..."
-                className="w-full pr-8 pl-3 py-2 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-xs outline-none focus:border-primary text-foreground transition-all"
+                className="w-full rounded-xl border border-border bg-background-secondary py-2 pl-3 pr-8 text-xs text-foreground outline-none transition-all placeholder:text-foreground-muted focus:border-primary"
               />
               {navSearchQuery && (
                 <button
@@ -2049,10 +2068,11 @@ export const AdminDashboard: React.FC = () => {
             {/* Categorized Sections */}
             <div className="space-y-4">
               {filteredSections.map((section) => (
-                <div key={section.id} className="space-y-1">
-                  <div className="text-[11px] font-black text-primary dark:text-primary-hover px-2 py-1 uppercase tracking-wider flex items-center justify-between">
-                    <span>{section.title}</span>
-                  </div>
+                <div key={section.id} className="space-y-1.5">
+                    <div className="flex items-center justify-between border-b border-border-subtle px-2 pb-1.5 pt-1">
+                      <span className="text-[10px] font-black uppercase tracking-wide text-primary dark:text-accent">{section.title}</span>
+                      <span className="rounded-full bg-background-secondary px-1.5 py-0.5 text-[9px] font-bold text-foreground-muted">{section.items.length}</span>
+                    </div>
 
                   <div className="space-y-1">
                     {section.items.map((item) => {
@@ -2092,13 +2112,13 @@ export const AdminDashboard: React.FC = () => {
                           type="button"
                           id={item.elementId}
                           onClick={() => handleSelectTab(item.id as typeof activeTab)}
-                          className={`w-full p-2.5 rounded-2xl text-xs font-bold transition-all flex items-center justify-between text-right cursor-pointer ${isActive
-                            ? 'bg-primary text-white shadow-md shadow-primary/25 ring-1 ring-primary'
-                            : 'bg-transparent hover:bg-primary/10 text-foreground hover:text-primary'
+                          className={`w-full p-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between text-right cursor-pointer ${isActive
+                            ? 'bg-primary text-white shadow-sm'
+                            : 'bg-transparent hover:bg-primary/10 text-foreground-secondary hover:text-primary dark:hover:text-accent'
                             }`}
                         >
                           <div className="flex items-center gap-2.5 min-w-0">
-                            <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${isActive ? 'bg-white/20 text-white' : 'bg-black/5 dark:bg-cream/5 text-primary dark:text-primary-hover'
+                            <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${isActive ? 'bg-white/20 text-white' : 'bg-primary/10 text-primary dark:text-accent'
                               }`}>
                               <Icon className="w-4 h-4" />
                             </div>
@@ -4644,7 +4664,7 @@ export const AdminDashboard: React.FC = () => {
           {activeTab === 'coupons' && (
 
             <div className="space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-3xl border border-border shadow-xs">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface p-5 rounded-3xl border border-border shadow-xs text-foreground">
                 <div>
                   <h3 className="font-bold text-base text-foreground">إدارة كوبونات وأكواد الخصم</h3>
                   <p className="text-xs text-black/60 dark:text-white/60 mt-0.5">
@@ -4867,36 +4887,36 @@ export const AdminDashboard: React.FC = () => {
               {/* Quick Metrics */}
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
                 <div className="bg-surface backdrop-blur-xl p-4 rounded-2xl border border-border shadow-sm text-foreground">
-                  <span className="text-[11px] text-black/60 dark:text-white/60 block mb-1">إجمالي المستخدمين</span>
+                  <span className="text-[11px] text-foreground-secondary block mb-1">إجمالي المستخدمين</span>
                   <span className="text-2xl font-black text-foreground font-mono">{adminUsers.length}</span>
                 </div>
                 <div className="bg-surface backdrop-blur-xl p-4 rounded-2xl border border-border shadow-sm text-foreground">
-                  <span className="text-[11px] text-black/60 dark:text-white/60 block mb-1">المشترين (Buyers)</span>
-                  <span className="text-2xl font-black text-blue-700 font-mono">
+                  <span className="text-[11px] text-foreground-secondary block mb-1">المشترين (Buyers)</span>
+                  <span className="text-2xl font-black text-blue-700 dark:text-blue-300 font-mono">
                     {adminUsers.filter((u) => u.role === 'buyer').length}
                   </span>
                 </div>
                 <div className="bg-surface backdrop-blur-xl p-4 rounded-2xl border border-border shadow-sm text-foreground">
-                  <span className="text-[11px] text-black/60 dark:text-white/60 block mb-1">الورش والحرفيين (Sellers)</span>
-                  <span className="text-2xl font-black text-amber-700 font-mono">
+                  <span className="text-[11px] text-foreground-secondary block mb-1">الورش والحرفيين (Sellers)</span>
+                  <span className="text-2xl font-black text-amber-700 dark:text-amber-300 font-mono">
                     {adminUsers.filter((u) => u.role === 'seller').length}
                   </span>
                 </div>
                 <div className="bg-surface backdrop-blur-xl p-4 rounded-2xl border border-border shadow-sm text-foreground">
-                  <span className="text-[11px] text-black/60 dark:text-white/60 block mb-1">المسؤولين (Admins)</span>
-                  <span className="text-2xl font-black text-purple-700 font-mono">
+                  <span className="text-[11px] text-foreground-secondary block mb-1">المسؤولين (Admins)</span>
+                  <span className="text-2xl font-black text-purple-700 dark:text-purple-300 font-mono">
                     {adminUsers.filter((u) => u.role === 'admin').length}
                   </span>
                 </div>
                 <div className="bg-surface backdrop-blur-xl p-4 rounded-2xl border border-border shadow-sm text-foreground">
-                  <span className="text-[11px] text-black/60 dark:text-white/60 block mb-1">حسابات شغالة</span>
-                  <span className="text-2xl font-black text-emerald-700 font-mono">
+                  <span className="text-[11px] text-foreground-secondary block mb-1">حسابات شغالة</span>
+                  <span className="text-2xl font-black text-emerald-700 dark:text-emerald-300 font-mono">
                     {adminUsers.filter((u) => (u.status || 'active') === 'active').length}
                   </span>
                 </div>
                 <div className="bg-surface backdrop-blur-xl p-4 rounded-2xl border border-border shadow-sm text-foreground">
-                  <span className="text-[11px] text-black/60 dark:text-white/60 block mb-1">حسابات متوقفة</span>
-                  <span className="text-2xl font-black text-rose-700 font-mono">
+                  <span className="text-[11px] text-foreground-secondary block mb-1">حسابات متوقفة</span>
+                  <span className="text-2xl font-black text-rose-700 dark:text-rose-300 font-mono">
                     {adminUsers.filter((u) => u.status === 'suspended' || u.status === 'blocked').length}
                   </span>
                 </div>
@@ -4905,7 +4925,7 @@ export const AdminDashboard: React.FC = () => {
               {/* Search, Filters & Action Bar */}
               <div className="bg-surface p-4 sm:p-5 rounded-2xl border border-border shadow-xs flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
                 <div className="relative flex-1 max-w-md">
-                  <Search className="w-4 h-4 text-gray-400 absolute right-3 top-3" />
+                  <Search className="w-4 h-4 text-gray-400 dark:text-foreground-secondary absolute right-3 top-3" />
                   <input
                     type="text"
                     id="admin-users-search-input"
@@ -4924,7 +4944,7 @@ export const AdminDashboard: React.FC = () => {
 
                   {/* Role filter */}
                   <div className="flex items-center gap-1.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl px-2 py-1">
-                    <Filter className="w-3.5 h-3.5 text-black/60 dark:text-white/60" />
+                    <Filter className="w-3.5 h-3.5 text-foreground-secondary" />
                     <select
                       id="admin-users-role-filter"
                       value={userRoleFilter}
@@ -5006,7 +5026,7 @@ export const AdminDashboard: React.FC = () => {
               <div className="bg-surface backdrop-blur-xl rounded-2xl border border-border shadow-sm overflow-hidden text-foreground">
                 <div className="wah-table-container overflow-x-auto">
                   <table className="w-full text-right text-xs">
-                    <thead className="bg-black/5 dark:bg-cream/5 border-b border-border text-black/60 dark:text-white/60">
+                    <thead className="bg-background-secondary border-b border-border text-foreground-secondary">
                       <tr>
                         <th className="py-3.5 px-4 font-bold">المستخدم</th>
                         <th className="py-3.5 px-4 font-bold">الدور</th>
@@ -5020,14 +5040,14 @@ export const AdminDashboard: React.FC = () => {
                     <tbody className="divide-y divide-black/10 dark:divide-white/10">
                       {isLoadingUsers ? (
                         <tr>
-                          <td colSpan={7} className="py-12 text-center text-gray-500">
+                          <td colSpan={7} className="py-12 text-center text-foreground-secondary">
                             <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-primary dark:text-primary-hover" />
                             <span>بنحمّل بيانات المستخدمين...</span>
                           </td>
                         </tr>
                       ) : adminUsers.length === 0 ? (
                         <tr>
-                          <td colSpan={7} className="py-12 text-center text-gray-500">
+                          <td colSpan={7} className="py-12 text-center text-foreground-secondary">
                             مفيش حسابات متطابقة مع البحث والفلتر.
                           </td>
                         </tr>
@@ -5036,7 +5056,7 @@ export const AdminDashboard: React.FC = () => {
                           const isCurrentAdmin = currentUser.id === u.id;
                           const isSuspended = u.status === 'suspended' || u.status === 'blocked';
                           return (
-                            <tr key={u.id} className="hover:bg-black/5 dark:bg-cream/5/60 transition-colors">
+                            <tr key={u.id} className="hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
                               <td className="py-3 px-4">
                                 <div className="flex items-center gap-3">
                                   <div className="relative shrink-0">
@@ -5046,7 +5066,7 @@ export const AdminDashboard: React.FC = () => {
                                       className="w-10 h-10 rounded-xl object-cover border border-border"
                                     />
                                     <span
-                                      className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white ${isSuspended ? 'bg-rose-500' : 'bg-emerald-500'
+                                      className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-surface ${isSuspended ? 'bg-rose-500' : 'bg-emerald-500'
                                         }`}
                                       title={isSuspended ? 'حساب متوقف' : 'حساب شغال'}
                                     />
@@ -5060,7 +5080,7 @@ export const AdminDashboard: React.FC = () => {
                                         </span>
                                       )}
                                     </div>
-                                    <span className="text-[11px] text-gray-500 block truncate">
+                                    <span className="text-[11px] text-foreground-secondary block truncate">
                                       {u.username ? `@${u.username}` : ''} {u.email ? `• ${u.email}` : ''}
                                     </span>
                                   </div>
@@ -5069,10 +5089,10 @@ export const AdminDashboard: React.FC = () => {
                               <td className="py-3 px-4">
                                 <span
                                   className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${u.role === 'admin'
-                                    ? 'bg-purple-100 text-purple-800 border border-purple-200'
+                                    ? 'bg-purple-100 text-purple-800 border border-purple-200 dark:bg-purple-950/60 dark:text-purple-300 dark:border-purple-800'
                                     : u.role === 'seller'
-                                      ? 'bg-amber-100 text-amber-800 border border-amber-200'
-                                      : 'bg-blue-100 text-blue-800 border border-blue-200'
+                                      ? 'bg-amber-100 text-amber-800 border border-amber-200 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800'
+                                      : 'bg-blue-100 text-blue-800 border border-blue-200 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-800'
                                     }`}
                                 >
                                   {u.role === 'admin' ? 'مسؤول منصة' : u.role === 'seller' ? 'ورشة وصنايعي' : 'مشتري موثق'}
@@ -5081,8 +5101,8 @@ export const AdminDashboard: React.FC = () => {
                               <td className="py-3 px-4">
                                 <span
                                   className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${isSuspended
-                                    ? 'bg-rose-100 text-rose-800 border border-rose-200'
-                                    : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                                    ? 'bg-rose-100 text-rose-800 border border-rose-200 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-800'
+                                    : 'bg-emerald-100 text-emerald-800 border border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800'
                                     }`}
                                 >
                                   <span className={`w-1.5 h-1.5 rounded-full ${isSuspended ? 'bg-rose-600' : 'bg-emerald-600'}`} />
@@ -5090,8 +5110,8 @@ export const AdminDashboard: React.FC = () => {
                                 </span>
                               </td>
                               <td className="py-3 px-4 font-medium text-foreground">{u.governorate || 'مش محدد'}</td>
-                              <td className="py-3 px-4 font-mono text-gray-600">{u.phone || '---'}</td>
-                              <td className="py-3 px-4 text-gray-500 text-[11px]">
+                              <td className="py-3 px-4 font-mono text-foreground-secondary">{u.phone || '---'}</td>
+                              <td className="py-3 px-4 text-foreground-secondary text-[11px]">
                                 {u.createdAt ? new Date(u.createdAt).toLocaleDateString('ar-EG') : '---'}
                               </td>
                               <td className="py-3 px-4 text-center">
@@ -7563,6 +7583,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 };
