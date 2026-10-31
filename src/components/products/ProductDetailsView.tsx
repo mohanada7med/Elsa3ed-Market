@@ -631,7 +631,7 @@ export const ProductDetailsView: React.FC = () => {
         <section
           className="
             grid
-            items-stretch
+            items-start
             gap-5
             lg:grid-cols-[1.08fr_0.92fr]
             lg:gap-7
@@ -650,7 +650,6 @@ export const ProductDetailsView: React.FC = () => {
               shadow-[0_24px_70px_-38px_rgba(59,30,14,0.42)]
               dark:border-white/10
               dark:bg-[#26160D]
-              lg:min-h-[680px]
             "
           >
             {/* Number */}
@@ -696,8 +695,8 @@ export const ProductDetailsView: React.FC = () => {
                 relative
                 h-[390px]
                 sm:h-[520px]
-                lg:h-full
-                lg:min-h-[680px]
+                lg:aspect-[0.9]
+                lg:h-auto
               "
             >
               <img
@@ -710,9 +709,6 @@ export const ProductDetailsView: React.FC = () => {
                   h-full
                   w-full
                   object-cover
-                  transition-transform
-                  duration-700
-                  hover:scale-[1.025]
                 "
               />
 

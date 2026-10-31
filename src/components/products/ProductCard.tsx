@@ -56,11 +56,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       className="flex min-w-0 flex-col overflow-hidden group relative transition-all duration-300 rounded-2xl sm:rounded-[1.5rem] bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl border border-black/10 dark:border-white/10 hover:border-primary/40 dark:hover:border-primary/50 shadow-md sm:shadow-lg hover:shadow-xl cursor-pointer touch-manipulation"
     >
       {/* Product Image & Badges */}
-      <div className="relative aspect-square w-full overflow-hidden bg-black/5 dark:bg-cream/5">
+      <div className="relative aspect-square w-full overflow-hidden bg-[#F5EFE5] dark:bg-[#27211C]">
         <img
-          src={getOptimizedImageUrl(primaryImage, { width: 600, crop: 'fill' })}
+          src={getOptimizedImageUrl(primaryImage, { width: 600, height: 600, crop: 'fill' })}
           alt={product.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           loading="lazy"
         />
 

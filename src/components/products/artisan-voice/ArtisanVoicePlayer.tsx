@@ -91,19 +91,12 @@ export const ArtisanVoicePlayer: React.FC<ArtisanVoicePlayerProps> = ({
   const [isLoadedOnce, setIsLoadedOnce] = useState(false);
   const [isRecorderOpen, setIsRecorderOpen] = useState(false);
 
-  // Check strictly if current user is the owner seller of this product, or admin
-  const isOwnerOrAdmin = useMemo(() => {
+  // Only the seller who owns this product can record its workshop voice.
+  const isProductOwner = useMemo(() => {
     if (!product || !currentUser) return false;
-    if (currentRole === 'admin' || currentUser.role === 'admin') return true;
-    if (currentRole === 'seller' || currentUser.role === 'seller') {
-      const userSellerId = currentUser.sellerId || currentUser.id || (currentUser as any)?.seller?.id;
-      return Boolean(
-        userSellerId &&
-        product.sellerId &&
-        (userSellerId === product.sellerId || currentUser.id === product.sellerId)
-      );
-    }
-    return false;
+    if (currentRole !== 'seller' || currentUser.role !== 'seller') return false;
+    const userSellerId = currentUser.sellerId || currentUser.id;
+    return Boolean(userSellerId && product.sellerId === userSellerId);
   }, [product, currentUser, currentRole]);
 
   // Global Audio Coordination across players
@@ -313,8 +306,8 @@ export const ArtisanVoicePlayer: React.FC<ArtisanVoicePlayerProps> = ({
               كل قطعة وراها حكاية.. اسمعها من صاحبها.
             </p>
 
-            {/* Seller / Artisan Voice Recording Action - ONLY visible to the product owner or admin */}
-            {product && isOwnerOrAdmin && (
+            {/* Recording is available only to the seller who owns this product. */}
+            {product && isProductOwner && (
               <button
                 type="button"
                 onClick={() => setIsRecorderOpen(true)}
@@ -394,8 +387,8 @@ export const ArtisanVoicePlayer: React.FC<ArtisanVoicePlayerProps> = ({
               </div>
             </div>
 
-            {/* Quick Seller / Artisan Action: ONLY for owner seller or admin */}
-            {product && isOwnerOrAdmin ? (
+            {/* Quick seller action: only the owner may open the recorder. */}
+            {product && isProductOwner ? (
               <div className="pt-2 border-t border-amber-900/10 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <span className="text-[11px] font-bold text-amber-800 dark:text-amber-300">
                   بصفتك البائع صاحب هذه القطعة، يمكنك توثيق صوت ورشتك وسر الصنعة الآن مباشرة لتظهر لجميع المشترين:
@@ -433,4 +426,3 @@ export const ArtisanVoicePlayer: React.FC<ArtisanVoicePlayerProps> = ({
     </div>
   );
 };
-

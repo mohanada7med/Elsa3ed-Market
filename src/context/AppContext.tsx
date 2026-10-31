@@ -236,6 +236,7 @@ interface AppContextType {
   ) => Promise<Product>;
   deleteProduct: (id: string) => Promise<void>;
   approveProduct: (id: string) => Promise<void>;
+  setProductOfWeek: (id: string) => Promise<void>;
   rejectProduct: (id: string, reason: string) => Promise<void>;
 
   // Seller Actions
@@ -2601,26 +2602,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   ): Promise<Product> => {
     try {
-      let updated: Product;
-      if (currentRole === 'admin' || currentUser.role === 'admin') {
-        updated = await api.updateAdminProduct(
-          { id: currentUser.id, role: 'admin' },
-          productId,
-          {
-            audioUrl: payload.audioUrl || payload.audioData,
-            transcript: payload.transcript,
-            artisanName: payload.artisanName,
-            artisanCraft: payload.artisanCraft,
-            audioDuration: payload.audioDuration
-          }
-        );
-      } else {
-        updated = await api.saveSellerArtisanVoice(
-          { id: currentUser.id, role: currentRole, sellerId: currentUser.sellerId || currentUser.id },
-          productId,
-          payload
-        );
+      const product = products.find((item) => item.id === productId);
+      const sellerId = currentUser?.sellerId || currentUser?.id;
+      if (
+        currentRole !== 'seller' ||
+        currentUser?.role !== 'seller' ||
+        !product ||
+        !sellerId ||
+        product.sellerId !== sellerId
+      ) {
+        throw new Error('تسجيل صوت الورشة متاح لصاحب المنتج فقط');
       }
+
+      let updated: Product;
+      updated = await api.saveSellerArtisanVoice(
+        { id: currentUser.id, role: currentRole, sellerId },
+        productId,
+        payload
+      );
 
       setSellerProducts((prev) => prev.map((prod) => (prod.id === productId ? updated : prod)));
       setAdminProducts((prev) => prev.map((prod) => (prod.id === productId ? updated : prod)));
@@ -2678,6 +2677,34 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       refreshAuditLogs();
     } catch (err) {
       console.error('Error approving product:', err);
+    }
+  };
+
+  const setProductOfWeek = async (id: string) => {
+    try {
+      const selected = await api.setProductOfWeek(
+        { id: currentUser.id, role: 'admin' },
+        id
+      );
+      const updateSelection = (items: Product[]) =>
+        items.map((item) => ({
+          ...item,
+          isProductOfWeek: item.id === selected.id
+        }));
+
+      setAdminProducts(updateSelection);
+      setSellerProducts(updateSelection);
+      setProducts((prev) => {
+        const updated = updateSelection(prev);
+        return updated.some((item) => item.id === selected.id)
+          ? updated
+          : [selected, ...updated];
+      });
+      addToast('تم تحديد منتج الأسبوع', `المنتج "${selected.title}" هيظهر في الصفحة الرئيسية`, 'success');
+      refreshAuditLogs();
+    } catch (error: any) {
+      console.error('Error setting product of the week:', error);
+      addToast('تعذر تحديد منتج الأسبوع', error?.message || 'حاول مرة أخرى بعد تحديث الصفحة', 'error');
     }
   };
 
@@ -3385,6 +3412,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         saveArtisanVoice,
         deleteProduct,
         approveProduct,
+        setProductOfWeek,
         rejectProduct,
 
         applyToBecomeSeller,

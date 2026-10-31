@@ -46,12 +46,12 @@ export const WAHProductCard: React.FC<WAHProductCardProps> = ({
       className={`group relative flex flex-col bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl border border-black/10 dark:border-white/10 hover:border-primary/40 dark:hover:border-primary/50 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden ${shapeClass}`}
     >
       {/* Product Image Stage */}
-      <div className="relative aspect-square w-full overflow-hidden bg-black/5 dark:bg-cream/5">
+      <div className="relative aspect-square w-full overflow-hidden bg-[#F5EFE5] dark:bg-[#27211C]">
         <img
           src={primaryImage}
           alt={product.title}
           onClick={() => navigateToProduct(product.id)}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out cursor-pointer"
+          className="h-full w-full cursor-pointer object-cover transition-transform duration-500 ease-out group-hover:scale-105"
           loading="lazy"
         />
 

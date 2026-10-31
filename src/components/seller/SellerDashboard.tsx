@@ -13,6 +13,7 @@ import { CraftReelsModal } from '../public/CraftReelsModal.tsx';
 import { ChatView } from '../chat/ChatView.tsx';
 import { DeleteAccountModal } from '../common/DeleteAccountModal.tsx';
 import { ArtisanVoiceRecorderModal } from './ArtisanVoiceRecorderModal.tsx';
+import { SellerPromotionPanel } from './SellerPromotionPanel.tsx';
 import {
   Store,
   Mic,
@@ -147,7 +148,7 @@ export const SellerDashboard: React.FC = () => {
     openReportModal
   } = useApp();
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'inventory' | 'orders' | 'messages' | 'payouts' | 'reels' | 'notifications' | 'settings' | 'reports'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'inventory' | 'orders' | 'messages' | 'payouts' | 'reels' | 'notifications' | 'settings' | 'reports' | 'promotion'>('overview');
 
   // Multi-Layout Modes for Artisan Seller Dashboard
   type SellerLayoutMode = 'sidebar' | 'compact-rail' | 'full-hub' | 'bento';
@@ -843,7 +844,7 @@ export const SellerDashboard: React.FC = () => {
   const pendingProductsCount = sellerProducts.filter((p) => p.approvalStatus === 'pending').length;
 
   interface SellerNavItem {
-    id: 'overview' | 'products' | 'inventory' | 'orders' | 'messages' | 'payouts' | 'reels' | 'notifications' | 'settings' | 'reports';
+    id: 'overview' | 'products' | 'inventory' | 'orders' | 'messages' | 'payouts' | 'reels' | 'notifications' | 'settings' | 'reports' | 'promotion';
     label: string;
     sublabel?: string;
     icon: React.ComponentType<{ className?: string }>;
@@ -877,7 +878,14 @@ export const SellerDashboard: React.FC = () => {
           sublabel: `المبيعات ${totalRevenue.toLocaleString('ar-EG')} ج.م`,
           icon: CreditCard,
           elementId: 'seller-nav-payouts-btn'
-        }
+        },
+        ...(currentUser.role === 'seller' ? [{
+          id: 'promotion' as const,
+          label: 'الاشتراك في مساحة الترشيح',
+          sublabel: 'طلب ظهور مدفوع في السوق ودليل الورش',
+          icon: Sparkles,
+          elementId: 'seller-nav-promotion-btn'
+        }] : [])
       ]
     },
     {
@@ -2873,6 +2881,10 @@ export const SellerDashboard: React.FC = () => {
                 else if (tab === 'settings') setActiveTab('settings');
               }}
             />
+          )}
+
+          {activeTab === 'promotion' && currentUser.role === 'seller' && (
+            <SellerPromotionPanel user={currentUser} addToast={addToast} />
           )}
 
           {/* TAB: REPORTS & SUPPORT */}

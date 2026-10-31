@@ -341,11 +341,11 @@ const ProductCard: React.FC<{
         <div
           className="
           relative
-          aspect-[0.9]
+          aspect-square
           overflow-hidden
-          bg-[#ded5c6]
+          bg-[#F5EFE5]
 
-          dark:bg-[#191816]
+          dark:bg-[#27211C]
         "
         >
           <img
@@ -364,7 +364,7 @@ const ProductCard: React.FC<{
             w-full
             object-cover
             transition-transform
-            duration-700
+            duration-500
             ease-out
 
             group-hover:scale-105
@@ -383,9 +383,9 @@ const ProductCard: React.FC<{
             absolute
             inset-0
             bg-gradient-to-t
-            from-black/60
-            via-black/0
-            to-black/15
+            from-black/30
+            via-transparent
+            to-transparent
           "
           />
 

@@ -7,6 +7,7 @@ import {
   getAllAdminProducts,
   approveProduct,
   rejectProduct,
+  setProductOfWeek,
   deleteProduct,
   updateProduct,
   createProduct
@@ -67,6 +68,14 @@ import {
   getAdminBroadcastHistory
 } from '../services/notificationService.ts';
 import { memoryDb, getDatabase } from '../db/mongodb.ts';
+import {
+  activatePaidPromotion,
+  getAdminPaidPromotionRequests,
+  getAdminActivePaidPromotion,
+  updateActivePaidPromotion,
+  removeActivePaidPromotion,
+  rejectPaidPromotionRequest
+} from '../services/communityService.ts';
 
 const router = express.Router();
 
@@ -741,6 +750,110 @@ router.get('/products', async (req: AuthenticatedRequest, res: Response) => {
       success: false,
       error: 'فشل في جلب منتجات الإدارة',
       code: 'SERVER_ERROR'
+    });
+  }
+});
+
+router.get('/paid-promotion-requests', async (_req: AuthenticatedRequest, res: Response) => {
+  try {
+    const requests = await getAdminPaidPromotionRequests();
+    res.json({ success: true, count: requests.length, data: requests });
+  } catch (error) {
+    console.error('[AdminRoutes] Failed to fetch paid promotion requests:', error);
+    res.status(500).json({ success: false, error: 'تعذر تحميل طلبات الاشتراك', code: 'SERVER_ERROR' });
+  }
+});
+
+router.get('/paid-promotion', async (_req: AuthenticatedRequest, res: Response) => {
+  try {
+    res.json({ success: true, data: await getAdminActivePaidPromotion() });
+  } catch (error) {
+    console.error('[AdminRoutes] Failed to fetch active paid promotion:', error);
+    res.status(500).json({ success: false, error: 'تعذر تحميل مساحة الترشيح الحالية', code: 'SERVER_ERROR' });
+  }
+});
+
+router.put('/paid-promotion-requests/:id/activate', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { contentType, contentId, durationDays, paidAmount, homepagePosition } = req.body;
+    const request = await activatePaidPromotion(req.user!, req.params.id, {
+      contentType,
+      contentId: String(contentId || ''),
+      durationDays: Number(durationDays),
+      paidAmount: Number(paidAmount),
+      homepagePosition
+    });
+    res.json({ success: true, message: 'تم تأكيد الدفع وتفعيل مساحة الترويج', data: request });
+  } catch (error) {
+    const message = (error as Error).message || 'تعذر تفعيل مساحة الترويج';
+    res.status(message.includes('غير موجود') ? 404 : 400).json({
+      success: false,
+      error: message,
+      code: 'PROMOTION_ACTIVATION_ERROR'
+    });
+  }
+});
+
+router.put('/paid-promotion', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { contentType, contentId, durationDays, paidAmount, homepagePosition } = req.body;
+    const promotion = await updateActivePaidPromotion(req.user!, {
+      contentType,
+      contentId: String(contentId || ''),
+      durationDays: Number(durationDays),
+      paidAmount: Number(paidAmount),
+      homepagePosition
+    });
+    res.json({ success: true, message: 'تم تحديث مساحة الترشيح', data: promotion });
+  } catch (error) {
+    const message = (error as Error).message || 'تعذر تحديث مساحة الترشيح';
+    res.status(message.includes('لا توجد مساحة') ? 404 : 400).json({
+      success: false,
+      error: message,
+      code: 'PROMOTION_UPDATE_ERROR'
+    });
+  }
+});
+
+router.delete('/paid-promotion', async (_req: AuthenticatedRequest, res: Response) => {
+  try {
+    await removeActivePaidPromotion();
+    res.json({ success: true, message: 'تم إيقاف مساحة الترشيح' });
+  } catch (error) {
+    console.error('[AdminRoutes] Failed to remove active paid promotion:', error);
+    res.status(500).json({ success: false, error: 'تعذر إيقاف مساحة الترشيح', code: 'PROMOTION_REMOVE_ERROR' });
+  }
+});
+
+router.post('/paid-promotion-requests/:id/reject', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    await rejectPaidPromotionRequest(req.params.id);
+    res.json({ success: true, message: 'تم رفض طلب الاشتراك' });
+  } catch (error) {
+    const message = (error as Error).message || 'تعذر رفض طلب الاشتراك';
+    res.status(message.includes('غير موجود') ? 404 : 400).json({
+      success: false,
+      error: message,
+      code: 'PROMOTION_REJECTION_ERROR'
+    });
+  }
+});
+
+router.put('/products/:id/weekly', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const product = await setProductOfWeek(req.user!, req.params.id);
+    res.json({
+      success: true,
+      message: `تم تحديد "${product.title}" كمنتج الأسبوع`,
+      data: product
+    });
+  } catch (error) {
+    const message = (error as Error).message || 'تعذر تحديد منتج الأسبوع';
+    const status = message.includes('غير موجود') ? 404 : 400;
+    res.status(status).json({
+      success: false,
+      error: message,
+      code: status === 404 ? 'NOT_FOUND' : 'WEEKLY_PRODUCT_ERROR'
     });
   }
 });

@@ -62,6 +62,7 @@ export interface ProductDocument {
   isHandmade: boolean;
   isHeritage: boolean;
   isFeatured?: boolean;
+  isProductOfWeek?: boolean;
   isNewArrival?: boolean;
   createdAt: string;
   updatedAt?: string;
@@ -1273,7 +1274,6 @@ export interface ReportTicketDocument {
   createdAt: string;
   updatedAt: string;
 }
-
 
 
 

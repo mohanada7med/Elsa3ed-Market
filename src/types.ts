@@ -51,6 +51,7 @@ export interface Product {
   isHandmade: boolean;
   isHeritage: boolean;
   isFeatured?: boolean;
+  isProductOfWeek?: boolean;
   isNewArrival?: boolean;
   wholesalePrice?: number;
   wholesaleMinQty?: number;
@@ -120,6 +121,52 @@ export interface Seller {
   rejectedBy?: string;
   rejectionReason?: string;
   suspensionReason?: string;
+}
+
+export interface SellerFollowState {
+  following: boolean;
+  followersCount: number;
+}
+
+export interface PaidPromotionRequest {
+  id: string;
+  sellerId: string;
+  sellerName: string;
+  sellerUserId: string;
+  message: string;
+  status: 'pending' | 'active' | 'rejected' | 'expired';
+  createdAt: string;
+  updatedAt?: string;
+  contentType?: 'product' | 'seller';
+  contentId?: string;
+  startsAt?: string;
+  endsAt?: string;
+  durationDays?: number;
+  paidAmount?: number;
+  homepagePosition?: HomePromotionPosition;
+  paymentConfirmedAt?: string;
+  paymentConfirmedBy?: string;
+}
+
+export type HomePromotionPosition =
+  | 'after-hero'
+  | 'after-product-of-week'
+  | 'after-governorates'
+  | 'after-reels'
+  | 'before-market'
+  | 'after-market'
+  | 'after-quiz'
+  | 'after-sellers';
+
+export interface PaidPromotion {
+  contentType: 'product' | 'seller';
+  content: Product | Seller;
+  startsAt: string;
+  endsAt: string;
+  homepagePosition?: HomePromotionPosition;
+  requestId?: string;
+  paidAmount?: number;
+  durationDays?: number;
 }
 
 export interface CartItem {

@@ -9,6 +9,8 @@ import { DialectDictionaryPage } from './quize';
 import { FeaturedSellers } from '../public/FeaturedSellers';
 import { AboutSection } from '../public/AboutSection';
 import { HeritageSectionDivider } from '../common/HeritageSectionDivider';
+import { ProductOfWeekSection } from '../public/ProductOfWeekSection';
+import { PaidPromotionSection } from '../public/PaidPromotionSection';
 
 export const HomePage: React.FC = () => {
   const { setActivePage } = useApp();
@@ -27,14 +29,19 @@ export const HomePage: React.FC = () => {
       "
     >
       <div className="relative z-10 space-y-6 [&_section]:bg-transparent">
+
         {/* 1. Hero Section (تحميل فوري مباشر) */}
         <HeroSection />
+        <PaidPromotionSection position="after-hero" />
+        <ProductOfWeekSection />
+        <PaidPromotionSection position="after-product-of-week" />
 
         {/* فاصل تراثي أصيل */}
         <HeritageSectionDivider variant="flanked" label="أبواب الصعيد ومحافظاته" />
 
         {/* 2. Ecosystem Portals (المحافظات والأماكن) */}
         <WahEcosystemPortalSection />
+        <PaidPromotionSection position="after-governorates" />
 
         {/* فاصل تراثي أصيل */}
         <HeritageSectionDivider variant="flanked" label="فيديوهات الصعيد" />
@@ -43,9 +50,11 @@ export const HomePage: React.FC = () => {
         <div>
           <CraftReelsSection />
         </div>
+        <PaidPromotionSection position="after-reels" />
 
         {/* فاصل تراثي أصيل */}
         <HeritageSectionDivider variant="flanked" label="سوق ومنتجات وه" />
+        <PaidPromotionSection position="before-market" />
 
         {/* 4. Products Section - سوق وه */}
         <section
@@ -202,6 +211,7 @@ export const HomePage: React.FC = () => {
             <ProductGrid limit={8} />
           </div>
         </section>
+        <PaidPromotionSection position="after-market" />
         {/* فاصل تراثي أصيل */}
         <HeritageSectionDivider variant="flanked" label="اختبار الصعيد" />
 
@@ -209,6 +219,7 @@ export const HomePage: React.FC = () => {
         <div style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 500px' }}>
           <DialectDictionaryPage />
         </div>
+        <PaidPromotionSection position="after-quiz" />
 
         {/* فاصل تراثي أصيل */}
         <HeritageSectionDivider
@@ -249,6 +260,7 @@ export const HomePage: React.FC = () => {
             <FeaturedSellers />
           </div>
         </section>
+        <PaidPromotionSection position="after-sellers" />
 
 
         {/* فاصل تراثي أصيل */}

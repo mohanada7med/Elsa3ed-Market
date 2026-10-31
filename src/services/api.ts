@@ -37,7 +37,11 @@ import {
   ShippingConfig,
   ShippingCompany,
   Shipment,
-  ShipmentStatus
+  ShipmentStatus,
+  PaidPromotion,
+  PaidPromotionRequest,
+  SellerFollowState,
+  HomePromotionPosition
 } from '../types.ts';
 
 
@@ -1237,6 +1241,148 @@ export const api = {
     return json.data || [];
   },
 
+  async getSellerFollowState(
+    user: { id: string; role: string },
+    sellerId: string
+  ): Promise<SellerFollowState> {
+    const res = await fetch(`${API_BASE}/community/sellers/${encodeURIComponent(sellerId)}/follow`, {
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<SellerFollowState> = await res.json();
+    if (!res.ok || !json.success || !json.data) throw new Error(json.error || 'تعذر تحميل حالة المتابعة');
+    return json.data;
+  },
+
+  async followSeller(user: { id: string; role: string }, sellerId: string): Promise<SellerFollowState> {
+    const res = await fetch(`${API_BASE}/community/sellers/${encodeURIComponent(sellerId)}/follow`, {
+      method: 'POST',
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<SellerFollowState> = await res.json();
+    if (!res.ok || !json.success || !json.data) throw new Error(json.error || 'تعذر متابعة الورشة');
+    return json.data;
+  },
+
+  async unfollowSeller(user: { id: string; role: string }, sellerId: string): Promise<SellerFollowState> {
+    const res = await fetch(`${API_BASE}/community/sellers/${encodeURIComponent(sellerId)}/follow`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<SellerFollowState> = await res.json();
+    if (!res.ok || !json.success || !json.data) throw new Error(json.error || 'تعذر إلغاء متابعة الورشة');
+    return json.data;
+  },
+
+  async getPaidPromotion(): Promise<PaidPromotion | null> {
+    const res = await fetch(`${API_BASE}/community/promotion`);
+    const json: ApiResponse<PaidPromotion | null> = await res.json();
+    if (!res.ok || !json.success) throw new Error(json.error || 'تعذر تحميل مساحة الترويج');
+    return json.data || null;
+  },
+
+  async getSellerPromotionRequest(user: { id: string; role: string }): Promise<PaidPromotionRequest | null> {
+    const res = await fetch(`${API_BASE}/seller/promotion-request`, { headers: getAuthHeaders(user) });
+    const json: ApiResponse<PaidPromotionRequest | null> = await res.json();
+    if (!res.ok || !json.success) throw new Error(json.error || 'تعذر تحميل طلب الاشتراك');
+    return json.data || null;
+  },
+
+  async requestPaidPromotion(
+    user: { id: string; role: string },
+    message: string
+  ): Promise<PaidPromotionRequest> {
+    const res = await fetch(`${API_BASE}/seller/promotion-request`, {
+      method: 'POST',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify({ message })
+    });
+    const json: ApiResponse<PaidPromotionRequest> = await res.json();
+    if (!res.ok || !json.success || !json.data) throw new Error(json.error || 'تعذر إرسال طلب الاشتراك');
+    return json.data;
+  },
+
+  async getAdminPromotionRequests(user: { id: string; role: string }): Promise<PaidPromotionRequest[]> {
+    const res = await fetch(`${API_BASE}/admin/paid-promotion-requests`, { headers: getAuthHeaders(user) });
+    const json: ApiResponse<PaidPromotionRequest[]> = await res.json();
+    if (!res.ok || !json.success) throw new Error(json.error || 'تعذر تحميل طلبات الاشتراك');
+    return json.data || [];
+  },
+
+  async getAdminPaidPromotion(user: { id: string; role: string }): Promise<PaidPromotion | null> {
+    const res = await fetch(`${API_BASE}/admin/paid-promotion`, { headers: getAuthHeaders(user) });
+    const json: ApiResponse<PaidPromotion | null> = await res.json();
+    if (!res.ok || !json.success) throw new Error(json.error || 'تعذر تحميل مساحة الترشيح الحالية');
+    return json.data || null;
+  },
+
+  async activatePaidPromotion(
+    user: { id: string; role: string },
+    requestId: string,
+    details: {
+      contentType: 'product' | 'seller';
+      contentId: string;
+      durationDays: number;
+      paidAmount: number;
+      homepagePosition: HomePromotionPosition;
+    }
+  ): Promise<PaidPromotionRequest> {
+    const res = await fetch(`${API_BASE}/admin/paid-promotion-requests/${encodeURIComponent(requestId)}/activate`, {
+      method: 'PUT',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(details)
+    });
+    const json: ApiResponse<PaidPromotionRequest> = await res.json();
+    if (!res.ok || !json.success || !json.data) throw new Error(json.error || 'تعذر تفعيل مساحة الترويج');
+    return json.data;
+  },
+
+  async updateActivePaidPromotion(
+    user: { id: string; role: string },
+    details: {
+      contentType: 'product' | 'seller';
+      contentId: string;
+      durationDays: number;
+      paidAmount: number;
+      homepagePosition: HomePromotionPosition;
+    }
+  ): Promise<PaidPromotionRequest> {
+    const res = await fetch(`${API_BASE}/admin/paid-promotion`, {
+      method: 'PUT',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(details)
+    });
+    const json: ApiResponse<PaidPromotionRequest> = await res.json();
+    if (!res.ok || !json.success || !json.data) throw new Error(json.error || 'تعذر تحديث مساحة الترشيح');
+    return json.data;
+  },
+
+  async removeActivePaidPromotion(user: { id: string; role: string }): Promise<void> {
+    const res = await fetch(`${API_BASE}/admin/paid-promotion`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<null> = await res.json();
+    if (!res.ok || !json.success) throw new Error(json.error || 'تعذر إيقاف مساحة الترشيح');
+  },
+
+  async rejectPaidPromotionRequest(user: { id: string; role: string }, requestId: string): Promise<void> {
+    const res = await fetch(`${API_BASE}/admin/paid-promotion-requests/${encodeURIComponent(requestId)}/reject`, {
+      method: 'POST',
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<null> = await res.json();
+    if (!res.ok || !json.success) throw new Error(json.error || 'تعذر رفض طلب الاشتراك');
+  },
+
+  async getProductOfWeek(): Promise<Product | null> {
+    const res = await fetch(`${API_BASE}/products/weekly`);
+    const json: ApiResponse<Product | null> = await res.json();
+    if (!res.ok || !json.success) {
+      throw new Error(json.error || 'تعذر تحميل منتج الأسبوع');
+    }
+    return json.data || null;
+  },
+
   async createSellerProduct(
     user: { id: string; role: string; sellerId?: string },
     productData: Partial<Product>,
@@ -1397,6 +1543,21 @@ export const api = {
     const json: ApiResponse<Product> = await res.json();
     if (!json.success || !json.data) {
       throw new Error(json.error || 'فشل في اعتماد المنتج');
+    }
+    return json.data;
+  },
+
+  async setProductOfWeek(
+    user: { id: string; role: string },
+    productId: string
+  ): Promise<Product> {
+    const res = await fetch(`${API_BASE}/admin/products/${encodeURIComponent(productId)}/weekly`, {
+      method: 'PUT',
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<Product> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في تحديد منتج الأسبوع');
     }
     return json.data;
   },

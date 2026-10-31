@@ -5,6 +5,7 @@ import type { AuthenticatedUser } from '../middleware/auth.ts';
 import { cacheService } from './cacheService.ts';
 import { Logger } from '../utils/logger.ts';
 import { createNotification, notifyAdmins, resolveSellerUserId } from './notificationService.ts';
+import { notifySellerFollowers } from './communityService.ts';
 
 export interface PublicProductFilters {
   categoryId?: string;
@@ -189,6 +190,24 @@ export async function getSellerProducts(sellerId: string): Promise<ProductDocume
   return memoryDb.products.filter((p) => p.sellerId === sellerId) as ProductDocument[];
 }
 
+export async function getProductOfWeek(): Promise<ProductDocument | null> {
+  const { db, isMongo } = await getDatabase();
+  if (isMongo && db) {
+    const product = await db.collection('products').findOne({
+      isProductOfWeek: true,
+      approvalStatus: 'approved',
+      inStock: true
+    });
+    return product as unknown as ProductDocument | null;
+  }
+  return (memoryDb.products.find(
+    (product) =>
+      product.isProductOfWeek &&
+      product.approvalStatus === 'approved' &&
+      product.inStock
+  ) as ProductDocument | undefined) || null;
+}
+
 /**
  * Admin-specific query: Returns all products awaiting moderation.
  */
@@ -226,6 +245,55 @@ export async function getAllAdminProducts(statusFilter?: ProductStatus): Promise
     prods = prods.filter((p) => p.approvalStatus === statusFilter);
   }
   return prods;
+}
+
+export async function setProductOfWeek(
+  adminUser: AuthenticatedUser,
+  productId: string
+): Promise<ProductDocument> {
+  const { db, isMongo } = await getDatabase();
+  const product = isMongo && db
+    ? await db.collection('products').findOne({ id: productId })
+    : memoryDb.products.find((item) => item.id === productId);
+
+  if (!product) {
+    throw new Error('المنتج غير موجود');
+  }
+  if (product.approvalStatus !== 'approved' || !product.inStock) {
+    throw new Error('يمكن اختيار منتج معتمد ومتاح في المخزون فقط');
+  }
+
+  if (isMongo && db) {
+    const collection = db.collection('products');
+    await collection.updateMany(
+      { isProductOfWeek: true },
+      { $set: { isProductOfWeek: false } }
+    );
+    const result = await collection.updateOne(
+      { id: productId, approvalStatus: 'approved', inStock: true },
+      { $set: { isProductOfWeek: true, updatedAt: new Date().toISOString().split('T')[0] } }
+    );
+    if (result.matchedCount !== 1) {
+      throw new Error('تعذر تعيين المنتج المختار، حدّث القائمة وحاول مرة أخرى');
+    }
+  }
+
+  for (const item of memoryDb.products) {
+    item.isProductOfWeek = item.id === productId;
+  }
+
+  const selectedProduct = { ...product, isProductOfWeek: true } as ProductDocument;
+  cacheService.invalidateProducts(productId);
+  await createAuditLog({
+    actorId: adminUser.id,
+    userName: adminUser.name,
+    userRole: adminUser.role,
+    action: 'set_product_of_week',
+    resource: 'product',
+    resourceId: productId,
+    details: `حدد المدير "${selectedProduct.title}" كمنتج الأسبوع`
+  });
+  return selectedProduct;
 }
 
 /**
@@ -491,6 +559,19 @@ export async function approveProduct(adminUser: AuthenticatedUser, productId: st
     console.error('[ProductService] Error notifying seller on product approval:', notifErr);
   }
 
+  if (product.approvalStatus !== 'approved') {
+    try {
+      await notifySellerFollowers(product.sellerId, {
+        title: 'قطعة جديدة من ورشة تتابعها',
+        message: `الورشة ${product.sellerName} نشرت قطعة جديدة: ${product.title}`,
+        link: `/products/${encodeURIComponent(product.id)}`,
+        metadata: { productId: product.id, sellerId: product.sellerId }
+      });
+    } catch (error) {
+      console.error('[ProductService] Failed to notify followers about new product:', error);
+    }
+  }
+
   return approvedProduct;
 }
 
@@ -518,6 +599,7 @@ export async function rejectProduct(
   const nowStr = new Date().toISOString();
   const updatedFields = {
     approvalStatus: 'rejected' as ProductStatus,
+    isProductOfWeek: false,
     rejectionReason: rejectionReason.trim(),
     approvedAt: null,
     approvedBy: null,
@@ -602,6 +684,13 @@ export async function updateProduct(
 
   // Security: prevent seller from setting status to approved directly
   const safeUpdates = { ...updates };
+  delete safeUpdates.isProductOfWeek;
+  if (
+    (safeUpdates.inStock === false || safeUpdates.stockCount === 0) &&
+    product.isProductOfWeek
+  ) {
+    safeUpdates.isProductOfWeek = false;
+  }
   if (!isAdmin) {
     delete safeUpdates.approvalStatus;
     delete safeUpdates.approvedAt;
@@ -624,6 +713,24 @@ export async function updateProduct(
   }
 
   cacheService.invalidateProducts(productId);
+  if (
+    (safeUpdates.approvalStatus || product.approvalStatus) === 'approved' &&
+    (
+      (safeUpdates.transcript?.trim() && safeUpdates.transcript.trim() !== product.transcript?.trim()) ||
+      (safeUpdates.audioUrl && safeUpdates.audioUrl !== product.audioUrl)
+    )
+  ) {
+    try {
+      await notifySellerFollowers(product.sellerId, {
+        title: 'حكاية جديدة من ورشة تتابعها',
+        message: `الورشة ${product.sellerName} أضافت حكاية صوتية لقطعة ${product.title}`,
+        link: `/products/${encodeURIComponent(product.id)}`,
+        metadata: { productId: product.id, sellerId: product.sellerId }
+      });
+    } catch (error) {
+      console.error('[ProductService] Failed to notify followers about new artisan story:', error);
+    }
+  }
   return { ...product, ...safeUpdates };
 }
 

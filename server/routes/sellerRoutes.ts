@@ -4,6 +4,7 @@ import { requireSeller, requireAuth, invalidateAuthSession } from '../middleware
 import type { AuthenticatedRequest } from '../middleware/auth.ts';
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
 import { storageService } from '../services/storage/storageProvider.ts';
+import { createPaidPromotionRequest, getSellerPaidPromotionRequest } from '../services/communityService.ts';
 import type { ProductDocument } from '../models/types.ts';
 import type { SellerStatus } from '../models/types.ts';
 import {
@@ -273,6 +274,36 @@ router.post('/apply', requireAuth, async (req: AuthenticatedRequest, res: Respon
 
 // Apply requireSeller to all protected /api/seller routes below
 router.use(requireSeller);
+
+router.get('/promotion-request', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    if (req.user?.role !== 'seller') {
+      return res.status(403).json({ success: false, error: 'الخدمة متاحة لحسابات الورش فقط', code: 'SELLER_ONLY' });
+    }
+    const request = await getSellerPaidPromotionRequest(req.user.sellerId || req.user.id);
+    res.json({ success: true, data: request });
+  } catch (error) {
+    console.error('[SellerRoutes] Failed to fetch promotion request:', error);
+    res.status(500).json({ success: false, error: 'تعذر تحميل طلب الترويج', code: 'SERVER_ERROR' });
+  }
+});
+
+router.post('/promotion-request', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    if (req.user?.role !== 'seller') {
+      return res.status(403).json({ success: false, error: 'طلب الاشتراك متاح لحسابات الورش فقط', code: 'SELLER_ONLY' });
+    }
+    const request = await createPaidPromotionRequest(req.user, String(req.body.message || ''));
+    res.status(201).json({ success: true, message: 'تم إرسال طلب مساحة الترويج للإدارة', data: request });
+  } catch (error) {
+    const message = (error as Error).message || 'تعذر إرسال طلب الاشتراك';
+    res.status(message.includes('اعتماد') ? 403 : 400).json({
+      success: false,
+      error: message,
+      code: 'PROMOTION_REQUEST_ERROR'
+    });
+  }
+});
 
 // ==================== DASHBOARD STATS & ANALYTICS ====================
 
@@ -599,6 +630,14 @@ router.put('/products/:id', async (req: AuthenticatedRequest, res: Response) => 
 // POST /api/seller/products/:id/voice - Seller records and saves artisan audio for their product
 router.post('/products/:id/voice', async (req: AuthenticatedRequest, res: Response) => {
   try {
+    if (req.user?.role !== 'seller') {
+      return res.status(403).json({
+        success: false,
+        error: 'تسجيل صوت الورشة متاح لصاحب المنتج فقط',
+        code: 'PRODUCT_OWNER_ONLY'
+      });
+    }
+
     const productId = req.params.id;
     const { audioData, audioUrl, transcript, artisanName, artisanCraft, audioDuration } = req.body;
 

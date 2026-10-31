@@ -13,6 +13,7 @@ import {
   Package,
 } from 'lucide-react';
 import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner';
+import { PaidPromotionSection } from '../public/PaidPromotionSection';
 
 const GOVERNORATES: (Governorate | 'all')[] = [
   'all',
@@ -122,6 +123,9 @@ export const SellersDirectoryPage: React.FC = () => {
             quote="عم وه خبط على بيبان ورش الصعيد دكان دكان، وقعد مع شيوخ الصنعة الحقيقيين وتأكد من أمانتهم وجودة شغلهم عشان تتعاملوا معاهم وإنتوا متطمنين 100%!"
             statsText={`${sellers.length} ورشة ودكان متوثق`}
           />
+        </div>
+        <div className="mb-8">
+          <PaidPromotionSection directory />
         </div>
 
         {/* =========================================================

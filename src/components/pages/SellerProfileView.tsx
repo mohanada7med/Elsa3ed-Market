@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { UncleWahInteractiveGuide } from '../common/UncleWahInteractiveGuide';
 import { updatePageSEO, generateStoreSchema } from '../../utils/seo';
+import { api } from '../../services/api';
 
 export const SellerProfileView: React.FC = () => {
   const {
@@ -31,6 +32,10 @@ export const SellerProfileView: React.FC = () => {
     products,
     setActivePage,
     addToast,
+    currentUser,
+    isAuthenticated,
+    setIsAuthModalOpen,
+    setAuthModalTab,
   } = useApp();
 
   const effectiveSellerId =
@@ -62,6 +67,8 @@ export const SellerProfileView: React.FC = () => {
   const [directSeller, setDirectSeller] = useState<any>(null);
   const [isLoadingDirect, setIsLoadingDirect] = useState(false);
   const [liked, setLiked] = useState(false);
+  const [followState, setFollowState] = useState({ following: false, followersCount: 0 });
+  const [isFollowLoading, setIsFollowLoading] = useState(false);
   const [visibleSections, setVisibleSections] = useState<
     Record<string, boolean>
   >({});
@@ -137,6 +144,51 @@ export const SellerProfileView: React.FC = () => {
   }, []);
 
   const seller = matchedSeller || directSeller;
+
+  useEffect(() => {
+    if (!seller?.id || !isAuthenticated || currentUser.role !== 'buyer') {
+      setFollowState({ following: false, followersCount: 0 });
+      return;
+    }
+
+    let active = true;
+    api.getSellerFollowState(currentUser, seller.id)
+      .then((state) => {
+        if (active) setFollowState(state);
+      })
+      .catch((error) => {
+        console.error('[SellerProfileView] Failed to load follow state:', error);
+      });
+    return () => {
+      active = false;
+    };
+  }, [seller?.id, isAuthenticated, currentUser.id, currentUser.role]);
+
+  const handleFollowSeller = async () => {
+    if (!isAuthenticated) {
+      setAuthModalTab('login');
+      setIsAuthModalOpen(true);
+      return;
+    }
+    if (currentUser.role !== 'buyer' || !seller?.id) return;
+
+    setIsFollowLoading(true);
+    try {
+      const state = followState.following
+        ? await api.unfollowSeller(currentUser, seller.id)
+        : await api.followSeller(currentUser, seller.id);
+      setFollowState(state);
+      addToast(
+        state.following ? 'بدأت متابعة الورشة' : 'تم إلغاء متابعة الورشة',
+        state.following ? 'هيوصلك تنبيه عند نشر منتجات أو حكايات جديدة' : 'يمكنك متابعة الورشة مرة أخرى في أي وقت',
+        'success'
+      );
+    } catch (error) {
+      addToast('تعذر تحديث المتابعة', (error as Error).message || 'حاول مرة أخرى بعد قليل', 'error');
+    } finally {
+      setIsFollowLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (!seller) return;
@@ -474,6 +526,27 @@ export const SellerProfileView: React.FC = () => {
                   {seller.bio ||
                     'ورشة متخصصة في المشغولات الصعيدية التراثية المتوارثة أباً عن جد؛ نصنع بعناية ونوصل الحكاية من يد الصانع لباب بيتك.'}
                 </p>
+
+                {(currentUser.role === 'buyer' || !isAuthenticated) && (
+                  <button
+                    type="button"
+                    onClick={handleFollowSeller}
+                    disabled={isFollowLoading}
+                    className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-xl border border-white/25 bg-white/10 px-4 py-2.5 text-xs font-black text-white backdrop-blur-md transition-all hover:bg-white/20 disabled:cursor-wait disabled:opacity-60"
+                  >
+                    <Heart className={`h-4 w-4 ${followState.following ? 'fill-current text-rose-300' : ''}`} />
+                    {isFollowLoading
+                      ? 'لحظة...'
+                      : followState.following
+                        ? 'إلغاء متابعة الورشة'
+                        : 'تابع الورشة'}
+                    {followState.followersCount > 0 && (
+                      <span className="rounded-full bg-black/20 px-2 py-0.5 text-[10px]">
+                        {followState.followersCount}
+                      </span>
+                    )}
+                  </button>
+                )}
 
                 {/* STATS */}
 

@@ -32,6 +32,7 @@ import notificationRoutes from './routes/notificationRoutes.ts';
 import cloudinaryRoutes from './routes/cloudinaryRoutes.ts';
 import paymentRoutes from './routes/paymentRoutes.ts';
 import shippingRoutes from './routes/shippingRoutes.ts';
+import communityRoutes from './routes/communityRoutes.ts';
 
 
 export function createApp(): Express {
@@ -144,6 +145,7 @@ export function createApp(): Express {
     { prefix: '/seller', router: sellerRoutes },
     { prefix: '/seller-requests', router: sellerRequestRoutes },
     { prefix: '/notifications', router: notificationRoutes },
+    { prefix: '/community', router: communityRoutes },
     { prefix: '/reports', router: reportRoutes },
     { prefix: '/admin/media', router: adminMediaRoutes },
     { prefix: '/admin', router: adminRoutes },

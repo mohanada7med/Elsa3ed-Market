@@ -70,6 +70,9 @@ class MemoryStore {
   messages: MessageDocument[] = [];
   passwordResets: import('../models/types.ts').PasswordResetRequestDocument[] = [];
   reports: import('../models/types.ts').ReportTicketDocument[] = [];
+  sellerFollows: Array<{ id: string; userId: string; sellerId: string; createdAt: string }> = [];
+  paidPromotionRequests: Array<Record<string, any>> = [];
+  paidPromotionSlot: Record<string, any> | null = null;
 
   // WAH Cultural Ecosystem Data (Database-driven solely from MongoDB, with rich authentic defaults)
   governorates: GovernorateDoc[] = [];
@@ -471,6 +474,10 @@ async function seedMongoDatabase(database: Db) {
       database.collection('carts').createIndex({ buyerId: 1 }, { unique: true }),
       database.collection('discounts').createIndex({ code: 1 }, { unique: true }),
       database.collection('favorites').createIndex({ buyerId: 1, productId: 1 }, { unique: true }),
+      database.collection('seller_follows').createIndex({ userId: 1, sellerId: 1 }, { unique: true }),
+      database.collection('seller_follows').createIndex({ sellerId: 1, createdAt: -1 }),
+      database.collection('paid_promotion_requests').createIndex({ id: 1 }, { unique: true }),
+      database.collection('paid_promotion_requests').createIndex({ sellerId: 1, status: 1 }),
       database.collection('notifications').createIndex({ userId: 1, createdAt: -1 }),
       database.collection('notifications').createIndex({ userId: 1, isRead: 1 }),
       database.collection('notifications').createIndex({ id: 1 }, { unique: true }),

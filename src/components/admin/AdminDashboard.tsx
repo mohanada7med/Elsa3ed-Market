@@ -12,6 +12,7 @@ import { CraftReelsModal } from '../public/CraftReelsModal.tsx';
 import { AdminMediaUploader } from '../common/AdminMediaUploader.tsx';
 import { AdminMediaLibraryPage } from './AdminMediaLibraryPage.tsx';
 import { AdminReportsManager } from './AdminReportsManager.tsx';
+import { PaidPromotionRequestsPanel } from './PaidPromotionRequestsPanel.tsx';
 import {
   Calendar,
   AlertTriangle,
@@ -116,6 +117,7 @@ export const AdminDashboard: React.FC = () => {
     refreshAdminProducts,
     pendingProducts,
     approveProduct,
+    setProductOfWeek,
     rejectProduct,
     deleteProduct,
     addProduct,
@@ -154,11 +156,12 @@ export const AdminDashboard: React.FC = () => {
   } = useApp();
 
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'approvals' | 'categories' | 'craft-stories' | 'craft-reels' | 'reviews' | 'sellers' | 'payouts' | 'orders' | 'coupons' | 'audit' | 'users' | 'password-resets' | 'payment-settings' | 'shipping-settings' | 'notifications' | 'media-library' | 'reports'
+    'overview' | 'approvals' | 'categories' | 'craft-stories' | 'craft-reels' | 'reviews' | 'sellers' | 'payouts' | 'orders' | 'coupons' | 'audit' | 'users' | 'password-resets' | 'payment-settings' | 'shipping-settings' | 'notifications' | 'media-library' | 'reports' | 'promotion-requests'
   >('overview');
 
 
   const [pendingReportsCount, setPendingReportsCount] = useState(0);
+  const [settingWeeklyProductId, setSettingWeeklyProductId] = useState<string | null>(null);
 
   // Reels Management State for Admin (Full Database & Cloud Control)
   const [adminReels, setAdminReels] = useState<CraftReel[]>([]);
@@ -1168,6 +1171,15 @@ export const AdminDashboard: React.FC = () => {
     }
   };
 
+  const handleSetProductOfWeek = async (id: string) => {
+    setSettingWeeklyProductId(id);
+    try {
+      await setProductOfWeek(id);
+    } finally {
+      setSettingWeeklyProductId(null);
+    }
+  };
+
   const openRejectModal = (id: string) => {
     setRejectingProductId(id);
     setRejectionReasonInput('يا ريت توضح نسبة الخامات الطبيعية وترفع صور أوضح للورشة ولطريقة الصنع اليدوي.');
@@ -1497,6 +1509,13 @@ export const AdminDashboard: React.FC = () => {
           sublabel: 'العروض التسويقية والحملات',
           icon: Tag,
           elementId: 'admin-tab-coupons'
+        },
+        {
+          id: 'promotion-requests' as const,
+          label: 'طلبات مساحة الترشيح',
+          sublabel: 'تأكيد الاشتراك واختيار المحتوى ومدته',
+          icon: Sparkles,
+          elementId: 'admin-tab-promotion-requests'
         },
         {
           id: 'payment-settings' as const,
@@ -2965,6 +2984,29 @@ export const AdminDashboard: React.FC = () => {
 
                         {/* Moderation Controls */}
                         <div className="flex flex-wrap items-center justify-end sm:justify-start gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100 dark:border-border w-full md:w-auto">
+                          {prod.approvalStatus === 'approved' && (
+                            <button
+                              type="button"
+                              onClick={() => handleSetProductOfWeek(prod.id)}
+                              disabled={!prod.inStock || settingWeeklyProductId !== null}
+                              className={`px-3.5 py-2 border text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed ${
+                                prod.isProductOfWeek
+                                  ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-200 border-amber-300 dark:border-amber-800'
+                                  : 'bg-black/5 dark:bg-cream/5 text-foreground border-border hover:bg-amber-50 dark:hover:bg-amber-950/30'
+                              }`}
+                              title={prod.inStock ? 'تحديد كمنتج الأسبوع' : 'المنتج غير متاح في المخزون'}
+                            >
+                              <Star className={`w-3.5 h-3.5 ${prod.isProductOfWeek ? 'fill-current' : ''}`} />
+                              <span>
+                                {settingWeeklyProductId === prod.id
+                                  ? 'جارٍ الحفظ...'
+                                  : prod.isProductOfWeek
+                                    ? 'منتج الأسبوع'
+                                    : 'اختيار للأسبوع'}
+                              </span>
+                            </button>
+                          )}
+
                           <button
                             type="button"
                             id={`admin-edit-prod-${prod.id}`}
@@ -5316,6 +5358,15 @@ export const AdminDashboard: React.FC = () => {
           {/* TAB 11: SELLER PAYOUT REQUESTS (طلبات صرف المستحقات) */}
           {activeTab === 'payouts' && <AdminPayouts user={currentUser} />}
 
+          {activeTab === 'promotion-requests' && (
+            <PaidPromotionRequestsPanel
+              user={currentUser}
+              products={adminProducts}
+              sellers={sellers}
+              addToast={addToast}
+            />
+          )}
+
           {/* TAB 12: PLATFORM NOTIFICATIONS (مركز الإشعارات والتنبيهات العامة) */}
           {activeTab === 'notifications' && (
             <NotificationsManager
@@ -7515,4 +7566,3 @@ export const AdminDashboard: React.FC = () => {
     </div>
   );
 };
-

@@ -1,11 +1,25 @@
 import express from 'express';
 import type { Request, Response } from 'express';
-import { getPublicProducts, getProductById } from '../services/productService.ts';
+import { getPublicProducts, getProductById, getProductOfWeek } from '../services/productService.ts';
 import { getProductReviews, createProductReview } from '../services/reviewService.ts';
 import { requireBuyer } from '../middleware/auth.ts';
 import type { AuthenticatedRequest } from '../middleware/auth.ts';
 
 const router = express.Router();
+
+router.get('/weekly', async (_req: Request, res: Response) => {
+  try {
+    const product = await getProductOfWeek();
+    res.json({ success: true, data: product });
+  } catch (error) {
+    console.error('Error fetching product of the week:', error);
+    res.status(500).json({
+      success: false,
+      error: 'حصلت مشكلة وإحنا بنجيب منتج الأسبوع، جرب تاني',
+      code: 'SERVER_ERROR'
+    });
+  }
+});
 
 // GET /api/products - Public query: Returns ONLY approved products
 router.get('/', async (req: Request, res: Response) => {
