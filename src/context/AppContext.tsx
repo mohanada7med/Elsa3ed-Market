@@ -493,7 +493,7 @@ export const PAGE_ROUTES: Record<ActivePage, string> = {
   favorites: '/favorites',
   notifications: '/notifications',
   messages: '/messages',
-  'buyer-account': '/buyer-account',
+  'buyer-account': '/profile',
 
   // Seller
   'seller-dashboard': '/seller-dashboard',
@@ -798,8 +798,8 @@ function getInitialNavigationState(): {
     return { page: 'global-search', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
-  if (rawPath === '/profile') {
-    return { page: 'profile', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  if (rawPath === '/profile' || rawPath === '/buyer-account') {
+    return { page: 'buyer-account', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
   // 3. Match any route directly against PAGE_ROUTES table

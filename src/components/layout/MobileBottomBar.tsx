@@ -49,22 +49,6 @@ export const MobileBottomBar: React.FC = () => {
       return;
     }
 
-    if (
-      currentRole === 'seller' ||
-      currentUser?.role === 'seller'
-    ) {
-      setActivePage('seller-account');
-      return;
-    }
-
-    if (
-      currentRole === 'admin' ||
-      currentUser?.role === 'admin'
-    ) {
-      setActivePage('admin-dashboard');
-      return;
-    }
-
     setActivePage('buyer-account');
   };
 

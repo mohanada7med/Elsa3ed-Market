@@ -349,7 +349,8 @@ const MainContent: React.FC = () => {
   const isProtectedRoute =
     activePage.startsWith('admin') ||
     activePage.startsWith('seller') ||
-    activePage === 'buyer-account';
+    activePage === 'buyer-account' ||
+    activePage === 'profile';
 
   if (isAuthChecking && isProtectedRoute) {
     return <LazySectionFallback />;

@@ -544,7 +544,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
         { id: 'seller-inventory', label: 'المخزون', icon: Store },
         { id: 'seller-orders', label: 'الطلبات', icon: ClipboardList },
         { id: 'seller-analytics', label: 'الإحصائيات', icon: Sparkles },
-        { id: 'seller-account', label: 'حسابي', icon: UserCircle },
+        { id: 'buyer-account', label: 'الملف الشخصي', icon: UserCircle },
       ];
     }
 
@@ -601,7 +601,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
           title: 'إدارة الورشة',
           description: 'لوحة التحكم وإعدادات الورشة',
           icon: Store,
-          items: ['seller-dashboard', 'seller-account'],
+          items: ['seller-dashboard', 'buyer-account'],
         },
         {
           id: 'seller-products',
@@ -709,10 +709,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
   }, [navigate]);
 
   const getAccountPage = useCallback((): ActivePage => {
-    if (isSeller) return 'seller-account';
-    if (isAdmin) return 'admin-dashboard';
     return 'buyer-account';
-  }, [isSeller, isAdmin]);
+  }, []);
 
   const profileMenuItems = useMemo(() => {
     if (isAdmin) {
@@ -825,8 +823,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
           badge: unreadNotificationsCount > 0 ? (unreadNotificationsCount > 99 ? '99+' : unreadNotificationsCount) : null,
         },
         {
-          id: 'seller-account',
-          label: 'إعدادات الورشة والحساب',
+          id: 'buyer-account',
+          label: 'الملف الشخصي',
           icon: UserCircle,
           badge: null,
         },
@@ -837,7 +835,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
     return [
       {
         id: 'buyer-account',
-        label: 'حسابي',
+        label: 'الملف الشخصي',
         icon: UserCircle,
         badge: null,
       },
