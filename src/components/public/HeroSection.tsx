@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import {
   Sparkles,
@@ -14,6 +14,15 @@ import { HOME_PATTERN_CONFIG, getHomePatternOpacity } from '../../config/homePat
 
 export const HeroSection: React.FC = () => {
   const { setActivePage, wahStats } = useApp();
+
+  // Fix: ensure Framer Motion animations trigger correctly on every mount,
+  // even when wrapped in AnimatePresence with initial={false}.
+  const [isVisible, setIsVisible] = useState(false);
+  useEffect(() => {
+    // Defer to next tick so the component is fully painted before animation starts
+    const raf = requestAnimationFrame(() => setIsVisible(true));
+    return () => cancelAnimationFrame(raf);
+  }, []);
   const heroConfig = HOME_PATTERN_CONFIG.hero;
   const isPatternActive = HOME_PATTERN_CONFIG.globalEnabled && heroConfig.enabled;
 
@@ -203,7 +212,7 @@ export const HeroSection: React.FC = () => {
 
             {/* كبسولة الكلام */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.8, y: 8 }}
+              initial={isVisible ? { opacity: 0, scale: 0.8, y: 8 } : false}
               animate={{
                 opacity: 1,
                 scale: [1, 1.025, 1],
@@ -258,7 +267,7 @@ export const HeroSection: React.FC = () => {
 
         <div className="relative z-10 space-y-3.5">
           <div className="space-y-1.5 text-right">
-            <h1 className="text-3.5xl xs:text-4xl sm:text-5xl font-black leading-tight tracking-tight text-foreground font-heading">
+            <h1 className="text-4xl xs:text-4xl sm:text-5xl md:text-8xl font-black leading-tight tracking-tight text-foreground font-heading">
               الصعيد{' '}
               <span className="text-primary dark:text-primary-hover">
                 بيحكي
@@ -369,9 +378,9 @@ export const HeroSection: React.FC = () => {
         {/* ===================================================== */}
 
         <motion.div
-          initial={{
+          initial={isVisible ? {
             scale: 1.06,
-          }}
+          } : false}
           animate={{
             scale: 1,
           }}
@@ -439,11 +448,11 @@ export const HeroSection: React.FC = () => {
         {/* ===================================================== */}
 
         <motion.div
-          initial={{
+          initial={isVisible ? {
             opacity: 0,
             y: 70,
             x: 30,
-          }}
+          } : false}
           animate={{
             opacity: 1,
             y: [0, -6, 0],
@@ -511,10 +520,10 @@ export const HeroSection: React.FC = () => {
 
           {/* Character Label */}
           <motion.div
-            initial={{
+            initial={isVisible ? {
               opacity: 0,
               x: 15,
-            }}
+            } : false}
             animate={{
               opacity: 1,
               x: 0,
@@ -573,10 +582,10 @@ export const HeroSection: React.FC = () => {
             {/* Location */}
 
             <motion.div
-              initial={{
+              initial={isVisible ? {
                 opacity: 0,
                 y: -10,
-              }}
+              } : false}
               animate={{
                 opacity: 1,
                 y: 0,
@@ -617,10 +626,10 @@ export const HeroSection: React.FC = () => {
             {/* Badge */}
 
             <motion.div
-              initial={{
+              initial={isVisible ? {
                 opacity: 0,
                 y: 8,
-              }}
+              } : false}
               animate={{
                 opacity: 1,
                 y: 0,
@@ -645,10 +654,10 @@ export const HeroSection: React.FC = () => {
             {/* Title */}
 
             <motion.h1
-              initial={{
+              initial={isVisible ? {
                 opacity: 0,
                 y: 24,
-              }}
+              } : false}
               animate={{
                 opacity: 1,
                 y: 0,
@@ -677,10 +686,10 @@ export const HeroSection: React.FC = () => {
             {/* Accent Line */}
 
             <motion.div
-              initial={{
+              initial={isVisible ? {
                 width: 0,
                 opacity: 0,
-              }}
+              } : false}
               animate={{
                 width: 85,
                 opacity: 1,
@@ -699,10 +708,10 @@ export const HeroSection: React.FC = () => {
             {/* Description */}
 
             <motion.p
-              initial={{
+              initial={isVisible ? {
                 opacity: 0,
                 y: 12,
-              }}
+              } : false}
               animate={{
                 opacity: 1,
                 y: 0,
@@ -730,10 +739,10 @@ export const HeroSection: React.FC = () => {
             {/* ================================================= */}
 
             <motion.div
-              initial={{
+              initial={isVisible ? {
                 opacity: 0,
                 y: 14,
-              }}
+              } : false}
               animate={{
                 opacity: 1,
                 y: 0,
@@ -940,10 +949,10 @@ export const HeroSection: React.FC = () => {
             {/* ================================================= */}
 
             <motion.div
-              initial={{
+              initial={isVisible ? {
                 opacity: 0,
                 y: 12,
-              }}
+              } : false}
               animate={{
                 opacity: 1,
                 y: 0,
