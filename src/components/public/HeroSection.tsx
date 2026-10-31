@@ -68,15 +68,16 @@ export const HeroSection: React.FC = () => {
       <div
         className="
           relative
-          h-dvh
           w-full
+          min-h-[calc(100dvh-4.5rem)]
           flex
           flex-col
           justify-between
-          overflow-hidden
           bg-background
-          p-5
+          p-4
+          xs:p-5
           pb-8
+          gap-5
           transition-colors
           duration-500
           lg:hidden
@@ -86,7 +87,7 @@ export const HeroSection: React.FC = () => {
         {/* MOBILE BACKGROUND                                      */}
         {/* ===================================================== */}
 
-        <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 z-0 overflow-hidden">
           <img
             src="https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800,c_limit/v1788832698/WAH/heritage-places/alexan-pasha-palace/dclassic-2026-08-21-02083951477127237e_1788832673058_bzeh.jpg"
             alt="قصر ألكسان باشا"
@@ -100,25 +101,22 @@ export const HeroSection: React.FC = () => {
             fetchPriority="high"
           />
 
-          {/* الفيد السفلي */}
-
+          {/* الفيد السفلي والعلوي الموحد لضمان وضوح النصوص */}
           <div
             className="
               pointer-events-none
               absolute
               inset-x-0
               bottom-0
-              h-[75%]
+              h-[85%]
               bg-linear-to-t
               from-background
-              via-background/80
+              via-background/85
               to-transparent
               transition-colors
               duration-500
             "
           />
-
-          {/* الفيد العلوي */}
 
           <div
             className="
@@ -128,409 +126,158 @@ export const HeroSection: React.FC = () => {
               top-0
               h-24
               bg-linear-to-b
-              from-black/40
+              from-black/50
               to-transparent
             "
           />
         </div>
 
         {/* ===================================================== */}
-        {/* عم وه — MOBILE                                         */}
+        {/* TOP ROW: LOCATION & HERITAGE BADGE                    */}
         {/* ===================================================== */}
 
-        <motion.div
-          initial={{
-            opacity: 0,
-            x: -80,
-            y: 55,
-          }}
-          animate={{
-            opacity: 1,
-            x: 0,
-            y: [0, -4, 0],
-          }}
-          transition={{
-            opacity: {
-              duration: 0.7,
-              delay: 0.65,
-            },
-            x: {
-              duration: 0.8,
-              delay: 0.65,
-              ease: [0.22, 1, 0.36, 1],
-            },
-            y: {
-              duration: 4,
-              repeat: Infinity,
-              ease: 'easeInOut',
-              delay: 1.3,
-            },
-          }}
-          className="
-  pointer-events-none
-  absolute
-  bottom-[48%]
-  left-[24px]
-  z-[5]
-"
-        >
-          {/* الإضاءة خلف الشخصية */}
-
-          <div
-            className="
-              absolute
-              bottom-5
-              left-1/2
-              h-36
-              w-36
-              -translate-x-1/2
-              rounded-full
-              bg-primary/20
-              blur-[55px]
-            "
-          />
-
-          <img
-            src="/mascot/welcoming.png"
-            alt="عم وه"
-            className="
-              relative
-              h-[175px]
-              w-auto
-              object-contain
-              drop-shadow-[0_15px_18px_rgba(0,0,0,0.55)]
-            "
-            style={{
-              imageRendering: 'crisp-edges',
-            }}
-          />
-
-          {/* اسم عم وه */}
-          <motion.div
-            initial={{
-              opacity: 0,
-              scale: 0.85,
-            }}
-            animate={{
-              opacity: 1,
-              scale: 1,
-            }}
-            transition={{
-              delay: 1.25,
-              duration: 0.4,
-            }}
-            className="
-    absolute
-    bottom-5
-    left-4
-    min-w-[200px]           /* 👈 زيادة العرض عبر حد أدنى مناسب للنصوص */
-    rounded-full            /* ملحوظة: لو زادت الأسطر يمكنك تحويله إلى rounded-2xl */
-    border
-    border-white/15
-    bg-black/45
-    px-4                    /* 👈 وسّعنا الحشو الجانبي من px-3 إلى px-4 */
-    py-2                    /* تحسين طفيف في التباعد الرأسي */
-    shadow-lg
-    backdrop-blur-md
-  "
-          >
-            <div className="flex flex-col gap-1">
-              <div className="flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary shadow-[0_0_6px_rgba(255,255,255,0.35)]" />
-
-                <span className="whitespace-nowrap text-[9px] font-black leading-tight text-white">
-                  أهلاً بيك، أنا عم وه 👋
-                </span>
-              </div>
-
-              <span className="whitespace-nowrap pl-3 text-[8px] leading-relaxed text-white/55">
-                وهساعدك تكتشف حكايات الصعيد ومنتجاته
-              </span>
-            </div>
-          </motion.div>
-
-        </motion.div>
-
-        {/* ===================================================== */}
-        {/* LOCATION                                              */}
-        {/* ===================================================== */}
-
-        <div
-          className="
-            relative
-            z-10
-            flex
-            items-center
-            justify-between
-            pt-2
-          "
-        >
-          <span
-            className="
-              flex
-              items-center
-              gap-1.5
-              rounded-full
-              border
-              border-white/15
-              bg-black/40
-              px-3
-              py-1
-              text-[11px]
-              font-bold
-              text-white
-              shadow-sm
-              backdrop-blur-md
-            "
-          >
+        <div className="relative z-10 flex items-center justify-between gap-2 pt-1">
+          <span className="flex items-center gap-1.5 rounded-full border border-white/20 dark:border-white/10 bg-black/45 px-3 py-1 text-[11px] font-bold text-white shadow-xs backdrop-blur-md">
             <MapPin className="h-3 w-3 text-primary" />
-
             أسيوط · قلب الصعيد
+          </span>
+
+          <span className="inline-block rounded-full border border-[#C99444]/40 bg-[#FDF6E9]/90 px-2.5 py-1 text-[10px] font-bold text-[#6B3A1F] shadow-xs dark:border-[#C99444]/30 dark:bg-[#26160D]/80 dark:text-[#C99444]">
+            شغل يدوي · ريلز · حكاوي زمان
           </span>
         </div>
 
         {/* ===================================================== */}
-        {/* MOBILE CONTENT                                         */}
+        {/* عم وه — MASCOT ON THE LEFT & SPEECH BUBBLE ON RIGHT   */}
         {/* ===================================================== */}
 
-        <div className="relative z-10 space-y-4">
-          <div className="space-y-2 text-right">
-            <span
-              className="
-  inline-block
-  rounded-full
-  border
-  border-[#C99444]/40
-  bg-[#FDF6E9]/70
-  px-2.5
-  py-0.5
-  text-[11px]
-  font-bold
-  text-[#6B3A1F]
-  shadow-xs
-  dark:border-[#C99444]/30
-  dark:bg-[#26160D]/70
-  dark:text-[#C99444]
-">
-              شغل يدوي · ريلز · حكاوي زمان
-            </span>
+        <div className="relative z-10 flex items-center justify-between gap-3 my-auto py-1.5">
+          {/* كبسولة كلام عم وه على اليمين */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.25, duration: 0.4 }}
+            className="relative flex-1 max-w-[210px] xs:max-w-[240px] rounded-2xl border border-white/20 dark:border-white/10 bg-black/55 dark:bg-black/70 p-3 shadow-lg backdrop-blur-md text-right"
+          >
+            <div className="flex items-center gap-1.5 mb-1">
+              <span className="h-2 w-2 rounded-full bg-primary shadow-[0_0_6px_rgba(255,255,255,0.6)]" />
+              <span className="text-[11px] font-black text-white">
+                أهلاً بيك، أنا عم وه 👋
+              </span>
+            </div>
+            <p className="text-[9.5px] leading-relaxed text-white/80 font-medium">
+              دليلك في حكاوي وخير الصعيد.. هلف معاك الورش والدكاكين حتة حتة!
+            </p>
+          </motion.div>
 
-            <h1
-              className="
-    text-5xl
-    leading-[1.15]
-    tracking-normal
-    text-foreground
-    font-heading
-  "
-            >
+          {/* شخصية عم وه على شمال الشاشة */}
+          <motion.div
+            animate={{ y: [0, -5, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+            className="relative shrink-0"
+          >
+            <div className="absolute inset-0 rounded-full bg-primary/25 blur-2xl" />
+            <img
+              src="/mascot/welcoming.png"
+              alt="عم وه"
+              className="relative h-28 xs:h-34 w-auto object-contain drop-shadow-[0_12px_16px_rgba(0,0,0,0.5)]"
+              style={{ imageRendering: 'crisp-edges' }}
+            />
+          </motion.div>
+        </div>
+
+        {/* ===================================================== */}
+        {/* MOBILE EDITORIAL CONTENT & ACTIONS                    */}
+        {/* ===================================================== */}
+
+        <div className="relative z-10 space-y-3.5">
+          <div className="space-y-1.5 text-right">
+            <h1 className="text-3.5xl xs:text-4xl sm:text-5xl font-black leading-tight tracking-tight text-foreground font-heading">
               الصعيد{' '}
               <span className="text-primary dark:text-primary-hover">
                 بيحكي
               </span>
             </h1>
-            <br />
-            <p
-              className="
-                text-xs
-                font-medium
-                leading-relaxed
-                text-foreground/80
-              "
-            >
-              أول مكان يجمع حلاوة الصعيد:
-              سوق لشغل اليد، فيديوهات من قلب
-              الورش، وحكاوي وتراث ملهاش مثيل.
+            <p className="text-xs font-medium leading-relaxed text-foreground/80 max-w-md">
+              أول مكان يجمع حلاوة الصعيد: سوق لشغل اليد، فيديوهات من قلب الورش، وحكاوي وتراث ملهاش مثيل.
             </p>
           </div>
 
-          {/* ================================================= */}
-          {/* MAIN BUTTON                                        */}
-          {/* ================================================= */}
-
+          {/* MAIN BUTTON */}
           <button
             type="button"
-            onClick={() =>
-              setActivePage('products')
-            }
-            className="
-              flex
-              w-full
-              items-center
-              justify-between
-              rounded-2xl
-              bg-primary
-              p-3.5
-              text-white
-              shadow-xl
-              shadow-caramel/25
-              transition-all
-              hover:bg-[#805423]
-              active:scale-[0.98]
-            "
+            onClick={() => setActivePage('products')}
+            className="flex w-full items-center justify-between rounded-xl bg-primary hover:bg-[#805423] p-3 text-white shadow-lg shadow-caramel/25 transition-all active:scale-[0.98] cursor-pointer"
           >
             <div className="flex items-center gap-2.5">
-              <div
-                className="
-                  flex
-                  h-8
-                  w-8
-                  items-center
-                  justify-center
-                  rounded-xl
-                  bg-white/20
-                "
-              >
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/20">
                 <ShoppingBag className="h-4 w-4 text-white" />
               </div>
-
               <span className="text-sm font-black">
                 خش على سوق وه
               </span>
             </div>
-
             <ArrowLeft className="h-4 w-4" />
           </button>
 
-          {/* ================================================= */}
-          {/* QUICK BUTTONS                                      */}
-          {/* ================================================= */}
-
+          {/* QUICK BUTTONS */}
           <div className="grid grid-cols-3 gap-2">
             <button
               type="button"
-              onClick={() =>
-                setActivePage('reels')
-              }
-              className="
-                flex
-                items-center
-                justify-center
-                gap-1.5
-                rounded-xl
-                bg-foreground
-                py-2.5
-                text-xs
-                font-bold
-                text-background
-                shadow-xs
-                transition-all
-                hover:bg-black
-                active:scale-95
-              "
+              onClick={() => setActivePage('reels')}
+              className="flex items-center justify-center gap-1.5 rounded-xl border border-primary/25 dark:border-white/10 bg-surface dark:bg-espresso-800/90 py-2.5 px-1 text-xs font-bold text-foreground hover:border-primary shadow-xs transition-all active:scale-95 cursor-pointer"
             >
-              <Film className="h-3.5 w-3.5 text-primary" />
-
-              <span>
-                ريلز وه
-              </span>
+              <Film className="h-3.5 w-3.5 text-primary shrink-0" />
+              <span className="truncate">ريلز وه</span>
             </button>
 
             <button
               type="button"
-              onClick={() =>
-                setActivePage('places')
-              }
-              className="
-                flex
-                items-center
-                justify-center
-                gap-1.5
-                rounded-xl
-                bg-foreground
-                py-2.5
-                text-xs
-                font-bold
-                text-background
-                shadow-xs
-                transition-all
-                hover:bg-black
-                active:scale-95
-              "
+              onClick={() => setActivePage('places')}
+              className="flex items-center justify-center gap-1.5 rounded-xl border border-primary/25 dark:border-white/10 bg-surface dark:bg-espresso-800/90 py-2.5 px-1 text-xs font-bold text-foreground hover:border-primary shadow-xs transition-all active:scale-95 cursor-pointer"
             >
-              <Landmark className="h-3.5 w-3.5 text-primary" />
-
-              <span>
-                أماكن وه
-              </span>
+              <Landmark className="h-3.5 w-3.5 text-primary shrink-0" />
+              <span className="truncate">أماكن وه</span>
             </button>
 
             <button
               type="button"
-              onClick={() =>
-                setActivePage('map')
-              }
-              className="
-                flex
-                items-center
-                justify-center
-                gap-1.5
-                rounded-xl
-                bg-foreground
-                py-2.5
-                text-xs
-                font-bold
-                text-background
-                shadow-xs
-                transition-all
-                hover:bg-black
-                active:scale-95
-              "
+              onClick={() => setActivePage('map')}
+              className="flex items-center justify-center gap-1.5 rounded-xl border border-primary/25 dark:border-white/10 bg-surface dark:bg-espresso-800/90 py-2.5 px-1 text-xs font-bold text-foreground hover:border-primary shadow-xs transition-all active:scale-95 cursor-pointer"
             >
-              <MapPin className="h-3.5 w-3.5 text-primary" />
-
-              <span>
-                خريطة الصعيد
-              </span>
+              <MapPin className="h-3.5 w-3.5 text-primary shrink-0" />
+              <span className="truncate">خريطة الصعيد</span>
             </button>
           </div>
 
-          {/* ================================================= */}
-          {/* MOBILE STATS                                       */}
-          {/* ================================================= */}
-
-          <div
-            className="
-              flex
-              items-center
-              justify-between
-              border-t
-              border-foreground/15
-              pt-3
-              text-center
-              text-foreground
-            "
-          >
+          {/* MOBILE STATS */}
+          <div className="flex items-center justify-between border-t border-foreground/15 pt-2.5 text-center text-foreground">
             <div>
               <span className="block text-sm font-black text-primary dark:text-primary-hover">
-                {wahStats?.governoratesCount}
+                {wahStats?.governoratesCount || 10}
               </span>
-
               <span className="text-[10px] text-foreground-muted">
                 محافظة
               </span>
             </div>
 
-            <div className="h-4 w-px bg-foreground/15" />
+            <div className="h-3.5 w-px bg-foreground/15" />
 
             <div>
-              <span className="block text-sm font-black text-primary dark:text-primary-hover
-">
-                +{wahStats?.placesCount}
+              <span className="block text-sm font-black text-primary dark:text-primary-hover">
+                +{wahStats?.placesCount || 45}
               </span>
-
               <span className="text-[10px] text-foreground-muted">
                 مكان وأثر
               </span>
             </div>
 
-            <div className="h-4 w-px bg-foreground/15" />
+            <div className="h-3.5 w-px bg-foreground/15" />
 
             <div>
               <span className="block text-sm font-black text-primary dark:text-primary-hover">
-                {wahStats?.productsCount}
+                {wahStats?.productsCount || 250}
               </span>
-
               <span className="text-[10px] text-foreground-muted">
                 منتجات صعيدية
               </span>
