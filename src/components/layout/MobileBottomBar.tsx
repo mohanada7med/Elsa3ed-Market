@@ -432,7 +432,7 @@ export const MobileBottomBar: React.FC = () => {
             relative
             z-10
 
-            text-[9px]
+            text-[10px]
             leading-none
             font-bold
 
@@ -474,8 +474,8 @@ export const MobileBottomBar: React.FC = () => {
 
         pointer-events-none
 
-        px-3
-        pb-[calc(10px+env(safe-area-inset-bottom))]
+        px-2.5
+        pb-[calc(8px+env(safe-area-inset-bottom))]
       "
       role="navigation"
       aria-label="التنقل الرئيسي"
@@ -547,7 +547,7 @@ export const MobileBottomBar: React.FC = () => {
             relative
             flex-1
 
-            h-[62px]
+            h-[66px]
 
             px-1
 
@@ -605,8 +605,8 @@ export const MobileBottomBar: React.FC = () => {
 
             relative
 
-            w-[66px]
-            h-[78px]
+            w-[64px]
+            h-[74px]
 
             flex
             items-start
@@ -684,8 +684,8 @@ export const MobileBottomBar: React.FC = () => {
 
               mt-[2px]
 
-              w-[58px]
-              h-[58px]
+              w-[56px]
+              h-[56px]
 
               rounded-[21px]
 

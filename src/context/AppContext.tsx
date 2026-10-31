@@ -113,6 +113,9 @@ interface AppContextType {
   showIntroVideo: boolean;
   setShowIntroVideo: (show: boolean) => void;
   dismissIntroVideo: () => void;
+  showOnboarding: boolean;
+  setShowOnboarding: (show: boolean) => void;
+  dismissOnboarding: () => void;
 
   // Theme (Dark / Light Mode)
   theme: ThemeMode;
@@ -925,6 +928,29 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setShowIntroVideo(false);
     localStorage.setItem('saeed_intro_seen', 'true');
   };
+
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  useEffect(() => {
+    if (activePage !== 'home') return;
+    try {
+      if (localStorage.getItem('wah_onboarding_seen_v1') !== 'true') {
+        setShowOnboarding(true);
+      }
+    } catch (error) {
+      console.warn('[AppContext] Could not read onboarding state:', error);
+      setShowOnboarding(true);
+    }
+  }, [activePage]);
+
+  const dismissOnboarding = useCallback(() => {
+    setShowOnboarding(false);
+    try {
+      localStorage.setItem('wah_onboarding_seen_v1', 'true');
+    } catch (error) {
+      console.warn('[AppContext] Could not save onboarding state:', error);
+    }
+  }, []);
 
   // Dark / Light Theme Mode
   const [theme, setThemeState] = useState<ThemeMode>(() => {
@@ -3267,6 +3293,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         showIntroVideo,
         setShowIntroVideo,
         dismissIntroVideo,
+        showOnboarding,
+        setShowOnboarding,
+        dismissOnboarding,
 
         theme,
         setTheme,

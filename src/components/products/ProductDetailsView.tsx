@@ -508,8 +508,8 @@ export const ProductDetailsView: React.FC = () => {
           z-10
           mx-auto
           max-w-[1800px]
-          px-4
-          py-5
+          px-3.5
+          py-4
           sm:px-6
           sm:py-8
           lg:px-10
@@ -519,8 +519,9 @@ export const ProductDetailsView: React.FC = () => {
         {/* Top Navigation */}
         <div
           className="
+            hidden
+            sm:flex
             mb-7
-            flex
             items-center
             justify-between
             gap-4
@@ -613,12 +614,13 @@ export const ProductDetailsView: React.FC = () => {
         </div>
 
         {/* UNCLE WAH INTERACTIVE GUIDE */}
-        <div className="mb-6">
+        <div className="mb-4 sm:mb-6">
           <UncleWahInteractiveGuide
             context="crafts"
             title={product.title}
             locationName={product.sellerGovernorate || product.specifications?.originGovernorate}
             customQuote={`«وأنا بتمشى في ورش الصعيد.. لقيت ${product.title}! شغل يدوي أصيل 100% من إيد شيوخ الصنعة الحقيقيين، متسعر بأمانة وضمان لحد باب دارك.»`}
+            className="hidden sm:block"
           />
         </div>
 
@@ -641,7 +643,8 @@ export const ProductDetailsView: React.FC = () => {
             className="
               relative
               overflow-hidden
-              rounded-[2.25rem]
+              rounded-2xl
+              sm:rounded-[2.25rem]
               border border-[#E0C79B]/70
               bg-[#EFE5D6]
               shadow-[0_24px_70px_-38px_rgba(59,30,14,0.42)]
@@ -948,7 +951,8 @@ export const ProductDetailsView: React.FC = () => {
             className="
               flex
               flex-col
-              rounded-[2.25rem]
+              rounded-2xl
+              sm:rounded-[2.25rem]
               border border-primary/15
               bg-gradient-to-br from-white/95 via-white/80 to-[#F8EBD7]/75
               p-5
@@ -2676,6 +2680,25 @@ export const ProductDetailsView: React.FC = () => {
             setIsVoiceRecorderOpen(false);
           }}
         />
+      )}
+      {product && (currentRole === 'buyer' || !isAuthenticated) && (
+        <div className="fixed inset-x-0 bottom-0 z-[60] border-t border-primary/15 bg-[#FFF9EE]/95 px-3 pt-2.5 pb-[calc(10px+env(safe-area-inset-bottom))] shadow-[0_-12px_35px_-24px_rgba(59,30,14,0.65)] backdrop-blur-xl dark:bg-[#1B1009]/95 sm:px-6 sm:pt-3 lg:hidden">
+          <div className="mx-auto flex max-w-xl items-center gap-3">
+            <div className="min-w-0 flex-1">
+              <div className="text-[10px] font-bold text-espresso/55 dark:text-cream/55">الإجمالي · {quantity} قطعة</div>
+              <div className="truncate text-base font-black text-primary dark:text-primary-hover">{totalPrice} ج.م</div>
+            </div>
+            <button
+              type="button"
+              disabled={!product.inStock}
+              onClick={() => addToCart(product, quantity)}
+              className="flex min-h-12 flex-[1.4] items-center justify-center gap-2 rounded-xl bg-primary px-4 text-xs font-black text-white shadow-md transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-45 touch-manipulation"
+            >
+              <ShoppingBag size={17} />
+              {product.inStock ? 'أضف للسلة' : 'غير متاح'}
+            </button>
+          </div>
+        </div>
       )}
     </main>
   );

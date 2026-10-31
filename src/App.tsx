@@ -8,13 +8,13 @@ import { ToastContainer } from './components/layout/ToastContainer';
 import { GlobalConfirmModal } from './components/common/GlobalConfirmModal';
 import { ReportIssueModal } from './components/common/ReportIssueModal';
 import { IntroExperience } from './components/layout/IntroExperience';
+import { WahOnboardingExperience } from './components/layout/WahOnboardingExperience';
 import { CartDrawer } from './components/cart/CartDrawer';
 import { AuthModal } from './components/auth/AuthModal';
 import { ForceChangePasswordModal } from './components/auth/ForceChangePasswordModal';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { updatePageSEO, generateBreadcrumbSchema } from './utils/seo';
 import { MobileBottomBar } from './components/layout/MobileBottomBar';
-import { FloatingUncleWahCompanion } from './components/common/FloatingUncleWahCompanion';
 
 // Pages
 import { HomePage } from './components/pages/HomePage';
@@ -733,14 +733,12 @@ const MainContent: React.FC = () => {
       {/* Persistent Mobile Bottom Navigation Bar */}
       <MobileBottomBar />
 
-      {/* Floating Uncle Wah Interactive Guide across All Pages */}
-      <FloatingUncleWahCompanion />
-
       {/* Global Modals & Drawers */}
       {(currentRole === 'buyer' || !isAuthenticated) && <CartDrawer />}
       <AuthModal />
       <ForceChangePasswordModal />
       <IntroExperience />
+      <WahOnboardingExperience />
       <ToastContainer />
       <GlobalConfirmModal />
       <ReportIssueModal />

@@ -53,7 +53,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       transition={{ duration: 0.35, ease: 'easeOut' }}
       whileHover={{ y: -5, transition: { duration: 0.2 } }}
       onClick={handleCardClick}
-      className="flex flex-col overflow-hidden group relative transition-all duration-300 rounded-[1.5rem] bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl border border-black/10 dark:border-white/10 hover:border-primary/40 dark:hover:border-primary/50 shadow-lg hover:shadow-xl cursor-pointer"
+      className="flex min-w-0 flex-col overflow-hidden group relative transition-all duration-300 rounded-2xl sm:rounded-[1.5rem] bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl border border-black/10 dark:border-white/10 hover:border-primary/40 dark:hover:border-primary/50 shadow-md sm:shadow-lg hover:shadow-xl cursor-pointer touch-manipulation"
     >
       {/* Product Image & Badges */}
       <div className="relative aspect-square w-full overflow-hidden bg-black/5 dark:bg-cream/5">
@@ -134,10 +134,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </div>
 
       {/* Product Content Details */}
-      <div className="p-4 sm:p-4.5 flex-1 flex flex-col justify-between bg-white/75 dark:bg-espresso-900/90">
+      <div className="min-w-0 p-3 sm:p-4.5 flex-1 flex flex-col justify-between bg-white/75 dark:bg-espresso-900/90">
         <div>
           {/* Seller / Workshop Link */}
-          <div className="flex items-center justify-between gap-1.5 mb-2">
+          <div className="flex items-center justify-between gap-1 mb-2">
             <button
               type="button"
               id={`seller-link-${product.sellerId}`}
@@ -146,21 +146,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 navigateToSeller(product.sellerId);
               }}
               aria-label={`زيارة ورشة الحرفي ${product.sellerName}`}
-              className="text-xs font-bold text-black/60 dark:text-white/60 hover:text-primary dark:hover:text-[#C99444] transition-colors truncate text-right cursor-pointer"
+              className="min-w-0 text-[11px] sm:text-xs font-bold text-black/60 dark:text-white/60 hover:text-primary dark:hover:text-[#C99444] transition-colors truncate text-right cursor-pointer touch-manipulation"
             >
               {product.sellerName}
             </button>
 
             {/* Rating Stars */}
             <div
-              className="flex items-center gap-1 text-xs shrink-0"
+              className="flex items-center gap-0.5 text-[10px] sm:text-xs shrink-0"
               aria-label={`التقييم ${product.rating} من 5 نجوم بناء على ${product.reviewCount} تقييم`}
             >
-              <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+              <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-500 fill-amber-500" />
               <span className="font-bold text-espresso dark:text-cream text-xs">
                 {product.rating}
               </span>
-              <span className="text-[10px] text-black/40 dark:text-white/40">
+              <span className="hidden min-[420px]:inline text-[10px] text-black/40 dark:text-white/40">
                 ({product.reviewCount})
               </span>
             </div>
@@ -168,26 +168,26 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
           {/* Product Title */}
           <h3
-            className="font-bold text-espresso dark:text-cream text-sm leading-snug hover:text-primary dark:hover:text-[#C99444] transition-colors line-clamp-2 mb-2"
+            className="font-bold text-espresso dark:text-cream text-[13px] sm:text-sm leading-snug hover:text-primary dark:hover:text-[#C99444] transition-colors line-clamp-2 mb-2"
           >
             {product.title}
           </h3>
         </div>
 
         {/* Pricing & Add To Cart Button */}
-        <div className="pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between gap-2 mt-auto">
+        <div className="pt-2.5 sm:pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between gap-1.5 sm:gap-2 mt-auto">
           <div>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-base font-normal font-price text-primary dark:text-primary-hover tracking-wide">
+              <span className="text-sm sm:text-base font-normal font-price text-primary dark:text-primary-hover tracking-wide whitespace-nowrap">
                 {product.price} ج.م
               </span>
               {product.originalPrice && product.originalPrice > product.price && (
-                <span className="text-xs text-black/40 dark:text-white/40 line-through">
+                <span className="hidden sm:inline text-xs text-black/40 dark:text-white/40 line-through">
                   {product.originalPrice} ج.م
                 </span>
               )}
             </div>
-            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold block">
+            <span className="text-[9px] sm:text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold block truncate">
               {product.inStock ? `موجود (${product.stockCount} قطعة)` : 'خلصان دلوقتي'}
             </span>
           </div>
@@ -205,7 +205,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 setIsCartDrawerOpen(true);
               }}
               disabled={!product.inStock}
-              className="p-2.5 rounded-xl bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:bg-[#6B3A1F] dark:text-[#FFF9EE] dark:hover:bg-[#4A2715] disabled:opacity-40 shadow-xs transition-colors flex items-center justify-center shrink-0 min-h-[44px] min-w-[44px] cursor-pointer"
+              className="p-2.5 rounded-xl bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:bg-[#6B3A1F] dark:text-[#FFF9EE] dark:hover:bg-[#4A2715] disabled:opacity-40 shadow-xs transition-colors flex items-center justify-center shrink-0 min-h-11 min-w-11 cursor-pointer touch-manipulation"
               title={`حط ${product.title} في السلة`}
               aria-label={`حط ${product.title} في السلة`}
             >

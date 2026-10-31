@@ -143,7 +143,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
         }
         setOpen((prev) => !prev);
       }}
-      className="relative flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11 cursor-pointer"
+      className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 lg:h-11 lg:w-11 cursor-pointer touch-manipulation"
       style={{
         backgroundColor: open ? '#E66A2E' : hoverBg,
         color: open ? '#fff' : mainText,
@@ -1412,7 +1412,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
         {/* =========================================================
             3. MOBILE MAIN ROW (يمين وشمال + اللوجو المتدلي في المنتصف)
             ========================================================= */}
-        <div className="flex lg:hidden relative mx-auto max-w-[1600px] h-28 sm:h-36 items-center justify-between px-3 sm:px-6 overflow-visible mt-2">
+        <div className="flex lg:hidden relative mx-auto max-w-[1600px] h-20 sm:h-24 items-center justify-between px-3 sm:px-6 overflow-visible">
           {/* الجانب الأيمن: القائمة والبحث */}
           <div className="flex items-center gap-1.5 z-20">
             <button
@@ -1420,20 +1420,20 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               onClick={() => setMobileMenuOpen(true)}
               aria-label="القائمة"
               title="القائمة"
-              className="flex h-8.5 w-8.5 items-center justify-center rounded-full cursor-pointer active:scale-95"
+              className="flex h-10 w-10 items-center justify-center rounded-full cursor-pointer touch-manipulation active:scale-95"
               style={{ backgroundColor: hoverBg, color: mainText }}
             >
-              <Menu size={16} className="text-primary-hover" />
+              <Menu size={18} className="text-primary-hover" />
             </button>
             <button
               type="button"
               onClick={toggleTheme}
               aria-label="تغيير المظهر"
               title="تغيير المظهر"
-              className="flex h-8.5 w-8.5 items-center justify-center rounded-full cursor-pointer transition-transform active:scale-95"
+              className="flex h-10 w-10 items-center justify-center rounded-full cursor-pointer touch-manipulation transition-transform active:scale-95"
               style={{ backgroundColor: hoverBg, color: mainText }}
             >
-              {isDark ? <Sun size={16} className="text-primary-hover" /> : <Moon size={16} />}
+              {isDark ? <Sun size={18} className="text-primary-hover" /> : <Moon size={18} />}
             </button>
 
             <button
@@ -1441,10 +1441,10 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               onClick={() => setSearchOverlayOpen(true)}
               aria-label="البحث"
               title="البحث"
-              className="flex h-8.5 w-8.5 items-center justify-center rounded-full cursor-pointer active:scale-95"
+              className="flex h-10 w-10 items-center justify-center rounded-full cursor-pointer touch-manipulation active:scale-95"
               style={{ backgroundColor: hoverBg, color: mainText }}
             >
-              <Search size={16} />
+              <Search size={18} />
             </button>
 
           </div>
@@ -1462,9 +1462,9 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 draggable={false}
                 className="
                   block
-                  h-24 w-auto max-w-[150px]
-                  xs:h-28 xs:max-w-[190px]
-                  sm:h-32 sm:max-w-[230px]
+                  h-16 w-auto max-w-[92px]
+                  xs:h-18 xs:max-w-[112px]
+                  sm:h-20 sm:max-w-[150px]
                   object-contain
                   transition-all duration-300
                   group-hover:scale-105
@@ -1482,10 +1482,10 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 onClick={handleFavoritesClick}
                 aria-label="المفضلة"
                 title="المفضلة"
-                className="relative flex h-8.5 w-8.5 items-center justify-center rounded-full cursor-pointer transition-transform active:scale-95"
+                className="relative flex h-10 w-10 items-center justify-center rounded-full cursor-pointer touch-manipulation transition-transform active:scale-95"
                 style={{ backgroundColor: hoverBg, color: mainText }}
               >
-                <Heart size={16} />
+                <Heart size={18} />
 
                 {favorites.length > 0 && (
                   <span className="absolute -right-0.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full px-1 text-[8px] font-bold bg-[#E66A2E] text-white">
@@ -1513,7 +1513,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     onClick={() => setIsProfileMenuOpen((prev) => !prev)}
                     aria-label="قائمة الحساب"
                     title="قائمة الحساب"
-                    className="flex h-8.5 w-8.5 items-center justify-center rounded-full border border-primary/40 overflow-hidden cursor-pointer transition-transform active:scale-95"
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-primary/40 overflow-hidden cursor-pointer touch-manipulation transition-transform active:scale-95"
                   >
                     <img
                       src={profileImage}

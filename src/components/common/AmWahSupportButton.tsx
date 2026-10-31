@@ -140,7 +140,7 @@ export const AmWahSupportButton: React.FC = () => {
 
   return (
     <div
-      className="fixed bottom-[calc(5.25rem+env(safe-area-inset-bottom,0px))] lg:bottom-8 left-3 sm:left-6 z-50 select-none font-sans"
+      className="fixed bottom-[calc(5.25rem+env(safe-area-inset-bottom,0px))] lg:bottom-8 right-3 sm:right-6 z-50 select-none font-sans"
       dir="rtl"
     >
       {/* =========================================================
@@ -154,7 +154,7 @@ export const AmWahSupportButton: React.FC = () => {
             exit={{ opacity: 0, scale: 0.9, y: 15 }}
             transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
             className="
-              absolute bottom-full left-0 mb-3
+absolute bottom-full right-0 mb-3
               w-[calc(100vw-2rem)]
               max-w-[380px]
               overflow-hidden
@@ -164,7 +164,7 @@ export const AmWahSupportButton: React.FC = () => {
               shadow-2xl
               backdrop-blur-2xl
               text-stone-850 dark:text-stone-100
-              origin-bottom-left
+              origin-bottom-right
               transition-colors duration-200
             "
             style={{
@@ -580,9 +580,11 @@ export const AmWahSupportButton: React.FC = () => {
           className="
             relative
             flex
+            min-h-11
+            min-w-11
             items-center
+            justify-center
             gap-1.5
-            sm:gap-2.5
             rounded-full
             border border-amber-600/40 dark:border-amber-600/50
             sm:border-2
@@ -597,6 +599,8 @@ export const AmWahSupportButton: React.FC = () => {
             hover:border-amber-600 dark:hover:border-amber-400
             cursor-pointer
             transition-all
+            sm:gap-2.5
+            lg:justify-start
           "
           style={{
             boxShadow:
@@ -637,7 +641,7 @@ export const AmWahSupportButton: React.FC = () => {
                 WebkitFontSmoothing: 'antialiased',
               }}
               className="
-                h-10
+                h-11
                 sm:h-13
                 w-auto
                 object-contain
@@ -707,7 +711,7 @@ export const AmWahSupportButton: React.FC = () => {
               text-right
               pr-0.5
               hidden
-              sm:block
+              lg:block
             "
           >
             <span

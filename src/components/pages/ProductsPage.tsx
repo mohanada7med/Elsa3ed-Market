@@ -232,8 +232,8 @@ export const ProductsPage: React.FC = () => {
             mx-auto
             max-w-[1700px]
             px-4
-            pb-8
-            pt-8
+            pb-6
+            pt-6
 
             sm:px-8
             sm:pb-14
@@ -249,7 +249,7 @@ export const ProductsPage: React.FC = () => {
           <div
             className="
               grid
-              gap-14
+              gap-7
 
               lg:grid-cols-[1fr_420px]
               lg:items-end
@@ -261,7 +261,7 @@ export const ProductsPage: React.FC = () => {
             <div>
               <div
                 className="
-                  mb-7
+                  mb-5
                   flex
                   items-center
                   gap-3
@@ -296,7 +296,7 @@ export const ProductsPage: React.FC = () => {
                 className="
                   max-w-6xl
                   font-black
-                  text-5xl
+                  text-4xl
                   sm:text-7xl
                   lg:text-[8rem]
                   xl:text-[9.5rem]
@@ -323,7 +323,7 @@ export const ProductsPage: React.FC = () => {
 
               <div
                 className="
-                  mt-10
+                  mt-5
                   grid
                   max-w-3xl
                   gap-7
@@ -362,7 +362,7 @@ export const ProductsPage: React.FC = () => {
                     max-w-2xl
                     text-sm
                     font-medium
-                    leading-8
+                    leading-7
                     text-black/55
                     dark:text-white/55
                     sm:text-base
@@ -387,7 +387,7 @@ export const ProductsPage: React.FC = () => {
                   rounded-[2rem]
                   border border-border-subtle
                   bg-surface
-                  p-7
+                  p-5
                   shadow-lg
                 "
               >
@@ -408,7 +408,7 @@ export const ProductsPage: React.FC = () => {
                 />
 
                 <div className="relative">
-                  <div className="mb-12 flex items-center justify-between">
+                  <div className="mb-7 flex items-center justify-between">
                     <div
                       className="
                         text-[8px]
@@ -436,7 +436,7 @@ export const ProductsPage: React.FC = () => {
                     <div>
                       <div
                         className="
-                          text-5xl
+                          text-4xl
                           font-black
                           tracking-[-0.07em]
                         "
@@ -446,7 +446,7 @@ export const ProductsPage: React.FC = () => {
 
                       <div
                         className="
-                          mt-3
+                          mt-2
                           text-[10px]
                           font-medium
                           leading-5
@@ -464,7 +464,7 @@ export const ProductsPage: React.FC = () => {
                     <div>
                       <div
                         className="
-                          text-5xl
+                          text-4xl
                           font-black
                           tracking-[-0.07em]
                         "
@@ -474,7 +474,7 @@ export const ProductsPage: React.FC = () => {
 
                       <div
                         className="
-                          mt-3
+                          mt-2
                           text-[10px]
                           font-medium
                           leading-5
@@ -492,7 +492,7 @@ export const ProductsPage: React.FC = () => {
 
                   <div
                     className="
-                      mt-10
+                      mt-6
                       flex
                       items-center
                       gap-3
@@ -524,7 +524,7 @@ export const ProductsPage: React.FC = () => {
       </section>
 
       {/* UNCLE WAH HERO BANNER - MASTER OF MARKETPLACE */}
-      <div className="relative z-20 mx-auto max-w-[1700px] px-5 sm:px-8 lg:px-12 xl:px-16 -mt-4 mb-8">
+      <div       className="relative z-20 mx-auto max-w-[1700px] px-4 sm:px-8 lg:px-12 xl:px-16 -mt-4 mb-6 sm:mb-8">
         <UncleWahHeroBanner
           doorTitle="سوق وه من إيد الصانع لدارك على طول"
           doorBadge="باب سوق وه"
@@ -547,7 +547,7 @@ export const ProductsPage: React.FC = () => {
           z-30
           mx-auto
           max-w-[1700px]
-          px-5
+          px-4
 
           sm:px-8
 
@@ -560,11 +560,11 @@ export const ProductsPage: React.FC = () => {
           className="
             relative
             overflow-hidden
-            rounded-[2rem]
+            rounded-2xl sm:rounded-[2rem]
             border
             border-black/[0.08]
             bg-espresso
-            p-5
+            p-4
             text-white
 
             dark:border-white/[0.08]
@@ -608,7 +608,9 @@ export const ProductsPage: React.FC = () => {
             className="
               relative
               grid
-              gap-5
+              grid-cols-[1fr_auto]
+              gap-3
+              sm:gap-5
 
               lg:grid-cols-[auto_1fr_auto]
               lg:items-center
@@ -616,28 +618,28 @@ export const ProductsPage: React.FC = () => {
           >
             {/* Search label */}
 
-            <div className="flex items-center gap-4">
+            <div className="col-span-2 flex items-center gap-3 lg:col-span-1 sm:gap-4">
               <div
                 className="
                   flex
-                  h-12
-                  w-12
+                  h-10
+                  w-10
                   shrink-0
                   items-center
                   justify-center
-                  rounded-2xl
+                  rounded-xl sm:rounded-2xl
                   bg-white/10
                 "
               >
-                <Search size={18} />
+                <Search size={16} />
               </div>
 
               <div>
-                <div className="text-[9px] font-black tracking-[0.2em] text-white/40">
+                <div className="text-[8px] sm:text-[9px] font-black tracking-[0.2em] text-white/40">
                   SEARCH THE ARCHIVE
                 </div>
 
-                <div className="mt-1 text-sm font-black">
+                <div className="mt-0.5 text-xs sm:text-sm font-black">
                   دور على حكايتك
                 </div>
               </div>
@@ -654,15 +656,15 @@ export const ProductsPage: React.FC = () => {
                 }
                 placeholder="فخار قنا، كليم أخميم، تلي أسيوط..."
                 className="
-                  h-14
+                  h-12 sm:h-16
                   w-full
                   rounded-2xl
                   border
                   border-white/10
                   bg-white/[0.07]
-                  px-5
-                  pl-12
-                  text-sm
+                  px-3 sm:px-6
+                  pl-9 sm:pl-14
+                  text-xs sm:text-sm
                   font-medium
                   text-white
                   outline-none
@@ -673,9 +675,6 @@ export const ProductsPage: React.FC = () => {
                   focus:border-[#C99444]/50
                   focus:bg-white/[0.1]
 
-                  sm:h-16
-                  sm:px-6
-                  sm:pl-14
                 "
               />
 
@@ -685,7 +684,7 @@ export const ProductsPage: React.FC = () => {
                   onClick={() => setSearchQuery('')}
                   className="
                     absolute
-                    left-3
+                    left-1.5 sm:left-3
                     top-1/2
                     flex
                     -translate-y-1/2
@@ -705,10 +704,10 @@ export const ProductsPage: React.FC = () => {
                 </button>
               ) : (
                 <Search
-                  size={17}
+                  size={16}
                   className="
                     absolute
-                    left-5
+                    left-3 sm:left-5
                     top-1/2
                     -translate-y-1/2
                     text-white/30
@@ -722,13 +721,13 @@ export const ProductsPage: React.FC = () => {
             <div
               className="
                 flex
-                h-14
+                h-12 sm:h-16
                 items-center
                 justify-center
                 gap-3
                 rounded-2xl
                 bg-[#C99444]
-                px-6
+                px-3 sm:px-6
                 text-black
 
                 sm:h-16
@@ -754,7 +753,7 @@ export const ProductsPage: React.FC = () => {
           z-20
           mx-auto
           max-w-[1700px]
-          px-5
+          px-4
           pt-10
 
           sm:px-8
@@ -830,7 +829,7 @@ export const ProductsPage: React.FC = () => {
           z-10
           mx-auto
           max-w-[1700px]
-          px-5
+          px-4
           pb-24
           pt-8
 
@@ -848,7 +847,7 @@ export const ProductsPage: React.FC = () => {
 
         <div
           className="
-            mb-10
+            mb-7 sm:mb-10
             flex
             flex-col
             gap-5
@@ -875,7 +874,7 @@ export const ProductsPage: React.FC = () => {
 
             <h2
               className="
-                text-3xl
+                text-2xl
                 font-black
                 tracking-[-0.05em]
 

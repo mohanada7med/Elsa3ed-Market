@@ -31,7 +31,7 @@ export const UncleWahHeroBanner: React.FC<UncleWahHeroBannerProps> = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       dir="rtl"
-      className={`relative overflow-hidden rounded-3xl sm:rounded-4xl border border-primary/30 bg-gradient-to-br from-surface-subtle via-surface-subtle/95 to-primary/10 p-5 sm:p-7 lg:p-8 shadow-xl backdrop-blur-xl ${className}`}
+      className={`relative overflow-hidden rounded-3xl sm:rounded-4xl border border-primary/30 bg-gradient-to-br from-surface-subtle via-surface-subtle/95 to-primary/10 p-4 sm:p-7 lg:p-8 shadow-xl backdrop-blur-xl ${className}`}
     >
       {/* Decorative ambient background glows */}
       <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-primary/15 blur-3xl" />
@@ -40,7 +40,7 @@ export const UncleWahHeroBanner: React.FC<UncleWahHeroBannerProps> = ({
       {/* Decorative subtle sun-ring */}
       <div className="pointer-events-none absolute left-6 top-1/2 -translate-y-1/2 h-52 w-52 rounded-full border border-dashed border-primary/20 opacity-60" />
 
-      <div className="relative z-10 grid items-center gap-6 sm:gap-8 lg:grid-cols-[auto_1fr_auto]">
+      <div className="relative z-10 grid items-center gap-4 sm:gap-8 lg:grid-cols-[auto_1fr_auto]">
         {/* MASCOT AVATAR / CUTOUT WITH SHADOW & FLOATING */}
         <div className="relative mx-auto flex flex-col items-center justify-end lg:mx-0 shrink-0">
           <div className="absolute -inset-3 rounded-full bg-primary/20 blur-xl animate-pulse pointer-events-none" />
@@ -56,7 +56,7 @@ export const UncleWahHeroBanner: React.FC<UncleWahHeroBannerProps> = ({
                 imageRendering: 'crisp-edges',
                 WebkitFontSmoothing: 'antialiased',
               }}
-              className="h-40 sm:h-48 lg:h-56 w-auto object-contain drop-shadow-[0_18px_30px_rgba(0,0,0,0.28)]"
+              className="h-32 sm:h-48 lg:h-56 w-auto object-contain drop-shadow-[0_18px_30px_rgba(0,0,0,0.28)]"
               loading="eager"
             />
           </motion.div>
@@ -70,7 +70,7 @@ export const UncleWahHeroBanner: React.FC<UncleWahHeroBannerProps> = ({
         </div>
 
         {/* NARRATIVE & QUOTE FROM UNCLE WAH */}
-        <div className="text-right space-y-3 min-w-0">
+        <div className="text-right space-y-2 sm:space-y-3 min-w-0">
           {/* Eyebrow & Badges */}
           <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary text-white text-[10px] sm:text-xs font-black shadow-sm">

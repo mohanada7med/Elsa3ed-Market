@@ -206,7 +206,7 @@ export const DynamicBreadcrumbs: React.FC = () => {
 
       items.push({
         id: 'current-product',
-        label: currentProd?.title || 'تفاصيل المقتنى',
+        label: currentProd?.title || 'تفاصيل المنتج',
         url: `${origin}/products/${selectedProductId || ''}`,
         isCurrent: true
       });
@@ -614,7 +614,7 @@ export const DynamicBreadcrumbs: React.FC = () => {
   }, [breadcrumbItems]);
 
   // If on home page or no breadcrumb items exist, render nothing
-  if (activePage === 'home' || breadcrumbItems.length === 0) {
+  if (activePage === 'home' || activePage === 'products' || breadcrumbItems.length === 0) {
     return null;
   }
 

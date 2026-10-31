@@ -1855,10 +1855,10 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ customProducts, limit 
         className="
           grid
           grid-cols-1
-          gap-4
+          gap-3
           sm:gap-5
 
-          sm:grid-cols-2
+          min-[380px]:grid-cols-2
 
           lg:grid-cols-3
 

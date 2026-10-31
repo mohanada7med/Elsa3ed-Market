@@ -31,6 +31,7 @@ export const Footer: React.FC = () => {
   const {
     setActivePage,
     setShowIntroVideo,
+    setShowOnboarding,
     isAuthenticated,
     currentRole,
     currentUser,
@@ -295,15 +296,11 @@ export const Footer: React.FC = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    if (typeof window !== 'undefined') {
-                      window.dispatchEvent(new CustomEvent('play-wah-intro'));
-                    }
-                  }}
+                  onClick={() => setShowOnboarding(true)}
                   className="px-3 py-1.5 rounded-xl bg-white/[0.04] border border-primary/30 hover:border-primary text-xs text-white/80 hover:bg-primary hover:text-white font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 active:scale-95"
                 >
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>بداية وه (WahIntro)</span>
+                  <Compass className="w-3.5 h-3.5" />
+                  <span>جولة وه التعريفية</span>
                 </button>
               </div>
             </div>
