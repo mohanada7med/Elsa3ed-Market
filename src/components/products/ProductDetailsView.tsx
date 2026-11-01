@@ -44,6 +44,7 @@ import { getWhatsAppUrl } from '../common/WhatsAppButton';
 import { UncleWahInteractiveGuide } from '../common/UncleWahInteractiveGuide';
 import { ArtisanVoicePlayer } from './artisan-voice';
 import { ArtisanVoiceRecorderModal } from '../seller/ArtisanVoiceRecorderModal';
+import { QrCodeModal } from '../common/QrCodeModal';
 
 export const ProductDetailsView: React.FC = () => {
   const {
@@ -632,7 +633,8 @@ export const ProductDetailsView: React.FC = () => {
           className="
             grid
             items-start
-            gap-5
+            gap-3
+            sm:gap-5
             lg:grid-cols-[1.08fr_0.92fr]
             lg:gap-7
           "
@@ -693,7 +695,7 @@ export const ProductDetailsView: React.FC = () => {
             <div
               className="
                 relative
-                h-[390px]
+                h-[clamp(280px,90vw,360px)]
                 sm:h-[520px]
                 lg:aspect-[0.9]
                 lg:h-auto
@@ -951,7 +953,7 @@ export const ProductDetailsView: React.FC = () => {
               sm:rounded-[2.25rem]
               border border-primary/15
               bg-gradient-to-br from-white/95 via-white/80 to-[#F8EBD7]/75
-              p-5
+              p-4
               shadow-[0_24px_70px_-42px_rgba(59,30,14,0.5)]
               backdrop-blur-xl
               dark:border-white/10
@@ -1008,7 +1010,7 @@ export const ProductDetailsView: React.FC = () => {
               <h1
                 className="
                   max-w-xl
-                  text-3xl
+                  text-2xl
                   font-black
                   leading-[1.2]
                   tracking-[-0.035em]
@@ -1034,6 +1036,15 @@ export const ProductDetailsView: React.FC = () => {
                 </p>
               )}
             </div>
+            {product && (
+              <div className="mt-4">
+                <QrCodeModal
+                  title={product.title}
+                  url={`/products/${encodeURIComponent(product.id)}`}
+                  entityLabel="المنتج"
+                />
+              </div>
+            )}
 
             {/* Seller */}
 
@@ -1318,7 +1329,7 @@ export const ProductDetailsView: React.FC = () => {
                   <div className="mt-1 flex items-baseline gap-2">
                     <span
                       className="
-                        text-4xl
+                        text-3xl
                         font-black
                         tracking-[-0.06em]
                         text-primary

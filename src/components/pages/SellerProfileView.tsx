@@ -26,6 +26,7 @@ import { UncleWahInteractiveGuide } from '../common/UncleWahInteractiveGuide';
 import { updatePageSEO, generateStoreSchema } from '../../utils/seo';
 import { api } from '../../services/api';
 import { SellerIntroAudioCard } from '../seller/SellerIntroAudioCard';
+import { QrCodeModal } from '../common/QrCodeModal';
 
 export const SellerProfileView: React.FC = () => {
   const {
@@ -422,17 +423,24 @@ export const SellerProfileView: React.FC = () => {
                 مشاركة
               </span>
             </button>
+            <QrCodeModal
+              title={brandTitle}
+              url={`/sellers/${encodeURIComponent(seller.id)}`}
+              entityLabel="الورشة"
+            />
             {isOwnSellerProfile && (
-              <button
-                type="button"
-                onClick={() => setActivePage('seller-account')}
-                className="h-10 px-3.5 sm:px-4 rounded-xl bg-primary text-white hover:bg-primary-hover inline-flex items-center gap-2 transition-all duration-300 hover:-translate-y-0.5"
-              >
-                <Edit2 className="w-4 h-4" />
-                <span className="hidden sm:inline text-[11px] font-black">
-                  تعديل البروفايل
-                </span>
-              </button>
+              <>
+                <button
+                  type="button"
+                  onClick={() => setActivePage('seller-account')}
+                  className="h-10 px-3.5 sm:px-4 rounded-xl bg-primary text-white hover:bg-primary-hover inline-flex items-center gap-2 transition-all duration-300 hover:-translate-y-0.5"
+                >
+                  <Edit2 className="w-4 h-4" />
+                  <span className="hidden sm:inline text-[11px] font-black">
+                    تعديل البروفايل
+                  </span>
+                </button>
+              </>
             )}
             <button
               type="button"

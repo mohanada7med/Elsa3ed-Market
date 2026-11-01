@@ -380,10 +380,11 @@ export const WahOnboardingExperience: React.FC = () => {
                         <h1 className="font-heading text-3xl font-black leading-tight text-espresso dark:text-cream sm:text-5xl">
                          افتح الباب وادخل
                           <br />
+                          <br />
                           <span className="text-primary dark:text-primary-hover">البيت بيتك</span>
                         </h1>
                         <p className="mx-auto max-w-md text-sm font-semibold leading-7 text-foreground-secondary sm:mx-0 sm:text-base">
-                          عم وه مستنيك.. افتح باب الحكاية وتعالى نلف سوا بين بلاد الصعيد وصنّاعه.
+                           من هنا تبدأ الحكاية.. اكتشف بلاد الصعيد، واتعرّف على ناسه وحرفه وتراثه، وشوف كل حكاية مخبّية ورا كل مكان.
                         </p>
                         <div className="flex items-center justify-center gap-2 text-xs font-bold text-primary dark:text-primary-hover sm:justify-start">
                           <span className="h-px w-8 bg-primary/40" />
@@ -452,12 +453,12 @@ export const WahOnboardingExperience: React.FC = () => {
                             transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
                           >
                             {doorOpened ? <MapPin size={12} /> : <Music2 size={12} />}
-                            {doorOpened ? 'أهلاً بيك في وه' : 'اضغط على الباب واسمع أغنية وه'}
+                            {doorOpened ? 'أهلاً بيك في وه' : 'افتح الباب'}
                           </motion.div>
                           </div>
                           {!doorOpened && (
                             <p className="mt-3 text-center text-[10px] font-semibold text-foreground-secondary sm:hidden">
-                              اضغط على الباب لفتحه
+                             دوس على الباب
                             </p>
                           )}
                           {doorOpened && (
