@@ -5,7 +5,7 @@ import {
   Compass,
   Crown,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 
 interface PortalMascot {
   src: string;
@@ -189,9 +189,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
     },
   ];
 
-  const [activeId, setActiveId] = useState<string>(
-    portals[0]?.id || ''
-  );
+  const [activeId, setActiveId] = useState<string>(portals[0]?.id || '');
 
   return (
     <section
@@ -369,362 +367,118 @@ export const WahEcosystemPortalSection: React.FC = () => {
 
       {/* ======================================== */}
       {/* DESKTOP */}
-      {/* ======================================== */}
-
-      <div className="hidden lg:flex gap-3 h-[520px] w-full">
+      <div className="hidden h-[520px] w-full gap-3 lg:flex">
         {portals.map((portal, idx) => {
           const isActive = activeId === portal.id;
 
           return (
-            <motion.div
-              key={portal.id}
-              role="button"
-              tabIndex={0}
-              onMouseEnter={() => setActiveId(portal.id)}
-              onClick={() => setActivePage(portal.page)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  setActivePage(portal.page);
-                }
-              }}
-              animate={{
-                flex: isActive ? 4.5 : 1,
-              }}
-              transition={{
-                duration: 0.55,
-                ease: [0.32, 0.72, 0, 1],
-              }}
-              className="
-                relative
-                h-full
-                rounded-3xl
-                overflow-hidden
-                cursor-pointer
-                shadow-lg
-                select-none
-                group
-                border border-white/10
-                bg-black
-              "
-            >
-              <img
-                src={portal.image}
-                alt={portal.title}
-                className="
-                  absolute inset-0
-                  w-full h-full
-                  object-cover
-                  object-bottom
-                  transition-transform
-                  duration-700
-                  ease-out
-                  group-hover:scale-105
-                  opacity-85
-                "
-                loading="lazy"
-              />
+          <motion.div
+            key={portal.id}
+            role="button"
+            tabIndex={0}
+            onMouseEnter={() => setActiveId(portal.id)}
+            onClick={() => setActivePage(portal.page)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setActivePage(portal.page);
+              }
+            }}
+            animate={{ flex: isActive ? 6.5 : 1 }}
+            transition={{ duration: 0.55, ease: [0.32, 0.72, 0, 1] }}
+            aria-label={`${portal.title}: ${portal.tagline}`}
+            className={`group relative h-full min-w-0 cursor-pointer select-none overflow-hidden rounded-3xl border bg-black shadow-lg transition-[border-color,box-shadow] duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${isActive ? 'border-primary/50 shadow-[0_18px_45px_rgba(0,0,0,0.4)]' : 'border-white/10'}`}
+          >
+            <img
+              src={portal.image}
+              alt={portal.title}
+              loading="lazy"
+              decoding="async"
+              className="absolute inset-0 h-full w-full object-cover object-bottom opacity-85 transition-transform duration-700 ease-out group-hover:scale-105"
+            />
+            <div className={`absolute inset-0 transition-colors duration-500 ${isActive ? 'bg-gradient-to-t from-black via-black/55 to-black/35' : 'bg-black/70 group-hover:bg-black/55'}`} />
 
-              <div
-                className={`absolute inset-0 transition-opacity duration-500 ${isActive
-                  ? 'bg-gradient-to-t from-black via-black/55 to-black/35'
-                  : 'bg-black/70 hover:bg-black/55'
-                  }`}
-              />
-
-              {/* CLOSED CARD */}
-
-              <div
-                className={`absolute inset-0 p-5 flex flex-col justify-between items-center transition-opacity duration-300 ${isActive
-                  ? 'opacity-0 pointer-events-none'
-                  : 'opacity-100'
-                  }`}
-              >
-                <div className="flex flex-col items-center gap-1.5">
-                  <span className="font-mono text-xs text-[#d5a56d] font-bold">
-                    0{idx + 1}
-                  </span>
-
-                  <div className="w-8 h-8 rounded-full bg-white/10 border border-white/20 p-0.5 flex items-center justify-center overflow-hidden">
-                    <img
-                      src={portal.mascot.src}
-                      alt={portal.mascot.role}
-                      style={{
-                        imageRendering: 'crisp-edges',
-                      }}
-                      className="
-                        w-full
-                        h-full
-                        object-contain
-                        -scale-x-100
-                      "
-                    />
-                  </div>
+            <div className={`absolute inset-0 flex flex-col items-center justify-between p-5 transition-opacity duration-300 ${isActive ? 'pointer-events-none opacity-0' : 'opacity-100'}`}>
+              <div className="flex flex-col items-center gap-1.5">
+                <span className="font-mono text-xs font-bold text-[#d5a56d]">0{idx + 1}</span>
+                <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-white/10 p-0.5">
+                  <img src={portal.mascot.src} alt={portal.mascot.role} className="h-full w-full object-contain -scale-x-100" />
                 </div>
-
-                <div className="flex flex-col items-center gap-2">
-                  <h3 className="
-                    text-white
-                    font-bold
-                    text-base
-                    font-cairo
-                    tracking-wide
-                    [writing-mode:vertical-rl]
-                    rotate-180
-                    select-none
-                  ">
-                    {portal.title}
-                  </h3>
-
-                  <span className="
-                    text-[10px]
-                    font-mono
-                    text-primary
-                    [writing-mode:vertical-rl]
-                    rotate-180
-                    opacity-70
-                  ">
-                    {portal.mascot.role}
-                  </span>
-                </div>
-
-                <div className="
-                  w-2.5
-                  h-2.5
-                  rounded-full
-                  bg-primary/70
-                  animate-pulse
-                " />
               </div>
+              <div className="flex flex-col items-center gap-2">
+                <h3 className="select-none text-base font-bold tracking-wide text-white [writing-mode:vertical-rl] rotate-180">
+                  {portal.title}
+                </h3>
+                <span className="text-[10px] text-primary opacity-70 [writing-mode:vertical-rl] rotate-180">
+                  {portal.mascot.role}
+                </span>
+              </div>
+              <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-primary/70" />
+            </div>
 
-              {/* OPEN CARD */}
-
-              <AnimatePresence>
-                {isActive && (
-                  <motion.div
-                    initial={{
-                      opacity: 0,
-                    }}
-                    animate={{
-                      opacity: 1,
-                    }}
-                    exit={{
-                      opacity: 0,
-                    }}
-                    transition={{
-                      duration: 0.35,
-                      delay: 0.12,
-                    }}
-                    className="
-                      absolute
-                      inset-0
-                      p-7
-                      lg:p-8
-                      flex
-                      flex-col
-                      justify-between
-                      z-10
-                    "
-                  >
-                    <div className="
-                      grid
-                      grid-cols-[1fr_auto]
-                      items-end
-                      gap-6
-                    ">
-                      <div className="
-                        max-w-xl
-                        text-right
-                        space-y-3
-                      ">
-                        <span className="
-                          text-xs
-                          uppercase
-                          tracking-widest
-                          text-primary-hover
-                          font-black
-                          block
-                        ">
-                          {portal.nameEn}
-                        </span>
-
-                        <h3 className="
-                          text-2xl
-                          sm:text-3xl
-                          lg:text-4xl
-                          font-black
-                          text-white
-                          font-cairo
-                          leading-tight
-                        ">
-                          {portal.title}
-                        </h3>
-
-                        <p className="
-                          text-xs
-                          sm:text-sm
-                          text-white/85
-                          leading-relaxed
-                          line-clamp-2
-                        ">
-                          {portal.desc}
+            <AnimatePresence>
+              {isActive && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.35, delay: 0.12 }}
+                  className="absolute inset-0 z-10 flex flex-col justify-center p-5 lg:p-7"
+                >
+                  <div className="grid grid-cols-[1fr_auto] items-center gap-4 lg:gap-6">
+                    <div className="max-w-xl space-y-3 text-right">
+                      <span className="block text-xs font-black uppercase tracking-widest text-primary-hover">
+                        {portal.nameEn}
+                      </span>
+                      <h3 className="font-cairo text-2xl font-black leading-tight text-white sm:text-3xl lg:text-4xl">
+                        {portal.title}
+                      </h3>
+                      <p className="line-clamp-2 text-xs leading-relaxed text-white/85 sm:text-sm">
+                        {portal.desc}
+                      </p>
+                      <div className="space-y-1.5 rounded-2xl border border-primary/40 bg-black/60 p-3.5 backdrop-blur-md">
+                        <div className="flex items-center justify-between text-[11px] font-black text-amber-300">
+                          <span>«عم وه»: {portal.mascot.role}</span>
+                          <span className="text-[10px] font-normal text-white/50">{portal.mascot.badge}</span>
+                        </div>
+                        <p className="text-xs font-medium leading-relaxed text-white/95">
+                          {portal.mascot.quote}
                         </p>
-
-                        <div className="
-                          rounded-2xl
-                          bg-black/60
-                          border border-primary/40
-                          p-3.5
-                          backdrop-blur-md
-                          space-y-1.5
-                        ">
-                          <div className="
-                            flex
-                            items-center
-                            justify-between
-                            text-[11px]
-                            font-black
-                            text-amber-300
-                          ">
-                            <span className="
-                              flex
-                              items-center
-                              gap-1.5
-                            ">
-                              <span className="
-                                w-2
-                                h-2
-                                rounded-full
-                                bg-amber-400
-                              " />
-
-                              «عم وه»: {portal.mascot.role}
-                            </span>
-
-                            <span className="
-                              text-[10px]
-                              text-white/50
-                              font-normal
-                            ">
-                              {portal.mascot.badge}
-                            </span>
-                          </div>
-
-                          <p className="
-                            text-xs
-                            font-medium
-                            text-white/95
-                            leading-relaxed
-                          ">
-                            {portal.mascot.quote}
-                          </p>
-                        </div>
-
-                        <div className="
-                          pt-2
-                          border-t
-                          border-white/20
-                          flex
-                          items-center
-                          justify-between
-                          text-xs
-                          text-[#d5a56d]
-                        ">
-                          <span className="italic">
-                            {portal.tagline}
-                          </span>
-
-                          <span className="
-                            font-bold
-                            text-white
-                            flex
-                            items-center
-                            gap-1
-                          ">
-                            افتح الباب الآن ←
-                          </span>
-                        </div>
                       </div>
-
-                      <div className="
-                        relative
-                        shrink-0
-                        flex
-                        flex-col
-                        items-center
-                      ">
-                        <div className="
-                          absolute
-                          -inset-2
-                          rounded-full
-                          bg-primary/20
-                          blur-xl
-                          animate-pulse
-                          pointer-events-none
-                        " />
-
-                        <motion.div
-                          animate={{
-                            y: [0, -6, 0],
-                          }}
-                          transition={{
-                            duration: 3.5,
-                            repeat: Infinity,
-                            ease: 'easeInOut',
-                          }}
-                          className="relative z-10"
-                        >
-                          <img
-                            src={portal.mascot.src}
-                            alt={portal.mascot.role}
-                            style={{
-                              imageRendering: 'crisp-edges',
-                            }}
-                            className="
-                              h-44
-                              sm:h-52
-                              w-auto
-                              object-contain
-                              drop-shadow-[0_14px_25px_rgba(0,0,0,0.5)]
-                              select-none
-                            "
-                          />
-                        </motion.div>
-
-                        <div className="
-                          w-24
-                          h-2
-                          rounded-[100%]
-                          bg-black/60
-                          blur-xs
-                          -mt-1
-                        " />
-
-                        <span className="
-                          mt-1
-                          text-[9px]
-                          font-bold
-                          text-amber-300/80
-                          bg-black/50
-                          px-2
-                          py-0.5
-                          rounded-full
-                          border border-white/10
-                          backdrop-blur-xs
-                        ">
-                          {portal.mascot.reactionNote}
-                        </span>
+                      <div className="flex items-center justify-between border-t border-white/20 pt-2 text-xs text-[#d5a56d]">
+                        <span className="italic">{portal.tagline}</span>
+                        <span className="font-bold text-white">افتح الباب الآن</span>
                       </div>
                     </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
+
+                    <div className="relative flex shrink-0 flex-col items-center">
+                      <div className="pointer-events-none absolute -inset-2 animate-pulse rounded-full bg-primary/20 blur-xl" />
+                      <motion.div
+                        animate={{ y: [0, -6, 0] }}
+                        transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
+                        className="relative z-10"
+                      >
+                        <img
+                          src={portal.mascot.src}
+                          alt={portal.mascot.role}
+                          className="h-44 w-auto select-none object-contain drop-shadow-[0_14px_25px_rgba(0,0,0,0.5)] sm:h-52"
+                        />
+                      </motion.div>
+                      <div className="-mt-1 h-2 w-24 rounded-[100%] bg-black/60 blur-xs" />
+                      <span className="mt-1 rounded-full border border-white/10 bg-black/50 px-2 py-0.5 text-[9px] font-bold text-amber-300/80 backdrop-blur-xs">
+                        {portal.mascot.reactionNote}
+                      </span>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+            <div className="pointer-events-none absolute inset-2 rounded-[1.3rem] border border-white/15" />
+          </motion.div>
           );
         })}
       </div>
 
-      {/* ======================================== */}
       {/* MOBILE + TABLET */}
       {/* ======================================== */}
 

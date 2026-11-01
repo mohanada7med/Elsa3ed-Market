@@ -141,7 +141,7 @@ export default function RootLayout({
               <span className="wah-loader-spark wah-loader-spark-two" aria-hidden="true" />
             </div>
             <p className="wah-loader-kicker">من قلب الصعيد</p>
-            <h1>بنحضرلك حكاية جديدة</h1>
+            <h1>وه بتجهز علشانك  </h1>
             <p className="wah-loader-caption">وه.. الحكاية ورا كل حاجة</p>
             <div className="wah-loader-progress" aria-hidden="true">
               <span />
