@@ -167,6 +167,7 @@ interface AppContextType {
   discounts: DiscountCoupon[];
   auditLogs: AuditLog[];
   isLoading: boolean;
+  isInitialDataReady: boolean;
 
   // Data Refresh Methods
   refreshPublicProducts: () => Promise<void>;
@@ -1067,6 +1068,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [discounts, setDiscounts] = useState<DiscountCoupon[]>([]);
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isInitialDataReady, setIsInitialDataReady] = useState(false);
 
   // Phase 4: Inventory & Seller Stats
   const [sellerInventory, setSellerInventory] = useState<any[]>([]);
@@ -1616,11 +1618,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Initial load: Only public catalog data (products, categories, sellers) in parallel for high speed
   useEffect(() => {
-    Promise.allSettled([
+    let isMounted = true;
+    void Promise.allSettled([
       refreshPublicProducts(),
       refreshCategories(),
       refreshSellers()
-    ]);
+    ]).then(() => {
+      if (isMounted) setIsInitialDataReady(true);
+    });
+
+    return () => {
+      isMounted = false;
+    };
   }, [refreshPublicProducts, refreshCategories, refreshSellers]);
 
   // Role-specific load: Only triggered after session check resolves to prevent premature guest calls
@@ -3311,6 +3320,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         discounts,
         auditLogs,
         isLoading,
+        isInitialDataReady,
 
         refreshPublicProducts,
         refreshSellerProducts,

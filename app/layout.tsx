@@ -60,6 +60,43 @@ export default function RootLayout({
             }`,
           }}
         />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function () {
+              var root = document.documentElement;
+              var startedAt = Date.now();
+              root.dataset.wahLoaderStartedAt = String(startedAt);
+              var completed = false;
+              var readyTimer = null;
+              var fallbackTimer = null;
+              var removeTimer = null;
+
+              function exitLoader() {
+                if (completed) return;
+                completed = true;
+                if (readyTimer !== null) window.clearTimeout(readyTimer);
+                if (fallbackTimer !== null) window.clearTimeout(fallbackTimer);
+                window.removeEventListener('wah:app-ready', onAppReady);
+                root.classList.add('app-ready');
+
+                var fadeDuration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 700;
+                removeTimer = window.setTimeout(function () {
+                  var loader = document.getElementById('wah-initial-loader');
+                  if (loader) loader.remove();
+                  removeTimer = null;
+                }, fadeDuration);
+              }
+
+              function onAppReady() {
+                var remaining = Math.max(0, 4000 - (Date.now() - startedAt));
+                readyTimer = window.setTimeout(exitLoader, remaining);
+              }
+
+              window.addEventListener('wah:app-ready', onAppReady, { once: true });
+              fallbackTimer = window.setTimeout(exitLoader, 12000);
+            })();`,
+          }}
+        />
         <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
         <link rel="preload" as="image" href="https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png" type="image/png" />
         <link rel="preload" as="image" href="/mascot/logo.png" type="image/png" />

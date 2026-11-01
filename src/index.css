@@ -1155,7 +1155,7 @@ h6 {
     #FFF9EE;
   opacity: 1;
   visibility: visible;
-  transition: opacity 450ms ease, visibility 450ms ease;
+  transition: opacity 700ms ease, visibility 700ms ease;
 }
 
 #wah-initial-loader::before {

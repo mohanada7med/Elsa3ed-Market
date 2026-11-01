@@ -855,17 +855,26 @@ const MainContent: React.FC = () => {
 };
 
 export function App() {
-  useEffect(() => {
-    document.documentElement.classList.add('app-ready');
-  }, []);
-
   return (
-    <ErrorBoundary>
-      <AppProvider>
+    <AppProvider>
+      <InitialLoaderReadySignal />
+      <ErrorBoundary>
         <MainContent />
-      </AppProvider>
-    </ErrorBoundary>
+      </ErrorBoundary>
+    </AppProvider>
   );
 }
+
+const InitialLoaderReadySignal: React.FC = () => {
+  const { isAuthChecking, isInitialDataReady } = useApp();
+
+  useEffect(() => {
+    if (!isAuthChecking && isInitialDataReady) {
+      window.dispatchEvent(new Event('wah:app-ready'));
+    }
+  }, [isAuthChecking, isInitialDataReady]);
+
+  return null;
+};
 
 export default App;
