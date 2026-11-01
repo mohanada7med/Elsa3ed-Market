@@ -61,8 +61,9 @@ export default function RootLayout({
           }}
         />
         <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
         <link rel="preload" as="image" href="https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png" type="image/png" />
+        <link rel="preload" as="image" href="/mascot/logo.png" type="image/png" />
+        <link rel="preload" as="image" href="/mascot/welcoming.png" type="image/png" />
         {/* Typography: Cairo (Primary UI & Display), Amiri (Heritage & Editorial) */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
