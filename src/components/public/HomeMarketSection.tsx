@@ -34,7 +34,7 @@ export const HomeMarketSection: React.FC = () => {
               BEST SELLERS / الأكتر طلبًا وإقبالًا
             </div>
 
-            <h1 className="flex max-w-6xl flex-col items-start gap-1 text-3xl font-black leading-[0.95] tracking-tight xs:text-4xl sm:gap-2 sm:text-6xl md:text-7xl lg:text-7xl xl:text-[7.5rem]">
+            <h1 className="flex max-w-6xl flex-col items-start gap-1 text-3xl font-black leading-[0.95] tracking-tight xs:text-4xl sm:gap-2 sm:text-6xl md:text-7xl lg:text-7xl xl:text-[6.5rem]">
               <span>سوق</span>
               <span className="inline-flex items-center gap-3 sm:gap-5">
                 <span className="text-primary dark:text-primary-hover">وه</span>

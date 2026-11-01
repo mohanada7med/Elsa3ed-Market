@@ -23,8 +23,7 @@ export const HomePage: React.FC = () => {
         transition-colors duration-500
       "
     >
-      {/* تم تصغير المسافات بين الأقسام هنا */}
-      <div className="relative z-10 space-y-1.5 sm:space-y-3 [&_section]:bg-transparent">
+      <div className="relative z-10 space-y-3 sm:space-y-6 [&_section]:bg-transparent">
 
         {/* Hero Section (تحميل فوري مباشر) */}
         <HeroSection />

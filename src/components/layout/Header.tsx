@@ -1145,7 +1145,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
         {/* =========================================================
             2. DESKTOP MAIN ROW (نظام الكمبيوتر الأصلي المتوازن)
             ========================================================= */}
-        <div className="hidden lg:flex relative mx-auto max-w-[1600px] h-[94px] items-center justify-between px-12">
+        <div className="hidden lg:flex relative mx-auto max-w-[1600px] h-[78px] items-center justify-between px-8 xl:px-12">
           {/* Start Actions / Nav Links */}
           <div className="flex items-center gap-6">
             <button
@@ -1412,7 +1412,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
         {/* =========================================================
             3. MOBILE MAIN ROW (يمين وشمال + اللوجو المتدلي في المنتصف)
             ========================================================= */}
-        <div className="flex lg:hidden relative mx-auto max-w-[1600px] h-20 sm:h-24 items-center justify-between px-3 sm:px-6 overflow-visible">
+        <div className="flex lg:hidden relative mx-auto max-w-[1600px] h-16 sm:h-20 items-center justify-between px-3 sm:px-6 overflow-visible">
           {/* الجانب الأيمن: القائمة والبحث */}
           <div className="flex items-center gap-1.5 z-20">
             <button
@@ -1462,9 +1462,9 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 draggable={false}
                 className="
                   block
-                  h-16 w-auto max-w-[92px]
-                  xs:h-18 xs:max-w-[112px]
-                  sm:h-20 sm:max-w-[150px]
+                  h-14 w-auto max-w-[84px]
+                  xs:h-16 xs:max-w-[100px]
+                  sm:h-18 sm:max-w-[132px]
                   object-contain
                   transition-all duration-300
                   group-hover:scale-105
@@ -1648,7 +1648,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               style={{ background: 'linear-gradient(90deg, transparent, #C99444, transparent)' }}
             />
 
-            <div className="mx-auto flex h-[68px] max-w-[1600px] items-center px-3 xl:px-8 overflow-visible">
+            <div className="mx-auto flex h-[54px] max-w-[1600px] items-center px-3 xl:px-8 overflow-visible">
               {/* الجانب الأيمن من البوابات بالكمبيوتر */}
               <div className="flex flex-1 items-center justify-end gap-1">
                 {rightPortals.map((link) => renderDesktopPortalItem(link, false))}
@@ -1661,13 +1661,13 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   onClick={() => navigate('home')}
                   whileHover={{ scale: 1.04 }}
                   whileTap={{ scale: 0.96 }}
-                  className="group relative z-30 flex flex-col items-center justify-center -translate-y-8 xl:-translate-y-12 bg-transparent border-0 p-0 cursor-pointer focus:outline-none overflow-visible"
+                  className="group relative z-30 flex flex-col items-center justify-center -translate-y-6 xl:-translate-y-8 bg-transparent border-0 p-0 cursor-pointer focus:outline-none overflow-visible"
                 >
                   <img
                     src="https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png"
                     alt="وه"
                     draggable={false}
-                    className="block h-36 xl:h-48 w-auto max-w-[200px] xl:max-w-[260px] object-contain transition-transform duration-300 group-hover:scale-103"
+                    className="block h-28 xl:h-36 w-auto max-w-[160px] xl:max-w-[200px] object-contain transition-transform duration-300 group-hover:scale-103"
                   />
                 </motion.button>
               </div>

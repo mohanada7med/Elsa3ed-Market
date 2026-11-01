@@ -8,12 +8,13 @@ import {
   Film,
   MapPin,
 } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import { WAHBadge } from '../../design-system/WAHBadge';
 import { HOME_PATTERN_CONFIG, getHomePatternOpacity } from '../../config/homePatternConfig';
 
 export const HeroSection: React.FC = () => {
   const { setActivePage, wahStats } = useApp();
+  const reduceMotion = useReducedMotion();
 
   // Fix: ensure Framer Motion animations trigger correctly on every mount,
   // even when wrapped in AnimatePresence with initial={false}.
@@ -41,7 +42,7 @@ export const HeroSection: React.FC = () => {
       {/* Authentic WAH Brand Heritage Corner Watermarks — يتم التحكم بها من config/homePatternConfig.ts */}
       {isPatternActive && heroConfig.topLeft.enabled && (
         <motion.div
-          animate={{ y: [0, -8, 0], x: [0, 4, 0] }}
+          animate={reduceMotion ? undefined : { y: [0, -8, 0], x: [0, 4, 0] }}
           transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
           className="absolute top-0 left-0 w-80 sm:w-[500px] h-80 sm:h-[500px] pointer-events-none select-none z-0 mix-blend-multiply dark:mix-blend-screen"
           style={{
@@ -166,9 +167,9 @@ export const HeroSection: React.FC = () => {
         >
           <motion.div
             className="relative shrink-0"
-            animate={{
-              y: [0, -7, 0],
-              rotate: [0, 1.5, 0, -1.5, 0],
+            animate={reduceMotion ? undefined : {
+              y: [0, -5, 0],
+              rotate: [0, 1, 0, -1, 0],
             }}
             transition={{
               y: {
@@ -185,7 +186,7 @@ export const HeroSection: React.FC = () => {
           >
             {/* إضاءة خلف الشخصية */}
             <motion.div
-              animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0.8, 0.5] }}
+              animate={reduceMotion ? undefined : { scale: [1, 1.1, 1], opacity: [0.55, 0.75, 0.55] }}
               transition={{
                 duration: 3,
                 repeat: Infinity,
@@ -213,7 +214,7 @@ export const HeroSection: React.FC = () => {
             {/* كبسولة الكلام */}
             <motion.div
               initial={isVisible ? { opacity: 0, scale: 0.8, y: 8 } : false}
-              animate={{
+              animate={reduceMotion ? { opacity: 1 } : {
                 opacity: 1,
                 scale: [1, 1.025, 1],
                 y: [0, -3, 0],
@@ -369,7 +370,7 @@ export const HeroSection: React.FC = () => {
         className="
           relative
           hidden
-          min-h-170
+          min-h-[min(82vh,760px)]
           lg:block
         "
       >
@@ -453,7 +454,7 @@ export const HeroSection: React.FC = () => {
             y: 70,
             x: 30,
           } : false}
-          animate={{
+          animate={reduceMotion ? { opacity: 1, x: 0, y: 0 } : {
             opacity: 1,
             y: [0, -6, 0],
             x: 0,
@@ -571,7 +572,7 @@ export const HeroSection: React.FC = () => {
             z-10
             mx-auto
             flex
-            min-h-170
+            min-h-[min(82vh,760px)]
             max-w-375
             items-center
             px-12
@@ -670,7 +671,7 @@ export const HeroSection: React.FC = () => {
               className="
   max-w-4xl
   font-main
-  text-4xl sm:text-6xl md:text-7xl lg:text-[6.5rem] xl:text-[7.5rem]
+  text-4xl sm:text-6xl md:text-7xl lg:text-[5.75rem] xl:text-[6.5rem]
   font-normal
   leading-[1.15]
   tracking-normal

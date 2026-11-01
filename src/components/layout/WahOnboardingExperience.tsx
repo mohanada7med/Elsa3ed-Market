@@ -9,10 +9,14 @@ import {
   Hammer,
   Music2,
   MapPin,
+  Pause,
+  Play,
   RotateCcw,
   ShoppingBag,
   Sparkles,
   Store,
+  Volume2,
+  VolumeX,
   X,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
@@ -127,8 +131,11 @@ export const WahOnboardingExperience: React.FC = () => {
   const [governorateLoadError, setGovernorateLoadError] = useState(false);
   const [doorOpened, setDoorOpened] = useState(false);
   const [audioError, setAudioError] = useState(false);
+  const [audioPlaying, setAudioPlaying] = useState(false);
+  const [audioMuted, setAudioMuted] = useState(false);
   const pointerStartX = useRef<number | null>(null);
   const introAudioRef = useRef<HTMLAudioElement | null>(null);
+  const dialogRef = useRef<HTMLElement | null>(null);
 
   const loadGovernorates = useCallback(async () => {
     setIsLoadingGovernorates(true);
@@ -150,8 +157,16 @@ export const WahOnboardingExperience: React.FC = () => {
     setActiveStep(0);
     setDoorOpened(false);
     setAudioError(false);
+    setAudioPlaying(false);
+    setAudioMuted(false);
     void loadGovernorates();
   }, [showOnboarding, loadGovernorates]);
+
+  const handleDismissOnboarding = useCallback(() => {
+    introAudioRef.current?.pause();
+    setAudioPlaying(false);
+    dismissOnboarding();
+  }, [dismissOnboarding]);
 
   useEffect(() => {
     if (!showOnboarding) return;
@@ -159,19 +174,37 @@ export const WahOnboardingExperience: React.FC = () => {
     document.body.style.overflow = 'hidden';
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        dismissOnboarding();
+        handleDismissOnboarding();
       } else if (event.key === 'ArrowLeft') {
         setActiveStep((step) => Math.min(ONBOARDING_STEPS.length - 1, step + 1));
       } else if (event.key === 'ArrowRight') {
         setActiveStep((step) => Math.max(0, step - 1));
+      } else if (event.key === 'Tab') {
+        const focusable = dialogRef.current?.querySelectorAll<HTMLElement>(
+          'button:not(:disabled), a[href], input:not(:disabled), [tabindex]:not([tabindex="-1"])'
+        );
+        if (!focusable?.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
       }
     };
+    const focusTimer = window.setTimeout(() => {
+      dialogRef.current?.querySelector<HTMLElement>('button:not(:disabled)')?.focus();
+    }, 0);
     document.addEventListener('keydown', onKeyDown);
     return () => {
+      window.clearTimeout(focusTimer);
       document.body.style.overflow = previousOverflow;
       document.removeEventListener('keydown', onKeyDown);
     };
-  }, [showOnboarding, dismissOnboarding]);
+  }, [showOnboarding, handleDismissOnboarding]);
 
   const featuredProducts = useMemo(
     () =>
@@ -195,15 +228,53 @@ export const WahOnboardingExperience: React.FC = () => {
       const audio = introAudioRef.current || new Audio('/audio/site-intro.mp3');
       audio.preload = 'auto';
       audio.volume = 0.45;
+      audio.muted = audioMuted;
       audio.currentTime = 0;
+      audio.onended = () => setAudioPlaying(false);
+      audio.onerror = () => {
+        setAudioPlaying(false);
+        setAudioError(true);
+      };
       introAudioRef.current = audio;
-      void audio.play().catch((error: unknown) => {
+      void audio.play().then(() => {
+        setAudioPlaying(true);
+      }).catch((error: unknown) => {
         console.warn('[WahOnboardingExperience] Could not play the intro audio:', error);
+        setAudioPlaying(false);
         setAudioError(true);
       });
     } catch (error) {
       console.warn('[WahOnboardingExperience] Could not initialize the intro audio:', error);
+      setAudioPlaying(false);
       setAudioError(true);
+    }
+  };
+
+  const toggleIntroAudio = () => {
+    const audio = introAudioRef.current;
+    if (!audio) return;
+    audio.muted = !audioMuted;
+    setAudioMuted(!audioMuted);
+  };
+
+  const toggleIntroPlayback = () => {
+    const audio = introAudioRef.current;
+    if (!audio) {
+      playIntroAudio();
+      return;
+    }
+
+    if (audio.paused || audio.ended) {
+      if (audio.ended) audio.currentTime = 0;
+      setAudioError(false);
+      void audio.play().then(() => setAudioPlaying(true)).catch((error: unknown) => {
+        console.warn('[WahOnboardingExperience] Could not resume the intro audio:', error);
+        setAudioPlaying(false);
+        setAudioError(true);
+      });
+    } else {
+      audio.pause();
+      setAudioPlaying(false);
     }
   };
 
@@ -226,17 +297,17 @@ export const WahOnboardingExperience: React.FC = () => {
   };
 
   const openGovernorate = (governorate: MapGovernorateData) => {
-    dismissOnboarding();
+    handleDismissOnboarding();
     navigateToGovernorate(governorate.slug || governorate.id);
   };
 
   const openProduct = (product: Product) => {
-    dismissOnboarding();
+    handleDismissOnboarding();
     navigateToProduct(product.id);
   };
 
   const openSeller = (seller: Seller) => {
-    dismissOnboarding();
+    handleDismissOnboarding();
     navigateToSeller(seller.id);
   };
 
@@ -253,6 +324,7 @@ export const WahOnboardingExperience: React.FC = () => {
         aria-label="جولة تعريفية بمنصة وه"
       >
         <motion.section
+          ref={dialogRef}
           initial={reduceMotion ? false : { opacity: 0, y: 22, scale: 0.97 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={reduceMotion ? undefined : { opacity: 0, y: 16, scale: 0.98 }}
@@ -276,8 +348,8 @@ export const WahOnboardingExperience: React.FC = () => {
             </div>
             <button
               type="button"
-              onClick={dismissOnboarding}
-              className="flex min-h-11 shrink-0 items-center gap-2 rounded-full border border-primary/15 px-3 text-xs font-bold text-foreground-secondary transition hover:border-primary/40 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              onClick={handleDismissOnboarding}
+              className="flex min-h-11 shrink-0 touch-manipulation items-center gap-2 rounded-full border border-primary/15 px-3 text-xs font-bold text-foreground-secondary transition hover:border-primary/40 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               aria-label="تخطي الجولة التعريفية"
             >
               <span className="hidden sm:inline">تخطي الجولة</span>
@@ -306,9 +378,9 @@ export const WahOnboardingExperience: React.FC = () => {
                           {ONBOARDING_STEPS[0].eyebrow}
                         </div>
                         <h1 className="font-heading text-3xl font-black leading-tight text-espresso dark:text-cream sm:text-5xl">
-                          الباب مفتوح
+                         افتح الباب وادخل
                           <br />
-                          <span className="text-primary dark:text-primary-hover">يا أهل وه</span>
+                          <span className="text-primary dark:text-primary-hover">البيت بيتك</span>
                         </h1>
                         <p className="mx-auto max-w-md text-sm font-semibold leading-7 text-foreground-secondary sm:mx-0 sm:text-base">
                           عم وه مستنيك.. افتح باب الحكاية وتعالى نلف سوا بين بلاد الصعيد وصنّاعه.
@@ -320,8 +392,8 @@ export const WahOnboardingExperience: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="order-1 flex min-h-[250px] items-center justify-center sm:order-2 sm:min-h-[380px]">
-                        <div className="relative h-[260px] w-full max-w-[360px] sm:h-[360px]" style={{ perspective: '1200px' }}>
+                      <div className="order-1 flex min-h-[250px] flex-col items-center justify-center sm:order-2 sm:min-h-0">
+                        <div className="relative h-[min(260px,34dvh)] min-h-[205px] w-full max-w-[360px] sm:h-[min(300px,40dvh)] sm:min-h-0" style={{ perspective: '1200px' }}>
                           <div className="absolute inset-3 rounded-[48%_48%_20px_20px] border-[7px] border-[#9B642F] bg-gradient-to-b from-[#F8EBD7] via-[#DAB987] to-[#6B3A1F] shadow-[inset_0_0_0_4px_rgba(255,255,255,0.25),0_24px_50px_rgba(59,30,14,0.25)] dark:border-[#C99444] dark:from-[#4A2715] dark:via-[#3B1E0E] dark:to-[#1B1009]">
                             <div className="absolute inset-x-0 bottom-0 top-[17%] overflow-hidden rounded-[47%_47%_12px_12px] bg-gradient-to-b from-[#fff5df] via-[#efd4a7] to-[#C99444]/50 dark:from-[#2b1a10] dark:via-[#3B1E0E] dark:to-[#6B3A1F]/70">
                               <motion.img
@@ -338,7 +410,10 @@ export const WahOnboardingExperience: React.FC = () => {
                               onClick={openDoor}
                               disabled={doorOpened}
                               aria-label={doorOpened ? 'الباب مفتوح' : 'افتح باب وه واسمع أغنية وه'}
-                              className="absolute inset-x-3 bottom-3 top-[17%] overflow-hidden rounded-[47%_47%_12px_12px] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/70"
+                              aria-pressed={doorOpened}
+                              className={`absolute inset-x-3 bottom-3 top-[17%] touch-manipulation overflow-hidden rounded-[47%_47%_12px_12px] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/70 ${
+                                doorOpened ? 'cursor-default' : 'cursor-pointer'
+                              }`}
                             >
                               <motion.span
                                 className="absolute inset-y-0 left-0 w-1/2 origin-left border-2 border-[#D6AA72] bg-gradient-to-br from-[#8B5528] via-[#6B3A1F] to-[#3B1E0E] shadow-[inset_-8px_0_12px_rgba(0,0,0,0.2)]"
@@ -364,8 +439,8 @@ export const WahOnboardingExperience: React.FC = () => {
                             {!doorOpened && (
                               <motion.span
                                 className="pointer-events-none absolute bottom-8 left-1/2 z-10 flex h-10 w-10 -translate-x-1/2 items-center justify-center rounded-full border border-[#F8EBD7]/60 bg-[#C99444] text-white shadow-lg"
-                                animate={reduceMotion ? undefined : { scale: [1, 1.12, 1] }}
-                                transition={{ duration: 1.5, repeat: Infinity }}
+                                animate={reduceMotion ? undefined : { scale: [1, 1.1, 1] }}
+                                transition={{ duration: 1.8, repeat: Infinity }}
                               >
                                 <ArrowLeft size={18} />
                               </motion.span>
@@ -377,22 +452,66 @@ export const WahOnboardingExperience: React.FC = () => {
                             transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
                           >
                             {doorOpened ? <MapPin size={12} /> : <Music2 size={12} />}
-                            {doorOpened ? 'أهلاً بيك في وه' : 'افتح الباب واسمع أغنية وه'}
+                            {doorOpened ? 'أهلاً بيك في وه' : 'اضغط على الباب واسمع أغنية وه'}
                           </motion.div>
-                        </div>
+                          </div>
+                          {!doorOpened && (
+                            <p className="mt-3 text-center text-[10px] font-semibold text-foreground-secondary sm:hidden">
+                              اضغط على الباب لفتحه
+                            </p>
+                          )}
+                          {doorOpened && (
+                              <div className="mt-4 flex w-full max-w-[360px] flex-wrap items-center justify-center gap-2">
+                              <button
+                                type="button"
+                                onClick={toggleIntroPlayback}
+                                className="inline-flex min-h-11 touch-manipulation items-center justify-center gap-2 rounded-full bg-primary px-4 text-xs font-black text-white shadow-md transition hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                                aria-label={audioPlaying ? 'إيقاف أغنية وه مؤقتاً' : 'تشغيل أغنية وه'}
+                              >
+                                {audioPlaying ? <Pause size={15} /> : <Play size={15} />}
+                                {audioPlaying ? 'إيقاف مؤقت' : 'تشغيل الأغنية'}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={toggleIntroAudio}
+                                disabled={!introAudioRef.current}
+                                className="inline-flex min-h-11 touch-manipulation items-center justify-center gap-2 rounded-full border border-primary/25 px-4 text-xs font-bold text-primary transition hover:bg-primary/5 disabled:opacity-50 dark:text-primary-hover"
+                                aria-label={audioMuted ? 'إلغاء كتم الأغنية' : 'كتم الأغنية'}
+                              >
+                                {audioMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
+                                {audioMuted ? 'إلغاء الكتم' : 'كتم'}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={playIntroAudio}
+                                className="inline-flex min-h-11 touch-manipulation items-center justify-center gap-2 rounded-full border border-primary/25 px-4 text-xs font-bold text-primary transition hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:text-primary-hover"
+                              >
+                                <RotateCcw size={14} />
+                                إعادة الأغنية
+                              </button>
+                              <button
+                                type="button"
+                                onClick={handleDismissOnboarding}
+                                className="inline-flex min-h-11 touch-manipulation items-center justify-center gap-2 rounded-full border border-primary/25 px-4 text-xs font-black text-foreground transition hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                              >
+                                ابدأ الرحلة
+                                <ArrowLeft size={15} />
+                              </button>
+                            </div>
+                          )}
+                          {audioError && (
+                            <div role="status" className="mt-3 flex w-full max-w-[360px] flex-wrap items-center justify-center gap-2 text-center text-xs font-semibold text-primary">
+                              <span>تعذر تشغيل الأغنية. تقدر تكمل الجولة أو تحاول تاني.</span>
+                              <button
+                                type="button"
+                                onClick={playIntroAudio}
+                                className="min-h-11 touch-manipulation px-2 font-black underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                              >
+                                حاول تاني
+                              </button>
+                            </div>
+                          )}
                       </div>
-                      {audioError && (
-                        <div role="status" className="flex items-center justify-center gap-2 text-center text-xs font-semibold text-primary">
-                          <span>تعذر تشغيل الأغنية.</span>
-                          <button
-                            type="button"
-                            onClick={playIntroAudio}
-                            className="underline underline-offset-2"
-                          >
-                            حاول تاني
-                          </button>
-                        </div>
-                      )}
                     </div>
                   )}
 
@@ -522,7 +641,7 @@ export const WahOnboardingExperience: React.FC = () => {
                             <button
                               type="button"
                               onClick={() => {
-                                dismissOnboarding();
+                                handleDismissOnboarding();
                                 setActivePage('sellers');
                               }}
                               className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-primary/25 px-4 text-xs font-black text-primary transition hover:bg-primary/5 dark:text-primary-hover"
@@ -539,7 +658,7 @@ export const WahOnboardingExperience: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => {
-                              dismissOnboarding();
+                              handleDismissOnboarding();
                               setActivePage('products');
                             }}
                             className="min-h-11 rounded-full bg-primary px-5 text-xs font-black text-white"
@@ -582,7 +701,7 @@ export const WahOnboardingExperience: React.FC = () => {
                       <div className="mt-6 flex w-full max-w-md flex-col gap-3 sm:flex-row">
                         <button
                           type="button"
-                          onClick={dismissOnboarding}
+                          onClick={handleDismissOnboarding}
                           className="flex min-h-12 flex-1 items-center justify-center gap-2 rounded-full bg-primary px-6 text-sm font-black text-white shadow-lg transition hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                         >
                           يلا نبدأ
@@ -591,7 +710,7 @@ export const WahOnboardingExperience: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => {
-                            dismissOnboarding();
+                            handleDismissOnboarding();
                             setActivePage('products');
                           }}
                           className="flex min-h-12 flex-1 items-center justify-center gap-2 rounded-full border border-primary/25 px-6 text-sm font-black text-primary transition hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:text-primary-hover"
@@ -606,45 +725,52 @@ export const WahOnboardingExperience: React.FC = () => {
               </AnimatePresence>
             </div>
 
-            <footer className="flex shrink-0 items-center justify-between gap-3 border-t border-primary/10 bg-background/80 px-4 py-3 sm:px-7 sm:py-4">
+            <footer className="grid shrink-0 grid-cols-[auto_1fr_auto] items-center gap-2 border-t border-primary/10 bg-background/80 px-3 py-2.5 sm:gap-3 sm:px-7 sm:py-4">
               <button
                 type="button"
                 onClick={() => goToStep(activeStep - 1)}
                 disabled={activeStep === 0}
-                className="flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-full px-3 text-xs font-bold text-foreground-secondary transition hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-35 sm:min-w-24"
+                className="flex min-h-11 min-w-[4.25rem] touch-manipulation items-center justify-center gap-1 rounded-full px-2 text-[10px] font-bold text-foreground-secondary transition hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:min-w-24 sm:gap-2 sm:px-3 sm:text-xs"
                 aria-label="الخطوة السابقة"
               >
                 <ArrowRight size={16} />
-                <span className="hidden sm:inline">السابق</span>
+                <span>السابق</span>
               </button>
-              <div className="flex items-center gap-2" role="group" aria-label="اختيار مرحلة الجولة">
-                {ONBOARDING_STEPS.map((step, index) => (
-                  <button
-                    key={step.title}
-                    type="button"
-                    onClick={() => goToStep(index)}
-                    aria-label={`الانتقال إلى المرحلة ${index + 1}: ${step.title}`}
-                    aria-current={activeStep === index ? 'step' : undefined}
-                    className={`h-2.5 rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
-                      activeStep === index ? 'w-8 bg-primary' : 'w-2.5 bg-primary/25 hover:bg-primary/50'
-                    }`}
-                  />
-                ))}
+              <div className="flex min-w-0 flex-col items-center gap-1.5" role="group" aria-label="اختيار مرحلة الجولة">
+                <span className="max-w-full truncate text-[9px] font-bold text-foreground-secondary sm:text-[10px]">
+                  {ONBOARDING_STEPS[activeStep].title}
+                </span>
+                <div className="flex items-center gap-2">
+                  {ONBOARDING_STEPS.map((step, index) => (
+                    <button
+                      key={step.title}
+                      type="button"
+                      onClick={() => goToStep(index)}
+                      aria-label={`الانتقال إلى المرحلة ${index + 1}: ${step.title}`}
+                      aria-current={activeStep === index ? 'step' : undefined}
+                      className={`h-3 min-w-3 touch-manipulation rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                        activeStep === index ? 'w-8 bg-primary' : 'w-3 bg-primary/25 hover:bg-primary/50'
+                      }`}
+                    />
+                  ))}
+                </div>
               </div>
               {activeStep < ONBOARDING_STEPS.length - 1 ? (
                 <button
                   type="button"
                   onClick={() => goToStep(activeStep + 1)}
                   aria-label="الخطوة التالية"
-                  className="flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-full bg-primary px-4 text-xs font-black text-white shadow-md transition hover:bg-primary-hover sm:min-w-24"
+                  className="flex min-h-11 min-w-[4.25rem] touch-manipulation items-center justify-center gap-1 rounded-full bg-primary px-2 text-[10px] font-black text-white shadow-md transition hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 sm:min-w-24 sm:gap-2 sm:px-4 sm:text-xs"
                 >
-                  <span className="hidden sm:inline">التالي</span>
+                  <span>التالي</span>
                   <ChevronLeft size={16} />
                 </button>
               ) : (
                 <button
                   type="button"
                   onClick={() => {
+                    introAudioRef.current?.pause();
+                    setAudioPlaying(false);
                     setActiveStep(0);
                     setDoorOpened(false);
                     setAudioError(false);

@@ -785,7 +785,13 @@ const ProductCard: React.FC<{
             gap-3
           `}
           >
-            <div>
+            <div className="min-w-0">
+              {compact && seller && (
+                <div className="mb-1 flex min-w-0 items-center gap-1 text-[8px] font-bold text-[#8C6F53] dark:text-[#D6C6B1] sm:text-[9px]">
+                  <Store size={10} className="shrink-0 text-primary dark:text-primary-hover" />
+                  <span className="truncate">{seller}</span>
+                </div>
+              )}
               {!compact && <div
                 className="
                 text-[8px]

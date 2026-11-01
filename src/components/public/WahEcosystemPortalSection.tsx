@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 
 interface PortalMascot {
   src: string;
@@ -33,6 +33,7 @@ interface Portal {
 
 export const WahEcosystemPortalSection: React.FC = () => {
   const { setActivePage, wahStats } = useApp();
+  const reduceMotion = useReducedMotion();
 
   const portals: Portal[] = [
     {
@@ -186,7 +187,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
   return (
     <section
       dir="rtl"
-      className="mx-auto w-full max-w-[1600px] overflow-hidden px-3 pb-12 text-foreground sm:px-6 lg:px-10"
+      className="mx-auto w-full max-w-[1600px] overflow-hidden px-3 pb-10 text-foreground sm:px-6 sm:pb-12 lg:px-10"
     >
       {/* ================= HEADER ================= */}
 
@@ -260,7 +261,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
 
             <motion.div
               className="relative z-10 flex h-full w-full items-end justify-center"
-              animate={{ y: [0, -5, 0] }}
+              animate={reduceMotion ? undefined : { y: [0, -4, 0] }}
               transition={{
                 duration: 4,
                 repeat: Infinity,
@@ -296,7 +297,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
       {/* DESKTOP - ORIGINAL INTERACTIVE PORTALS */}
       {/* ================================================= */}
 
-      <div className="hidden h-[520px] w-full gap-3 lg:flex">
+      <div className="hidden h-[450px] w-full gap-3 lg:flex">
         {portals.map((portal, idx) => {
           const isActive = activeId === portal.id;
 
@@ -437,7 +438,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
                         <div className="pointer-events-none absolute -inset-2 animate-pulse rounded-full bg-primary/20 blur-xl" />
 
                         <motion.div
-                          animate={{ y: [0, -6, 0] }}
+                          animate={reduceMotion ? undefined : { y: [0, -6, 0] }}
                           transition={{
                             duration: 3.5,
                             repeat: Infinity,
@@ -482,10 +483,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
               key={portal.id}
               type="button"
               onClick={() => setActivePage(portal.page)}
-              initial={{
-                opacity: 0,
-                y: 25,
-              }}
+              initial={reduceMotion ? false : { opacity: 0, y: 18 }}
               whileInView={{
                 opacity: 1,
                 y: 0,
@@ -495,7 +493,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
                 amount: 0.1,
               }}
               transition={{
-                duration: 0.5,
+                duration: reduceMotion ? 0 : 0.4,
                 delay: idx * 0.045,
                 ease: [0.16, 1, 0.3, 1],
               }}
@@ -557,9 +555,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
                     ? 'h-[78%] w-[43%] sm:h-[85%] sm:w-[40%]'
                     : 'h-[65%] w-[42%] sm:h-[72%]'
                 }`}
-                animate={{
-                  y: [0, -4, 0],
-                }}
+                animate={reduceMotion ? undefined : { y: [0, -4, 0] }}
                 transition={{
                   duration: 3.5 + idx * 0.2,
                   repeat: Infinity,
