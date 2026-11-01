@@ -699,11 +699,24 @@ export async function updateProduct(
   safeUpdates.updatedAt = new Date().toISOString().split('T')[0];
 
   const { db, isMongo } = await getDatabase();
+  if (isArtisanVoiceUpdate && (!isMongo || !db)) {
+    throw new Error('قاعدة البيانات غير متاحة حالياً؛ لم يتم تأكيد حفظ التسجيل. حاول مرة تانية.');
+  }
+
   if (isMongo && db) {
     try {
-      await db.collection('products').updateOne({ id: productId }, { $set: safeUpdates });
+      const result = await db.collection('products').updateOne(
+        { id: productId },
+        { $set: safeUpdates }
+      );
+      if (isArtisanVoiceUpdate && result.matchedCount !== 1) {
+        throw new Error('المنتج لم يعد موجوداً في قاعدة البيانات؛ لم يتم حفظ التسجيل.');
+      }
     } catch (e) {
       console.error('[ProductService] MongoDB update error:', e);
+      if (isArtisanVoiceUpdate) {
+        throw new Error(`تعذر حفظ التسجيل في قاعدة البيانات: ${(e as Error).message}`);
+      }
     }
   }
 

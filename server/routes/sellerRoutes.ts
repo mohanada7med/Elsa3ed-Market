@@ -710,13 +710,58 @@ router.post('/products/:id/voice', async (req: AuthenticatedRequest, res: Respon
     const { audioData, audioUrl, transcript, artisanName, artisanCraft, audioDuration } = req.body;
 
     let finalAudioUrl = audioUrl;
+    const numericDuration = audioDuration === undefined ? undefined : Number(audioDuration);
+    if (
+      numericDuration !== undefined &&
+      (!Number.isFinite(numericDuration) || numericDuration <= 0 || numericDuration > 600)
+    ) {
+      return res.status(400).json({
+        success: false,
+        error: 'مدة التسجيل غير صحيحة.',
+        code: 'INVALID_AUDIO_DURATION'
+      });
+    }
 
-    // If seller recorded audio in browser and provided base64 data:
-    if (audioData && typeof audioData === 'string' && audioData.startsWith('data:')) {
+    if (audioData !== undefined) {
+      const match = typeof audioData === 'string'
+        ? audioData.match(/^data:(audio\/[a-z0-9.+-]+)(?:;[^,]*)?;base64,([a-z0-9+/=\r\n]+)$/i)
+        : null;
+      const audioExtensions: Record<string, string> = {
+        'audio/webm': 'webm',
+        'audio/mp4': 'm4a',
+        'audio/x-m4a': 'm4a',
+        'audio/mpeg': 'mp3',
+        'audio/wav': 'wav',
+        'audio/x-wav': 'wav',
+        'audio/ogg': 'ogg',
+        'audio/aac': 'aac',
+        'audio/3gpp': '3gp'
+      };
+
+      if (!match || !audioExtensions[match[1].toLowerCase()]) {
+        return res.status(400).json({
+          success: false,
+          error: 'صيغة الملف الصوتي غير مدعومة. استخدم MP3 أو WAV أو M4A أو OGG أو WebM.',
+          code: 'INVALID_AUDIO'
+        });
+      }
+
+      const encodedAudio = match[2].replace(/\s/g, '');
+      const audioSize = Math.floor((encodedAudio.length * 3) / 4) -
+        (encodedAudio.endsWith('==') ? 2 : encodedAudio.endsWith('=') ? 1 : 0);
+      if (audioSize === 0 || audioSize > 3 * 1024 * 1024) {
+        return res.status(400).json({
+          success: false,
+          error: 'حجم الملف الصوتي يجب أن يكون أقل من 3 ميجابايت.',
+          code: 'INVALID_AUDIO_SIZE'
+        });
+      }
+
+      const mimeType = match[1].toLowerCase();
       const uploadRes = await storageService.upload({
         data: audioData,
-        filename: `artisan_voice_${productId}.webm`,
-        mimeType: 'audio/webm',
+        filename: `artisan_voice_${productId}.${audioExtensions[mimeType]}`,
+        mimeType,
         folder: 'products',
         productId,
         ownerId: req.user!.sellerId || req.user!.id,
@@ -730,7 +775,7 @@ router.post('/products/:id/voice', async (req: AuthenticatedRequest, res: Respon
       transcript: transcript !== undefined ? String(transcript).trim() : undefined,
       artisanName: artisanName !== undefined ? String(artisanName).trim() : undefined,
       artisanCraft: artisanCraft !== undefined ? String(artisanCraft).trim() : undefined,
-      audioDuration: audioDuration ? Number(audioDuration) : undefined,
+      audioDuration: numericDuration,
     };
 
     const updatedProduct = await updateProduct(req.user!, productId, updates);

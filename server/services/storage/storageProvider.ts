@@ -189,10 +189,21 @@ export const localStorageProvider = new LocalStorageProvider();
 
 class DelegatingStorageProvider implements IStorageProvider {
   async upload(options: UploadFileOptions): Promise<UploadResult> {
+    const requiresPersistentStorage =
+      process.env.VERCEL === '1' && Boolean(options.mimeType?.startsWith('audio/'));
+
+    if (requiresPersistentStorage && !isCloudinaryAvailable()) {
+      throw new Error('التخزين الدائم للصوت غير مهيأ. يرجى ضبط Cloudinary قبل حفظ التسجيل.');
+    }
+
     if (isCloudinaryAvailable()) {
       try {
         return await cloudinaryStorage.upload(options);
       } catch (err: any) {
+        if (requiresPersistentStorage) {
+          Logger.error('[StorageProvider] Persistent audio upload failed:', err?.message || err);
+          throw new Error('فشل رفع التسجيل إلى التخزين الدائم؛ لم يتم حفظه. حاول مرة تانية.');
+        }
         Logger.warn(
           `[StorageProvider] Cloudinary upload encountered an issue (${err?.message || err}). Seamlessly falling back to LocalStorageProvider...`
         );
@@ -228,4 +239,3 @@ class DelegatingStorageProvider implements IStorageProvider {
 }
 
 export const storageService: IStorageProvider = new DelegatingStorageProvider();
-
