@@ -942,79 +942,7 @@ export const PlacesHeritagePage: React.FC = () => {
         </div>
       </section>
 
-      {/* DISCOVER MAP BANNER */}
-      {!isLoading && filteredPlaces.length > 0 && (
-        <section className="mx-auto max-w-[1600px] px-5 pb-24 sm:px-8 lg:px-12">
-          <div
-            className="
-              relative overflow-hidden
-              rounded-[2rem]
-              bg-espresso
-              px-6 py-14
-              text-white
-              sm:px-12 sm:py-20
-              lg:px-20
-            "
-          >
-            <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full border border-white/10" />
-            <div className="absolute -bottom-40 -right-20 h-96 w-96 rounded-full border border-white/10" />
 
-            <div className="relative z-10 grid gap-10 lg:grid-cols-[1fr_400px] lg:items-end">
-              <div>
-                <div className="mb-5 text-[10px] font-bold tracking-[0.3em] text-[#C99444]">
-                  CONTINUE EXPLORING
-                </div>
-                <h2
-                  className="
-                    max-w-4xl
-                    text-4xl
-                    font-black
-                    leading-tight
-                    tracking-[-0.04em]
-                    sm:text-6xl
-                  "
-                >
-                  شُفت الحكايات...
-                  <br />
-                  دلوقتي شوف مكانها.
-                </h2>
-              </div>
-
-              <div className="flex flex-col gap-4">
-                <p className="text-sm leading-8 text-white/55">
-                  افتح لفة في الصعيد وشوف الأماكن على الخريطة واكتشف اللي حواليها.
-                </p>
-                <button
-                  onClick={() => setActivePage('map')}
-                  className="inline-flex w-fit items-center gap-2
-             rounded-full bg-espresso px-3 py-2
-             font-bold text-white shadow-lg transition-all
-             hover:bg-primary dark:bg-[#6B3A1F] dark:text-[#FFF9EE]
-             dark:hover:bg-primary dark:hover:text-white
-             cursor-pointer text-sm"
-                >
-                  <span>افتح الأطلس</span>
-                  <ArrowUpLeft size={15} />
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* FOOTER */}
-      <footer className="border-t border-black/10 dark:border-white/10 py-12 text-center">
-        <div className="mx-auto flex w-full max-w-md items-center gap-3 px-5 mb-4">
-          <span className="h-px flex-1 bg-black/10 dark:bg-cream/10" />
-          <span className="text-[10px] font-bold tracking-[0.2em] text-black/50 dark:text-white/50">
-            وه — حكاية الصعيد في إيدك
-          </span>
-          <span className="h-px flex-1 bg-black/10 dark:bg-cream/10" />
-        </div>
-        <p className="text-[9px] font-black uppercase tracking-[0.25em] text-black/40 dark:text-white/40">
-          WAH / 2026
-        </p>
-      </footer>
       {/* ========================================================================= */}
       {/* MODAL: LIVE LANDMARK EDITOR (ADMIN ONLY)                                  */}
       {/* ========================================================================= */}

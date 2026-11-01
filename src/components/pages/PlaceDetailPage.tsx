@@ -1477,63 +1477,6 @@ export const PlaceDetailPage: React.FC = () => {
         )}
       </main>
 
-      {/* =====================================================
-          FINAL CTA
-      ===================================================== */}
-      <section className="border-t border-black/10 dark:border-white/10">
-        <div className="mx-auto max-w-[1600px] px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
-          <div
-            className="
-              relative overflow-hidden
-              rounded-[2rem]
-              bg-espresso
-              px-6 py-14
-              text-white
-              sm:px-12 sm:py-20
-              lg:px-20
-            "
-          >
-            <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full border border-white/10" />
-            <div className="absolute -bottom-40 -right-20 h-96 w-96 rounded-full border border-white/10" />
-
-            <div className="relative z-10 grid gap-10 lg:grid-cols-[1fr_400px] lg:items-end">
-              <div>
-                <div className="mb-5 text-[10px] font-bold tracking-[0.3em] text-[#C99444]">
-                  KEEP EXPLORING
-                </div>
-                <h2
-                  className="
-                    font-main
-                    max-w-4xl
-                    text-4xl
-                    font-black
-                    leading-tight
-                    tracking-[-0.04em]
-                    sm:text-6xl
-                  "
-                >
-                  الحكاية لسه
-                  <br />
-                  <span className="text-[#C99444]">مخلصتش.</span>
-                </h2>
-              </div>
-
-              <div className="flex flex-col gap-4">
-                <p className="text-sm leading-8 text-white/55">
-                  اكتشف معالم أكتر، وحكايات أقدم، وحرف لسه عايشة في صعيد مصر.
-                </p>
-                <button
-                  onClick={() => setActivePage('places')}
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-espresso text-white dark:bg-white dark:text-espresso px-6 py-3.5 text-xs font-bold transition-all duration-300 hover:bg-primary dark:hover:bg-primary dark:hover:text-white cursor-pointer w-fit shadow-md"
-                >
-                  <span>استكشف باقي المعالم</span>
-                  <ArrowLeft size={15} />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
       {/* ========================================================================= */}
       {/* MODAL: LIVE IN-PAGE LANDMARK EDITOR (ADMIN ONLY)                          */}
       {/* ========================================================================= */}

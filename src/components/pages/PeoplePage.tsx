@@ -26,7 +26,8 @@ import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner';
 import { div } from 'motion/react-client';
 
 export const PeoplePage: React.FC = () => {
-  const { navigateToPerson, setActivePage } = useApp();
+  const { navigateToPerson, setActivePage, currentUser, currentRole } = useApp();
+  const isAdmin = currentRole === 'admin' || currentUser?.role === 'admin';
   const [people, setPeople] = useState<LocalPerson[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -103,6 +104,10 @@ export const PeoplePage: React.FC = () => {
 
   const handleContributeSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isAdmin) {
+      setSubmitError('إضافة الشخصيات متاحة لمدير النظام فقط.');
+      return;
+    }
     if (!formData.name.trim()) {
       setSubmitError('لازم تكتب اسم الشخصية أو الرمز الصعيدي يا غالي!');
       return;
@@ -144,8 +149,8 @@ export const PeoplePage: React.FC = () => {
       photoUrl: formData.avatarUrl.trim() || 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=800&auto=format&fit=crop&q=80',
       yearsOfExperience: 35,
       isFeatured: true,
-      status: 'approved',
-      verificationStatus: 'verified',
+      status: 'pending_review',
+      verificationStatus: 'pending_review',
       sourceName: 'توثيق مجتمعي شعبي - أبناء الصعيد',
       sourceType: 'community',
       historicalAnecdotes: formData.anecdote.trim()
@@ -157,9 +162,12 @@ export const PeoplePage: React.FC = () => {
     };
 
     try {
-      const saved = await wahApi.contributePerson(newPersonPayload);
+      const saved = await wahApi.savePerson(newPersonPayload, {
+        id: currentUser.id,
+        role: currentRole
+      });
       setPeople((prev) => [saved, ...prev]);
-      setSubmitSuccess('تسلم إيدك يا غالي.. سيرة العلم ده اتسجلت فخر لكل أهل الصعيد ومحفوظة في الداتا بيز!');
+      setSubmitSuccess('اتحفظت الشخصية وهي دلوقتي مستنية مراجعة الأدمن قبل ما تظهر للناس.');
       setTimeout(() => {
         setIsAddModalOpen(false);
         setSubmitSuccess(null);
@@ -402,8 +410,8 @@ export const PeoplePage: React.FC = () => {
           mascotRole="عم وه في مضايف الكبار"
           quote="عم وه قعد في مضايف الكبار وسمع حكايات شيوخ الصنعة والرواة والشعراء اللي سابوا علامة في تاريخ الجنوب.. اقرأ سيرتهم العطرة واعرف أصل الحكاية!"
           statsText={`${people.length} رمز متوثق`}
-          actionText="أضف قامة صعيدية"
-          onAction={() => setIsAddModalOpen(true)}
+          actionText={isAdmin ? 'أضف قامة صعيدية' : undefined}
+          onAction={isAdmin ? () => setIsAddModalOpen(true) : undefined}
         />
       </div>
 
@@ -597,10 +605,11 @@ export const PeoplePage: React.FC = () => {
             </div>
 
             {/* Add Person */}
-            <button
-              type="button"
-              onClick={() => setIsAddModalOpen(true)}
-              className="
+            {isAdmin && (
+              <button
+                type="button"
+                onClick={() => setIsAddModalOpen(true)}
+                className="
           flex h-14
           shrink-0
           items-center
@@ -622,10 +631,11 @@ export const PeoplePage: React.FC = () => {
           active:scale-[0.98]
           cursor-pointer
         "
-            >
-              <Plus size={17} />
-              <span>ضيف شخصية من بلدك</span>
-            </button>
+              >
+                <Plus size={17} />
+                <span>ضيف شخصية من بلدك</span>
+              </button>
+            )}
           </div>
         </div>
       </section>
@@ -1557,58 +1567,9 @@ export const PeoplePage: React.FC = () => {
         </div>
       )}
       {/* =====================================================
-          FINAL CTA
-      ===================================================== */}
-      <section className="border-t border-border-subtle">
-        <div className="mx-auto max-w-[1600px] px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
-          <div
-            className="
-              relative overflow-hidden
-              rounded-[2rem]
-              bg-btn-dark
-              px-6 py-14
-              text-white
-              sm:px-12 sm:py-20
-              lg:px-20
-            "
-          >
-            <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full border border-white/10" />
-            <div className="absolute -bottom-40 -right-20 h-96 w-96 rounded-full border border-white/10" />
-
-            <div className="relative z-10 grid gap-10 lg:grid-cols-[1fr_400px] lg:items-end">
-              <div>
-                <div className="mb-5 text-[10px] font-bold tracking-[0.3em] text-accent">
-                  LIVING LEGENDS
-                </div>
-                <h2
-                  className="
-                    max-w-4xl
-                    text-4xl
-                    font-black
-                    leading-tight
-                    tracking-[-0.04em]
-                    sm:text-6xl
-                  "
-                >
-                  أيدٍ تنقش في الذاكرة...
-                  <br />
-                  <br />
-                  وعقول تحرس التراث.
-                </h2>
-              </div>
-
-              <p className="text-sm leading-8 text-white/70">
-                كل شخصية هنا مسجلة وموثقة في سجل وه، تمثل حلقة وصل حية بين الماضي المجيد ومستقبل الصعيد، تنقل الحكمة والصنعة للأجيال القادمة.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* =====================================================
           ADD PERSON MODAL (بالعامية الصعيدية الأصيلة)
       ===================================================== */}
-      {isAddModalOpen && (
+      {isAdmin && isAddModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
           {/* Backdrop */}
           <div

@@ -187,7 +187,7 @@ router.get('/governorates', async (req: Request, res: Response) => {
 });
 
 // GET single governorate by slug or id with populated child collections
-router.get('/governorates/:slugOrId', async (req: Request, res: Response) => {
+router.get('/governorates/:slugOrId', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { slugOrId } = req.params;
     if (!slugOrId || slugOrId === '[object Object]' || slugOrId === 'undefined' || slugOrId === 'null') {
@@ -195,7 +195,7 @@ router.get('/governorates/:slugOrId', async (req: Request, res: Response) => {
     }
 
     const cacheKey = `gov_detail_${slugOrId}`;
-    const cached = getWahCached(cacheKey, req);
+    const cached = req.user?.role === 'admin' ? null : getWahCached(cacheKey, req);
     if (cached) {
       return res.json(cached);
     }
@@ -253,7 +253,9 @@ router.get('/governorates/:slugOrId', async (req: Request, res: Response) => {
         }).toArray(),
         db.collection('wah_local_people').find({
           $or: [{ governorateId: gov.id }, { governorateName: gov.name }],
-          status: { $ne: 'archived' }
+          ...(req.user?.role === 'admin'
+            ? { status: { $ne: 'archived' } }
+            : { status: { $nin: ['draft', 'pending_review', 'rejected', 'archived'] } })
         }).toArray(),
         db.collection('wah_food').find({
           $or: [
@@ -311,7 +313,12 @@ router.get('/governorates/:slugOrId', async (req: Request, res: Response) => {
         c.governorateId === gov!.id
       ) && c.status !== 'archived');
       stories = memoryDb.wahStories.filter(s => (s.governorateId === gov!.id || s.governorateName === gov!.name) && s.status !== 'archived');
-      people = memoryDb.localPeople.filter(p => (p.governorateId === gov!.id || p.governorateName === gov!.name) && p.status !== 'archived');
+      people = memoryDb.localPeople.filter(p =>
+        (p.governorateId === gov!.id || p.governorateName === gov!.name) &&
+        (req.user?.role === 'admin'
+          ? p.status !== 'archived'
+          : !['draft', 'pending_review', 'rejected', 'archived'].includes(p.status))
+      );
       foods = memoryDb.upperEgyptFood.filter(f => (
         f.governorateId === gov!.id ||
         f.governorateName === gov!.name ||
@@ -380,7 +387,9 @@ router.get('/governorates/:slugOrId', async (req: Request, res: Response) => {
     };
 
     const responseData = { success: true, data: populatedGov };
-    setWahCache(cacheKey, responseData, 300);
+    if (req.user?.role !== 'admin') {
+      setWahCache(cacheKey, responseData, 300);
+    }
     return res.json(responseData);
   } catch (err: any) {
     Logger.error('[WAH Content] Error fetching single governorate:', err);
@@ -1439,7 +1448,7 @@ router.delete('/stories/:id', requireAdmin, async (req: AuthenticatedRequest, re
 // 7. LOCAL PEOPLE (ناس وشخصيات الصعيد)
 // ==========================================
 
-router.get('/people', async (req: Request, res: Response) => {
+router.get('/people', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { governorate, status } = req.query;
     const { db, isMongo } = await getMongoOrMemory();
@@ -1450,6 +1459,9 @@ router.get('/people', async (req: Request, res: Response) => {
       const query: any = {};
       if (governorate) query.$or = [{ governorateName: governorate }, { governorateId: governorate }];
       if (status) query.status = status;
+      if (req.user?.role !== 'admin') {
+        query.status = { ...(status ? { $eq: status } : {}), $nin: ['draft', 'pending_review', 'rejected', 'archived'] };
+      }
       const people = await db.collection<LocalPersonDoc>('wah_local_people').find(query).toArray();
       return res.json({ success: true, count: people.length, data: people.map(normalizePerson) });
     }
@@ -1457,13 +1469,16 @@ router.get('/people', async (req: Request, res: Response) => {
     let list = memoryDb.localPeople;
     if (governorate) list = list.filter((p) => p.governorateName === governorate || p.governorateId === governorate);
     if (status) list = list.filter((p) => p.status === status);
+    if (req.user?.role !== 'admin') {
+      list = list.filter((p) => !['draft', 'pending_review', 'rejected', 'archived'].includes(p.status));
+    }
     return res.json({ success: true, count: list.length, data: list.map(normalizePerson) });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: 'فشل جلب شخصيات الصعيد' });
   }
 });
 
-router.get('/people/:slugOrId', async (req: Request, res: Response) => {
+router.get('/people/:slugOrId', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { slugOrId } = req.params;
     if (!slugOrId || slugOrId === '[object Object]' || slugOrId === 'undefined' || slugOrId === 'null') {
@@ -1482,7 +1497,9 @@ router.get('/people/:slugOrId', async (req: Request, res: Response) => {
       person = memoryDb.localPeople.find((p) => p.slug === slugOrId || p.id === slugOrId) || null;
     }
 
-    if (!person) return res.status(404).json({ success: false, error: 'الشخصية غير موجودة' });
+    if (!person || (req.user?.role !== 'admin' && ['draft', 'pending_review', 'rejected', 'archived'].includes(person.status))) {
+      return res.status(404).json({ success: false, error: 'الشخصية غير موجودة' });
+    }
     return res.json({ success: true, data: normalizePerson(person) });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: 'فشل جلب بيانات الشخصية' });

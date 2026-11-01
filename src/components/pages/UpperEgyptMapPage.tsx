@@ -943,22 +943,6 @@ export const UpperEgyptMapPage: React.FC = () => {
           </div>
         )}
       </main>
-
-
-
-      {/* الفوتر */}
-      <footer className="border-t border-black/10 dark:border-white/10 py-12 text-center">
-        <div className="mx-auto flex w-full max-w-md items-center gap-3 px-5 mb-4">
-          <span className="h-px flex-1 bg-black/10 dark:bg-cream/10" />
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-black/10 dark:border-white/10 bg-white/50 dark:bg-cream/5">
-            <img src={LOGO_URL} alt="وه" className="h-6 w-6 object-contain opacity-80" />
-          </div>
-          <span className="h-px flex-1 bg-black/10 dark:bg-cream/10" />
-        </div>
-        <p className="text-[10px] font-black tracking-[0.2em] text-black/50 dark:text-white/50">
-          وَه · حكايات الصعيد من المكان للإنسان
-        </p>
-      </footer>
     </div>
   );
 };
