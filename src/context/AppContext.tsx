@@ -939,7 +939,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     if (activePage !== 'home') return;
     try {
-      if (localStorage.getItem('wah_onboarding_seen_v1') !== 'true') {
+      if (sessionStorage.getItem('wah_onboarding_seen_v1') !== 'true') {
         setShowOnboarding(true);
       }
     } catch (error) {
@@ -951,7 +951,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const dismissOnboarding = useCallback(() => {
     setShowOnboarding(false);
     try {
-      localStorage.setItem('wah_onboarding_seen_v1', 'true');
+      sessionStorage.setItem('wah_onboarding_seen_v1', 'true');
     } catch (error) {
       console.warn('[AppContext] Could not save onboarding state:', error);
     }
