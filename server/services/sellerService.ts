@@ -297,17 +297,19 @@ export async function saveSellerIntroAudio(
     introAudioDuration: Math.round(duration)
   };
   const { db, isMongo } = await getDatabase();
+  if (!isMongo || !db) {
+    throw new Error('قاعدة البيانات غير متاحة حالياً؛ لم يتم تأكيد حفظ التسجيل. حاول مرة تانية.');
+  }
+
   let sellerRecord: SellerDocument | null = null;
 
-  if (isMongo && db) {
+  sellerRecord = await db.collection('sellers').findOne({
+    $or: [{ id: sellerUser.id }, { userId: sellerUser.id }]
+  }) as unknown as SellerDocument | null;
+  if (!sellerRecord && requestedSellerId !== sellerUser.id) {
     sellerRecord = await db.collection('sellers').findOne({
-      $or: [{ id: sellerUser.id }, { userId: sellerUser.id }]
+      id: requestedSellerId
     }) as unknown as SellerDocument | null;
-    if (!sellerRecord && requestedSellerId !== sellerUser.id) {
-      sellerRecord = await db.collection('sellers').findOne({
-        id: requestedSellerId
-      }) as unknown as SellerDocument | null;
-    }
   }
 
   if (!sellerRecord) {
@@ -326,9 +328,14 @@ export async function saveSellerIntroAudio(
   }
 
   const ownedSeller = sellerRecord;
-  if (isMongo && db) {
-    await db.collection('sellers').updateOne({ id: ownedSeller.id }, { $set: updates });
+  const result = await db.collection('sellers').updateOne(
+    { id: ownedSeller.id },
+    { $set: updates }
+  );
+  if (result.matchedCount !== 1) {
+    throw new Error('لم يتم العثور على الورشة في قاعدة البيانات؛ لم يتم حفظ التسجيل.');
   }
+
   const memorySeller = memoryDb.sellers.find((seller) => seller.id === ownedSeller.id);
   if (memorySeller) Object.assign(memorySeller, updates);
 
