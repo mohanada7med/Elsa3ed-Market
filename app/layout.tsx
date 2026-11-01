@@ -142,11 +142,23 @@ export default function RootLayout({
               <span className="wah-loader-spark wah-loader-spark-two" aria-hidden="true" />
             </div>
             <p className="wah-loader-kicker">من قلب الصعيد</p>
-            <h1>وه بتجهز علشانك  </h1>
-            <p className="wah-loader-caption">وه.. الحكاية ورا كل حاجة</p>
-            <div className="wah-loader-progress" aria-hidden="true">
+            <h1>الحكاية ورا كل حاجة</h1>
+            <p className="wah-loader-caption" aria-hidden="true">
+              <span className="wah-loader-message-list">
+                <span>بنجهزلك رحلة في قلب الصعيد</span>
+                <span>بنفتح أبواب الحكايات والتراث</span>
+                <span>بنوصلك بصنّاع وه المميزين</span>
+              </span>
+            </p>
+            <div
+              className="wah-loader-progress"
+              role="progressbar"
+              aria-label="جاري تجهيز المنصة"
+              aria-valuetext="جاري التحميل"
+            >
               <span />
             </div>
+            <p className="wah-loader-footnote">لحظات وتبدأ الرحلة</p>
           </div>
         </div>
         {children}

@@ -145,12 +145,126 @@ const AdminEventsManagerPage = lazyWithRetry(() =>
   import('./components/pages/AdminEventsManagerPage').then((m) => ({ default: m.default || m.AdminEventsManagerPage }))
 );
 
-const LazySectionFallback: React.FC = () => (
-  <div className="min-h-[380px] flex flex-col items-center justify-center p-8 text-center" dir="rtl">
-    <div className="w-10 h-10 border-3 border-primary/20 border-t-[#C99444] rounded-full animate-spin mb-3" />
-    <p className="text-xs font-bold text-primary">وَه | جاري فتح الصفحة...</p>
-  </div>
+const SkeletonBlock: React.FC<{ className: string }> = ({ className }) => (
+  <div aria-hidden="true" className={`skeleton-pulse ${className}`} />
 );
+
+const LazySectionFallback: React.FC = () => {
+  const { activePage } = useApp();
+  const isDashboard =
+    activePage.startsWith('seller') ||
+    activePage.startsWith('admin') ||
+    activePage === 'buyer-account' ||
+    activePage === 'profile';
+  const isListing = [
+    'products',
+    'market',
+    'wah-market',
+    'categories',
+    'sellers',
+    'favorites',
+    'reels',
+  ].includes(activePage);
+  const isDetail = [
+    'product-details',
+    'product-detail',
+    'seller-details',
+    'category-details',
+    'order-details',
+    'place-details',
+    'person-details',
+    'food-details',
+    'event-details',
+  ].includes(activePage);
+
+  return (
+    <section
+      className="wah-route-skeleton mx-auto min-h-[65vh] w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8"
+      role="status"
+      aria-busy="true"
+      aria-label="جاري تجهيز الصفحة"
+      dir="rtl"
+    >
+      <span className="sr-only">جاري فتح الصفحة...</span>
+      <div aria-hidden="true">
+        <div className="mb-7 flex items-center justify-between gap-4">
+          <div className="w-full max-w-sm space-y-3">
+            <SkeletonBlock className="h-7 w-2/3 rounded-xl" />
+            <SkeletonBlock className="h-4 w-full max-w-xs rounded-lg" />
+          </div>
+          <SkeletonBlock className="hidden h-11 w-28 rounded-xl sm:block" />
+        </div>
+
+        {isDashboard ? (
+          <>
+            <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+              {Array.from({ length: 4 }, (_, index) => (
+                <div key={index} className="rounded-2xl border border-primary/10 bg-white/60 p-4 dark:bg-white/[0.03]">
+                  <SkeletonBlock className="mb-4 h-10 w-10 rounded-xl" />
+                  <SkeletonBlock className="mb-2 h-4 w-2/3 rounded-lg" />
+                  <SkeletonBlock className="h-6 w-1/2 rounded-lg" />
+                </div>
+              ))}
+            </div>
+            <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
+              <div className="space-y-3 rounded-2xl border border-primary/10 bg-white/60 p-4 dark:bg-white/[0.03]">
+                <SkeletonBlock className="mb-5 h-5 w-1/3 rounded-lg" />
+                {Array.from({ length: 4 }, (_, index) => (
+                  <SkeletonBlock key={index} className="h-14 w-full rounded-xl" />
+                ))}
+              </div>
+              <SkeletonBlock className="min-h-52 rounded-2xl" />
+            </div>
+          </>
+        ) : isListing ? (
+          <>
+            <div className="mb-6 flex gap-2 overflow-hidden">
+              {Array.from({ length: 5 }, (_, index) => (
+                <SkeletonBlock key={index} className="h-10 w-24 shrink-0 rounded-full" />
+              ))}
+            </div>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+              {Array.from({ length: 8 }, (_, index) => (
+                <div key={index} className="overflow-hidden rounded-2xl border border-primary/10 bg-white/60 p-2 dark:bg-white/[0.03]">
+                  <SkeletonBlock className="aspect-[4/3] rounded-xl" />
+                  <div className="space-y-2 p-2 pt-3">
+                    <SkeletonBlock className="h-4 w-4/5 rounded-lg" />
+                    <SkeletonBlock className="h-3 w-1/2 rounded-lg" />
+                    <SkeletonBlock className="mt-3 h-8 w-full rounded-lg" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        ) : isDetail ? (
+          <div className="grid gap-6 lg:grid-cols-2">
+            <SkeletonBlock className="aspect-square max-h-[520px] rounded-3xl" />
+            <div className="space-y-4 rounded-3xl border border-primary/10 bg-white/60 p-5 dark:bg-white/[0.03]">
+              <SkeletonBlock className="h-4 w-28 rounded-lg" />
+              <SkeletonBlock className="h-8 w-4/5 rounded-xl" />
+              <SkeletonBlock className="h-5 w-1/3 rounded-lg" />
+              <SkeletonBlock className="mt-7 h-24 w-full rounded-xl" />
+              <SkeletonBlock className="h-12 w-full rounded-xl" />
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-5">
+            <SkeletonBlock className="aspect-[2.4/1] w-full rounded-3xl" />
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 3 }, (_, index) => (
+                <div key={index} className="space-y-3 rounded-2xl border border-primary/10 bg-white/60 p-4 dark:bg-white/[0.03]">
+                  <SkeletonBlock className="h-36 w-full rounded-xl" />
+                  <SkeletonBlock className="h-5 w-2/3 rounded-lg" />
+                  <SkeletonBlock className="h-4 w-full rounded-lg" />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+};
 
 const MainContent: React.FC = () => {
   const {
