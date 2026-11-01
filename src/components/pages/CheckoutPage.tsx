@@ -33,13 +33,35 @@ export const CheckoutPage: React.FC = () => {
   const [city, setCity] = useState('');
   const [address, setAddress] = useState('');
   const [notes, setNotes] = useState('');
+  const [sellerTipAmount, setSellerTipAmount] = useState('0');
+  const [sellerTipSellerId, setSellerTipSellerId] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [completedOrder, setCompletedOrder] = useState<Order | null>(null);
+  const cartSellers = Array.from(
+    new Map(
+      cart.map(({ product }) => [
+        product.sellerId,
+        { id: product.sellerId, name: product.sellerName }
+      ])
+    ).values()
+  );
+  const tipAmount = Number(sellerTipAmount) || 0;
+  const effectiveTipSellerId = sellerTipSellerId || cartSellers[0]?.id || '';
+  const checkoutTotal = cartTotal + tipAmount;
 
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!fullName.trim() || !phone.trim() || !city.trim() || !address.trim()) {
       addToast('بيانات ناقصة', 'لو سمحت كمل كل بيانات عنوان التوصيل المطلوبة', 'error');
+      return;
+    }
+    if (
+      !Number.isInteger(tipAmount) ||
+      tipAmount < 0 ||
+      tipAmount > 1000 ||
+      (tipAmount > 0 && !cartSellers.some((seller) => seller.id === effectiveTipSellerId))
+    ) {
+      addToast('مبلغ الدعم غير صحيح', 'اختار مبلغاً صحيحاً من 1 إلى 1000 جنيه وحرفياً من طلبك', 'error');
       return;
     }
 
@@ -52,7 +74,9 @@ export const CheckoutPage: React.FC = () => {
         city: city.trim(),
         addressText: address.trim(),
         notes: notes.trim(),
-        paymentMethod: 'cod'
+        paymentMethod: 'cod',
+        sellerTipAmount: tipAmount,
+        sellerTipSellerId: tipAmount > 0 ? effectiveTipSellerId : undefined
       });
 
       setCompletedOrder(newOrder);
@@ -124,6 +148,12 @@ export const CheckoutPage: React.FC = () => {
                   <span>المبلغ الإجمالي:</span>
                   <span className="font-mono text-base font-black text-primary">{completedOrder.total} ج.م</span>
                 </div>
+                {!!completedOrder.sellerTipAmount && (
+                  <div className="flex justify-between text-espresso/60 dark:text-cream/60 text-[11px]">
+                    <span>دعم اختياري لـ{completedOrder.sellerTipSellerName || 'الحرفي'}:</span>
+                    <span>{completedOrder.sellerTipAmount} ج.م</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-espresso/60 dark:text-cream/60 text-[11px]">
                   <span>عنوان الشحن:</span>
                   <span>{completedOrder.shippingAddress?.governorate || ''} - {completedOrder.shippingAddress?.city || ''}</span>
@@ -325,6 +355,65 @@ export const CheckoutPage: React.FC = () => {
                   />
                 </div>
 
+                <section className="space-y-4 rounded-2xl border border-primary/15 bg-primary/[0.04] p-4">
+                  <div>
+                    <h3 className="text-sm font-black text-espresso dark:text-cream">ادعم حرفي من طلبك (اختياري)</h3>
+                    <p className="mt-1 text-[11px] leading-5 text-espresso/60 dark:text-cream/60">
+                      المبلغ يضاف لإجمالي الدفع عند الاستلام ويُسجل لصالح الحرفي الذي تختاره.
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {[0, 10, 20, 50, 100].map((amount) => (
+                      <button
+                        key={amount}
+                        type="button"
+                        onClick={() => setSellerTipAmount(String(amount))}
+                        aria-pressed={tipAmount === amount}
+                        className={`rounded-xl border px-3 py-2 text-xs font-bold transition ${
+                          tipAmount === amount
+                            ? 'border-primary bg-primary text-white'
+                            : 'border-black/10 bg-white/70 text-espresso dark:border-white/10 dark:bg-white/5 dark:text-cream'
+                        }`}
+                      >
+                        {amount === 0 ? 'بدون دعم' : `${amount} ج.م`}
+                      </button>
+                    ))}
+                    <label className="flex items-center gap-2 rounded-xl border border-black/10 bg-white/70 px-3 py-2 text-xs dark:border-white/10 dark:bg-white/5">
+                      <span className="font-bold">مبلغ آخر</span>
+                      <input
+                        type="number"
+                        min="1"
+                        max="1000"
+                        step="1"
+                        value={sellerTipAmount !== '0' && ![10, 20, 50, 100].includes(tipAmount) ? sellerTipAmount : ''}
+                        onChange={(event) => setSellerTipAmount(event.target.value || '0')}
+                        placeholder="ج.م"
+                        aria-label="مبلغ دعم مخصص"
+                        className="w-20 bg-transparent text-center font-mono outline-none"
+                      />
+                    </label>
+                  </div>
+                  {cartSellers.length > 1 && tipAmount > 0 && (
+                    <label className="block space-y-1.5 text-xs font-bold text-espresso/80 dark:text-cream/80">
+                      اختار الحرفي المستفيد
+                      <select
+                        value={effectiveTipSellerId}
+                        onChange={(event) => setSellerTipSellerId(event.target.value)}
+                        className="w-full rounded-xl border border-black/10 bg-white px-3 py-2.5 text-sm dark:border-white/10 dark:bg-[#1c1713] dark:text-cream"
+                      >
+                        {cartSellers.map((seller) => (
+                          <option key={seller.id} value={seller.id}>{seller.name}</option>
+                        ))}
+                      </select>
+                    </label>
+                  )}
+                  {tipAmount > 0 && (
+                    <p className="text-[11px] font-bold text-primary">
+                      دعمك: {tipAmount} ج.م {cartSellers.length === 1 ? `لـ${cartSellers[0].name}` : ''}
+                    </p>
+                  )}
+                </section>
+
                 <div className="pt-4 flex justify-end">
                   <button
                     type="submit"
@@ -336,7 +425,7 @@ export const CheckoutPage: React.FC = () => {
                     ) : (
                       <>
                         <PackageCheck className="w-5 h-5 text-primary" />
-                        <span>تأكيد الطلب الآن ({cartTotal} ج.م)</span>
+                        <span>تأكيد الطلب الآن ({checkoutTotal} ج.م)</span>
                       </>
                     )}
                   </button>
@@ -454,6 +543,12 @@ export const CheckoutPage: React.FC = () => {
                       <span className="text-xs font-black font-mono text-emerald-600 dark:text-emerald-400">- {cartDiscountAmount} ج.م</span>
                     </div>
                   )}
+                  {tipAmount > 0 && (
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-[#81766d] dark:text-white/50">دعم اختياري للحرفي</span>
+                      <span className="font-mono font-bold text-primary">+ {tipAmount} ج.م</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Divider */}
@@ -469,7 +564,7 @@ export const CheckoutPage: React.FC = () => {
                       <p className="text-sm font-bold text-white/80">شامل التوصيل والخصم</p>
                     </div>
                     <div className="text-left">
-                      <span className="text-2xl sm:text-3xl font-black font-mono text-white">{cartTotal}</span>
+                      <span className="text-2xl sm:text-3xl font-black font-mono text-white">{checkoutTotal}</span>
                       <span className="text-[10px] font-bold text-white/50 mr-1">ج.م</span>
                     </div>
                   </div>

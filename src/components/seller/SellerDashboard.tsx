@@ -349,6 +349,12 @@ export const SellerDashboard: React.FC = () => {
   const [craftSinceYear, setCraftSinceYear] = useState(
     currentSeller?.craftSinceYear ? String(currentSeller.craftSinceYear) : ''
   );
+  const [achievementOrdersCount, setAchievementOrdersCount] = useState(
+    currentSeller?.achievementOrdersCount != null ? String(currentSeller.achievementOrdersCount) : ''
+  );
+  const [achievementSkills, setAchievementSkills] = useState(
+    currentSeller?.achievementSkills?.join(', ') || ''
+  );
   const [sellerSpecialty, setSellerSpecialty] = useState(currentSeller?.specialty || 'فخار نيلي وأواني فخارية تراثية');
   const [sellerGovernorate, setSellerGovernorate] = useState<Governorate>(currentSeller?.governorate || currentUser.governorate || 'قنا');
   const [sellerCoverImage, setSellerCoverImage] = useState<string>(
@@ -378,6 +384,10 @@ export const SellerDashboard: React.FC = () => {
       setSellerStory(currentSeller.story || '');
       setSellerOfferings(currentSeller.offerings || '');
       setCraftSinceYear(currentSeller.craftSinceYear ? String(currentSeller.craftSinceYear) : '');
+      setAchievementOrdersCount(
+        currentSeller.achievementOrdersCount != null ? String(currentSeller.achievementOrdersCount) : ''
+      );
+      setAchievementSkills(currentSeller.achievementSkills?.join(', ') || '');
       if (currentSeller.specialty) setSellerSpecialty(currentSeller.specialty);
       if (currentSeller.governorate) setSellerGovernorate(currentSeller.governorate);
       if (currentSeller.coverImage) setSellerCoverImage(currentSeller.coverImage);
@@ -840,6 +850,8 @@ export const SellerDashboard: React.FC = () => {
         story: sellerStory,
         offerings: sellerOfferings,
         craftSinceYear: craftSinceYear ? Number(craftSinceYear) : null,
+        achievementOrdersCount: achievementOrdersCount ? Number(achievementOrdersCount) : null,
+        achievementSkills: achievementSkills.split(',').map((skill) => skill.trim()).filter(Boolean),
         specialty: sellerSpecialty,
         governorate: sellerGovernorate,
         coverImage: sellerCoverImage,
@@ -2695,6 +2707,46 @@ export const SellerDashboard: React.FC = () => {
                           placeholder="اكتب أنواع الشغل أو الخدمات والطلبات الخاصة اللي بتنفذها، والخامات أو الطرق اللي بتميزك..."
                           className="w-full p-2.5 bg-white/60 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-espresso dark:text-cream rounded-xl text-xs outline-none focus:border-primary"
                         />
+                      </div>
+
+                      <div className="rounded-2xl border border-primary/15 bg-primary/[0.04] p-4 space-y-3">
+                        <div>
+                          <h3 className="text-xs font-black text-espresso dark:text-cream">إنجازاتك الحرفية</h3>
+                          <p className="mt-1 text-[10px] leading-5 text-espresso/60 dark:text-cream/60">
+                            البيانات دي بتضيفها بنفسك وبتظهر للزوار على إنها مقدمة من الحرفي.
+                          </p>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-espresso dark:text-cream mb-1">
+                            عدد الطلبات التي نفذتها
+                          </label>
+                          <input
+                            type="number"
+                            min="0"
+                            max="1000000"
+                            step="1"
+                            value={achievementOrdersCount}
+                            onChange={(e) => setAchievementOrdersCount(e.target.value)}
+                            placeholder="مثال: 120"
+                            className="w-full p-2.5 bg-white/60 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-espresso dark:text-cream rounded-xl text-xs outline-none focus:border-primary"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-espresso dark:text-cream mb-1">
+                            الحرف والتقنيات التي تتقنها
+                          </label>
+                          <textarea
+                            rows={2}
+                            maxLength={800}
+                            value={achievementSkills}
+                            onChange={(e) => setAchievementSkills(e.target.value)}
+                            placeholder="مثال: التلي، التطريز اليدوي، صباغة الخيوط"
+                            className="w-full p-2.5 bg-white/60 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-espresso dark:text-cream rounded-xl text-xs outline-none focus:border-primary"
+                          />
+                          <p className="mt-1 text-[10px] text-espresso/60 dark:text-cream/60">
+                            افصل بين كل حرفة أو تقنية بفاصلة. سنوات الخبرة تُعرض من سنة بداية الحرفة أعلاه.
+                          </p>
+                        </div>
                       </div>
 
                       <button

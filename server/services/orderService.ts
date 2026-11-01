@@ -20,6 +20,8 @@ export interface CreateOrderInput {
   discountCode?: string;
   notes?: string;
   paymentReference?: string;
+  sellerTipAmount?: number;
+  sellerTipSellerId?: string;
   items?: Array<{
     productId: string;
     quantity: number;
@@ -35,7 +37,16 @@ export async function createOrder(
   buyer: AuthenticatedUser,
   input: CreateOrderInput
 ): Promise<OrderDocument> {
-  const { shippingAddress, paymentMethod, discountCode, notes, paymentReference, items } = input;
+  const {
+    shippingAddress,
+    paymentMethod,
+    discountCode,
+    notes,
+    paymentReference,
+    sellerTipAmount = 0,
+    sellerTipSellerId,
+    items
+  } = input;
 
   // 1. Validate shipping address fields
   if (!shippingAddress.fullName || !shippingAddress.fullName.trim()) {
@@ -67,6 +78,27 @@ export async function createOrder(
   if (!cartSummary.isAllAvailable) {
     const reason = cartSummary.warnings.join(' | ') || 'بعض المنتجات في السلة غير متوفرة أو نفدت كميتها';
     throw new Error(`تعذر إتمام الطلب: ${reason}`);
+  }
+
+  if (
+    !Number.isInteger(sellerTipAmount) ||
+    sellerTipAmount < 0 ||
+    sellerTipAmount > 1000
+  ) {
+    throw new Error('مبلغ دعم الحرفي يجب أن يكون رقماً صحيحاً بين 0 و1000 جنيه');
+  }
+
+  const cartSellerIds = Array.from(
+    new Set(cartSummary.items.map((item) => item.product.sellerId))
+  );
+  if (
+    sellerTipAmount > 0 &&
+    (!sellerTipSellerId || !cartSellerIds.includes(sellerTipSellerId))
+  ) {
+    throw new Error('اختار حرفياً لديه منتج في طلبك لإضافة الدعم');
+  }
+  if (sellerTipAmount === 0 && sellerTipSellerId) {
+    throw new Error('لا يمكن تحديد مستفيد للدعم دون إضافة مبلغ');
   }
 
   const { db, isMongo } = await getDatabase();
@@ -139,6 +171,9 @@ export async function createOrder(
   }));
 
   const distinctSellerIds = Array.from(new Set(orderItems.map((it) => it.sellerId)));
+  const sellerTipSellerName = sellerTipSellerId
+    ? orderItems.find((item) => item.sellerId === sellerTipSellerId)?.sellerName
+    : undefined;
   const uniqueNum = Math.floor(100000 + Math.random() * 900000);
   const orderNumber = `SAED-${uniqueNum}`;
   const orderId = `ord-${Date.now()}`;
@@ -216,7 +251,10 @@ export async function createOrder(
     shippingFee: cartSummary.shippingFee,
     discountAmount: cartSummary.discountAmount,
     discountCode: cartSummary.discountCode,
-    total: cartSummary.total,
+    ...(sellerTipAmount > 0
+      ? { sellerTipAmount, sellerTipSellerId, sellerTipSellerName }
+      : {}),
+    total: cartSummary.total + sellerTipAmount,
     createdAt: nowIso,
     updatedAt: nowIso,
     trackingNumber,
@@ -278,7 +316,9 @@ export async function createOrder(
         userId: sellerUserId,
         recipientId: sId,
         title: `طلب شراء جديد لمنتجات ورشتك #${orderNumber}`,
-        message: `لديك طلب شراء جديد يتضمن منتجات من ورشتك بالطلب رقم #${orderNumber}. يرجى مراجعة وتجهيز المنتجات.`,
+        message: sellerTipSellerId === sId
+          ? `لديك طلب شراء جديد #${orderNumber}، ويتضمن دعمًا اختياريًا لورشتك بقيمة ${sellerTipAmount.toLocaleString('ar-EG')} ج.م. يرجى مراجعة وتجهيز المنتجات.`
+          : `لديك طلب شراء جديد يتضمن منتجات من ورشتك بالطلب رقم #${orderNumber}. يرجى مراجعة وتجهيز المنتجات.`,
         type: 'new_order',
         link: 'seller-orders',
         recipientRole: 'seller',
@@ -1139,4 +1179,3 @@ export async function deleteAdminOrder(
 
   return true;
 }
-

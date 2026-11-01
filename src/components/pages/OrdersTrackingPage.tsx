@@ -269,6 +269,11 @@ export const OrdersTrackingPage: React.FC = () => {
                   <div className="text-left sm:text-left">
                     <span className="text-xs text-espresso/50 dark:text-cream/50 block">الإجمالي النهائي:</span>
                     <span className="text-xl font-black text-primary dark:text-primary-hover">{currentSelected.total} ج.م</span>
+                    {!!currentSelected.sellerTipAmount && (
+                      <span className="mt-1 block text-[10px] font-bold text-espresso/60 dark:text-cream/60">
+                        يشمل دعمًا اختياريًا بقيمة {currentSelected.sellerTipAmount} ج.م لـ{currentSelected.sellerTipSellerName || 'الحرفي'}
+                      </span>
+                    )}
                   </div>
                 </div>
 

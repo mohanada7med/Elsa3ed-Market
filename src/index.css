@@ -175,7 +175,7 @@
      - CTA / Important Button: #E66A2E (Orange)
      - Accent: #C99444 (Golden)
      - Borders: #E0C79B (Light Beige)
-     - Muted: #D6C6B1 (Secondary Neutral)
+     - Muted: #76624D (Readable muted text)
      ========================================================================= */
   --background: #FFF9EE;
   --background-secondary: #F8EBD7;
@@ -186,9 +186,9 @@
   --surface-subtle: rgba(107, 58, 31, 0.05);
   --surface-muted: rgba(107, 58, 31, 0.08);
   --foreground: #3B1E0E;
-  --foreground-secondary: #8C6F53;
-  --foreground-muted: #8C6F53;
-  --foreground-disabled: #D6C6B1;
+  --foreground-secondary: #7D664F;
+  --foreground-muted: #7D664F;
+  --foreground-disabled: #76624D;
   --border: #E0C79B;
   --border-subtle: rgba(224, 199, 155, 0.5);
   --border-hover: #C99444;

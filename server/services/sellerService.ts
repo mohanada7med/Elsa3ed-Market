@@ -55,6 +55,9 @@ export async function getSellerDashboardStats(sellerId: string) {
         productSalesMap[item.productId].revenue += revenue;
       }
     }
+    if (order.sellerTipSellerId === sellerId) {
+      totalSales += Number(order.sellerTipAmount) || 0;
+    }
   }
 
   const activeApprovedCount = products.filter((p) => p.approvalStatus === 'approved').length;
@@ -147,6 +150,9 @@ export async function getSellerAnalytics(sellerId: string, period: '7d' | '30d' 
           orderSellerUnits += item.quantity || 1;
         }
       }
+      if (order.sellerTipSellerId === sellerId) {
+        orderSellerRevenue += Number(order.sellerTipAmount) || 0;
+      }
 
       if (orderSellerRevenue > 0) {
         if (!dailyMap[orderDate]) {
@@ -193,6 +199,27 @@ export async function updateSellerProfile(
     throw new Error('سنة بداية الحرفة غير صحيحة');
   }
 
+  if (
+    updates.achievementOrdersCount !== undefined &&
+    updates.achievementOrdersCount !== null &&
+    (!Number.isInteger(updates.achievementOrdersCount) ||
+      updates.achievementOrdersCount < 0 ||
+      updates.achievementOrdersCount > 1000000)
+  ) {
+    throw new Error('عدد الطلبات المنفذة غير صحيح');
+  }
+
+  if (
+    updates.achievementSkills !== undefined &&
+    (!Array.isArray(updates.achievementSkills) ||
+      updates.achievementSkills.length > 15 ||
+      updates.achievementSkills.some(
+        (skill) => typeof skill !== 'string' || !skill.trim() || skill.trim().length > 50
+      ))
+  ) {
+    throw new Error('قائمة الحرف والتقنيات غير صحيحة');
+  }
+
   const safeUpdates: Partial<SellerDocument> = {
     brandName: updates.brandName?.trim(),
     name: updates.name?.trim(),
@@ -200,6 +227,8 @@ export async function updateSellerProfile(
     story: updates.story?.trim(),
     offerings: updates.offerings?.trim(),
     craftSinceYear: updates.craftSinceYear,
+    achievementOrdersCount: updates.achievementOrdersCount,
+    achievementSkills: updates.achievementSkills?.map((skill) => skill.trim()),
     avatar: updates.avatar?.trim(),
     coverImage: updates.coverImage?.trim(),
     phone: updates.phone?.trim(),

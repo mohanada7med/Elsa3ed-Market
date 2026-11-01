@@ -105,6 +105,8 @@ export interface Seller {
   story: string;
   offerings?: string;
   craftSinceYear?: number | null;
+  achievementOrdersCount?: number | null;
+  achievementSkills?: string[];
   introAudioUrl?: string | null;
   introAudioDuration?: number | null;
   verified: boolean;
@@ -246,6 +248,9 @@ export interface Order {
   shippingFee: number;
   discountAmount: number;
   discountCode?: string;
+  sellerTipAmount?: number;
+  sellerTipSellerId?: string;
+  sellerTipSellerName?: string;
   total: number;
   createdAt: string;
   updatedAt: string;

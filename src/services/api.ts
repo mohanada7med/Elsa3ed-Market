@@ -1748,6 +1748,8 @@ export const api = {
       paymentReference?: string;
       discountCode?: string;
       notes?: string;
+      sellerTipAmount?: number;
+      sellerTipSellerId?: string;
       items?: Array<{
         productId: string;
         quantity: number;

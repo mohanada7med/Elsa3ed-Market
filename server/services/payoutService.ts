@@ -89,6 +89,9 @@ export async function calculateSellerBalance(sellerId: string): Promise<{
           totalSalesCount += item.quantity || 1;
         }
       }
+      if (order.sellerTipSellerId === effectiveSellerId) {
+        totalEarnings += Number(order.sellerTipAmount) || 0;
+      }
     }
   }
 

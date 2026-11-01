@@ -681,6 +681,47 @@ export const SellerProfileView: React.FC = () => {
           </article>
         </section>
 
+        {(seller.achievementOrdersCount != null ||
+          seller.craftSinceYear ||
+          seller.achievementSkills?.length) && (
+          <section className="mt-5 rounded-[2rem] border border-primary/15 bg-primary/[0.04] p-6 sm:p-8">
+            <div className="mb-5 flex items-center gap-2 text-primary">
+              <Award className="h-5 w-5" />
+              <h2 className="text-lg font-black">إنجازات الحرفي</h2>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              {seller.achievementOrdersCount != null && (
+                <div className="min-w-36 rounded-2xl border border-border-subtle bg-background/70 p-4">
+                  <span className="block text-[10px] font-bold text-foreground-disabled">طلبات نفذها الحرفي</span>
+                  <span className="mt-1 block text-xl font-black text-primary">
+                    {seller.achievementOrdersCount.toLocaleString('ar-EG')}
+                  </span>
+                </div>
+              )}
+              {seller.craftSinceYear && (
+                <div className="min-w-36 rounded-2xl border border-border-subtle bg-background/70 p-4">
+                  <span className="block text-[10px] font-bold text-foreground-disabled">سنوات الخبرة بحسب الحرفي</span>
+                  <span className="mt-1 block text-xl font-black text-primary">
+                    {craftYears} سنة
+                  </span>
+                </div>
+              )}
+            </div>
+            {!!seller.achievementSkills?.length && (
+              <div className="mt-4 flex flex-wrap gap-2">
+                {seller.achievementSkills.map((skill) => (
+                  <span key={skill} className="rounded-full border border-primary/15 bg-background/70 px-3 py-1.5 text-xs font-bold">
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            )}
+            <p className="mt-4 text-[10px] text-foreground-disabled">
+              هذه المعلومات يضيفها الحرفي بنفسه.
+            </p>
+          </section>
+        )}
+
         {/* =========================================================
             INFO STRIP
         ========================================================= */}

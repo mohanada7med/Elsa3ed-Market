@@ -274,6 +274,8 @@ interface AppContextType {
     paymentMethod: PaymentMethod;
     paymentReference?: string;
     notes?: string;
+    sellerTipAmount?: number;
+    sellerTipSellerId?: string;
   }) => Promise<Order> | Order;
   updateOrderStatus: (orderId: string, newStatus: OrderStatus, note?: string) => Promise<void>;
   cancelOrder: (orderId: string, reason?: string) => Promise<void>;
@@ -2957,6 +2959,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     paymentMethod: PaymentMethod;
     paymentReference?: string;
     notes?: string;
+    sellerTipAmount?: number;
+    sellerTipSellerId?: string;
   }): Promise<Order> => {
     if (cart.length === 0) {
       throw new Error('سلة المشتريات فارغة، لا يمكن إتمام الطلب');
@@ -2997,6 +3001,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           paymentReference: orderData.paymentReference,
           discountCode: appliedDiscount?.code,
           notes: orderData.notes,
+          sellerTipAmount: orderData.sellerTipAmount,
+          sellerTipSellerId: orderData.sellerTipSellerId,
           items: cartPayloadItems
         }
       );
