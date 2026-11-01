@@ -66,6 +66,7 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
   const [liveSpokenText, setLiveSpokenText] = useState<string>('');
   const [transcriptionSuccess, setTranscriptionSuccess] = useState<boolean>(false);
   const [isDictating, setIsDictating] = useState<boolean>(false);
+  const [speechRecognitionError, setSpeechRecognitionError] = useState<string | null>(null);
 
   // Audio Preview Playback State
   const [isPlayingPreview, setIsPlayingPreview] = useState(false);
@@ -90,6 +91,7 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
   const recognitionRef = useRef<any>(null);
   const dictationRecognitionRef = useRef<any>(null);
   const speechAccumulatedRef = useRef<string>('');
+  const speechRecognitionUnavailableRef = useRef(false);
 
   // Clean up all recording and speech recognition resources
   const cleanupRecording = useCallback(() => {
@@ -177,6 +179,7 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
       setRecordingSeconds(0);
       setRecordingError(null);
       setLiveSpokenText('');
+      setSpeechRecognitionError(null);
       setPreviewCurrentTime(0);
       setPreviewDuration(0);
       setIsPlayingPreview(false);
@@ -267,6 +270,8 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
     chunksRef.current = [];
     speechAccumulatedRef.current = '';
     setLiveSpokenText('');
+    setSpeechRecognitionError(null);
+    speechRecognitionUnavailableRef.current = false;
     setTranscriptionSuccess(false);
     if (
       typeof navigator === 'undefined' ||
@@ -361,10 +366,13 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
             }
           };
           recognition.onerror = (event: any) => {
+            if (event.error === 'no-speech' || event.error === 'aborted') return;
+            speechRecognitionUnavailableRef.current = true;
+            setSpeechRecognitionError('الإملاء الصوتي غير متاح حالياً. التسجيل مستمر، وتقدر تكتب الحكاية يدوياً.');
             console.warn('[SpeechRecognition] Transcription unavailable:', event.error);
           };
           recognition.onend = () => {
-            if (isRecordingRef.current) {
+            if (isRecordingRef.current && !speechRecognitionUnavailableRef.current) {
               try {
                 recognition.start();
               } catch {
@@ -692,7 +700,7 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 pt-[max(0.5rem,env(safe-area-inset-top))] pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:items-center sm:p-4 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-[60] flex items-end justify-center bg-black/60 pt-[max(0.5rem,env(safe-area-inset-top))] pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:items-center sm:p-4 backdrop-blur-sm animate-in fade-in duration-200"
       dir="rtl"
     >
       <div
@@ -812,7 +820,11 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
                       </div>
                       <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
-                        {supportsSpeechRecognition ? 'متاح في متصفحك' : 'اكتب الحكاية يدوياً'}
+                        {speechRecognitionError
+                          ? 'التسجيل شغال؛ الإملاء غير متاح'
+                          : supportsSpeechRecognition
+                            ? 'متاح في متصفحك'
+                            : 'اكتب الحكاية يدوياً'}
                       </span>
                     </div>
 
@@ -821,7 +833,9 @@ export const ArtisanVoiceRecorderModal: React.FC<ArtisanVoiceRecorderModalProps>
                         <span className="text-amber-900 dark:text-amber-200">« {liveSpokenText} »</span>
                       ) : (
                         <span className="text-secondary/60 dark:text-cream/40 italic">
-                          {supportsSpeechRecognition
+                          {speechRecognitionError
+                            ? speechRecognitionError
+                            : supportsSpeechRecognition
                             ? 'اتكلم بحريتك.. الكلمات المدعومة هتظهر هنا، وتقدر تراجعها وتعدلها.'
                             : 'الإملاء الصوتي مش مدعوم في المتصفح ده. اكتب حكايتك في الخانة تحت.'}
                         </span>
