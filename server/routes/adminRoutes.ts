@@ -951,14 +951,7 @@ router.post('/products', async (req: AuthenticatedRequest, res: Response) => {
       sellerId,
       sellerName,
       sellerGovernorate,
-      approvalStatus,
-      artisanName,
-      artisanPortrait,
-      artisanGovernorate,
-      artisanCraft,
-      audioUrl,
-      transcript,
-      audioDuration
+      approvalStatus
     } = req.body;
 
     if (!title || !price || !categoryId) {
@@ -990,14 +983,7 @@ router.post('/products', async (req: AuthenticatedRequest, res: Response) => {
         sellerId: sellerId || req.user!.id,
         sellerName: sellerName || 'إدارة المنصة',
         sellerGovernorate: sellerGovernorate || 'أسيوط',
-        approvalStatus: approvalStatus || 'approved',
-        artisanName,
-        artisanPortrait,
-        artisanGovernorate,
-        artisanCraft,
-        audioUrl,
-        transcript,
-        audioDuration: audioDuration ? Number(audioDuration) : undefined
+        approvalStatus: approvalStatus || 'approved'
       },
       'approved'
     );

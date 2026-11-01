@@ -1,20 +1,17 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
-import { ArrowLeft, BadgeCheck, MapPin, Sparkles, Store, Volume2 } from 'lucide-react';
+import { ArrowLeft, BadgeCheck, MapPin, Sparkles, Store } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { Product } from '../../types';
 import { api } from '../../services/api';
 import { getOptimizedImageUrl } from '../../utils/cloudinaryMedia';
 
-const WEEKLY_PRODUCT_CACHE_KEY = 'wah_product_of_week';
-
 const getProductStory = (product: Product): string => {
-  const story = product.transcript?.trim() || product.description?.trim();
+  const story = product.description?.trim();
   if (story) return story;
 
-  const maker = product.artisanName || product.sellerName;
+  const maker = product.sellerName;
   const craft =
-    product.artisanCraft ||
     product.specifications?.craftsmanship ||
     product.categoryName;
   const material = product.specifications?.material;
@@ -34,30 +31,15 @@ export const ProductOfWeekSection: React.FC = () => {
     let active = true;
 
     try {
-      const cachedProduct = localStorage.getItem(WEEKLY_PRODUCT_CACHE_KEY);
-      if (cachedProduct) {
-        const parsedProduct = JSON.parse(cachedProduct) as Product;
-        if (parsedProduct?.id && parsedProduct.isProductOfWeek) {
-          setApiProduct(parsedProduct);
-        }
-      }
+      localStorage.removeItem('wah_product_of_week');
     } catch (error) {
-      console.warn('Failed to read cached product of the week:', error);
+      console.warn('Failed to clear cached product of the week:', error);
     }
 
     api.getProductOfWeek()
       .then((selectedProduct) => {
         if (!active) return;
         setApiProduct(selectedProduct);
-        try {
-          if (selectedProduct) {
-            localStorage.setItem(WEEKLY_PRODUCT_CACHE_KEY, JSON.stringify(selectedProduct));
-          } else {
-            localStorage.removeItem(WEEKLY_PRODUCT_CACHE_KEY);
-          }
-        } catch (error) {
-          console.warn('Failed to cache product of the week:', error);
-        }
       })
       .catch((error) => {
         console.error('Failed to load product of the week:', error);
@@ -113,17 +95,14 @@ export const ProductOfWeekSection: React.FC = () => {
     );
   }
 
-  const makerName = product.artisanName || product.sellerName;
+  const makerName = product.sellerName;
   const craftName =
-    product.artisanCraft ||
     product.specifications?.craftsmanship ||
     product.categoryName;
-  const makerGovernorate =
-    product.artisanGovernorate || product.sellerGovernorate;
+  const makerGovernorate = product.sellerGovernorate;
   const story = getProductStory(product);
   const image =
     product.images?.[0] ||
-    product.artisanPortrait ||
     seller?.coverImage ||
     seller?.avatar;
 
@@ -248,9 +227,9 @@ export const ProductOfWeekSection: React.FC = () => {
               aria-label={`زيارة ورشة ${makerName}`}
             >
               <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-primary/10 text-primary dark:text-primary-hover sm:h-11 sm:w-11 sm:rounded-xl">
-                {(product.artisanPortrait || seller?.avatar) ? (
+                {seller?.avatar ? (
                   <img
-                    src={product.artisanPortrait || seller?.avatar}
+                    src={seller.avatar}
                     alt=""
                     loading="lazy"
                     className="h-full w-full object-cover"
@@ -272,22 +251,6 @@ export const ProductOfWeekSection: React.FC = () => {
                 {makerGovernorate}
               </span>
             </button>
-
-            {product.audioUrl && (
-              <div className="mt-2 flex items-center gap-2 rounded-xl border border-primary/10 bg-background/45 px-2 py-1.5 sm:mt-4 sm:px-3 sm:py-2">
-                <Volume2 size={16} className="shrink-0 text-primary dark:text-primary-hover" />
-                <span className="shrink-0 text-[10px] font-bold text-foreground-secondary">
-                  صوت الصانع
-                </span>
-                <audio
-                  controls
-                  preload="none"
-                  src={product.audioUrl}
-                  aria-label={`استمع لحكاية ${makerName} عن ${product.title}`}
-                  className="h-9 min-w-0 flex-1"
-                />
-              </div>
-            )}
 
             <div className="mt-2.5 flex items-center justify-between gap-3 border-t border-primary/10 pt-2.5 sm:mt-5 sm:pt-5">
               <div className="min-w-0">

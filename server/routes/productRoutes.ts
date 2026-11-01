@@ -9,6 +9,7 @@ const router = express.Router();
 
 router.get('/weekly', async (_req: Request, res: Response) => {
   try {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
     const product = await getProductOfWeek();
     res.json({ success: true, data: product });
   } catch (error) {
@@ -24,6 +25,7 @@ router.get('/weekly', async (_req: Request, res: Response) => {
 // GET /api/products - Public query: Returns ONLY approved products
 router.get('/', async (req: Request, res: Response) => {
   try {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
     const { categoryId, governorate, minPrice, maxPrice, search, sortBy } = req.query;
 
     const products = await getPublicProducts({
@@ -98,6 +100,7 @@ router.post('/:id/reviews', requireBuyer, async (req: AuthenticatedRequest, res:
 // GET /api/products/:id - Single product (enforces approval check for non-owners)
 router.get('/:id', async (req: AuthenticatedRequest, res: Response) => {
   try {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
     const productId = req.params.id;
     const product = await getProductById(productId, req.user);
 

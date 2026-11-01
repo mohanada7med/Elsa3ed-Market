@@ -10,15 +10,9 @@ import type { AuthenticatedRequest } from '../middleware/auth.ts';
 
 const router = express.Router();
 
-import { cacheService } from '../services/cacheService.ts';
-
-// GET /api/sellers - Cached public list of verified/active sellers
+// GET /api/sellers - Current public list of verified/active sellers
 router.get('/sellers', async (req: Request, res: Response) => {
-  const cacheKey = 'sellers:active';
-  const cached = cacheService.get<any[]>(cacheKey);
-  if (cached) {
-    return res.json({ success: true, count: cached.length, data: cached });
-  }
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
 
   const { db, isMongo } = await getDatabase();
   let sellers: any[] = [];
@@ -43,7 +37,6 @@ router.get('/sellers', async (req: Request, res: Response) => {
           productsCount: countMap.get(String(s.id)) ?? countMap.get(String(s.userId)) ?? s.productsCount ?? 0
         }));
 
-        cacheService.set(cacheKey, sellers, 120, ['sellers', 'products']);
         return res.json({ success: true, count: sellers.length, data: sellers });
       }
     } catch (e) {
@@ -59,18 +52,13 @@ router.get('/sellers', async (req: Request, res: Response) => {
     return { ...s, productsCount: pCount || s.productsCount || 0 };
   });
 
-  cacheService.set(cacheKey, sellers, 120, ['sellers', 'products']);
   res.json({ success: true, count: sellers.length, data: sellers });
 });
 
-// GET /api/sellers/:id - Cached single seller details
+// GET /api/sellers/:id - Public single seller details
 router.get('/sellers/:id', async (req: Request, res: Response) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
   const sellerId = req.params.id;
-  const cacheKey = `seller:${sellerId}`;
-  const cached = cacheService.get<any>(cacheKey);
-  if (cached) {
-    return res.json({ success: true, data: cached });
-  }
 
   const { db, isMongo } = await getDatabase();
   let seller: any = null;
@@ -84,7 +72,6 @@ router.get('/sellers/:id', async (req: Request, res: Response) => {
           approvalStatus: { $in: ['approved', undefined, null] }
         });
         seller.productsCount = pCount;
-        cacheService.set(cacheKey, seller, 120, ['sellers', 'products']);
         return res.json({ success: true, data: seller });
       }
       return res.status(404).json({ success: false, error: 'الورشة غير موجودة' });
@@ -108,7 +95,6 @@ router.get('/sellers/:id', async (req: Request, res: Response) => {
     return res.status(404).json({ success: false, error: 'الورشة غير موجودة' });
   }
 
-  cacheService.set(cacheKey, seller, 300, ['sellers']);
   res.json({ success: true, data: seller });
 });
 

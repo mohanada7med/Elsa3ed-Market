@@ -37,13 +37,10 @@ import {
   Layers3,
   Info,
   X,
-  Mic,
 } from 'lucide-react';
 
 import { getWhatsAppUrl } from '../common/WhatsAppButton';
 import { UncleWahInteractiveGuide } from '../common/UncleWahInteractiveGuide';
-import { ArtisanVoicePlayer } from './artisan-voice';
-import { ArtisanVoiceRecorderModal } from '../seller/ArtisanVoiceRecorderModal';
 import { QrCodeModal } from '../common/QrCodeModal';
 
 export const ProductDetailsView: React.FC = () => {
@@ -88,7 +85,6 @@ export const ProductDetailsView: React.FC = () => {
   const [newComment, setNewComment] = useState('');
   const [relatedFilter, setRelatedFilter] = useState<'all' | 'artisan' | 'category' | 'governorate'>('all');
   const isOwner = currentRole === 'seller' && (currentUser?.sellerId === product?.sellerId || currentUser?.id === product?.sellerId);
-  const [isVoiceRecorderOpen, setIsVoiceRecorderOpen] = useState(false);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1222,11 +1218,6 @@ export const ProductDetailsView: React.FC = () => {
               {product.description}
             </p>
 
-            {/* صوت الحرفي • الاستماع للجميع والتسجيل متاح حصراً للبائع صاحب القطعة */}
-            <div className="mt-7">
-              <ArtisanVoicePlayer product={product} />
-            </div>
-
             {/* Data Strip */}
 
             <div
@@ -1480,14 +1471,6 @@ export const ProductDetailsView: React.FC = () => {
                       تعديل بيانات المنتج
                     </button>
 
-                    <button
-                      type="button"
-                      onClick={() => setIsVoiceRecorderOpen(true)}
-                      className="flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-700 to-orange-600 hover:from-amber-800 hover:to-orange-700 px-4 text-xs font-bold text-white shadow-sm transition-all"
-                    >
-                      <Mic size={15} />
-                      <span>{product?.audioUrl ? 'تعديل تسجيل صوت الورشة' : 'تسجيل صوت الورشة'}</span>
-                    </button>
                   </div>
                 </div>
               ) : currentRole === 'admin' ? (
@@ -2401,15 +2384,6 @@ export const ProductDetailsView: React.FC = () => {
         </section>
 
         {/* ========================================= */}
-        {/* VOICE OF THE ARTISAN - اسمع حكاية الصنعة  */}
-        {/* ========================================= */}
-        {product && (
-          <section className="mt-14 mb-14" aria-label="صوت الحرفي">
-            <ArtisanVoicePlayer product={product} />
-          </section>
-        )}
-
-        {/* ========================================= */}
         {/* RELATED PRODUCTS - قطع من نفس الحكاية */}
         {/* ========================================= */}
 
@@ -2677,17 +2651,6 @@ export const ProductDetailsView: React.FC = () => {
         )}
       </div>
 
-      {/* مودال تسجيل صوت الورشة مخصص حصراً للبائع صاحب القطعة */}
-      {product && isVoiceRecorderOpen && isOwner && (
-        <ArtisanVoiceRecorderModal
-          isOpen={isVoiceRecorderOpen}
-          onClose={() => setIsVoiceRecorderOpen(false)}
-          product={product}
-          onSaved={() => {
-            setIsVoiceRecorderOpen(false);
-          }}
-        />
-      )}
       {product && (currentRole === 'buyer' || !isAuthenticated) && (
         <div className="fixed inset-x-0 bottom-0 z-[60] border-t border-primary/15 bg-[#FFF9EE]/95 px-3 pt-2.5 pb-[calc(10px+env(safe-area-inset-bottom))] shadow-[0_-12px_35px_-24px_rgba(59,30,14,0.65)] backdrop-blur-xl dark:bg-[#1B1009]/95 sm:px-6 sm:pt-3 lg:hidden">
           <div className="mx-auto flex max-w-xl items-center gap-3">

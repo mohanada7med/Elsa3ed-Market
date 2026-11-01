@@ -981,14 +981,18 @@ export const api = {
     if (filters?.sortBy) params.append('sortBy', filters.sortBy);
 
     const queryStr = params.toString() ? `?${params.toString()}` : '';
-    const json: ApiResponse<Product[]> = await dedupedFetch(`${API_BASE}/products${queryStr}`, undefined, 10000);
+    const json: ApiResponse<Product[]> = await dedupedFetch(
+      `${API_BASE}/products${queryStr}`,
+      { cache: 'no-store' }
+    );
     return json.data || [];
   },
 
 
   async getProductById(id: string, user?: { id?: string; role?: string }): Promise<Product | null> {
     const res = await fetch(`${API_BASE}/products/${id}`, {
-      headers: getAuthHeaders(user)
+      headers: getAuthHeaders(user),
+      cache: 'no-store'
     });
     if (!res.ok) return null;
     const json: ApiResponse<Product> = await res.json();
@@ -1375,7 +1379,7 @@ export const api = {
   },
 
   async getProductOfWeek(): Promise<Product | null> {
-    const res = await fetch(`${API_BASE}/products/weekly`);
+    const res = await fetch(`${API_BASE}/products/weekly`, { cache: 'no-store' });
     const json: ApiResponse<Product | null> = await res.json();
     if (!res.ok || !json.success) {
       throw new Error(json.error || 'تعذر تحميل منتج الأسبوع');
@@ -1428,30 +1432,6 @@ export const api = {
     const json: ApiResponse<Product> = await res.json();
     if (!json.success || !json.data) {
       throw new Error(json.error || 'فشل في تحديث المنتج');
-    }
-    return json.data;
-  },
-
-  async saveSellerArtisanVoice(
-    user: { id: string; role: string; sellerId?: string },
-    productId: string,
-    payload: {
-      audioData?: string;
-      audioUrl?: string;
-      transcript?: string;
-      artisanName?: string;
-      artisanCraft?: string;
-      audioDuration?: number;
-    }
-  ): Promise<Product> {
-    const res = await fetch(`${API_BASE}/seller/products/${encodeURIComponent(productId)}/voice`, {
-      method: 'POST',
-      headers: getAuthHeaders(user),
-      body: JSON.stringify(payload)
-    });
-    const json: ApiResponse<Product> = await res.json();
-    if (!json.success || !json.data) {
-      throw new Error(json.error || 'فشل في حفظ تسجيل صوت الحرفي');
     }
     return json.data;
   },
@@ -1630,7 +1610,10 @@ export const api = {
 
   async getSellers(): Promise<Seller[]> {
     try {
-      const json: ApiResponse<Seller[]> = await dedupedFetch(`${API_BASE}/sellers`, undefined, 60000);
+      const json: ApiResponse<Seller[]> = await dedupedFetch(
+        `${API_BASE}/sellers`,
+        { cache: 'no-store' }
+      );
       return json.data || [];
     } catch {
       return [];
@@ -2334,22 +2317,6 @@ export const api = {
     const json: ApiResponse<Seller> = await res.json();
     if (!json.success || !json.data) {
       throw new Error(json.error || 'فشل في تحديث بيانات المتجر');
-    }
-    return json.data;
-  },
-
-  async saveSellerIntroAudio(
-    user: { id: string; role: string; sellerId?: string },
-    payload: { audioData: string; duration: number }
-  ): Promise<{ audioUrl: string; duration: number }> {
-    const res = await fetch(`${API_BASE}/seller/profile/intro-audio`, {
-      method: 'POST',
-      headers: getAuthHeaders(user),
-      body: JSON.stringify(payload)
-    });
-    const json: ApiResponse<{ audioUrl: string; duration: number }> = await res.json();
-    if (!json.success || !json.data) {
-      throw new Error(json.error || 'فشل في حفظ التسجيل التعريفي');
     }
     return json.data;
   },

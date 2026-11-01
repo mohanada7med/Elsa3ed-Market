@@ -296,7 +296,12 @@ export class CloudinaryStorageProvider implements IStorageProvider {
       return false;
     }
 
-    const isVideo = fileKey.includes('/reels/') || fileKey.includes('/videos/') || fileKey.startsWith('WAH/videos/') || fileKey.includes('video');
+    const isVideo =
+      fileKey.includes('/reels/') ||
+      fileKey.includes('/videos/') ||
+      fileKey.startsWith('WAH/videos/') ||
+      fileKey.includes('video') ||
+      /(?:^|\/)(?:artisan_voice_|workshop_intro_)/i.test(fileKey);
 
     try {
       const res = await cloudinary.uploader.destroy(fileKey, isVideo ? { resource_type: 'video' } : undefined);

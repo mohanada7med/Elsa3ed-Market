@@ -112,7 +112,7 @@ export const PaidPromotionSection: React.FC<PaidPromotionSectionProps> = ({
   const coverImage = product?.images?.[0] || workshopProductImage;
 
   // صورة البائع الشخصية
-  const avatar = maker?.avatar || product?.artisanPortrait;
+  const avatar = maker?.avatar;
 
   const expiresAt = new Date(promotion.endsAt).toLocaleDateString('ar-EG', {
     day: 'numeric',

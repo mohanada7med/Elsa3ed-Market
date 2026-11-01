@@ -12,11 +12,9 @@ import { ReelEditModal } from '../common/ReelEditModal.tsx';
 import { CraftReelsModal } from '../public/CraftReelsModal.tsx';
 import { ChatView } from '../chat/ChatView.tsx';
 import { DeleteAccountModal } from '../common/DeleteAccountModal.tsx';
-import { ArtisanVoiceRecorderModal } from './ArtisanVoiceRecorderModal.tsx';
 import { SellerPromotionPanel } from './SellerPromotionPanel.tsx';
 import {
   Store,
-  Mic,
   Package,
   DollarSign,
   Star,
@@ -307,7 +305,6 @@ export const SellerDashboard: React.FC = () => {
   // Product Modal State
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [recordingVoiceProduct, setRecordingVoiceProduct] = useState<Product | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Form Fields for Product
@@ -2144,20 +2141,6 @@ export const SellerDashboard: React.FC = () => {
                             <span>عدّل الكمية ({prod.stockCount})</span>
                           </button>
 
-                          <button
-                            type="button"
-                            onClick={() => setRecordingVoiceProduct(prod)}
-                            className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 border transition-all cursor-pointer ${
-                              prod.audioUrl
-                                ? 'bg-amber-700/10 hover:bg-amber-700 hover:text-white dark:bg-amber-400/10 dark:hover:bg-amber-500 text-amber-800 dark:text-amber-300 dark:hover:text-black border-amber-700/20 dark:border-amber-400/20'
-                                : 'bg-gradient-to-r from-amber-700 to-orange-600 hover:from-amber-800 hover:to-orange-700 text-white border-transparent shadow-xs'
-                            }`}
-                            title="سجّل حكاية القطعة بصوتك"
-                          >
-                            <Mic className="w-3.5 h-3.5" />
-                            <span>{prod.audioUrl ? 'عدّل التسجيل' : 'احكي حكاية القطعة'}</span>
-                          </button>
-
                           {(prod.approvalStatus === 'draft' || prod.approvalStatus === 'rejected') && (
                             <button
                               type="button"
@@ -3505,36 +3488,6 @@ export const SellerDashboard: React.FC = () => {
                 )}
               </div>
 
-              {/* Artisan Voice Feature for Seller */}
-              {editingProduct && (
-                <div className="p-4 rounded-2xl bg-amber-700/10 dark:bg-amber-400/10 border border-amber-700/20 dark:border-amber-400/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <div className="flex items-center gap-2.5">
-                    <div className="p-2 rounded-xl bg-amber-700 text-white">
-                      <Mic className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-black text-espresso dark:text-cream">
-                        صوت الحرفي وتوثيق الحكاية (Voice of the Artisan)
-                      </h4>
-                      <p className="text-[11px] text-secondary dark:text-cream/70">
-                        {editingProduct.audioUrl
-                          ? 'هذه القطعة تحتوي على تسجيل صوتي موثق يظهر لكل الزوار.'
-                          : 'لسه مسجلتش حكاية المنتج. سجّلها بصوتك عشان الناس تسمعها.'}
-                      </p>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => setRecordingVoiceProduct(editingProduct)}
-                    className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-amber-700 hover:bg-amber-800 text-white text-xs font-bold shadow-xs cursor-pointer transition-colors shrink-0"
-                  >
-                    <Mic className="w-3.5 h-3.5" />
-                    <span>{editingProduct.audioUrl ? 'تعديل أو إعادة تسجيل الصوت' : 'سجل صوتك للقطعة الآن'}</span>
-                  </button>
-                </div>
-              )}
-
               <div className="flex flex-col-reverse items-stretch justify-end gap-2 border-t border-black/10 pt-3 dark:border-white/10 sm:flex-row sm:items-center sm:gap-3">
                 <button
                   type="button"
@@ -3629,18 +3582,6 @@ export const SellerDashboard: React.FC = () => {
           onClose={() => {
             setIsReelPreviewOpen(false);
             setSelectedReelPreviewId(null);
-          }}
-        />
-      )}
-
-      {/* Artisan Voice Recorder Modal for Seller */}
-      {recordingVoiceProduct && (
-        <ArtisanVoiceRecorderModal
-          isOpen={Boolean(recordingVoiceProduct)}
-          onClose={() => setRecordingVoiceProduct(null)}
-          product={recordingVoiceProduct}
-          onSaved={() => {
-            setRecordingVoiceProduct(null);
           }}
         />
       )}

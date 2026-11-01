@@ -25,7 +25,6 @@ import {
 import { UncleWahInteractiveGuide } from '../common/UncleWahInteractiveGuide';
 import { updatePageSEO, generateStoreSchema } from '../../utils/seo';
 import { api } from '../../services/api';
-import { SellerIntroAudioCard } from '../seller/SellerIntroAudioCard';
 import { QrCodeModal } from '../common/QrCodeModal';
 
 export const SellerProfileView: React.FC = () => {
@@ -73,7 +72,6 @@ export const SellerProfileView: React.FC = () => {
   const [liked, setLiked] = useState(false);
   const [followState, setFollowState] = useState({ following: false, followersCount: 0 });
   const [isFollowLoading, setIsFollowLoading] = useState(false);
-  const [introAudio, setIntroAudio] = useState<{ audioUrl: string; duration: number } | null>(null);
   const [visibleSections, setVisibleSections] = useState<
     Record<string, boolean>
   >({});
@@ -97,7 +95,7 @@ export const SellerProfileView: React.FC = () => {
 
     setIsLoadingDirect(true);
 
-    fetch(`/api/sellers/${encodeURIComponent(effectiveSellerId)}`)
+    fetch(`/api/sellers/${encodeURIComponent(effectiveSellerId)}`, { cache: 'no-store' })
       .then((res) => res.json())
       .then((json) => {
         if (isMounted && json?.data) {
@@ -963,22 +961,6 @@ export const SellerProfileView: React.FC = () => {
             </div>
           </div>
         </section>
-
-        <SellerIntroAudioCard
-          audioUrl={introAudio?.audioUrl || seller.introAudioUrl}
-          duration={introAudio?.duration || seller.introAudioDuration}
-          isOwner={isOwnSellerProfile}
-          user={{
-            id: currentUser.id,
-            role: currentUser.role,
-            sellerId: currentUser.sellerId
-          }}
-          onSaved={(audio) => {
-            setIntroAudio(audio);
-            refreshSellers();
-            addToast('تم نشر صوتك التعريفي', 'أصبح بإمكان الزوار التعرف عليك وعلى حرفتك بصوتك', 'success');
-          }}
-        />
 
         {/* =========================================================
             CONTACT FOOTER

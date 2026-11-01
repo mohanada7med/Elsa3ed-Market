@@ -70,14 +70,6 @@ export interface ProductDocument {
   approvedAt?: string | null;
   approvedBy?: string | null;
   rejectionReason?: string | null;
-  // Voice of the Artisan (صوت الحرفي وتوثيق الحكاية)
-  artisanName?: string;
-  artisanPortrait?: string;
-  artisanGovernorate?: string;
-  artisanCraft?: string;
-  audioUrl?: string;
-  transcript?: string;
-  audioDuration?: number;
 }
 
 export interface SellerDocument {
@@ -98,8 +90,6 @@ export interface SellerDocument {
   craftSinceYear?: number | null;
   achievementOrdersCount?: number | null;
   achievementSkills?: string[];
-  introAudioUrl?: string | null;
-  introAudioDuration?: number | null;
   verified: boolean;
   joinedDate: string;
   phone: string;

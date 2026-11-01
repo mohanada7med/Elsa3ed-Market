@@ -33,14 +33,6 @@ export async function getPublicProducts(filters?: PublicProductFilters): Promise
   const page = Math.max(1, Number(filters?.page) || 1);
   const limit = Math.min(100, Math.max(1, Number(filters?.limit) || 50));
 
-  // Cache key based on filter values
-  const filterKey = JSON.stringify({ ...filters, page, limit });
-  const cacheKey = `products:public:${filterKey}`;
-  const cached = cacheService.get<ProductDocument[]>(cacheKey);
-  if (cached) {
-    return cached;
-  }
-
   const { db, isMongo } = await getDatabase();
   let products: ProductDocument[] = [];
 
@@ -82,7 +74,6 @@ export async function getPublicProducts(filters?: PublicProductFilters): Promise
 
       products = (await cursor.limit(limit).toArray()) as unknown as ProductDocument[];
 
-      cacheService.set(cacheKey, products, 180, ['products']);
       return products;
     } catch (e) {
       console.error('[ProductService] MongoDB query error:', e);
@@ -125,7 +116,6 @@ export async function getPublicProducts(filters?: PublicProductFilters): Promise
     products.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }
 
-  cacheService.set(cacheKey, products, 180, ['products']);
   return products;
 }
 
@@ -133,14 +123,6 @@ export async function getPublicProducts(filters?: PublicProductFilters): Promise
  * Get single product by ID. If not approved, only owning seller or admin can view.
  */
 export async function getProductById(productId: string, user?: AuthenticatedUser): Promise<ProductDocument | null> {
-  const cacheKey = `product:${productId}`;
-
-  // Only use public cache for unauthenticated / non-admin / non-owner lookups
-  if (!user) {
-    const cached = cacheService.get<ProductDocument>(cacheKey);
-    if (cached) return cached;
-  }
-
   const { db, isMongo } = await getDatabase();
   let product: ProductDocument | null = null;
 
@@ -166,9 +148,6 @@ export async function getProductById(productId: string, user?: AuthenticatedUser
     if (!isOwner && !isAdmin) {
       return null;
     }
-  } else {
-    // Cache approved product
-    cacheService.set(cacheKey, product, 300, ['products']);
   }
 
   return product;
@@ -346,13 +325,6 @@ export async function createProduct(
     approvedAt: null,
     approvedBy: null,
     rejectionReason: null,
-    artisanName: data.artisanName?.trim(),
-    artisanPortrait: data.artisanPortrait?.trim(),
-    artisanGovernorate: data.artisanGovernorate?.trim(),
-    artisanCraft: data.artisanCraft?.trim(),
-    audioUrl: data.audioUrl?.trim(),
-    transcript: data.transcript?.trim(),
-    audioDuration: data.audioDuration ? Number(data.audioDuration) : undefined
   };
 
   const { db, isMongo } = await getDatabase();
@@ -666,25 +638,29 @@ export async function updateProduct(
     throw new Error('المنتج غير موجود');
   }
 
-  const updateKeys = Object.keys(updates).filter((k) => k !== 'updatedAt');
-  const isArtisanVoiceUpdate =
-    updateKeys.length > 0 &&
-    updateKeys.every((k) =>
-      ['audioUrl', 'transcript', 'artisanName', 'artisanCraft', 'audioDuration'].includes(k)
-    );
-
   const isOwner =
     user.role === 'seller' &&
     (user.sellerId === product.sellerId || user.id === product.sellerId);
   const isAdmin = user.role === 'admin';
 
   if (!isOwner && !isAdmin) {
-    throw new Error('غير مصرح لك بتسجيل صوت أو تعديل هذا المنتج، فقط البائع صاحب القطعة هو المخول بذلك');
+    throw new Error('غير مصرح لك بتعديل هذا المنتج');
   }
 
   // Security: prevent seller from setting status to approved directly
   const safeUpdates = { ...updates };
   delete safeUpdates.isProductOfWeek;
+  for (const field of [
+    'artisanName',
+    'artisanPortrait',
+    'artisanGovernorate',
+    'artisanCraft',
+    'audioUrl',
+    'transcript',
+    'audioDuration'
+  ]) {
+    Reflect.deleteProperty(safeUpdates, field);
+  }
   if (
     (safeUpdates.inStock === false || safeUpdates.stockCount === 0) &&
     product.isProductOfWeek
@@ -699,24 +675,14 @@ export async function updateProduct(
   safeUpdates.updatedAt = new Date().toISOString().split('T')[0];
 
   const { db, isMongo } = await getDatabase();
-  if (isArtisanVoiceUpdate && (!isMongo || !db)) {
-    throw new Error('قاعدة البيانات غير متاحة حالياً؛ لم يتم تأكيد حفظ التسجيل. حاول مرة تانية.');
-  }
-
   if (isMongo && db) {
     try {
-      const result = await db.collection('products').updateOne(
+      await db.collection('products').updateOne(
         { id: productId },
         { $set: safeUpdates }
       );
-      if (isArtisanVoiceUpdate && result.matchedCount !== 1) {
-        throw new Error('المنتج لم يعد موجوداً في قاعدة البيانات؛ لم يتم حفظ التسجيل.');
-      }
     } catch (e) {
       console.error('[ProductService] MongoDB update error:', e);
-      if (isArtisanVoiceUpdate) {
-        throw new Error(`تعذر حفظ التسجيل في قاعدة البيانات: ${(e as Error).message}`);
-      }
     }
   }
 
@@ -726,24 +692,6 @@ export async function updateProduct(
   }
 
   cacheService.invalidateProducts(productId);
-  if (
-    (safeUpdates.approvalStatus || product.approvalStatus) === 'approved' &&
-    (
-      (safeUpdates.transcript?.trim() && safeUpdates.transcript.trim() !== product.transcript?.trim()) ||
-      (safeUpdates.audioUrl && safeUpdates.audioUrl !== product.audioUrl)
-    )
-  ) {
-    try {
-      await notifySellerFollowers(product.sellerId, {
-        title: 'حكاية جديدة من ورشة تتابعها',
-        message: `الورشة ${product.sellerName} أضافت حكاية صوتية لقطعة ${product.title}`,
-        link: `/products/${encodeURIComponent(product.id)}`,
-        metadata: { productId: product.id, sellerId: product.sellerId }
-      });
-    } catch (error) {
-      console.error('[ProductService] Failed to notify followers about new artisan story:', error);
-    }
-  }
   return { ...product, ...safeUpdates };
 }
 

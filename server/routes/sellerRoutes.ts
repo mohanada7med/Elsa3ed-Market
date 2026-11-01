@@ -3,9 +3,7 @@ import type { Response } from 'express';
 import { requireSeller, requireAuth, invalidateAuthSession } from '../middleware/auth.ts';
 import type { AuthenticatedRequest } from '../middleware/auth.ts';
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
-import { storageService } from '../services/storage/storageProvider.ts';
 import { createPaidPromotionRequest, getSellerPaidPromotionRequest } from '../services/communityService.ts';
-import type { ProductDocument } from '../models/types.ts';
 import type { SellerStatus } from '../models/types.ts';
 import {
   getSellerProducts,
@@ -23,8 +21,7 @@ import {
 import {
   getSellerDashboardStats,
   getSellerAnalytics,
-  updateSellerProfile,
-  saveSellerIntroAudio
+  updateSellerProfile
 } from '../services/sellerService.ts';
 import {
   createSellerPayoutRequest,
@@ -419,71 +416,6 @@ router.get('/inventory/movements', async (req: AuthenticatedRequest, res: Respon
 
 // ==================== STORE PROFILE ====================
 
-// POST /api/seller/profile/intro-audio - Save an owner's spoken workshop introduction
-router.post('/profile/intro-audio', requireSeller, async (req: AuthenticatedRequest, res: Response) => {
-  try {
-    if (!req.user || req.user.role !== 'seller') {
-      return res.status(403).json({
-        success: false,
-        error: 'التسجيل التعريفي متاح لصاحب الورشة فقط',
-        code: 'SELLER_OWNER_ONLY'
-      });
-    }
-
-    const { audioData, duration } = req.body as { audioData?: unknown; duration?: unknown };
-    if (
-      typeof audioData !== 'string' ||
-      !/^data:audio\/[a-z0-9.+-]+;base64,/i.test(audioData) ||
-      audioData.length > 17 * 1024 * 1024
-    ) {
-      return res.status(400).json({
-        success: false,
-        error: 'ملف التسجيل غير صالح أو أكبر من الحد المسموح',
-        code: 'INVALID_AUDIO'
-      });
-    }
-
-    const numericDuration = Number(duration);
-    if (!Number.isFinite(numericDuration) || numericDuration <= 0 || numericDuration > 120) {
-      return res.status(400).json({
-        success: false,
-        error: 'مدة التسجيل يجب أن تكون بين ثانية و120 ثانية',
-        code: 'INVALID_AUDIO_DURATION'
-      });
-    }
-
-    const sellerId = req.user.sellerId || req.user.id;
-    const mimeType = audioData.slice(5, audioData.indexOf(';'));
-    const extension = mimeType.startsWith('audio/mp4')
-      ? 'm4a'
-      : mimeType.startsWith('audio/ogg')
-        ? 'ogg'
-        : 'webm';
-    const upload = await storageService.upload({
-      data: audioData,
-      filename: `workshop_intro_${sellerId}.${extension}`,
-      mimeType,
-      folder: 'sellers',
-      ownerId: sellerId,
-      resourceType: 'auto'
-    });
-    await saveSellerIntroAudio(req.user, upload.url, numericDuration);
-
-    res.json({
-      success: true,
-      message: 'تم حفظ التسجيل التعريفي للورشة',
-      data: { audioUrl: upload.url, duration: Math.round(numericDuration) }
-    });
-  } catch (error) {
-    console.error('[SellerRoutes] Failed to save workshop introduction audio:', error);
-    res.status(400).json({
-      success: false,
-      error: (error as Error).message || 'تعذر حفظ التسجيل التعريفي',
-      code: 'INTRO_AUDIO_ERROR'
-    });
-  }
-});
-
 // PUT /api/seller/profile - Update store information
 router.put('/profile', async (req: AuthenticatedRequest, res: Response) => {
   try {
@@ -691,106 +623,6 @@ router.put('/products/:id', async (req: AuthenticatedRequest, res: Response) => 
       success: false,
       error: (error as Error).message || 'تعذر تحديث المنتج',
       code: 'UPDATE_ERROR'
-    });
-  }
-});
-
-// POST /api/seller/products/:id/voice - Seller records and saves artisan audio for their product
-router.post('/products/:id/voice', async (req: AuthenticatedRequest, res: Response) => {
-  try {
-    if (req.user?.role !== 'seller') {
-      return res.status(403).json({
-        success: false,
-        error: 'تسجيل صوت الورشة متاح لصاحب المنتج فقط',
-        code: 'PRODUCT_OWNER_ONLY'
-      });
-    }
-
-    const productId = req.params.id;
-    const { audioData, audioUrl, transcript, artisanName, artisanCraft, audioDuration } = req.body;
-
-    let finalAudioUrl = audioUrl;
-    const numericDuration = audioDuration === undefined ? undefined : Number(audioDuration);
-    if (
-      numericDuration !== undefined &&
-      (!Number.isFinite(numericDuration) || numericDuration <= 0 || numericDuration > 600)
-    ) {
-      return res.status(400).json({
-        success: false,
-        error: 'مدة التسجيل غير صحيحة.',
-        code: 'INVALID_AUDIO_DURATION'
-      });
-    }
-
-    if (audioData !== undefined) {
-      const match = typeof audioData === 'string'
-        ? audioData.match(/^data:(audio\/[a-z0-9.+-]+)(?:;[^,]*)?;base64,([a-z0-9+/=\r\n]+)$/i)
-        : null;
-      const audioExtensions: Record<string, string> = {
-        'audio/webm': 'webm',
-        'audio/mp4': 'm4a',
-        'audio/x-m4a': 'm4a',
-        'audio/mpeg': 'mp3',
-        'audio/wav': 'wav',
-        'audio/x-wav': 'wav',
-        'audio/ogg': 'ogg',
-        'audio/aac': 'aac',
-        'audio/3gpp': '3gp'
-      };
-
-      if (!match || !audioExtensions[match[1].toLowerCase()]) {
-        return res.status(400).json({
-          success: false,
-          error: 'صيغة الملف الصوتي غير مدعومة. استخدم MP3 أو WAV أو M4A أو OGG أو WebM.',
-          code: 'INVALID_AUDIO'
-        });
-      }
-
-      const encodedAudio = match[2].replace(/\s/g, '');
-      const audioSize = Math.floor((encodedAudio.length * 3) / 4) -
-        (encodedAudio.endsWith('==') ? 2 : encodedAudio.endsWith('=') ? 1 : 0);
-      if (audioSize === 0 || audioSize > 3 * 1024 * 1024) {
-        return res.status(400).json({
-          success: false,
-          error: 'حجم الملف الصوتي يجب أن يكون أقل من 3 ميجابايت.',
-          code: 'INVALID_AUDIO_SIZE'
-        });
-      }
-
-      const mimeType = match[1].toLowerCase();
-      const uploadRes = await storageService.upload({
-        data: audioData,
-        filename: `artisan_voice_${productId}.${audioExtensions[mimeType]}`,
-        mimeType,
-        folder: 'products',
-        productId,
-        ownerId: req.user!.sellerId || req.user!.id,
-        resourceType: 'auto'
-      });
-      finalAudioUrl = uploadRes.url;
-    }
-
-    const updates: Partial<ProductDocument> = {
-      audioUrl: finalAudioUrl,
-      transcript: transcript !== undefined ? String(transcript).trim() : undefined,
-      artisanName: artisanName !== undefined ? String(artisanName).trim() : undefined,
-      artisanCraft: artisanCraft !== undefined ? String(artisanCraft).trim() : undefined,
-      audioDuration: numericDuration,
-    };
-
-    const updatedProduct = await updateProduct(req.user!, productId, updates);
-
-    res.json({
-      success: true,
-      message: 'تم حفظ تسجيل صوت الحرفي والحكاية بنجاح!',
-      data: updatedProduct
-    });
-  } catch (error) {
-    console.error('Error saving artisan voice by seller:', error);
-    res.status(400).json({
-      success: false,
-      error: (error as Error).message || 'تعذر حفظ تسجيل صوت الحرفي',
-      code: 'VOICE_SAVE_ERROR'
     });
   }
 });
