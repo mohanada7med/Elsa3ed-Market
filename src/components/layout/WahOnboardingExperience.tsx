@@ -137,6 +137,23 @@ export const WahOnboardingExperience: React.FC = () => {
   const introAudioRef = useRef<HTMLAudioElement | null>(null);
   const dialogRef = useRef<HTMLElement | null>(null);
 
+  useEffect(() => {
+    if (!showOnboarding) return;
+
+    const audio = new Audio('/audio/site-intro.mp3');
+    audio.preload = 'auto';
+    audio.volume = 0.45;
+    introAudioRef.current = audio;
+    audio.load();
+
+    return () => {
+      audio.pause();
+      audio.onended = null;
+      audio.onerror = null;
+      if (introAudioRef.current === audio) introAudioRef.current = null;
+    };
+  }, [showOnboarding]);
+
   const loadGovernorates = useCallback(async () => {
     setIsLoadingGovernorates(true);
     setGovernorateLoadError(false);
@@ -229,7 +246,7 @@ export const WahOnboardingExperience: React.FC = () => {
       audio.preload = 'auto';
       audio.volume = 0.45;
       audio.muted = audioMuted;
-      audio.currentTime = 0;
+      if (audio.ended || audio.currentTime > 0) audio.currentTime = 0;
       audio.onended = () => setAudioPlaying(false);
       audio.onerror = () => {
         setAudioPlaying(false);
@@ -280,8 +297,8 @@ export const WahOnboardingExperience: React.FC = () => {
 
   const openDoor = () => {
     if (doorOpened) return;
-    setDoorOpened(true);
     playIntroAudio();
+    setDoorOpened(true);
   };
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -314,7 +331,7 @@ export const WahOnboardingExperience: React.FC = () => {
   return (
     <AnimatePresence>
       {showOnboarding && <motion.div
-        className="fixed inset-0 z-[1000] flex items-center justify-center bg-[#1B1009]/80 p-2 backdrop-blur-xl sm:p-5"
+        className="fixed inset-0 z-[1000] flex items-center justify-center bg-[#1B1009]/80 pl-[max(0.5rem,env(safe-area-inset-left))] pr-[max(0.5rem,env(safe-area-inset-right))] pt-[max(0.5rem,env(safe-area-inset-top))] pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur-xl sm:p-5"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -329,10 +346,10 @@ export const WahOnboardingExperience: React.FC = () => {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={reduceMotion ? undefined : { opacity: 0, y: 16, scale: 0.98 }}
           transition={{ duration: reduceMotion ? 0 : 0.45, ease: [0.16, 1, 0.3, 1] }}
-          className="relative flex h-[min(760px,calc(100dvh-16px))] w-[min(1100px,calc(100vw-16px))] flex-col overflow-hidden rounded-[1.75rem] border border-primary/30 bg-background text-foreground shadow-[0_35px_110px_rgba(0,0,0,0.55)] sm:h-[min(760px,calc(100dvh-40px))] sm:w-[min(1100px,calc(100vw-40px))] sm:rounded-[2.25rem]"
+          className="relative flex h-[min(760px,calc(100dvh-16px-env(safe-area-inset-top,0px)-env(safe-area-inset-bottom,0px)))] w-[min(1100px,calc(100vw-16px-env(safe-area-inset-left,0px)-env(safe-area-inset-right,0px)))] flex-col overflow-hidden rounded-2xl border border-primary/30 bg-background text-foreground shadow-[0_35px_110px_rgba(0,0,0,0.55)] sm:h-[min(760px,calc(100dvh-40px))] sm:w-[min(1100px,calc(100vw-40px))] sm:rounded-[2.25rem]"
         >
           <div className="pointer-events-none absolute inset-0 opacity-[0.055]" style={{ backgroundImage: "url('/pattern/pat2.png')", backgroundSize: '380px auto' }} />
-          <header className="relative z-10 flex shrink-0 items-center justify-between border-b border-primary/10 px-4 py-3 sm:px-7 sm:py-4">
+          <header className="relative z-10 flex shrink-0 items-center justify-between border-b border-primary/10 px-3 py-2.5 sm:px-7 sm:py-4">
             <div className="flex min-w-0 items-center gap-2.5">
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary dark:text-primary-hover">
                 <Compass size={18} />
@@ -349,7 +366,7 @@ export const WahOnboardingExperience: React.FC = () => {
             <button
               type="button"
               onClick={handleDismissOnboarding}
-              className="flex min-h-11 shrink-0 touch-manipulation items-center gap-2 rounded-full border border-primary/15 px-3 text-xs font-bold text-foreground-secondary transition hover:border-primary/40 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              className="flex min-h-11 shrink-0 touch-manipulation items-center gap-2 rounded-full border border-primary/15 px-2.5 text-xs font-bold text-foreground-secondary transition hover:border-primary/40 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:px-3"
               aria-label="تخطي الجولة التعريفية"
             >
               <span className="hidden sm:inline">تخطي الجولة</span>
@@ -367,23 +384,23 @@ export const WahOnboardingExperience: React.FC = () => {
                   animate="animate"
                   exit={reduceMotion ? undefined : 'exit'}
                   transition={{ duration: reduceMotion ? 0 : 0.32, ease: [0.22, 1, 0.36, 1] }}
-                  className="flex min-h-0 w-full flex-col overflow-y-auto px-4 py-4 sm:px-8 sm:py-6"
+                  className="flex min-h-0 w-full flex-col overflow-y-auto px-3 py-3 sm:px-8 sm:py-6"
                   aria-live="polite"
                 >
                   {activeStep === 0 && (
-                    <div className="grid min-h-full flex-1 items-center gap-3 sm:grid-cols-[1fr_0.9fr] sm:gap-8">
-                      <div className="order-2 space-y-4 text-center sm:order-1 sm:text-right">
+                    <div className="grid min-h-full flex-1 items-center gap-2.5 sm:grid-cols-[1fr_0.9fr] sm:gap-8">
+                      <div className="order-2 space-y-3 text-center sm:order-1 sm:space-y-4 sm:text-right">
                         <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1.5 text-[10px] font-black text-primary dark:text-primary-hover">
                           <Sparkles size={13} />
                           {ONBOARDING_STEPS[0].eyebrow}
                         </div>
-                        <h1 className="font-heading text-3xl font-black leading-tight text-espresso dark:text-cream sm:text-5xl">
-                         افتح الباب وادخل
-                          <br />
-                          <br />
+                        <h1 className="font-heading text-2xl font-black leading-tight text-espresso dark:text-cream min-[390px]:text-3xl sm:text-5xl">
+                          افتح الباب وادخل
+                          <br className="sm:hidden" />
+                          <span className="hidden sm:inline"> </span>
                           <span className="text-primary dark:text-primary-hover">البيت بيتك</span>
                         </h1>
-                        <p className="mx-auto max-w-md text-sm font-semibold leading-7 text-foreground-secondary sm:mx-0 sm:text-base">
+                        <p className="mx-auto max-w-md text-xs font-semibold leading-6 text-foreground-secondary sm:mx-0 sm:text-base sm:leading-7">
                            من هنا تبدأ الحكاية.. اكتشف بلاد الصعيد، واتعرّف على ناسه وحرفه وتراثه، وشوف كل حكاية مخبّية ورا كل مكان.
                         </p>
                         <div className="flex items-center justify-center gap-2 text-xs font-bold text-primary dark:text-primary-hover sm:justify-start">
@@ -393,8 +410,8 @@ export const WahOnboardingExperience: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="order-1 flex min-h-[250px] flex-col items-center justify-center sm:order-2 sm:min-h-0">
-                        <div className="relative h-[min(260px,34dvh)] min-h-[205px] w-full max-w-[360px] sm:h-[min(300px,40dvh)] sm:min-h-0" style={{ perspective: '1200px' }}>
+                      <div className="order-1 flex min-h-[clamp(190px,32dvh,250px)] flex-col items-center justify-center sm:order-2 sm:min-h-0">
+                        <div className="relative h-[clamp(190px,34dvh,260px)] w-full max-w-[360px] sm:h-[min(300px,40dvh)]" style={{ perspective: '1200px' }}>
                           <div className="absolute inset-3 rounded-[48%_48%_20px_20px] border-[7px] border-[#9B642F] bg-gradient-to-b from-[#F8EBD7] via-[#DAB987] to-[#6B3A1F] shadow-[inset_0_0_0_4px_rgba(255,255,255,0.25),0_24px_50px_rgba(59,30,14,0.25)] dark:border-[#C99444] dark:from-[#4A2715] dark:via-[#3B1E0E] dark:to-[#1B1009]">
                             <div className="absolute inset-x-0 bottom-0 top-[17%] overflow-hidden rounded-[47%_47%_12px_12px] bg-gradient-to-b from-[#fff5df] via-[#efd4a7] to-[#C99444]/50 dark:from-[#2b1a10] dark:via-[#3B1E0E] dark:to-[#6B3A1F]/70">
                               <motion.img
@@ -462,7 +479,7 @@ export const WahOnboardingExperience: React.FC = () => {
                             </p>
                           )}
                           {doorOpened && (
-                              <div className="mt-4 flex w-full max-w-[360px] flex-wrap items-center justify-center gap-2">
+                              <div className="mt-3 grid w-full max-w-[360px] grid-cols-2 items-center gap-1.5 sm:mt-4 sm:flex sm:flex-wrap sm:justify-center sm:gap-2">
                               <button
                                 type="button"
                                 onClick={toggleIntroPlayback}

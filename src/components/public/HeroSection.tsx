@@ -79,15 +79,18 @@ export const HeroSection: React.FC = () => {
         className="
           relative
           w-full
-          min-h-[calc(100dvh-4.5rem)]
+          min-h-[calc(100dvh-9.25rem-env(safe-area-inset-bottom,0px))]
           flex
           flex-col
           justify-between
           bg-background
-          p-4
-          xs:p-5
-          pb-8
-          gap-5
+          p-3
+          sm:p-5
+          pb-5
+          sm:pb-8
+          gap-3
+          sm:gap-5
+          max-[380px]:gap-2
           transition-colors
           duration-500
           lg:hidden
@@ -163,7 +166,7 @@ export const HeroSection: React.FC = () => {
 
         <div
           dir="ltr"
-          className="relative z-10 flex w-full items-end justify-start my-auto py-1.5"
+          className="relative z-10 flex w-full items-end justify-start my-auto py-1 max-[380px]:py-0.5"
         >
           <motion.div
             className="relative shrink-0"
@@ -204,7 +207,9 @@ export const HeroSection: React.FC = () => {
               src="/mascot/welcoming.png"
               alt="عم وه"
               className="
-        relative h-[175px] w-auto
+        relative
+        h-[clamp(120px,min(39vw,22dvh),175px)]
+        w-auto
         object-contain
         drop-shadow-[0_15px_18px_rgba(0,0,0,0.55)]
       "
@@ -266,7 +271,7 @@ export const HeroSection: React.FC = () => {
         {/* MOBILE EDITORIAL CONTENT & ACTIONS                    */}
         {/* ===================================================== */}
 
-        <div className="relative z-10 space-y-3.5">
+        <div className="relative z-10 space-y-2.5 sm:space-y-3.5 max-[380px]:space-y-2">
           <div className="space-y-1.5 text-right">
             <h1 className="text-4xl xs:text-4xl sm:text-5xl md:text-8xl font-black leading-tight tracking-tight text-foreground font-heading">
               الصعيد{' '}
@@ -283,7 +288,7 @@ export const HeroSection: React.FC = () => {
           <button
             type="button"
             onClick={() => setActivePage('products')}
-            className="flex w-full items-center justify-between rounded-xl bg-primary hover:bg-[#805423] p-3 text-white shadow-lg shadow-caramel/25 transition-all active:scale-[0.98] cursor-pointer"
+            className="flex w-full items-center justify-between rounded-xl bg-primary hover:bg-[#805423] p-2.5 sm:p-3 max-[380px]:p-2 text-white shadow-lg shadow-caramel/25 transition-all active:scale-[0.98] cursor-pointer"
           >
             <div className="flex items-center gap-2.5">
               <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/20">
@@ -301,7 +306,7 @@ export const HeroSection: React.FC = () => {
             <button
               type="button"
               onClick={() => setActivePage('reels')}
-              className="flex items-center justify-center gap-1.5 rounded-xl border border-primary/25 dark:border-white/10 bg-surface dark:bg-espresso-800/90 py-2.5 px-1 text-xs font-bold text-foreground hover:border-primary shadow-xs transition-all active:scale-95 cursor-pointer"
+              className="flex items-center justify-center gap-1.5 rounded-xl border border-primary/25 dark:border-white/10 bg-surface dark:bg-espresso-800/90 py-2 px-1 sm:py-2.5 max-[380px]:py-1.5 text-xs font-bold text-foreground hover:border-primary shadow-xs transition-all active:scale-95 cursor-pointer"
             >
               <Film className="h-3.5 w-3.5 text-primary shrink-0" />
               <span className="truncate">ريلز وه</span>
@@ -310,7 +315,7 @@ export const HeroSection: React.FC = () => {
             <button
               type="button"
               onClick={() => setActivePage('places')}
-              className="flex items-center justify-center gap-1.5 rounded-xl border border-primary/25 dark:border-white/10 bg-surface dark:bg-espresso-800/90 py-2.5 px-1 text-xs font-bold text-foreground hover:border-primary shadow-xs transition-all active:scale-95 cursor-pointer"
+              className="flex items-center justify-center gap-1.5 rounded-xl border border-primary/25 dark:border-white/10 bg-surface dark:bg-espresso-800/90 py-2 px-1 sm:py-2.5 max-[380px]:py-1.5 text-xs font-bold text-foreground hover:border-primary shadow-xs transition-all active:scale-95 cursor-pointer"
             >
               <Landmark className="h-3.5 w-3.5 text-primary shrink-0" />
               <span className="truncate">أماكن وه</span>
@@ -319,7 +324,7 @@ export const HeroSection: React.FC = () => {
             <button
               type="button"
               onClick={() => setActivePage('map')}
-              className="flex items-center justify-center gap-1.5 rounded-xl border border-primary/25 dark:border-white/10 bg-surface dark:bg-espresso-800/90 py-2.5 px-1 text-xs font-bold text-foreground hover:border-primary shadow-xs transition-all active:scale-95 cursor-pointer"
+              className="flex items-center justify-center gap-1.5 rounded-xl border border-primary/25 dark:border-white/10 bg-surface dark:bg-espresso-800/90 py-2 px-1 sm:py-2.5 max-[380px]:py-1.5 text-xs font-bold text-foreground hover:border-primary shadow-xs transition-all active:scale-95 cursor-pointer"
             >
               <MapPin className="h-3.5 w-3.5 text-primary shrink-0" />
               <span className="truncate">خريطة الصعيد</span>
@@ -327,7 +332,7 @@ export const HeroSection: React.FC = () => {
           </div>
 
           {/* MOBILE STATS */}
-          <div className="flex items-center justify-between border-t border-foreground/15 pt-2.5 text-center text-foreground">
+          <div className="flex items-center justify-between border-t border-foreground/15 pt-2 sm:pt-2.5 max-[380px]:pt-1.5 text-center text-foreground">
             <div>
               <span className="block text-sm font-black text-primary dark:text-primary-hover">
                 {wahStats?.governoratesCount || 10}
