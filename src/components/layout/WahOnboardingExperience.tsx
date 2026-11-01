@@ -138,21 +138,25 @@ export const WahOnboardingExperience: React.FC = () => {
   const dialogRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    if (!showOnboarding) return;
+    if (!showOnboarding || introAudioRef.current) return;
 
     const audio = new Audio('/audio/site-intro.mp3');
     audio.preload = 'auto';
     audio.volume = 0.45;
     introAudioRef.current = audio;
     audio.load();
+  }, [showOnboarding]);
 
+  useEffect(() => {
     return () => {
+      const audio = introAudioRef.current;
+      if (!audio) return;
       audio.pause();
       audio.onended = null;
       audio.onerror = null;
-      if (introAudioRef.current === audio) introAudioRef.current = null;
+      introAudioRef.current = null;
     };
-  }, [showOnboarding]);
+  }, []);
 
   const loadGovernorates = useCallback(async () => {
     setIsLoadingGovernorates(true);
@@ -174,14 +178,12 @@ export const WahOnboardingExperience: React.FC = () => {
     setActiveStep(0);
     setDoorOpened(false);
     setAudioError(false);
-    setAudioPlaying(false);
-    setAudioMuted(false);
+    setAudioPlaying(Boolean(introAudioRef.current && !introAudioRef.current.paused));
+    setAudioMuted(Boolean(introAudioRef.current?.muted));
     void loadGovernorates();
   }, [showOnboarding, loadGovernorates]);
 
   const handleDismissOnboarding = useCallback(() => {
-    introAudioRef.current?.pause();
-    setAudioPlaying(false);
     dismissOnboarding();
   }, [dismissOnboarding]);
 
@@ -506,14 +508,6 @@ export const WahOnboardingExperience: React.FC = () => {
                               >
                                 <RotateCcw size={14} />
                                 إعادة الأغنية
-                              </button>
-                              <button
-                                type="button"
-                                onClick={handleDismissOnboarding}
-                                className="inline-flex min-h-11 touch-manipulation items-center justify-center gap-2 rounded-full border border-primary/25 px-4 text-xs font-black text-foreground transition hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                              >
-                                ابدأ الرحلة
-                                <ArrowLeft size={15} />
                               </button>
                             </div>
                           )}
