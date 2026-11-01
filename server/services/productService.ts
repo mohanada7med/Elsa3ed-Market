@@ -288,6 +288,8 @@ export async function createProduct(
   const sellerGovernorate = sellerUser.governorate || 'قنا';
 
   const productId = data.id || `prod-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+  const requestedStockCount = data.stockCount == null ? 10 : Number(data.stockCount);
+  const stockCount = Number.isFinite(requestedStockCount) ? requestedStockCount : 10;
 
   const newProduct: ProductDocument = {
     id: productId,
@@ -303,18 +305,18 @@ export async function createProduct(
     discountPercent: data.discountPercent ? Number(data.discountPercent) : undefined,
     rating: 0,
     reviewCount: 0,
-    inStock: data.inStock ?? true,
-    stockCount: Number.isFinite(Number(data.stockCount)) ? Number(data.stockCount) : 10,
+    inStock: data.inStock ?? stockCount > 0,
+    stockCount,
     images: data.images && data.images.length > 0 ? data.images : [],
     description: data.description?.trim() || '',
     specifications: {
-      material: data.specifications?.material || 'خامات صعيدية طبيعية',
-      originGovernorate: data.specifications?.originGovernorate || sellerGovernorate,
-      craftsmanship: data.specifications?.craftsmanship || 'صناعة يدوية أصيلة',
-      dimensions: data.specifications?.dimensions || '',
-      weight: data.specifications?.weight || '',
-      careInstructions: data.specifications?.careInstructions || '',
-      estimatedMakingTime: data.specifications?.estimatedMakingTime || ''
+      material: data.specifications?.material ?? 'خامات صعيدية طبيعية',
+      originGovernorate: data.specifications?.originGovernorate ?? sellerGovernorate,
+      craftsmanship: data.specifications?.craftsmanship ?? 'صناعة يدوية أصيلة',
+      dimensions: data.specifications?.dimensions ?? '',
+      weight: data.specifications?.weight ?? '',
+      careInstructions: data.specifications?.careInstructions ?? '',
+      estimatedMakingTime: data.specifications?.estimatedMakingTime ?? ''
     },
     tags: data.tags || ['تراث_صعيدي', 'يدوي', sellerGovernorate],
     isHandmade: data.isHandmade ?? true,

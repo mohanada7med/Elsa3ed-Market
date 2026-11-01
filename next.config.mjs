@@ -63,6 +63,20 @@ const nextConfig = {
       },
     ];
 
+    const nextStaticHeaders = isProd
+      ? immutableAssetHeaders
+      : [
+          ...commonHeaders,
+          {
+            key: 'Cache-Control',
+            value: 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+          },
+          {
+            key: 'Pragma',
+            value: 'no-cache',
+          },
+        ];
+
     const serviceWorkerHeaders = [
       ...commonHeaders,
       {
@@ -96,7 +110,7 @@ const nextConfig = {
       },
       {
         source: '/_next/static/:path*',
-        headers: immutableAssetHeaders,
+        headers: nextStaticHeaders,
       },
       {
         source: '/_next/image/:path*',

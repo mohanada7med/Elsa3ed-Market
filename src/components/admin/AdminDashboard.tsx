@@ -336,10 +336,13 @@ export const AdminDashboard: React.FC = () => {
   const [prodStockCount, setProdStockCount] = useState(10);
   const [prodDescription, setProdDescription] = useState('');
   const [prodImageUrl, setProdImageUrl] = useState('');
+  const [prodAdditionalImages, setProdAdditionalImages] = useState<string[]>([]);
   const [prodMaterial, setProdMaterial] = useState('طين نيل طبيعي');
   const [prodCraftsmanship, setProdCraftsmanship] = useState('صناعة يدوية على الدولاب التقليدي');
   const [prodDimensions, setProdDimensions] = useState('25 × 15 سم');
   const [prodWeight, setProdWeight] = useState('800 جرام');
+  const [prodCareInstructions, setProdCareInstructions] = useState('');
+  const [prodEstimatedMakingTime, setProdEstimatedMakingTime] = useState('');
   const [prodOriginGovernorate, setProdOriginGovernorate] = useState<Governorate>('قنا');
   const [prodApprovalStatus, setProdApprovalStatus] = useState<ProductStatus>('approved');
   const [prodIsHandmade, setProdIsHandmade] = useState(true);
@@ -951,10 +954,13 @@ export const AdminDashboard: React.FC = () => {
     setProdStockCount(15);
     setProdDescription('');
     setProdImageUrl('https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=800&q=80');
+    setProdAdditionalImages([]);
     setProdMaterial('طمي نيل طبيعي وأصباغ نباتية');
     setProdCraftsmanship('يدوي أصيل بالكامل');
     setProdDimensions('30 × 20 سم');
     setProdWeight('1 كجم');
+    setProdCareInstructions('');
+    setProdEstimatedMakingTime('');
     setProdOriginGovernorate(sellers[0]?.governorate || 'قنا');
     setProdApprovalStatus('approved');
     setProdIsHandmade(true);
@@ -973,12 +979,15 @@ export const AdminDashboard: React.FC = () => {
     setProdOriginalPrice(product.originalPrice);
     setProdStockCount(product.stockCount || 0);
     setProdDescription(product.description || '');
-    setProdImageUrl(product.images?.[0] || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=800&q=80');
+    setProdImageUrl(product.images?.[0] || '');
+    setProdAdditionalImages(product.images?.slice(1) || []);
     setProdMaterial(product.specifications?.material || 'خامات طبيعية');
     setProdCraftsmanship(product.specifications?.craftsmanship || 'صناعة يدوية');
     setProdDimensions(product.specifications?.dimensions || '');
     setProdWeight(product.specifications?.weight || '');
-    setProdOriginGovernorate(product.sellerGovernorate || product.specifications?.originGovernorate || 'قنا');
+    setProdCareInstructions(product.specifications?.careInstructions || '');
+    setProdEstimatedMakingTime(product.specifications?.estimatedMakingTime || '');
+    setProdOriginGovernorate(product.specifications?.originGovernorate || product.sellerGovernorate || 'قنا');
     setProdApprovalStatus(product.approvalStatus || 'approved');
     setProdIsHandmade(product.isHandmade !== undefined ? product.isHandmade : true);
     setProdIsHeritage(product.isHeritage !== undefined ? product.isHeritage : true);
@@ -994,32 +1003,39 @@ export const AdminDashboard: React.FC = () => {
     setIsAdminSubmittingProduct(true);
     try {
       const selectedCat = categories.find((c) => c.id === prodCategoryId);
-      const targetSeller = sellers.find((s) => s.id === prodSellerId);
+      const targetSeller = sellers.find(
+        (seller) => seller.id === prodSellerId || seller.userId === prodSellerId
+      );
+      const selectedImages = [prodImageUrl.trim(), ...prodAdditionalImages]
+        .filter((image, index, images) => Boolean(image) && images.indexOf(image) === index);
 
       const productPayload: Partial<Product> = {
         title: prodTitle.trim(),
-        titleEn: prodTitleEn.trim() || undefined,
+        titleEn: prodTitleEn.trim(),
         categoryId: prodCategoryId,
         categoryName: selectedCat?.name || prodCategoryName,
         sellerId: prodSellerId || currentUser.id,
-        sellerName: targetSeller?.brandName || targetSeller?.name || 'إدارة منصة وه',
-        sellerGovernorate: (prodOriginGovernorate || targetSeller?.governorate || 'قنا') as any,
+        sellerName: targetSeller?.brandName || targetSeller?.name || editingAdminProduct?.sellerName || 'إدارة منصة وه',
+        sellerGovernorate: (targetSeller?.governorate || editingAdminProduct?.sellerGovernorate || prodOriginGovernorate || 'قنا') as any,
         price: Number(prodPrice),
-        originalPrice: prodOriginalPrice ? Number(prodOriginalPrice) : undefined,
+        originalPrice: prodOriginalPrice ? Number(prodOriginalPrice) : 0,
         discountPercent:
           prodOriginalPrice && prodOriginalPrice > prodPrice
             ? Math.round(((prodOriginalPrice - prodPrice) / prodOriginalPrice) * 100)
-            : undefined,
+            : 0,
         stockCount: Number(prodStockCount),
         inStock: Number(prodStockCount) > 0,
         description: prodDescription.trim(),
-        images: [prodImageUrl.trim() || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=800&q=80'],
+        images: selectedImages,
         specifications: {
+          ...(editingAdminProduct?.specifications || {}),
           material: prodMaterial.trim(),
           craftsmanship: prodCraftsmanship.trim(),
           dimensions: prodDimensions.trim(),
           weight: prodWeight.trim(),
-          originGovernorate: prodOriginGovernorate
+          originGovernorate: prodOriginGovernorate,
+          careInstructions: prodCareInstructions.trim() || undefined,
+          estimatedMakingTime: prodEstimatedMakingTime.trim() || undefined
         },
         isHandmade: prodIsHandmade,
         isHeritage: prodIsHeritage,
@@ -7353,6 +7369,9 @@ export const AdminDashboard: React.FC = () => {
                     }}
                     className="w-full px-3 py-2 bg-surface text-foreground border border-border rounded-xl text-xs outline-none focus:border-primary cursor-pointer transition-colors"
                   >
+                    {prodCategoryId && !categories.some((category) => category.id === prodCategoryId) && (
+                      <option value={prodCategoryId}>{prodCategoryName || 'التصنيف الحالي'}</option>
+                    )}
                     {categories.map((c) => (
                       <option key={c.id} value={c.id}>
                         {c.name}
@@ -7368,6 +7387,11 @@ export const AdminDashboard: React.FC = () => {
                     onChange={(e) => setProdSellerId(e.target.value)}
                     className="w-full px-3 py-2 bg-surface text-foreground border border-border rounded-xl text-xs outline-none focus:border-primary cursor-pointer transition-colors"
                   >
+                    {prodSellerId && !sellers.some((seller) => seller.id === prodSellerId) && (
+                      <option value={prodSellerId}>
+                        {editingAdminProduct?.sellerName || 'البائع الحالي'}
+                      </option>
+                    )}
                     {sellers.map((s) => (
                       <option key={s.id} value={s.id}>
                         {s.brandName || s.name} (محافظة {s.governorate})
@@ -7445,6 +7469,62 @@ export const AdminDashboard: React.FC = () => {
                 helperText="ارفع صورة واضحة وعالية الجودة للمنتج من جهازك أو استخدم لينك مباشر"
               />
 
+              {(prodImageUrl || prodAdditionalImages.length > 0) && (
+                <div className="space-y-2">
+                  <p className="text-xs font-bold text-foreground">صور المنتج المحفوظة:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {prodImageUrl && (
+                      <div className="relative">
+                        <img
+                          src={prodImageUrl}
+                          alt="الصورة الرئيسية للمنتج"
+                          className="h-20 w-20 rounded-xl border border-border object-cover"
+                        />
+                        <span className="absolute inset-x-1 bottom-1 rounded bg-black/70 px-1 py-0.5 text-center text-[9px] font-bold text-white">
+                          رئيسية
+                        </span>
+                      </div>
+                    )}
+                    {prodAdditionalImages.map((image, index) => (
+                      <div key={`${image}-${index}`} className="relative">
+                        <img
+                          src={image}
+                          alt={`صورة إضافية للمنتج ${index + 1}`}
+                          className="h-20 w-20 rounded-xl border border-border object-cover"
+                        />
+                        <div className="mt-1 flex items-center justify-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const selectedImage = prodAdditionalImages[index];
+                              if (!selectedImage || selectedImage === prodImageUrl) return;
+
+                              const remainingImages = prodAdditionalImages.filter((_, imageIndex) => imageIndex !== index);
+                              if (prodImageUrl && !remainingImages.includes(prodImageUrl)) {
+                                remainingImages.splice(Math.min(index, remainingImages.length), 0, prodImageUrl);
+                              }
+                              setProdImageUrl(selectedImage);
+                              setProdAdditionalImages(remainingImages);
+                            }}
+                            className="rounded-md border border-primary/30 px-1.5 py-1 text-[9px] font-bold text-primary hover:bg-primary/10"
+                          >
+                            اختيار كغلاف
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setProdAdditionalImages((images) => images.filter((_, imageIndex) => imageIndex !== index))}
+                            aria-label={`حذف الصورة الإضافية ${index + 1}`}
+                            className="flex h-6 w-6 items-center justify-center rounded-md text-rose-600 hover:bg-rose-50"
+                          >
+                            <X className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Specifications */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div className="space-y-1">
@@ -7487,6 +7567,28 @@ export const AdminDashboard: React.FC = () => {
                     value={prodWeight}
                     onChange={(e) => setProdWeight(e.target.value)}
                     placeholder="مثال: 1.2 كجم"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-xs outline-none focus:border-primary"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-foreground">وقت التجهيز لو هيتصنع بعد الطلب:</label>
+                  <input
+                    type="text"
+                    value={prodEstimatedMakingTime}
+                    onChange={(e) => setProdEstimatedMakingTime(e.target.value)}
+                    placeholder="مثال: 3 أيام"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-xs outline-none focus:border-primary"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-foreground">طريقة العناية بالقطعة:</label>
+                  <input
+                    type="text"
+                    value={prodCareInstructions}
+                    onChange={(e) => setProdCareInstructions(e.target.value)}
+                    placeholder="مثال: تتغسل يدويًا من غير منظفات قوية"
                     className="w-full px-3 py-2 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-xs outline-none focus:border-primary"
                   />
                 </div>

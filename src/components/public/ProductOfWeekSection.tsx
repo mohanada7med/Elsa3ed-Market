@@ -201,7 +201,7 @@ export const ProductOfWeekSection: React.FC = () => {
             </h3>
 
             <p className="mt-2 text-[9px] font-black tracking-[0.16em] text-primary dark:text-primary-hover sm:mt-5 sm:text-[10px]">
-              حكاية الصنعة
+              عن المنتج
             </p>
             <p className="mt-1 line-clamp-2 text-[11px] font-semibold leading-5 text-foreground-secondary sm:mt-2 sm:line-clamp-5 sm:text-base sm:leading-8">
               {story}

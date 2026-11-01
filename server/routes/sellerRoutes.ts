@@ -516,7 +516,25 @@ router.put('/orders/:id/status', async (req: AuthenticatedRequest, res: Response
 
 router.post('/products', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { id, title, categoryId, categoryName, price, stockCount, description, specifications, images, status } = req.body;
+    const {
+      id,
+      title,
+      titleEn,
+      categoryId,
+      categoryName,
+      price,
+      originalPrice,
+      discountPercent,
+      stockCount,
+      inStock,
+      isHandmade,
+      isHeritage,
+      description,
+      specifications,
+      images,
+      tags,
+      status
+    } = req.body;
 
     // Server-side validation
     if (!title || !title.trim()) {
@@ -527,10 +545,18 @@ router.post('/products', async (req: AuthenticatedRequest, res: Response) => {
       });
     }
 
-    if (!price || Number(price) <= 0) {
+    if (price == null || !Number.isFinite(Number(price)) || Number(price) <= 0) {
       return res.status(400).json({
         success: false,
         error: 'سعر المنتج يجب أن يكون أكبر من صفر',
+        code: 'VALIDATION_ERROR'
+      });
+    }
+
+    if (stockCount != null && (!Number.isFinite(Number(stockCount)) || Number(stockCount) < 0)) {
+      return res.status(400).json({
+        success: false,
+        error: 'كمية المخزون يجب أن تكون رقمًا صفرًا أو أكبر',
         code: 'VALIDATION_ERROR'
       });
     }
@@ -559,13 +585,20 @@ router.post('/products', async (req: AuthenticatedRequest, res: Response) => {
       {
         id,
         title: title.trim(),
+        titleEn: titleEn?.trim() || '',
         categoryId,
         categoryName,
         price: Number(price),
-        stockCount: stockCount ? Number(stockCount) : 10,
+        originalPrice: originalPrice != null ? Number(originalPrice) : undefined,
+        discountPercent: discountPercent != null ? Number(discountPercent) : undefined,
+        stockCount: stockCount != null ? Number(stockCount) : 10,
+        inStock: inStock ?? (stockCount == null || Number(stockCount) > 0),
+        isHandmade,
+        isHeritage,
         description: description?.trim() || '',
         specifications,
-        images
+        images,
+        tags
       },
       initialStatus
     );

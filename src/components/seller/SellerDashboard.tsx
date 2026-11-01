@@ -638,7 +638,7 @@ export const SellerDashboard: React.FC = () => {
     const submittedOriginalPrice =
       originalPrice !== '' && originalPrice > price ? originalPrice : undefined;
     const discountPercent = submittedOriginalPrice
-      ? Math.round(((submittedOriginalPrice - Number(price)) / Number(price)) * 100)
+      ? Math.round(((submittedOriginalPrice - Number(price)) / submittedOriginalPrice) * 100)
       : 0;
     setIsSubmitting(true);
     setIsUploadingImages(true);
