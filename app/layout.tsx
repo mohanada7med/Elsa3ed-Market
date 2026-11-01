@@ -69,7 +69,6 @@ export default function RootLayout({
               var completed = false;
               var readyTimer = null;
               var fallbackTimer = null;
-              var removeTimer = null;
 
               function exitLoader() {
                 if (completed) return;
@@ -78,13 +77,6 @@ export default function RootLayout({
                 if (fallbackTimer !== null) window.clearTimeout(fallbackTimer);
                 window.removeEventListener('wah:app-ready', onAppReady);
                 root.classList.add('app-ready');
-
-                var fadeDuration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 700;
-                removeTimer = window.setTimeout(function () {
-                  var loader = document.getElementById('wah-initial-loader');
-                  if (loader) loader.remove();
-                  removeTimer = null;
-                }, fadeDuration);
               }
 
               function onAppReady() {
