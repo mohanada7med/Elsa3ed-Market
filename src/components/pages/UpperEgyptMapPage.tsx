@@ -1,5 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import {
+  motion,
+  AnimatePresence,
+  MotionConfig,
+  useMotionValue,
+  useSpring,
+  useTransform,
+} from 'motion/react';
 import { useApp } from '../../context/AppContext';
 import { wahApi } from '../../services/api';
 import {
@@ -15,11 +22,9 @@ import {
   ChevronRight,
   Hammer,
   Landmark,
-  LayoutGrid,
   MapPin,
   Search,
   Scroll,
-  Ship,
   ShoppingBag,
   Utensils,
   X,
@@ -32,6 +37,8 @@ const LOGO_URL =
 
 const FALLBACK_IMAGE =
   'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=1200&auto=format&fit=crop&q=80';
+
+const VISITED_KEY = 'wah_atlas_visited';
 
 const GOVERNORATE_ORDER = [
   'الفيوم',
@@ -64,6 +71,7 @@ const TABS = [
   { id: 'foods' as const, label: 'السفرة', icon: Utensils },
   { id: 'folklore' as const, label: 'الحكايات', icon: Scroll },
 ];
+type TabId = (typeof TABS)[number]['id'];
 
 /**
  * دالة الحفاظ على أعلى جودة كريستالية للصور
@@ -97,6 +105,150 @@ const getHighQualityImage = (url?: string | null, width = 1600): string => {
   }
 
   return clean;
+};
+
+/* ───────────── ستايل الورق والحبر ───────────── */
+const PAPER = 'bg-[#fbf3e1] dark:bg-[#2a2420]';
+const INK_BORDER = 'border-2 border-espresso/80 dark:border-[#C99444]/70';
+const LINED =
+  'bg-[repeating-linear-gradient(transparent,transparent_31px,rgba(107,58,31,.12)_32px)] dark:bg-[repeating-linear-gradient(transparent,transparent_31px,rgba(201,148,68,.16)_32px)]';
+
+const formatDate = (iso?: string) => {
+  if (!iso) return '';
+  try {
+    return new Date(iso).toLocaleDateString('ar-EG', { day: 'numeric', month: 'short' });
+  } catch {
+    return '';
+  }
+};
+
+/* ───────────── مكونات صغيرة ───────────── */
+
+// ميلان تلاتي الأبعاد مع حركة الماوس
+const TiltCard: React.FC<{
+  children: React.ReactNode;
+  className?: string;
+  onClick?: () => void;
+  label?: string;
+}> = ({ children, className, onClick, label }) => {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [7, -7]), { stiffness: 200, damping: 20 });
+  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-9, 9]), { stiffness: 200, damping: 20 });
+
+  return (
+    <motion.div
+      role="button"
+      tabIndex={0}
+      aria-label={label}
+      onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick?.();
+        }
+      }}
+      onPointerMove={(e) => {
+        if (e.pointerType !== 'mouse') return;
+        const r = e.currentTarget.getBoundingClientRect();
+        x.set((e.clientX - r.left) / r.width - 0.5);
+        y.set((e.clientY - r.top) / r.height - 0.5);
+      }}
+      onPointerLeave={() => {
+        x.set(0);
+        y.set(0);
+      }}
+      whileTap={{ scale: 0.97 }}
+      style={{ rotateX, rotateY, transformPerspective: 900 }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+};
+
+// باركود شكلي مبني على رقم المحافظة
+const Barcode: React.FC<{ seed: string }> = ({ seed }) => {
+  const bars = useMemo(
+    () =>
+      Array.from({ length: 24 }).map((_, i) => {
+        const code = seed.charCodeAt(i % seed.length) || 7;
+        return ((code * (i + 3)) % 4) + 1;
+      }),
+    [seed]
+  );
+  return (
+    <div className="flex w-full flex-col gap-[2px] text-espresso dark:text-[#C99444]" aria-hidden>
+      {bars.map((h, i) => (
+        <span key={i} className="block w-full bg-current" style={{ height: h }} />
+      ))}
+    </div>
+  );
+};
+
+// ختم بيتخبط (سلام بقوة)
+const Stamp: React.FC<{ label: string; date?: string; size?: 'sm' | 'lg'; delay?: number }> = ({ label, date, size = 'lg', delay = 0 }) => (
+  <motion.div
+    initial={{ scale: 3, rotate: -35, opacity: 0 }}
+    animate={{ scale: 1, rotate: -12, opacity: 0.92 }}
+    transition={{ type: 'spring', stiffness: 420, damping: 14, delay }}
+    className={`pointer-events-none flex flex-col items-center justify-center rounded-full border-[3px] border-double border-[#B3261E] text-center text-[#B3261E] dark:border-[#FF8A80] dark:text-[#FF8A80] ${size === 'lg' ? 'h-28 w-28' : 'h-[68px] w-[68px]'
+      }`}
+  >
+    <span className={`font-main font-black leading-none ${size === 'lg' ? 'text-xl' : 'text-[11px]'}`}>وصلت</span>
+    <span className={`font-bold leading-tight ${size === 'lg' ? 'mt-1 max-w-[88px] truncate text-[11px]' : 'max-w-[56px] truncate text-[8px]'}`}>{label}</span>
+    {date && size === 'lg' && <span className="text-[10px] font-bold opacity-80">{date}</span>}
+  </motion.div>
+);
+
+// دايرة التقدم
+const ProgressRing: React.FC<{ done: number; total: number }> = ({ done, total }) => {
+  const r = 52;
+  const c = 2 * Math.PI * r;
+  const ratio = total ? done / total : 0;
+  return (
+    <div className="relative flex h-32 w-32 items-center justify-center">
+      <svg viewBox="0 0 120 120" className="absolute inset-0 -rotate-90">
+        <circle cx="60" cy="60" r={r} fill="none" stroke="currentColor" strokeOpacity=".18" strokeWidth="8" />
+        <motion.circle
+          cx="60"
+          cy="60"
+          r={r}
+          fill="none"
+          stroke="#C99444"
+          strokeWidth="8"
+          strokeLinecap="round"
+          strokeDasharray={c}
+          initial={{ strokeDashoffset: c }}
+          animate={{ strokeDashoffset: c * (1 - ratio) }}
+          transition={{ duration: 1.1, ease: 'easeOut' }}
+        />
+      </svg>
+      <div className="text-center">
+        <div className="text-3xl font-black leading-none">
+          {done}
+          <span className="text-base opacity-60">/{total}</span>
+        </div>
+        <div className="mt-1 text-[11px] font-bold opacity-75">محطة مختومة</div>
+      </div>
+    </div>
+  );
+};
+
+const gridVariants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.07 } },
+};
+const rise = {
+  hidden: { opacity: 0, y: 22 },
+  show: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 280, damping: 24 } },
+};
+
+// قلب صفحة الجواز
+const pageVariants = {
+  enter: (d: number) => ({ rotateY: d * -55, opacity: 0, x: d * -30 }),
+  center: { rotateY: 0, opacity: 1, x: 0 },
+  exit: (d: number) => ({ rotateY: d * 55, opacity: 0, x: d * 30 }),
 };
 
 export const UpperEgyptMapPage: React.FC = () => {
@@ -139,11 +291,32 @@ export const UpperEgyptMapPage: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [activeTab, setActiveTab] = useState<'places' | 'crafts' | 'products' | 'foods' | 'folklore'>('places');
-  const [displayMode, setDisplayMode] = useState<'voyage' | 'grid'>('voyage');
+  const [bookOpen, setBookOpen] = useState(false);
+  const [flipDir, setFlipDir] = useState(1);
+  const [activeTab, setActiveTab] = useState<TabId>('places');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRegionFilter, setSelectedRegionFilter] = useState('الكل');
   const [addedProductId, setAddedProductId] = useState<string | null>(null);
+
+  // الأختام اللي اتجمعت (متخزنة في المتصفح)
+  const [visited, setVisited] = useState<Record<string, string>>(() => {
+    try {
+      return JSON.parse(localStorage.getItem(VISITED_KEY) || '{}');
+    } catch {
+      return {};
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(VISITED_KEY, JSON.stringify(visited));
+    } catch { }
+  }, [visited]);
+
+  const markVisited = (id?: string) => {
+    if (!id) return;
+    setVisited((cur) => (cur[id] ? cur : { ...cur, [id]: new Date().toISOString() }));
+  };
 
   // تحميل البيانات وتحميل كل الصور في الـ RAM قبل إخفاء الـ Loader
   useEffect(() => {
@@ -169,16 +342,15 @@ export const UpperEgyptMapPage: React.FC = () => {
           } catch { }
         }
 
-        // تحميل جميع صور أغلفة المحافظات مسبقاً بدقة كاملة
         const preloadPromises = currentGovs
           .filter((g) => Boolean(g.coverImage))
           .map(
             (g) =>
               new Promise<void>((resolve) => {
                 const img = new Image();
-                img.src = getHighQualityImage(g.coverImage, 1600);
+                img.src = getHighQualityImage(g.coverImage, 800);
                 img.onload = () => resolve();
-                img.onerror = () => resolve(); // لضمان عدم توقف الصفحة إذا تعذر تحميل صورة واحدة
+                img.onerror = () => resolve();
               })
           );
 
@@ -198,6 +370,21 @@ export const UpperEgyptMapPage: React.FC = () => {
       isMounted = false;
     };
   }, []);
+
+  // قفل السكروول وإغلاق بـ Esc
+  useEffect(() => {
+    if (!bookOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setBookOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [bookOpen]);
 
   const selectedGov = governorates[selectedIndex] ?? governorates[0];
 
@@ -246,6 +433,18 @@ export const UpperEgyptMapPage: React.FC = () => {
     });
   }, [products, selectedGov]);
 
+  const countsByGov = useMemo(() => {
+    const map: Record<string, { places: number; crafts: number }> = {};
+    governorates.forEach((g) => {
+      const own = markers.filter((m) => m.governorateId === g.id || m.governorateName === g.name);
+      map[g.id] = {
+        places: own.filter((m) => m.type === 'place').length,
+        crafts: own.filter((m) => m.type === 'craft').length,
+      };
+    });
+    return map;
+  }, [governorates, markers]);
+
   const availableRegions = useMemo(() => {
     const set = new Set<string>();
     governorates.forEach((g) => {
@@ -281,31 +480,23 @@ export const UpperEgyptMapPage: React.FC = () => {
     );
   }, [selectedGov]);
 
-  const scrollTop = () => {
-    if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
+  const visitedCount = governorates.filter((g) => visited[g.id]).length;
 
-  const selectGovernorate = (index: number) => {
-    if (index < 0 || index >= governorates.length) return;
+  const openGovernorate = (index: number) => {
+    setFlipDir(1);
     setSelectedIndex(index);
     setActiveTab('places');
-    scrollTop();
+    markVisited(governorates[index]?.id);
+    setBookOpen(true);
   };
 
-  const nextGovernorate = () => {
+  const stepGovernorate = (dir: 1 | -1) => {
     if (!governorates.length) return;
-    setSelectedIndex((current) => (current >= governorates.length - 1 ? 0 : current + 1));
+    setFlipDir(dir);
+    const next = (selectedIndex + dir + governorates.length) % governorates.length;
+    setSelectedIndex(next);
     setActiveTab('places');
-    scrollTop();
-  };
-
-  const previousGovernorate = () => {
-    if (!governorates.length) return;
-    setSelectedIndex((current) => (current <= 0 ? governorates.length - 1 : current - 1));
-    setActiveTab('places');
-    scrollTop();
+    markVisited(governorates[next]?.id);
   };
 
   const handleAddProduct = (product: Product) => {
@@ -324,9 +515,14 @@ export const UpperEgyptMapPage: React.FC = () => {
         dir="rtl"
         className="min-h-screen w-full flex flex-col items-center justify-center bg-cream dark:bg-espresso-900 text-espresso dark:text-cream gap-4"
       >
-        <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-cream/5 shadow-xl">
+        <motion.div
+          animate={{ rotateY: [0, 180, 360] }}
+          transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+          style={{ transformPerspective: 600 }}
+          className={`flex h-16 w-16 items-center justify-center rounded-2xl bg-white/80 dark:bg-cream/5 ${INK_BORDER}`}
+        >
           <img src={LOGO_URL} alt="وه" className="h-10 w-10 object-contain" />
-        </div>
+        </motion.div>
         <div className="flex items-center gap-2 text-sm font-bold text-primary">
           <Loader2 className="w-4 h-4 animate-spin" />
           <span>بنجهّز صور ومحطات الصعيد بأعلى جودة...</span>
@@ -336,614 +532,601 @@ export const UpperEgyptMapPage: React.FC = () => {
   }
 
   return (
-    <div
-      dir="rtl"
-      className="
-        min-h-screen
-        overflow-x-hidden
-        bg-cream
-        text-espresso
-        transition-colors duration-500
-        dark:bg-espresso-900
-        dark:text-cream
-      "
-    >
-      {/* الرأس */}
-      <header className="relative z-50 border-b border-black/10 dark:border-white/10">
-        <div className="mx-auto flex h-[76px] max-w-[1600px] items-center justify-between px-5 sm:px-8 lg:px-12">
-          <button
-            onClick={() => setActivePage('home')}
-            className="group flex items-center gap-3 text-sm font-bold transition-all hover:text-primary cursor-pointer"
-          >
-            <span className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white/60 transition-all group-hover:bg-espresso group-hover:text-white dark:border-white/10 dark:bg-cream/5 dark:group-hover:bg-white dark:group-hover:text-black">
-              <ArrowLeft size={17} className="transition-transform group-hover:-translate-x-1" />
-            </span>
-            <span className="hidden sm:block">الرئيسية</span>
-          </button>
-
-          <div className="absolute left-1/2 -translate-x-1/2 text-center">
-            <div className="text-[9px] font-bold tracking-[0.35em] text-primary">WAH</div>
-            <div className="mt-1 text-sm font-black">رحلة الصعيد</div>
-          </div>
-
-          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-
-            <div className="flex items-center gap-1 rounded-xl sm:rounded-2xl border border-black/10 bg-white/50 p-1 backdrop-blur-xl dark:border-white/10 dark:bg-cream/[0.05] shadow-lg">
-              <button
-                type="button"
-                onClick={() => setDisplayMode('voyage')}
-                className={`flex h-8 sm:h-10 items-center justify-center gap-1.5 sm:gap-2 rounded-lg sm:rounded-xl px-2 sm:px-4 text-[10px] sm:text-xs font-black transition-all cursor-pointer ${displayMode === 'voyage'
-                  ? 'bg-espresso text-white shadow-lg dark:bg-[#6B3A1F] dark:text-[#FFF9EE]'
-                  : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
-                  }`}
-              >
-                <Ship size={15} className="shrink-0" />
-                <span>مركب النيل</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setDisplayMode('grid')}
-                className={`flex h-8 sm:h-10 items-center justify-center gap-1.5 sm:gap-2 rounded-lg sm:rounded-xl px-2 sm:px-4 text-[10px] sm:text-xs font-black transition-all cursor-pointer ${displayMode === 'grid'
-                  ? 'bg-espresso text-white shadow-lg dark:bg-[#6B3A1F] dark:text-[#FFF9EE]'
-                  : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
-                  }`}
-              >
-                <LayoutGrid size={15} className="shrink-0" />
-                <span>كل المحافظات</span>
-              </button>
+    <MotionConfig reducedMotion="user">
+      <div
+        dir="rtl"
+        className="min-h-screen overflow-x-hidden bg-cream text-espresso transition-colors duration-500 dark:bg-espresso-900 dark:text-cream"
+      >
+        {/* الرأس */}
+        <header className="border-b border-black/10 dark:border-white/10">
+          <div className="mx-auto flex h-[68px] max-w-[1400px] items-center justify-between px-5 sm:px-8">
+            <button
+              onClick={() => setActivePage('home')}
+              className="group flex items-center gap-3 text-sm font-bold transition-colors hover:text-primary cursor-pointer"
+            >
+              <span className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white/60 transition-colors group-hover:bg-espresso group-hover:text-white dark:border-white/10 dark:bg-cream/5 dark:group-hover:bg-white dark:group-hover:text-black">
+                <ArrowLeft size={17} className="transition-transform group-hover:-translate-x-1" />
+              </span>
+              <span className="hidden sm:block">الرئيسية</span>
+            </button>
+            <div className="flex items-center gap-2">
+              <img src={LOGO_URL} alt="وه" className="h-7 w-7 object-contain" />
+              <span className="text-sm font-black">رحلة الصعيد</span>
             </div>
+            <div className="w-10 sm:w-24" aria-hidden />
           </div>
-        </div>
-      </header>
+        </header>
 
-      {/* شريط المحطات */}
-      <div className="sticky top-0 z-40 w-full border-b border-black/10 dark:border-white/10 bg-cream/90 dark:bg-espresso-900/90 backdrop-blur-2xl">
-        <div className="mx-auto max-w-[1600px] px-3 sm:px-5 md:px-7 lg:px-10 xl:px-12">
-          <div className="relative overflow-x-auto no-scrollbar py-3">
-            <div className="absolute right-7 left-7 top-[31px] h-px bg-black/10 dark:bg-cream/10" />
+        <main className="mx-auto max-w-[1400px] px-5 pb-24 pt-8 sm:px-8 sm:pt-12">
+          <div className="mb-12">
+            <UncleWahHeroBanner
+              doorTitle="خريطة بلاد ودكاكين ونيل الصعيد"
+              doorBadge="باب خريطة الصعيد"
+              mascotSrc="/mascot/saaed.png"
+              mascotRole="دليل عم وه للبلاد"
+              quote="عم وه رسم لكم خريطة الصعيد شبر شبر من بحري لحد أسوان والنوبة عشان متتوهش في ديارنا.. دوس على أي محافظة وشوف حكاياتها وخيرها!"
+              statsText={`${governorates.length} محافظة صعيدية`}
+              actionText="طلّع تذكرتك"
+              onAction={() => document.getElementById('tickets')?.scrollIntoView({ behavior: 'smooth' })}
+            />
+          </div>
 
-            <div className="relative z-10 flex min-w-max items-start justify-between gap-2">
-              {governorates.map((gov, index) => {
-                const active = index === selectedIndex;
+          {/* غلاف الجواز */}
+          <motion.section
+            initial={{ opacity: 0, y: 30, rotateX: 20 }}
+            whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+            viewport={{ once: true }}
+            transition={{ type: 'spring', stiffness: 120, damping: 18 }}
+            style={{ transformPerspective: 1200 }}
+            className="relative mb-12 overflow-hidden rounded-[2rem] bg-espresso p-3 text-[#E8C27A] shadow-2xl dark:bg-[#1a1310]"
+          >
+            <div className="relative grid items-center gap-6 rounded-[1.5rem] border-2 border-dashed border-[#C99444]/60 bg-[radial-gradient(circle_at_85%_20%,rgba(201,148,68,.22),transparent_45%)] px-6 py-8 sm:px-10 md:grid-cols-[auto_1fr_auto]">
+              <motion.div
+                animate={{ rotate: [0, 6, -6, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                className="mx-auto flex h-24 w-24 items-center justify-center rounded-full border-[3px] border-double border-[#C99444] md:mx-0"
+              >
+                <img src={LOGO_URL} alt="وه" className="h-14 w-14 object-contain" />
+              </motion.div>
+
+              <div className="text-center md:text-right">
+                <div className="text-xs font-bold text-[#C99444]/80">جمهورية الصعيد الأصيل</div>
+                <h2 className="mt-1 font-main text-4xl font-black text-white sm:text-5xl">جواز سفر الصعيد</h2>
+                <p className="mx-auto mt-3 max-w-md text-sm leading-loose text-white/75 md:mx-0">
+                  كل محطة تفتح تذكرتها بتتختم في جوازك. اجمع {governorates.length} ختم وكمّل الرحلة من أول النيل لآخره.
+                </p>
+                {visitedCount > 0 && (
+                  <button
+                    onClick={() => setVisited({})}
+                    className="mt-3 text-xs font-bold text-[#C99444] underline-offset-4 hover:underline cursor-pointer"
+                  >
+                    امسح الأختام وابدأ من جديد
+                  </button>
+                )}
+              </div>
+
+              <div className="mx-auto text-[#E8C27A] md:mx-0">
+                <ProgressRing done={visitedCount} total={governorates.length} />
+              </div>
+            </div>
+          </motion.section>
+
+          {/* البحث والتصفية */}
+          <div className="mb-8 flex flex-col gap-3 lg:flex-row lg:items-center">
+            <div className="relative flex-1">
+              <Search size={18} className="absolute right-4 top-1/2 -translate-y-1/2 text-black/45 dark:text-white/45" />
+              <input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="قلّب على بلد، معلم، صنعة يدوية..."
+                className={`h-12 w-full rounded-xl py-3 pr-12 pl-11 text-sm font-bold outline-none placeholder:text-black/35 focus:border-primary dark:placeholder:text-white/35 ${PAPER} ${INK_BORDER}`}
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  aria-label="مسح البحث"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full p-1.5 hover:bg-black/10 dark:hover:bg-white/10 cursor-pointer"
+                >
+                  <X size={15} />
+                </button>
+              )}
+            </div>
+            <div className="no-scrollbar flex gap-2 overflow-x-auto">
+              {availableRegions.map((region) => {
+                const active = selectedRegionFilter === region;
                 return (
                   <button
-                    key={gov.id}
-                    type="button"
-                    onClick={() => selectGovernorate(index)}
-                    className="group flex min-w-[70px] sm:min-w-[90px] flex-col items-center gap-2 cursor-pointer"
+                    key={region}
+                    onClick={() => setSelectedRegionFilter(region)}
+                    className={`shrink-0 rounded-lg border-2 border-dashed px-4 py-2.5 text-xs font-black whitespace-nowrap transition-colors cursor-pointer ${active
+                      ? 'border-primary bg-primary text-white'
+                      : 'border-espresso/50 hover:border-primary dark:border-[#C99444]/50'
+                      }`}
                   >
-                    <span
-                      className={`relative flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-full border text-[9px] sm:text-[10px] font-black transition-all duration-300 ${active
-                        ? 'border-primary bg-primary text-white shadow-[0_0_0_5px_rgba(154,106,53,.15)] scale-110'
-                        : 'border-black/15 dark:border-white/15 bg-white/80 dark:bg-cream/5 text-black/70 dark:text-white/70 group-hover:border-primary'
-                        }`}
-                    >
-                      {String(index + 1).padStart(2, '0')}
-                    </span>
-
-                    <span
-                      className={`max-w-[85px] sm:max-w-[110px] text-center break-words leading-tight text-[10px] sm:text-xs font-black transition-colors ${active
-                        ? 'text-primary'
-                        : 'text-black/60 dark:text-white/60 group-hover:text-black dark:group-hover:text-white'
-                        }`}
-                    >
-                      {gov.name}
-                    </span>
+                    {region}
                   </button>
                 );
               })}
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* المحتوى الرئيسي */}
-      <main className="mx-auto max-w-[1600px] px-5 py-8 sm:px-8 sm:py-12 lg:px-12">
-        {/* UNCLE WAH HERO BANNER - MASTER OF THE MAP */}
-        <div className="mb-10">
-          <UncleWahHeroBanner
-            doorTitle="خريطة بلاد ودكاكين ونيل الصعيد"
-            doorBadge="باب خريطة الصعيد"
-            mascotSrc="/mascot/saaed.png"
-            mascotRole="دليل عم وه للبلاد"
-            quote="عم وه رسم لكم خريطة الصعيد شبر شبر من بحري لحد أسوان والنوبة عشان متتوهش في ديارنا.. دوس على أي محافظة وشوف حكاياتها وخيرها!"
-            statsText={`${governorates.length} محافظة صعيدية`}
-            actionText="شوف مركب النيل"
-            onAction={() => setDisplayMode('voyage')}
-          />
-        </div>
-
-        {/* نظام الشبكة */}
-        {displayMode === 'grid' && (
-          <section className="mb-14">
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-8 lg:gap-16 items-end mb-8">
-              <div>
-                <div className="mb-2 text-xs font-bold tracking-[0.3em] text-primary">حكايات على ضفاف النيل</div>
-                <h2 className="text-4xl sm:text-6xl lg:text-7xl font-main font-black tracking-tight leading-none">
-                  الصعيد <span className="text-primary">على أصوله.</span>
-                </h2>
-                <p className="mt-4 text-sm sm:text-base text-black/60 dark:text-white/60 leading-relaxed">
-                  بلاد طيبة وناس كريمة، صنايعية ورثوا الحرفة أب عن جد، ومعالم حية تفرح القلب.
-                </p>
-              </div>
-
-              <div className="rounded-3xl border border-black/10 dark:border-white/10 bg-white/50 dark:bg-cream/[0.03] p-6 backdrop-blur-xl shadow-lg">
-                <p className="text-[10px] font-bold tracking-[0.25em] text-black/40 dark:text-white/40">صعيد مصر</p>
-                <div className="mt-2 flex items-end gap-3">
-                  <span className="text-5xl sm:text-6xl font-black leading-none">
-                    {String(governorates.length).padStart(2, '0')}
-                  </span>
-                  <span className="text-xs font-bold text-black/60 dark:text-white/60">محافظة جاهزة ومحملة</span>
-                </div>
-              </div>
-            </div>
-
-
-
-            {/* البحث */}
-            <div className="mb-8 rounded-3xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-espresso-900/90 p-3 sm:p-4 backdrop-blur-2xl shadow-xl">
-              <div className="flex flex-col xl:flex-row gap-3">
-                <div className="relative flex-1">
-                  <Search size={18} className="absolute right-4 top-1/2 -translate-y-1/2 text-black/40 dark:text-white/40" />
-                  <input
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="قلّب على بلد، معلم، صنعة يدوية..."
-                    className="h-12 w-full rounded-2xl border border-transparent bg-black/[0.035] pr-11 pl-10 text-sm font-medium outline-none transition-all placeholder:text-black/35 focus:border-primary/40 focus:bg-transparent dark:bg-cream/[0.04] dark:placeholder:text-white/30 dark:focus:bg-white/[0.06]"
-                  />
-                  {searchQuery && (
-                    <button
-                      onClick={() => setSearchQuery('')}
-                      className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full p-1.5 hover:bg-black/10 dark:hover:bg-white/10 cursor-pointer"
-                    >
-                      <X size={14} />
-                    </button>
-                  )}
-                </div>
-
-                <div className="flex gap-2 overflow-x-auto no-scrollbar pb-0.5">
-                  {availableRegions.map((region) => {
-                    const active = selectedRegionFilter === region;
-                    return (
-                      <button
-                        key={region}
-                        onClick={() => setSelectedRegionFilter(region)}
-                        className={`shrink-0 rounded-xl px-4 py-3 text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${active
-                          ? 'bg-primary text-white shadow-md'
-                          : 'bg-black/5 dark:bg-cream/5 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/10'
-                          }`}
-                      >
-                        {region}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-
-            {/* كروت المحافظات */}
+          {/* ═════════ التذاكر ═════════ */}
+          <section id="tickets" className="scroll-mt-6">
             {filteredGovernorates.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <motion.div
+                key={`${searchQuery}-${selectedRegionFilter}`}
+                variants={gridVariants}
+                initial="hidden"
+                animate="show"
+                className="grid grid-cols-1 gap-6 md:grid-cols-2 2xl:grid-cols-3"
+              >
                 {filteredGovernorates.map((gov) => {
-                  const originalIndex = governorates.findIndex((item) => item.id === gov.id);
-                  const active = originalIndex === selectedIndex;
+                  const originalIndex = governorates.findIndex((g) => g.id === gov.id);
+                  const counts = countsByGov[gov.id] || { places: 0, crafts: 0 };
+                  const stamped = Boolean(visited[gov.id]);
 
                   return (
-                    <article
-                      key={gov.id}
-                      className="group relative overflow-hidden rounded-[2rem] border border-black/10 dark:border-white/10 bg-[#dfd6c5] dark:bg-[#1a1917] shadow-xl cursor-pointer"
-                      onClick={() => {
-                        selectGovernorate(originalIndex);
-                        setDisplayMode('voyage');
-                      }}
-                    >
-                      <div className="relative h-[380px] w-full overflow-hidden">
-                        <img
-                          src={getHighQualityImage(gov.coverImage, 900)}
-                          alt={gov.name}
-                          className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+                    <motion.div key={gov.id} variants={rise}>
+                      <TiltCard
+                        onClick={() => openGovernorate(originalIndex)}
+                        label={`افتح تذكرة ${gov.name}`}
+                        className="group relative cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                      >
+                        <div className={`relative grid grid-cols-[minmax(0,1fr)_88px] overflow-hidden rounded-2xl shadow-xl transition-shadow group-hover:shadow-2xl sm:grid-cols-[minmax(0,1fr)_108px] ${PAPER} ${INK_BORDER}`}>
+                          {/* الجزء الرئيسي */}
+                          <div className="min-w-0">
+                            <div className="relative h-36 overflow-hidden sm:h-40">
+                              <img
+                                src={getHighQualityImage(gov.coverImage, 800)}
+                                alt={gov.name}
+                                loading="lazy"
+                                className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                              <div className="absolute inset-x-0 top-0 flex items-center justify-between p-3">
+                                <span className="rounded-md bg-black/45 px-2.5 py-1 text-[11px] font-black text-white backdrop-blur-md">
+                                  تذكرة رحلة
+                                </span>
+                                {gov.region && (
+                                  <span className="rounded-md bg-white/85 px-2.5 py-1 text-[11px] font-black text-espresso">{gov.region}</span>
+                                )}
+                              </div>
+                              <AnimatePresence>
+                                {stamped && (
+                                  <div className="absolute bottom-2 left-3">
+                                    <Stamp label={gov.name} size="sm" />
+                                  </div>
+                                )}
+                              </AnimatePresence>
+                            </div>
 
-                        <div className="absolute right-5 top-5 text-7xl font-black leading-none text-white/20">
-                          {String(originalIndex + 1).padStart(2, '0')}
+                            <div className="space-y-2 p-4">
+                              <h3 className="font-main text-3xl font-black leading-tight">{gov.name}</h3>
+                              {gov.nickname && <p className="line-clamp-1 text-xs font-bold text-primary">{gov.nickname}</p>}
+                              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t-2 border-dashed border-espresso/25 pt-3 text-[11px] font-bold text-black/65 dark:border-[#C99444]/30 dark:text-white/65">
+                                {gov.capitalCity && (
+                                  <span className="flex items-center gap-1">
+                                    <MapPin size={12} className="text-primary" />
+                                    {gov.capitalCity}
+                                  </span>
+                                )}
+                                {counts.places > 0 && (
+                                  <span className="flex items-center gap-1">
+                                    <Landmark size={12} className="text-primary" />
+                                    {counts.places} معالم
+                                  </span>
+                                )}
+                                {counts.crafts > 0 && (
+                                  <span className="flex items-center gap-1">
+                                    <Hammer size={12} className="text-primary" />
+                                    {counts.crafts} حرف
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* العُرقوب (الجزء اللي بيتقطع) */}
+                          <div className="flex flex-col items-center justify-between border-r-2 border-dashed border-espresso/60 p-3 text-center dark:border-[#C99444]/60">
+                            <div>
+                              <div className="text-[10px] font-black text-black/50 dark:text-white/50">المحطة</div>
+                              <div className="font-main text-4xl font-black leading-none text-primary">
+                                {String(originalIndex + 1).padStart(2, '0')}
+                              </div>
+                            </div>
+                            <div className="w-full px-1">
+                              <Barcode seed={gov.id || gov.name} />
+                            </div>
+                            <motion.div
+                              animate={{ x: [0, -5, 0] }}
+                              transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+                              className="flex items-center gap-1 text-[11px] font-black text-primary"
+                            >
+                              <ChevronLeft size={14} />
+                              افتح
+                            </motion.div>
+                          </div>
+
+                          {/* فتحات التذكرة */}
+                          <span className="absolute -top-3 left-[88px] h-6 w-6 -translate-x-1/2 rounded-full border-2 border-espresso/80 bg-cream sm:left-[108px] dark:border-[#C99444]/70 dark:bg-espresso-900" />
+                          <span className="absolute -bottom-3 left-[88px] h-6 w-6 -translate-x-1/2 rounded-full border-2 border-espresso/80 bg-cream sm:left-[108px] dark:border-[#C99444]/70 dark:bg-espresso-900" />
                         </div>
-
-                        <div className="absolute left-5 top-5">
-                          <span className="inline-flex rounded-full border border-white/20 bg-black/30 px-3 py-1 text-[10px] font-bold text-white backdrop-blur-md">
-                            {gov.region}
-                          </span>
-                        </div>
-
-                        <div className="absolute inset-x-0 bottom-0 p-6">
-                          <h3 className="text-3xl font-black text-white group-hover:text-[#C99444] transition-colors">
-                            {gov.name}
-                          </h3>
-                          <p className="mt-1 text-xs font-bold text-[#C99444]">{gov.nickname}</p>
-                          <p className="mt-2 line-clamp-2 text-xs text-white/75">{gov.shortIntro}</p>
-
-                          {active && (
-                            <span className="mt-4 inline-flex rounded-full border border-white/20 bg-white/25 px-3 py-1 text-[10px] font-bold text-white backdrop-blur-md">
-                              إحنا هنا دلوقتي
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </article>
+                      </TiltCard>
+                    </motion.div>
                   );
                 })}
-              </div>
+              </motion.div>
             ) : (
-              <div className="py-20 text-center rounded-3xl border border-dashed border-black/20 dark:border-white/20">
+              <div className={`rounded-2xl border-dashed py-16 text-center ${PAPER} ${INK_BORDER}`}>
                 <Search className="mx-auto mb-3 h-8 w-8 text-black/40 dark:text-white/40" />
-                <h3 className="text-lg font-bold">ملقيناش حاجة بالاسم ده</h3>
-                <p className="text-xs text-black/50 dark:text-white/50 mt-1">جرّب كلمة تانية أو امسح البحث.</p>
+                <h3 className="text-lg font-black">ملقيناش حاجة بالاسم ده</h3>
+                <p className="mt-1 text-xs text-black/55 dark:text-white/55">جرّب كلمة تانية أو امسح البحث.</p>
               </div>
             )}
           </section>
-        )}
+        </main>
 
-        {/* نظام الرحلة الفردية: الصورة والكلام بيظهروا سوا بدون ثانية انتظار واحدة */}
-        {displayMode === 'voyage' && (
-          <div className="space-y-8">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-xs font-bold tracking-[0.3em] text-primary">سكة النيل</div>
-                <p className="mt-1 text-sm font-bold text-black/60 dark:text-white/60">
-                  المحطة {String(selectedIndex + 1).padStart(2, '0')} من {String(governorates.length || 1).padStart(2, '0')}
-                </p>
-              </div>
-
-              <div className="flex gap-2">
-                <button
-                  onClick={previousGovernorate}
-                  className="flex items-center gap-2 rounded-xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-cream/5 px-4 py-2.5 text-xs font-bold shadow-md backdrop-blur-xl hover:border-primary cursor-pointer"
-                >
-                  <ChevronRight size={16} />
-                  <span>المحطة اللي قبلها</span>
-                </button>
-
-                <button
-                  onClick={nextGovernorate}
-                  className="flex items-center gap-2 rounded-xl bg-[#6B3A1F] text-[#FFF9EE] px-4 py-2.5 text-xs font-bold shadow-md hover:bg-primary dark:hover:bg-primary-hover transition-colors cursor-pointer"
-                >
-                  <span>المحطة اللي بعدها</span>
-                  <ChevronLeft size={16} />
-                </button>
-              </div>
-            </div>
-
-            {/* كارت البطل المشترك بنظام الـ Animated Swap الفوري */}
-            <div className="relative overflow-hidden rounded-[2.5rem] border border-black/10 dark:border-white/10 bg-[#dfd6c5] dark:bg-[#1a1917] min-h-[550px] sm:min-h-[600px] shadow-2xl">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={selectedGov?.id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3, ease: 'easeOut' }}
-                  className="absolute inset-0 flex flex-col justify-end p-6 sm:p-12"
-                >
-                  <img
-                    src={getHighQualityImage(selectedGov?.coverImage, 1600)}
-                    alt={selectedGov?.name}
-                    className="absolute inset-0 h-full w-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-transparent pointer-events-none" />
-
-                  <motion.div
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: 0.05 }}
-                    className="relative z-10 max-w-4xl space-y-4 pointer-events-auto"
-                  >
-                    <div className="flex flex-wrap items-center gap-2">
-                      {selectedGov?.region && (
-                        <span className="rounded-full border border-white/20 bg-black/30 px-3 py-1 text-xs font-bold text-white backdrop-blur-md">
-                          {selectedGov.region}
-                        </span>
-                      )}
-                      {selectedGov?.nileSegment && (
-                        <span className="rounded-full border border-white/20 bg-black/30 px-3 py-1 text-xs font-bold text-white/70 backdrop-blur-md">
-                          {selectedGov.nileSegment}
-                        </span>
-                      )}
-                    </div>
-
-                    <h1 className="text-5xl sm:text-7xl lg:text-8xl font-main font-black text-white tracking-tight">
-                      {selectedGov?.name}
-                    </h1>
-                    <br />
-                    {selectedGov?.nickname && (
-                      <p className="text-lg sm:text-2xl font-bold text-[#C99444]">{selectedGov.nickname}</p>
-                    )}
-
-                    {selectedGov?.shortIntro && (
-                      <p className="text-sm sm:text-base text-white/80 max-w-2xl leading-relaxed">
-                        {selectedGov.shortIntro}
-                      </p>
-                    )}
-
-                    {selectedGov?.capitalCity && (
-                      <div className="flex items-center gap-2 pt-2 text-xs font-bold text-white/70">
-                        <MapPin size={15} className="text-primary" />
-                        <span>عاصمتها ومركزها: {selectedGov.capitalCity}</span>
-                      </div>
-                    )}
-
-                    {selectedGov?.famousFor && selectedGov.famousFor.length > 0 && (
-                      <div className="flex flex-wrap gap-2 pt-4">
-                        {selectedGov.famousFor.map((item) => (
-                          <span
-                            key={item}
-                            className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-bold text-white backdrop-blur-md"
-                          >
-                            {item}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </motion.div>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-
-            {/* العدادات */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {[
-                { number: places.length, label: 'أماكن ومعالم', icon: Landmark },
-                { number: crafts.length, label: 'صنايعية وحرف', icon: Hammer },
-                { number: govMarketProducts.length, label: 'منتجات بالسوق', icon: ShoppingBag },
-                { number: foods.length, label: 'أكلات صعيدي', icon: Utensils },
-              ].map((stat) => {
-                const Icon = stat.icon;
-                return (
-                  <div
-                    key={stat.label}
-                    className="flex items-center gap-4 rounded-3xl border border-black/10 dark:border-white/10 bg-white/60 dark:bg-cream/[0.04] p-5 backdrop-blur-xl shadow-lg"
-                  >
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                      <Icon size={22} />
-                    </div>
-                    <div>
-                      <div className="text-2xl sm:text-3xl font-black leading-none">{stat.number}</div>
-                      <div className="mt-1 text-xs font-bold text-black/50 dark:text-white/50">{stat.label}</div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* أصل الحكاية من الداتابيز */}
-            {folkloreStory && (
-              <div className="rounded-[2.5rem] border border-black/10 dark:border-white/10 bg-espresso text-white p-8 sm:p-12 text-center relative overflow-hidden shadow-xl">
-                <div className="absolute -right-20 -top-20 h-60 w-60 rounded-full border-[30px] border-white/5" />
-                <div className="relative z-10 max-w-3xl mx-auto space-y-4">
-                  <span className="text-xs font-bold tracking-[0.3em] text-[#C99444]">حكاية المكان وتاريخه</span>
-                  <p className="text-sm sm:text-base text-white/80 leading-relaxed font-medium">
-                    {folkloreStory}
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* التبويبات */}
-            <section className="rounded-[2.5rem] border border-black/10 dark:border-white/10 bg-white/60 dark:bg-espresso-900/80 p-6 sm:p-10 backdrop-blur-xl shadow-xl space-y-8">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-6">
-                <div>
-                  <div className="text-xs font-bold tracking-[0.3em] text-primary">تفاصيل من قلب البلد</div>
-                  <h2 className="text-2xl sm:text-3xl font-main font-bold mt-1">
-                    دفتر حكايات {selectedGov?.name}
-                  </h2>
-                </div>
-
-                {selectedGov?.slug && (
+        {/* ═════════ الجواز المفتوح: صفحتين وعلامات كتاب ═════════ */}
+        <AnimatePresence>
+          {bookOpen && selectedGov && (
+            <motion.div
+              key="overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setBookOpen(false)}
+              className="fixed inset-0 z-[70] flex items-stretch justify-center bg-black/70 backdrop-blur-sm md:items-center md:p-8"
+            >
+              <motion.div
+                role="dialog"
+                aria-modal="true"
+                aria-label={`جواز ${selectedGov.name}`}
+                dir="rtl"
+                onClick={(e) => e.stopPropagation()}
+                initial={{ scale: 0.8, y: 80, rotateX: 25, opacity: 0 }}
+                animate={{ scale: 1, y: 0, rotateX: 0, opacity: 1 }}
+                exit={{ scale: 0.85, y: 60, opacity: 0 }}
+                transition={{ type: 'spring', stiffness: 200, damping: 22 }}
+                style={{ transformPerspective: 1800 }}
+                className="relative flex h-full w-full max-w-6xl flex-col overflow-hidden bg-espresso shadow-2xl md:h-[88vh] md:rounded-[2rem] md:p-3 dark:bg-[#1a1310]"
+              >
+                {/* أزرار */}
+                <div className="absolute inset-x-4 top-4 z-40 flex items-center justify-between md:inset-x-7 md:top-7">
                   <button
-                    onClick={() => navigateToGovernorate(selectedGov.slug)}
-                    className="flex items-center gap-2 rounded-xl bg-[#6B3A1F] text-[#FFF9EE] px-5 py-3 text-xs font-bold shadow-lg hover:bg-primary dark:hover:bg-primary-hover transition-colors cursor-pointer w-fit"
+                    onClick={() => setBookOpen(false)}
+                    aria-label="إغلاق"
+                    className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-espresso/70 bg-[#fbf3e1] text-espresso shadow-lg transition-transform hover:rotate-90 cursor-pointer"
                   >
-                    <span>افتح ملف المحافظة كامل</span>
-                    <ArrowLeft size={16} />
+                    <X size={18} />
                   </button>
-                )}
-              </div>
-
-              {/* أزرار التبويب */}
-              <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
-                {TABS.map((tab) => {
-                  const Icon = tab.icon;
-                  const active = activeTab === tab.id;
-                  return (
+                  <div className="flex items-center gap-2">
                     <button
-                      key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
-                      className={`flex items-center gap-2 rounded-xl px-5 py-3 text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${active
-                        ? 'bg-primary text-white shadow-md'
-                        : 'bg-black/5 dark:bg-cream/5 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/10'
-                        }`}
+                      onClick={() => stepGovernorate(-1)}
+                      aria-label="الصفحة اللي قبلها"
+                      className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-espresso/70 bg-[#fbf3e1] text-espresso shadow-lg transition-transform hover:scale-110 cursor-pointer"
                     >
-                      <Icon size={16} />
-                      <span>{tab.label}</span>
+                      <ChevronRight size={19} />
                     </button>
-                  );
-                })}
-              </div>
-
-              {/* محتويات التبويب */}
-              <div className="pt-4">
-                {/* المعالم */}
-                {activeTab === 'places' && (
-                  <div className="space-y-6">
-                    <h4 className="text-lg font-black">أشهر الأماكن والمعالم اللي تزار</h4>
-                    {places.length > 0 ? (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {places.map((place) => {
-                          const targetKey = (place as any).slug || (place as any).placeId || place.id;
-                          return (
-                            <div
-                              key={place.id}
-                              onClick={() => navigateToPlace(targetKey)}
-                              className="group overflow-hidden rounded-3xl border border-black/10 dark:border-white/10 bg-[#dfd6c5] dark:bg-[#1a1917] text-white relative shadow-lg cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
-                            >
-                              <div className="aspect-[16/10] overflow-hidden">
-                                <img
-                                  src={getHighQualityImage(place.coverImage, 700)}
-                                  alt={place.title}
-                                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                />
-                              </div>
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent pointer-events-none" />
-                              <div className="absolute inset-x-0 bottom-0 p-6 space-y-1">
-                                {place.typeLabel && (
-                                  <span className="text-[10px] font-bold tracking-widest text-[#C99444]">
-                                    {place.typeLabel}
-                                  </span>
-                                )}
-                                <h5 className="text-xl font-black group-hover:text-[#C99444] transition-colors">{place.title}</h5>
-                                {place.shortDescription && (
-                                  <p className="text-xs text-white/75 line-clamp-2">{place.shortDescription}</p>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    ) : (
-                      <p className="text-sm text-black/50 dark:text-white/50">لسه مفيش معالم متسجلة للمحافظة دي في الداتابيز.</p>
-                    )}
+                    <span className="rounded-full border-2 border-espresso/70 bg-[#fbf3e1] px-3 py-2.5 text-[11px] font-black text-espresso shadow-lg">
+                      {selectedIndex + 1} / {governorates.length}
+                    </span>
+                    <button
+                      onClick={() => stepGovernorate(1)}
+                      aria-label="الصفحة اللي بعدها"
+                      className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-espresso/70 bg-[#C99444] text-espresso shadow-lg transition-transform hover:scale-110 cursor-pointer"
+                    >
+                      <ChevronLeft size={19} />
+                    </button>
                   </div>
-                )}
+                </div>
 
-                {/* الحرف */}
-                {activeTab === 'crafts' && (
-                  <div className="space-y-6">
-                    <h4 className="text-lg font-black">حرف يدوية وصنايعية البلد</h4>
-                    {crafts.length > 0 ? (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {crafts.map((craft) => (
-                          <div
-                            key={craft.id}
-                            className="flex gap-4 rounded-3xl border border-black/10 dark:border-white/10 bg-white/50 dark:bg-cream/[0.03] p-5 shadow-md"
-                          >
-                            <img
-                              src={getHighQualityImage(craft.coverImage, 400)}
-                              alt={craft.title}
-                              className="h-28 w-28 shrink-0 rounded-2xl object-cover bg-[#dfd6c5] dark:bg-[#1a1917]"
-                            />
-                            <div className="space-y-1 min-w-0">
-                              <span className="text-[10px] font-bold text-primary">حرفة أصلية</span>
-                              <h5 className="text-base font-black truncate">{craft.title}</h5>
-                              <p className="text-xs text-black/60 dark:text-white/60 line-clamp-3">
-                                {craft.shortDescription}
-                              </p>
+                <div className="flex-1 overflow-y-auto overscroll-contain md:overflow-hidden md:rounded-[1.4rem]" style={{ perspective: 1800 }}>
+                  <AnimatePresence mode="wait" custom={flipDir}>
+                    <motion.div
+                      key={selectedGov.id}
+                      custom={flipDir}
+                      variants={pageVariants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                      style={{ transformOrigin: flipDir > 0 ? 'right center' : 'left center' }}
+                      className="flex min-h-full flex-col md:h-full md:flex-row"
+                    >
+                      {/* ───── الصفحة الأولى: الصورة والبيانات ───── */}
+                      <div className={`relative flex flex-col gap-5 px-6 pb-8 pt-20 md:w-[42%] md:overflow-y-auto md:px-9 md:pt-24 ${PAPER}`}>
+                        {/* ظل الكعب */}
+                        <div className="pointer-events-none absolute inset-y-0 left-0 hidden w-10 bg-gradient-to-r from-black/15 to-transparent md:block" />
+
+                        {/* صورة ملزوقة بشريط */}
+                        <div className="relative mx-auto w-full max-w-[320px] -rotate-2">
+                          <span className="absolute -top-3 left-6 z-10 h-6 w-16 rotate-[-8deg] bg-[#E8C27A]/80 shadow-sm" />
+                          <span className="absolute -top-3 right-6 z-10 h-6 w-16 rotate-[9deg] bg-[#E8C27A]/80 shadow-sm" />
+                          <div className="border-[10px] border-b-[44px] border-white bg-white shadow-xl dark:border-[#f1e6cf]">
+                            <div className="relative aspect-[4/5] overflow-hidden">
+                              <img
+                                src={getHighQualityImage(selectedGov.coverImage, 800)}
+                                alt={selectedGov.name}
+                                className="absolute inset-0 h-full w-full object-cover"
+                              />
                             </div>
                           </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-sm text-black/50 dark:text-white/50">لسه مفيش حرف متسجلة للمحافظة دي في الداتابيز.</p>
-                    )}
-                  </div>
-                )}
+                          <div className="absolute bottom-2 inset-x-0 text-center font-main text-lg font-black text-espresso">{selectedGov.name}</div>
 
-                {/* السوق والمنتجات */}
-                {activeTab === 'products' && (
-                  <div className="space-y-6">
-                    <h4 className="text-lg font-black">شغل يدوي وحاجات من خير المحافظة</h4>
-                    {govMarketProducts.length > 0 ? (
-                      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        {govMarketProducts.map((product) => {
-                          const added = addedProductId === product.id;
-                          return (
-                            <div
-                              key={product.id}
-                              className="group rounded-3xl border border-black/10 dark:border-white/10 bg-white/50 dark:bg-cream/[0.03] overflow-hidden p-4 flex flex-col justify-between shadow-md"
-                            >
-                              <div className="space-y-3">
-                                <div className="aspect-square overflow-hidden rounded-2xl bg-[#dfd6c5]/50 dark:bg-[#1a1917]">
-                                  <img
-                                    src={getHighQualityImage(product.images?.[0], 500)}
-                                    alt={product.title}
-                                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                  />
-                                </div>
-                                <h5 className="text-sm font-black line-clamp-1">{product.title}</h5>
-                                <div className="text-xs font-black text-primary">{product.price} جنيه</div>
-                              </div>
-                              <button
-                                onClick={() => handleAddProduct(product)}
-                                className={`mt-4 w-full flex items-center justify-center gap-2 rounded-xl py-2.5 text-xs font-bold text-white transition-colors cursor-pointer ${added
-                                  ? 'bg-emerald-600'
-                                  : 'bg-espresso dark:bg-[#6B3A1F] dark:text-[#FFF9EE] hover:bg-primary'
-                                  }`}
-                              >
-                                {added ? <Check size={14} /> : <ShoppingBag size={14} />}
-                                <span>{added ? 'اتحط في السلة' : 'حطه في السلة'}</span>
-                              </button>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    ) : (
-                      <p className="text-sm text-black/50 dark:text-white/50">مفيش منتجات معروضة بالسوق تابعة للمحافظة دي حالياً.</p>
-                    )}
-                  </div>
-                )}
+                          {/* الختم */}
+                          <div className="absolute -bottom-8 -left-4 z-20">
+                            <Stamp key={selectedGov.id} label={selectedGov.name} date={formatDate(visited[selectedGov.id])} delay={0.5} />
+                          </div>
+                        </div>
 
-                {/* السفرة */}
-                {activeTab === 'foods' && (
-                  <div className="space-y-6">
-                    <h4 className="text-lg font-black">أكلات السفرة الصعيدية الأصيلة</h4>
-                    {foods.length > 0 ? (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {foods.map((food: any, idx: number) => (
-                          <div
-                            key={food.id || idx}
-                            className="flex gap-4 rounded-3xl border border-black/10 dark:border-white/10 bg-white/50 dark:bg-cream/[0.03] p-5 shadow-md"
-                          >
-                            {food.coverImage ? (
-                              <img
-                                src={getHighQualityImage(food.coverImage, 300)}
-                                alt={food.title}
-                                className="h-16 w-16 shrink-0 rounded-2xl object-cover bg-[#dfd6c5] dark:bg-[#1a1917]"
-                              />
-                            ) : (
-                              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                                <Utensils size={24} />
+                        <div className="space-y-3 pt-6 text-center md:text-right">
+                          <div className="flex flex-wrap justify-center gap-2 md:justify-start">
+                            <span className="rounded-md border-2 border-dashed border-primary px-2.5 py-1 text-[11px] font-black text-primary">المحطة {selectedIndex + 1}</span>
+                            {selectedGov.region && (
+                              <span className="rounded-md border-2 border-dashed border-espresso/50 px-2.5 py-1 text-[11px] font-black dark:border-[#C99444]/60">{selectedGov.region}</span>
+                            )}
+                          </div>
+                          <h2 className="font-main text-5xl font-black leading-tight">{selectedGov.name}</h2>
+                          {selectedGov.nickname && <p className="text-lg font-black text-primary">{selectedGov.nickname}</p>}
+                          {selectedGov.shortIntro && (
+                            <p className="text-sm leading-loose text-black/70 dark:text-white/70">{selectedGov.shortIntro}</p>
+                          )}
+
+                          <dl className="space-y-1.5 border-t-2 border-dashed border-espresso/25 pt-3 text-xs dark:border-[#C99444]/30">
+                            {selectedGov.capitalCity && (
+                              <div className="flex justify-between gap-3">
+                                <dt className="font-bold text-black/55 dark:text-white/55">العاصمة</dt>
+                                <dd className="font-black">{selectedGov.capitalCity}</dd>
                               </div>
                             )}
-                            <div>
-                              <h5 className="text-base font-black">{food.title}</h5>
-                              <p className="mt-1 text-xs text-black/60 dark:text-white/60 leading-relaxed">
-                                {food.shortDescription || food.description}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-sm text-black/50 dark:text-white/50">لسه مفيش أكلات متسجلة للمحافظة دي في الداتابيز.</p>
-                    )}
-                  </div>
-                )}
+                            {selectedGov.nileSegment && (
+                              <div className="flex justify-between gap-3">
+                                <dt className="font-bold text-black/55 dark:text-white/55">على النيل</dt>
+                                <dd className="font-black">{selectedGov.nileSegment}</dd>
+                              </div>
+                            )}
+                          </dl>
 
-                {/* الحكايات */}
-                {activeTab === 'folklore' && (
-                  <div className="space-y-6 text-center py-8">
-                    <Scroll className="mx-auto h-12 w-12 text-primary" />
-                    <h4 className="text-xl font-cairo font-bold">حكايات وذكريات من {selectedGov?.name}</h4>
-                    <p className="max-w-xl mx-auto text-sm text-black/70 dark:text-white/70 leading-relaxed">
-                      {folkloreStory || 'لسه مفيش حكايات شعبية متسجلة للمحافظة دي في الداتابيز.'}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </section>
-          </div>
-        )}
-      </main>
-    </div>
+                          {selectedGov.famousFor && selectedGov.famousFor.length > 0 && (
+                            <div className="flex flex-wrap justify-center gap-2 pt-1 md:justify-start">
+                              {selectedGov.famousFor.map((item, i) => (
+                                <motion.span
+                                  key={item}
+                                  initial={{ opacity: 0, scale: 0.4 }}
+                                  animate={{ opacity: 1, scale: 1 }}
+                                  transition={{ delay: 0.35 + i * 0.06, type: 'spring', stiffness: 320, damping: 14 }}
+                                  className={`rounded-full bg-primary/12 px-3 py-1 text-xs font-black text-primary ${i % 2 ? 'rotate-1' : '-rotate-1'}`}
+                                >
+                                  {item}
+                                </motion.span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* ───── الصفحة التانية: ورق مسطّر + علامات كتاب ───── */}
+                      <div className={`relative flex flex-1 flex-col md:flex-row ${PAPER} ${LINED} md:overflow-hidden`}>
+                        <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-10 bg-gradient-to-l from-black/15 to-transparent md:block" />
+
+                        {/* علامات الكتاب */}
+                        <div className="no-scrollbar order-first flex gap-2 overflow-x-auto px-5 pb-1 pt-4 md:order-last md:w-[58px] md:flex-col md:overflow-visible md:px-0 md:pt-24">
+                          {TABS.map((tab) => {
+                            const Icon = tab.icon;
+                            const active = activeTab === tab.id;
+                            const count =
+                              tab.id === 'places' ? places.length
+                                : tab.id === 'crafts' ? crafts.length
+                                  : tab.id === 'products' ? govMarketProducts.length
+                                    : tab.id === 'foods' ? foods.length
+                                      : null;
+                            return (
+                              <motion.button
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id)}
+                                animate={{ x: active ? 0 : 0 }}
+                                whileHover={{ x: -4 }}
+                                whileTap={{ scale: 0.94 }}
+                                aria-label={tab.label}
+                                className={`relative flex shrink-0 items-center gap-2 rounded-t-xl px-3.5 py-2.5 text-xs font-black whitespace-nowrap transition-colors cursor-pointer md:w-[58px] md:flex-col md:rounded-l-xl md:rounded-r-none md:px-0 md:py-4 ${active
+                                  ? 'bg-primary text-white shadow-lg md:-translate-x-1'
+                                  : 'bg-espresso/10 text-espresso hover:bg-espresso/20 dark:bg-white/10 dark:text-cream dark:hover:bg-white/20'
+                                  }`}
+                              >
+                                <Icon size={17} />
+                                <span className="md:[writing-mode:vertical-rl]">{tab.label}</span>
+                                {count !== null && (
+                                  <span className={`rounded-full px-1.5 text-[10px] ${active ? 'bg-white/25' : 'bg-primary/20 text-primary'}`}>{count}</span>
+                                )}
+                              </motion.button>
+                            );
+                          })}
+                        </div>
+
+                        {/* محتوى الصفحة */}
+                        <div className="relative flex-1 px-5 pb-10 pt-4 md:overflow-y-auto md:px-9 md:pt-24">
+                          <AnimatePresence mode="wait">
+                            <motion.div
+                              key={`${selectedGov.id}-${activeTab}`}
+                              variants={gridVariants}
+                              initial="hidden"
+                              animate="show"
+                              exit={{ opacity: 0 }}
+                              transition={{ duration: 0.1 }}
+                              className="space-y-5"
+                            >
+                              {activeTab === 'places' && (
+                                places.length > 0 ? (
+                                  <div className="grid gap-6 sm:grid-cols-2">
+                                    {places.map((place, i) => {
+                                      const targetKey = (place as any).slug || (place as any).placeId || place.id;
+                                      return (
+                                        <motion.button
+                                          key={place.id}
+                                          variants={rise}
+                                          whileHover={{ y: -6, rotate: i % 2 ? 1.5 : -1.5 }}
+                                          whileTap={{ scale: 0.97 }}
+                                          onClick={() => navigateToPlace(targetKey)}
+                                          className="group text-right cursor-pointer"
+                                        >
+                                          <div className={`bg-white p-2.5 pb-4 shadow-lg dark:bg-[#f1e6cf] ${i % 2 ? 'rotate-1' : '-rotate-1'}`}>
+                                            <div className="aspect-[4/3] overflow-hidden">
+                                              <img
+                                                src={getHighQualityImage(place.coverImage, 600)}
+                                                alt={place.title}
+                                                loading="lazy"
+                                                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                              />
+                                            </div>
+                                            <div className="px-1 pt-3 text-espresso">
+                                              {place.typeLabel && <span className="text-[11px] font-black text-primary">{place.typeLabel}</span>}
+                                              <h4 className="text-base font-black">{place.title}</h4>
+                                              {place.shortDescription && <p className="line-clamp-2 text-xs leading-relaxed text-espresso/70">{place.shortDescription}</p>}
+                                            </div>
+                                          </div>
+                                        </motion.button>
+                                      );
+                                    })}
+                                  </div>
+                                ) : (
+                                  <p className="text-sm text-black/55 dark:text-white/55">لسه مفيش معالم متسجلة للمحافظة دي في الداتابيز.</p>
+                                )
+                              )}
+
+                              {activeTab === 'crafts' && (
+                                crafts.length > 0 ? (
+                                  <ul className="space-y-3">
+                                    {crafts.map((craft) => (
+                                      <motion.li
+                                        key={craft.id}
+                                        variants={rise}
+                                        className="flex items-center gap-4 border-b-2 border-dashed border-espresso/25 pb-3 dark:border-[#C99444]/30"
+                                      >
+                                        <img
+                                          src={getHighQualityImage(craft.coverImage, 300)}
+                                          alt={craft.title}
+                                          loading="lazy"
+                                          className="h-16 w-16 shrink-0 rounded-full border-2 border-espresso/70 object-cover dark:border-[#C99444]"
+                                        />
+                                        <div className="min-w-0">
+                                          <h4 className="truncate text-base font-black">{craft.title}</h4>
+                                          <p className="line-clamp-2 text-xs leading-relaxed text-black/65 dark:text-white/65">{craft.shortDescription}</p>
+                                        </div>
+                                      </motion.li>
+                                    ))}
+                                  </ul>
+                                ) : (
+                                  <p className="text-sm text-black/55 dark:text-white/55">لسه مفيش حرف متسجلة للمحافظة دي في الداتابيز.</p>
+                                )
+                              )}
+
+                              {activeTab === 'products' && (
+                                govMarketProducts.length > 0 ? (
+                                  <div className="grid grid-cols-2 gap-4">
+                                    {govMarketProducts.map((product) => {
+                                      const added = addedProductId === product.id;
+                                      return (
+                                        <motion.div
+                                          key={product.id}
+                                          variants={rise}
+                                          whileHover={{ y: -5 }}
+                                          className={`flex flex-col overflow-hidden rounded-xl bg-white dark:bg-[#f1e6cf] ${INK_BORDER}`}
+                                        >
+                                          <img
+                                            src={getHighQualityImage(product.images?.[0], 450)}
+                                            alt={product.title}
+                                            loading="lazy"
+                                            className="aspect-square w-full object-cover"
+                                          />
+                                          <div className="flex flex-1 flex-col justify-between gap-3 p-3 text-espresso">
+                                            <div>
+                                              <h4 className="line-clamp-1 text-sm font-black">{product.title}</h4>
+                                              <div className="text-xs font-black text-primary">{product.price} جنيه</div>
+                                            </div>
+                                            <motion.button
+                                              whileTap={{ scale: 0.92 }}
+                                              onClick={() => handleAddProduct(product)}
+                                              className={`flex w-full items-center justify-center gap-2 rounded-lg py-2.5 text-xs font-black text-white cursor-pointer ${added ? 'bg-emerald-600' : 'bg-espresso'}`}
+                                            >
+                                              {added ? <Check size={14} /> : <ShoppingBag size={14} />}
+                                              <span>{added ? 'اتحط في السلة' : 'حطه في السلة'}</span>
+                                            </motion.button>
+                                          </div>
+                                        </motion.div>
+                                      );
+                                    })}
+                                  </div>
+                                ) : (
+                                  <p className="text-sm text-black/55 dark:text-white/55">مفيش منتجات معروضة بالسوق تابعة للمحافظة دي حالياً.</p>
+                                )
+                              )}
+
+                              {activeTab === 'foods' && (
+                                foods.length > 0 ? (
+                                  <ul className="space-y-3">
+                                    {foods.map((food: any, idx: number) => (
+                                      <motion.li
+                                        key={food.id || idx}
+                                        variants={rise}
+                                        className="flex items-center gap-3 border-b-2 border-dashed border-espresso/25 pb-3 dark:border-[#C99444]/30"
+                                      >
+                                        {food.coverImage ? (
+                                          <img src={getHighQualityImage(food.coverImage, 300)} alt={food.title} loading="lazy" className="h-16 w-16 shrink-0 rounded-lg object-cover" />
+                                        ) : (
+                                          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary">
+                                            <Utensils size={26} />
+                                          </div>
+                                        )}
+                                        <div className="min-w-0">
+                                          <h4 className="text-base font-black">{food.title}</h4>
+                                          <p className="line-clamp-2 text-xs leading-relaxed text-black/65 dark:text-white/65">{food.shortDescription || food.description}</p>
+                                        </div>
+                                      </motion.li>
+                                    ))}
+                                  </ul>
+                                ) : (
+                                  <p className="text-sm text-black/55 dark:text-white/55">لسه مفيش أكلات متسجلة للمحافظة دي في الداتابيز.</p>
+                                )
+                              )}
+
+                              {activeTab === 'folklore' && (
+                                <motion.div variants={rise} className="space-y-4 py-2">
+                                  <div className="flex items-center gap-3">
+                                    <motion.div animate={{ rotate: [0, -10, 10, 0] }} transition={{ duration: 4, repeat: Infinity }}>
+                                      <Scroll className="h-9 w-9 text-primary" />
+                                    </motion.div>
+                                    <h4 className="text-xl font-black">حكايات وذكريات من {selectedGov.name}</h4>
+                                  </div>
+                                  <p className="text-sm leading-[2rem] text-black/80 dark:text-white/80">
+                                    {folkloreStory || 'لسه مفيش حكايات شعبية متسجلة للمحافظة دي في الداتابيز.'}
+                                  </p>
+                                </motion.div>
+                              )}
+
+                              {selectedGov.slug && (
+                                <motion.div variants={rise} className="pt-4">
+                                  <button
+                                    onClick={() => navigateToGovernorate(selectedGov.slug)}
+                                    className="group inline-flex items-center gap-2 rounded-xl bg-[#6B3A1F] px-6 py-3.5 text-sm font-black text-[#FFF9EE] shadow-lg transition-transform hover:-translate-y-1 cursor-pointer"
+                                  >
+                                    <span>افتح ملف المحافظة كامل</span>
+                                    <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1.5" />
+                                  </button>
+                                </motion.div>
+                              )}
+                            </motion.div>
+                          </AnimatePresence>
+                        </div>
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </MotionConfig>
   );
 };
 

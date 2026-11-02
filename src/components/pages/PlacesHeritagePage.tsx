@@ -574,7 +574,7 @@ export const PlacesHeritagePage: React.FC = () => {
               >
                 أماكن
                 <br />
-                <span className="mr-[8vw] text-primary lg:mr-28">بتحكي</span>
+                <span className="mr-[8vw] text-primary dark:text-primary-hover lg:mr-28">بتحكى</span>
               </h1>
               <br />
               <br />
