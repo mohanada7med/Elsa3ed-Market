@@ -431,13 +431,6 @@ const WAH_PORTALS_PREVIEW: Record<string, PortalPreviewItem> = {
     badge: 'تحدي عم وه',
     accentColor: '#E66A2E',
   },
-  about: {
-    title: 'عم وه يحكيلك عن وَه',
-    desc: 'اقعد مع عم وه واعرف حكاية وَه، وليه بنوثق تراث الصعيد وحكاياته ونوصلها لكل الناس.',
-    avatar: '/mascot/logo.png',
-    badge: 'حكاية عم وه',
-    accentColor: '#C99444',
-  },
 };
 
 /* =========================================================
@@ -572,7 +565,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
       { id: 'sellers', label: 'شيوخ الصنعة والورش', shortLabel: 'ورش الصنعة', icon: Store },
       { id: 'categories', label: 'التصنيفات التراثية', shortLabel: 'التصنيفات', icon: Layers },
       { id: 'quize', label: 'انت صعيدى ؟ (لعبة اللهجة)', shortLabel: 'انت صعيدى؟', isNew: true, icon: Flame },
-      { id: 'about', label: 'عن وه', shortLabel: 'عن وه', icon: Sparkles },
       { id: 'help', label: 'مضايفة وه (المساعدة والتواصل)', shortLabel: 'المساعدة', icon: Headphones },
     ];
 
@@ -589,8 +581,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
         link.id !== 'home' &&
         link.id !== 'products' &&
         link.id !== 'cart' &&
-        link.id !== 'orders' &&
-        link.id !== 'about'
+        link.id !== 'orders'
     );
   }, [roleNavLinks]);
   const mobileNavCategories = useMemo(() => {
@@ -672,11 +663,11 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             items: ['sellers', 'categories'],
           },
           {
-            id: 'about',
-            title: 'عن وَه والمساعدة',
-            description: 'تعرف على وَه وتواصل معنا',
+            id: 'help',
+            title: 'المساعدة والتواصل',
+            description: 'تواصل معنا واطلب مساعدة في أي وقت',
             icon: Headphones,
-            items: ['quize', 'about', 'help'],
+            items: ['quize', 'help'],
           },
         ];
 
@@ -1676,31 +1667,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               <div className="flex flex-1 items-center justify-start gap-1">
                 {leftPortals.map((link) => renderDesktopPortalItem(link, true))}
 
-                {/* عن وه */}
-                <div
-                  className="relative"
-                  onMouseEnter={() => setHoveredPortalId('about')}
-                  onMouseLeave={() => setHoveredPortalId(null)}
-                >
-                  <motion.button
-                    type="button"
-                    onClick={() => {
-                      navigate('about');
-                      setHoveredPortalId(null);
-                    }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.94 }}
-                    className="relative ml-2 flex items-center gap-1.5 rounded-full px-3 py-2 border cursor-pointer whitespace-nowrap"
-                    style={{
-                      color: '#C99444',
-                      borderColor: 'rgba(154,106,53,0.20)',
-                      backgroundColor: isDark ? 'rgba(201,148,68,0.06)' : 'rgba(154,106,53,0.05)',
-                    }}
-                  >
-                    <Sparkles size={12} />
-                    <span className="text-[10px] font-black">عن وَه</span>
-                  </motion.button>
-                </div>
               </div>
             </div>
 

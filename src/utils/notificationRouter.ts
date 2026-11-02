@@ -235,7 +235,7 @@ export function resolveNotificationNavigation(
     'explore': 'explore',
     'map': 'map',
     'favorites': 'favorites',
-    'about': 'about',
+    'about': 'home',
     'wholesale': 'wholesale',
     'categories': 'categories',
     'crafts': 'categories',

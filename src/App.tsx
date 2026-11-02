@@ -350,12 +350,6 @@ const MainContent: React.FC = () => {
           description: 'تواصل مباشر وفوري مع الحرفيين وشيوخ الصنعة في منصة وه.'
         });
         break;
-      case 'about':
-        updatePageSEO({
-          title: 'عن منصة وه | العالم الرقمي لصعيد مصر',
-          description: 'رسالتنا في توثيق وحفظ وإحياء تراث صعيد مصر وربطه بالعالم.'
-        });
-        break;
       case 'map':
         updatePageSEO({
           title: 'لفة في الصعيد ورحلة النيل | وه',

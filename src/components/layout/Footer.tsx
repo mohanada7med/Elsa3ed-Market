@@ -121,7 +121,6 @@ export const Footer: React.FC = () => {
     { label: 'سلة الشراء', page: 'cart' },
     { label: 'الحاجات المحفوظة', page: 'favorites' },
     { label: 'حسابك وعناوينك', page: 'buyer-account' },
-    { label: 'عن وه وحكايتنا', page: 'about' },
     { label: 'سياسة الخصوصية', page: 'privacy' },
     { label: 'الشروط والأحكام', page: 'terms' },
   ];

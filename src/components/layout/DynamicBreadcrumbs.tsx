@@ -332,13 +332,6 @@ export const DynamicBreadcrumbs: React.FC = () => {
         url: `${origin}/profile`,
         isCurrent: true
       });
-    } else if (activePage === 'about') {
-      items.push({
-        id: 'about',
-        label: 'عن منصة وه | العالم الرقمي لصعيد مصر',
-        url: `${origin}/about`,
-        isCurrent: true
-      });
     } else if (activePage === 'wholesale') {
       items.push({
         id: 'market-parent',

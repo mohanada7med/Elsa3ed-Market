@@ -486,7 +486,6 @@ export type ActivePage =
   | 'category-details'
   | 'sellers'
   | 'seller-details'
-  | 'about'
   | 'wholesale'
   | 'crafts'
   | 'reels'

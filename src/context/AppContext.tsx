@@ -483,7 +483,6 @@ export const PAGE_ROUTES: Record<ActivePage, string> = {
   sellers: '/sellers',
   'seller-details': '/sellers/:id',
 
-  about: '/about',
   wholesale: '/wholesale',
   search: '/search',
 
@@ -608,7 +607,7 @@ function getInitialNavigationState(): {
   }
 
   const storySlug = params.get('story') || params.get('storySlug');
-  if (storySlug || (pageParam as string) === 'stories' || (pageParam as string) === 'story-details') {
+  if (storySlug || (pageParam as string) === 'stories' || (pageParam as string) === 'story-details' || rawPath === '/about' || (pageParam as string) === 'about') {
     return { page: 'home', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
