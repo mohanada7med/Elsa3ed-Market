@@ -14,8 +14,19 @@ export interface PaymobConfig {
   environment: 'live' | 'test';
 }
 
+function getKeyEnvironment(value?: string): 'live' | 'test' | undefined {
+  const match = value?.match(/(?:^|_)(?:pk|sk)_(test|live)(?:_|$)/i);
+  return match?.[1]?.toLowerCase() as 'live' | 'test' | undefined;
+}
+
 export function getPaymobConfig(): PaymobConfig {
-  const environment = process.env.PAYMOB_ENVIRONMENT?.trim().toLowerCase();
+  const configuredEnvironment = process.env.PAYMOB_ENVIRONMENT?.trim().toLowerCase();
+  if (configuredEnvironment && configuredEnvironment !== 'test' && configuredEnvironment !== 'live') {
+    throw new Error('قيمة PAYMOB_ENVIRONMENT غير صالحة. استخدم TEST أو LIVE.');
+  }
+
+  const environment: PaymobConfig['environment'] =
+    configuredEnvironment === 'live' ? 'live' : 'test';
   return {
     secretKey: process.env.PAYMOB_SECRET_KEY?.trim(),
     publicKey: process.env.PAYMOB_PUBLIC_KEY?.trim(),
@@ -30,7 +41,7 @@ export function getPaymobConfig(): PaymobConfig {
     )?.trim(),
     iframeId: process.env.PAYMOB_IFRAME_ID?.trim(),
     hmacSecret: process.env.PAYMOB_HMAC_SECRET?.trim(),
-    environment: environment === 'live' ? 'live' : 'test'
+    environment
   };
 }
 
@@ -67,6 +78,14 @@ function getPaymobErrorSummary(responseBody: unknown): string | undefined {
   return undefined;
 }
 
+function sanitizePaymobErrorSummary(summary: string | undefined, config: PaymobConfig): string | undefined {
+  if (!summary) return undefined;
+
+  return [config.secretKey, config.hmacSecret]
+    .filter((secret): secret is string => Boolean(secret))
+    .reduce((message, secret) => message.split(secret).join('[REDACTED]'), summary);
+}
+
 /**
  * Initiates a Paymob Unified Checkout intention.
  */
@@ -76,6 +95,16 @@ export async function initiatePaymobPayment(
   requestOrigin?: string
 ): Promise<InitiatePaymentResult> {
   const config = getPaymobConfig();
+  const keyEnvironments = [
+    getKeyEnvironment(config.secretKey),
+    getKeyEnvironment(config.publicKey)
+  ].filter((mode): mode is 'live' | 'test' => Boolean(mode));
+  if (keyEnvironments.some((mode) => mode !== config.environment)) {
+    throw new Error(
+      `إعداد Paymob غير متطابق: PAYMOB_ENVIRONMENT=${config.environment.toUpperCase()} لكن أحد المفاتيح يحمل وضعاً مختلفاً. استخدم مفاتيح ومعرّفات TEST معاً أو مفاتيح ومعرّفات LIVE معاً.`
+    );
+  }
+
   const configuredOrigin =
     requestOrigin ||
     process.env.APP_URL ||
@@ -151,7 +180,9 @@ export async function initiatePaymobPayment(
     if (!cardId) throw new Error('إعداد معرّف تكامل بطاقات Paymob غير مكتمل');
     paymentMethods.push(cardId);
   } else if (methodType === 'wallet') {
-    if (!walletId) throw new Error('إعداد معرّف تكامل المحافظ في Paymob غير مكتمل');
+    if (!walletId) {
+      throw new Error('معرّف تكامل محفظة Paymob مفقود أو غير صالح. اضبط PAYMOB_INTEGRATION_ID_WALLET برقم صحيح من نفس بيئة وحساب التاجر.');
+    }
     paymentMethods.push(walletId);
   } else {
     if (cardId) paymentMethods.push(cardId);
@@ -211,7 +242,7 @@ export async function initiatePaymobPayment(
   }
 
   if (!response.ok || typeof responseData?.client_secret !== 'string' || !responseData.client_secret) {
-    const errorSummary = getPaymobErrorSummary(responseData);
+    const errorSummary = sanitizePaymobErrorSummary(getPaymobErrorSummary(responseData), config);
     const normalizedError = errorSummary?.toLowerCase() || '';
     const isUnknownIntegration =
       normalizedError.includes('integration') &&
@@ -231,7 +262,7 @@ export async function initiatePaymobPayment(
     });
     if (isUnknownIntegration) {
       throw new Error(
-        `رفض Paymob معرّف تكامل ${methodType === 'wallet' ? 'المحفظة' : 'البطاقة'} في بيئة ${config.environment.toUpperCase()}. تحقق أن المعرّف موجود ومفعّل كتكامل أونلاين وطريقة الدفع المطلوبة، وأنه تابع لنفس حساب وبيئة PAYMOB_SECRET_KEY. نوع UIG أو قناة online_new وحدهما لا يثبتان أن التكامل مفعّل للمحافظ.`
+        `رفض Paymob معرّف تكامل ${methodType === 'wallet' ? 'المحفظة' : 'البطاقة'} في بيئة ${config.environment.toUpperCase()} (HTTP ${response.status}): ${errorSummary || 'Integration ID/Name does not exist'}. تحقق أن المعرّف تابع لنفس حساب وبيئة PAYMOB_SECRET_KEY، ومفعّل كتكامل أونلاين لطريقة الدفع المطلوبة. نوع UIG أو قناة online_new وحدهما لا يثبتان تفعيل المحافظ؛ راجع لوحة Paymob أو الدعم الفني.`
       );
     }
     throw new Error(

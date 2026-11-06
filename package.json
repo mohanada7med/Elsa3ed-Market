@@ -13,6 +13,7 @@
     "db:cleanup": "tsx scripts/cleanup-test-data.ts",
     "db:reset": "tsx scripts/reset-dev-db.ts",
     "db:bootstrap-admin": "tsx scripts/bootstrap-admin.ts",
+    "test:paymob": "tsx --test server/services/paymobService.test.ts",
     "lint": "tsc --noEmit",
     "typecheck": "tsc --noEmit"
   },
