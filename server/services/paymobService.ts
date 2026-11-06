@@ -209,6 +209,10 @@ export async function initiatePaymobPayment(
 
   if (!response.ok || typeof responseData?.client_secret !== 'string' || !responseData.client_secret) {
     const errorSummary = getPaymobErrorSummary(responseData);
+    const normalizedError = errorSummary?.toLowerCase() || '';
+    const isUnknownIntegration =
+      normalizedError.includes('integration') &&
+      (normalizedError.includes('does not exist') || normalizedError.includes('not found'));
     const errorCode = responseData && typeof responseData === 'object'
       ? (responseData as Record<string, unknown>).error_code ??
         (responseData as Record<string, unknown>).code
@@ -216,8 +220,14 @@ export async function initiatePaymobPayment(
     Logger.error('[Paymob] Intention API rejected payment request', {
       status: response.status,
       code: typeof errorCode === 'string' || typeof errorCode === 'number' ? errorCode : undefined,
-      message: errorSummary
+      reason: isUnknownIntegration ? 'integration_not_found' : undefined,
+      message: isUnknownIntegration ? undefined : errorSummary
     });
+    if (isUnknownIntegration) {
+      throw new Error(
+        `معرّف تكامل ${methodType === 'wallet' ? 'المحفظة' : 'البطاقة'} غير موجود في حساب Paymob المستخدم. انسخ معرّف التكامل من Developers → Payment Integrations، وتأكد أنه من نفس حساب وبيئة مفاتيح PAYMOB_SECRET_KEY وPAYMOB_PUBLIC_KEY.`
+      );
+    }
     throw new Error(
       `رفضت بوابة Paymob بدء الدفع (HTTP ${response.status})${errorSummary ? `: ${errorSummary}` : '. راجع سجل الخادم لمعرفة التفاصيل.'}`
     );
