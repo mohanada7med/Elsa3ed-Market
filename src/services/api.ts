@@ -962,6 +962,32 @@ export const adminMediaApi = {
   }
 };
 
+export async function initiatePaymobPayment(
+  user: { id?: string; role?: string },
+  orderId: string,
+  methodType: 'card' | 'wallet' | 'all' = 'all'
+): Promise<{ paymentUrl: string; clientSecret?: string; provider: string; orderNumber: string }> {
+  const res = await fetch(`${API_BASE}/payments/paymob/initiate`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: getAuthHeaders(user),
+    body: JSON.stringify({ orderId, methodType })
+  });
+  const json: ApiResponse<any> = await res.json();
+  if (!json.success || !json.data) {
+    throw new Error(json.error || 'تعذر بدء عملية الدفع عبر Paymob');
+  }
+  return json.data;
+}
+
+export async function getPaymentStatus(orderId: string): Promise<any> {
+  const res = await fetch(`${API_BASE}/payments/status/${orderId}`, {
+    credentials: 'include'
+  });
+  const json: ApiResponse<any> = await res.json();
+  return json.data || null;
+}
+
 export const api = {
   // Public Products
   async getPublicProducts(filters?: {
@@ -1772,6 +1798,9 @@ export const api = {
     const json: ApiResponse<any> = await res.json();
     return json.data || null;
   },
+
+  initiatePaymobPayment,
+  getPaymentStatus,
 
   async cancelBuyerOrder(
     user: { id?: string; role?: string },

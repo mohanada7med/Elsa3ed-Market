@@ -17,7 +17,7 @@ router.use(requireBuyer);
 // POST /api/orders - Place a new order
 router.post('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const {
+    let {
       shippingAddress,
       paymentMethod,
       discountCode,
@@ -25,8 +25,23 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
       paymentReference,
       sellerTipAmount,
       sellerTipSellerId,
-      items
+      items,
+      governorate,
+      city,
+      addressText,
+      buyerName,
+      buyerPhone
     } = req.body;
+
+    if (!shippingAddress && (governorate || city || addressText)) {
+      shippingAddress = {
+        fullName: buyerName || req.user?.name || 'مشتري صعيدي',
+        phone: buyerPhone || req.user?.phone || '01000000000',
+        governorate: governorate || 'قنا',
+        city: city || 'قنا',
+        streetAddress: addressText || 'الصعيد'
+      };
+    }
 
     if (!shippingAddress) {
       return res.status(400).json({

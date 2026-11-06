@@ -221,11 +221,12 @@ export async function createOrder(
   ];
 
   // Orders via InstaPay and Vodafone Cash are placed with 'payment_pending_verification' until manually verified by Admin
-  // Cash on Delivery orders remain 'pending' until delivered/collected
   const initialPaymentStatus: PaymentStatus =
     paymentMethod === 'instapay' || paymentMethod === 'vodafone_cash'
       ? 'payment_pending_verification'
-      : 'pending';
+      : paymentMethod === 'cod' || paymentMethod === 'cash_on_delivery'
+        ? 'cash_on_delivery'
+        : 'pending';
 
   const orderDocument: OrderDocument = {
     id: orderId,
@@ -244,7 +245,7 @@ export async function createOrder(
     paymentStatus: initialPaymentStatus,
     paymentReference:
       paymentReference?.trim() ||
-      (paymentMethod !== 'cod'
+      (paymentMethod !== 'cod' && paymentMethod !== 'cash_on_delivery'
         ? `REF-${Math.floor(100000 + Math.random() * 900000)}`
         : undefined),
     subtotal: cartSummary.subtotal,

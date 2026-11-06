@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Governorate, Order } from '../../types';
+import { api, initiatePaymobPayment } from '../../services/api';
 import {
   ShieldCheck,
   Truck,
   ShoppingBag,
   Check,
   MapPin,
-  PackageCheck
+  PackageCheck,
+  CreditCard,
+  Smartphone,
+  Banknote,
+  Lock,
+  Loader2,
+  ExternalLink
 } from 'lucide-react';
 
 export const CheckoutPage: React.FC = () => {
@@ -35,8 +42,12 @@ export const CheckoutPage: React.FC = () => {
   const [notes, setNotes] = useState('');
   const [sellerTipAmount, setSellerTipAmount] = useState('0');
   const [sellerTipSellerId, setSellerTipSellerId] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState<'paymob_card' | 'paymob_wallet' | 'cod'>('paymob_card');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRedirectingPaymob, setIsRedirectingPaymob] = useState(false);
   const [completedOrder, setCompletedOrder] = useState<Order | null>(null);
+  const [paymobPayUrl, setPaymobPayUrl] = useState<string | null>(null);
+
   const cartSellers = Array.from(
     new Map(
       cart.map(({ product }) => [
@@ -48,6 +59,24 @@ export const CheckoutPage: React.FC = () => {
   const tipAmount = Number(sellerTipAmount) || 0;
   const effectiveTipSellerId = sellerTipSellerId || cartSellers[0]?.id || '';
   const checkoutTotal = cartTotal + tipAmount;
+
+  const requestPaymobSession = async (orderId: string, methodType: 'card' | 'wallet' | 'all') => {
+    if (typeof api?.initiatePaymobPayment === 'function') {
+      return api.initiatePaymobPayment(currentUser, orderId, methodType);
+    }
+    if (typeof initiatePaymobPayment === 'function') {
+      return initiatePaymobPayment(currentUser, orderId, methodType);
+    }
+    const res = await fetch('/api/payments/paymob/initiate', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orderId, methodType })
+    });
+    const json = await res.json();
+    if (!json.success || !json.data) throw new Error(json.error || 'تعذر بدء عملية الدفع عبر Paymob');
+    return json.data;
+  };
 
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,10 +103,32 @@ export const CheckoutPage: React.FC = () => {
         city: city.trim(),
         addressText: address.trim(),
         notes: notes.trim(),
-        paymentMethod: 'cod',
+        paymentMethod: paymentMethod,
         sellerTipAmount: tipAmount,
         sellerTipSellerId: tipAmount > 0 ? effectiveTipSellerId : undefined
       });
+
+      if (paymentMethod === 'paymob_card' || paymentMethod === 'paymob_wallet') {
+        setIsRedirectingPaymob(true);
+        try {
+          const methodType = paymentMethod === 'paymob_wallet' ? 'wallet' : 'card';
+          const payRes = await requestPaymobSession(newOrder.id, methodType);
+          if (payRes?.paymentUrl) {
+            setPaymobPayUrl(payRes.paymentUrl);
+            setCompletedOrder(newOrder);
+            addToast('جاري التحويل لـ Paymob', 'يتم تحويلك الآن لبوابة الدفع الآمنة لإتمام السداد', 'info');
+            setTimeout(() => {
+              window.location.href = payRes.paymentUrl;
+            }, 800);
+            return;
+          }
+        } catch (payErr: any) {
+          console.error('[Paymob] Initiate checkout error:', payErr);
+          addToast('تم إنشاء الطلب', 'تم تسجيل طلبك بنجاح. يمكنك استكمال السداد الإلكتروني عبر Paymob من تفاصيل الطلب.', 'info');
+        } finally {
+          setIsRedirectingPaymob(false);
+        }
+      }
 
       setCompletedOrder(newOrder);
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -143,11 +194,51 @@ export const CheckoutPage: React.FC = () => {
 
             <div className="px-8 pb-8 space-y-6">
               {/* Order Summary & Address */}
-              <div className="p-5 bg-black/[0.02] dark:bg-white/[0.02] rounded-2xl border border-black/5 space-y-2 text-xs">
-                <div className="flex justify-between text-espresso/70 dark:text-cream/70">
+              <div className="p-5 bg-black/[0.02] dark:bg-white/[0.02] rounded-2xl border border-black/5 space-y-2.5 text-xs">
+                <div className="flex justify-between items-center text-espresso/70 dark:text-cream/70">
                   <span>المبلغ الإجمالي:</span>
                   <span className="font-mono text-base font-black text-primary">{completedOrder.total} ج.م</span>
                 </div>
+                
+                <div className="flex justify-between items-center text-espresso/70 dark:text-cream/70">
+                  <span>طريقة السداد:</span>
+                  <span className="font-bold flex items-center gap-1.5 text-primary">
+                    {completedOrder.paymentMethod === 'paymob_wallet' ? (
+                      <>
+                        <Smartphone className="w-3.5 h-3.5" />
+                        <span>محفظة ذكية (Paymob)</span>
+                      </>
+                    ) : completedOrder.paymentMethod === 'paymob_card' || completedOrder.paymentMethod === 'paymob' ? (
+                      <>
+                        <CreditCard className="w-3.5 h-3.5" />
+                        <span>بطاقة بنكية (Paymob)</span>
+                      </>
+                    ) : (
+                      <>
+                        <Banknote className="w-3.5 h-3.5" />
+                        <span>الدفع نقداً عند الاستلام</span>
+                      </>
+                    )}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center text-espresso/70 dark:text-cream/70">
+                  <span>حالة الدفع:</span>
+                  <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-black ${
+                    completedOrder.paymentStatus === 'paid'
+                      ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
+                      : completedOrder.paymentMethod === 'cod' || completedOrder.paymentMethod === 'cash_on_delivery'
+                        ? 'bg-blue-500/15 text-blue-700 dark:text-blue-300'
+                        : 'bg-amber-500/15 text-amber-800 dark:text-amber-300'
+                  }`}>
+                    {completedOrder.paymentStatus === 'paid'
+                      ? 'تم السداد بنجاح ✓'
+                      : completedOrder.paymentMethod === 'cod' || completedOrder.paymentMethod === 'cash_on_delivery'
+                        ? 'الدفع عند المعاينة والاستلام'
+                        : 'في انتظار إتمام السداد الإلكتروني'}
+                  </span>
+                </div>
+
                 {!!completedOrder.sellerTipAmount && (
                   <div className="flex justify-between text-espresso/60 dark:text-cream/60 text-[11px]">
                     <span>دعم اختياري لـ{completedOrder.sellerTipSellerName || 'الحرفي'}:</span>
@@ -163,6 +254,52 @@ export const CheckoutPage: React.FC = () => {
                   <span>{completedOrder.buyerName} ({completedOrder.buyerPhone})</span>
                 </div>
               </div>
+
+              {/* Paymob Pending Payment Action */}
+              {(completedOrder.paymentMethod === 'paymob_card' || completedOrder.paymentMethod === 'paymob_wallet' || completedOrder.paymentMethod === 'paymob') &&
+                completedOrder.paymentStatus !== 'paid' && (
+                <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/25 space-y-3">
+                  <div className="flex items-center gap-2 text-xs font-bold text-amber-900 dark:text-amber-200">
+                    <ShieldCheck className="w-4 h-4 text-amber-600" />
+                    <span>سدد الآن بأمان عبر بوابة Paymob لتأكيد حجز القطعة فورياً بالورشة</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (paymobPayUrl) {
+                        window.location.href = paymobPayUrl;
+                        return;
+                      }
+                      try {
+                        setIsRedirectingPaymob(true);
+                        const methodType = completedOrder.paymentMethod === 'paymob_wallet' ? 'wallet' : 'card';
+                        const res = await requestPaymobSession(completedOrder.id, methodType);
+                        if (res?.paymentUrl) {
+                          window.location.href = res.paymentUrl;
+                        }
+                      } catch (err: any) {
+                        addToast('خطأ في الاتصال بـ Paymob', err?.message || 'تعذر بدء بوابة الدفع، جرب مرة أخرى', 'error');
+                      } finally {
+                        setIsRedirectingPaymob(false);
+                      }
+                    }}
+                    disabled={isRedirectingPaymob}
+                    className="w-full py-3 bg-primary hover:bg-primary-hover text-white text-xs font-black rounded-xl shadow-md flex items-center justify-center gap-2 transition cursor-pointer"
+                  >
+                    {isRedirectingPaymob ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>جاري فتح بوابة Paymob...</span>
+                      </>
+                    ) : (
+                      <>
+                        <ExternalLink className="w-4 h-4" />
+                        <span>استكمال السداد الإلكتروني الآن عبر Paymob</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
 
               <div className="grid grid-cols-2 gap-3 pt-2">
                 <button
@@ -414,18 +551,167 @@ export const CheckoutPage: React.FC = () => {
                   )}
                 </section>
 
+                {/* --- PAYMENT METHOD SELECTION (PAYMOB & COD) --- */}
+                <section className="space-y-4 pt-2">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-base font-bold font-cairo text-espresso dark:text-cream flex items-center gap-2">
+                        <Lock className="w-4 h-4 text-primary" />
+                        <span>طريقة السداد الآمنة</span>
+                      </h3>
+                      <p className="text-xs text-espresso/60 dark:text-cream/60 mt-0.5">
+                        اختر طريقة الدفع المناسبة لك عبر بوابة Paymob المعتمدة
+                      </p>
+                    </div>
+                    <span className="px-2.5 py-1 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 rounded-full text-[11px] font-bold border border-emerald-500/20">
+                      تشفير بنكي 256-bit
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    {/* Option 1: Card via Paymob */}
+                    <div
+                      onClick={() => setPaymentMethod('paymob_card')}
+                      className={`relative p-4 rounded-2xl border cursor-pointer transition-all ${
+                        paymentMethod === 'paymob_card'
+                          ? 'border-primary bg-primary/[0.06] shadow-md ring-2 ring-primary/20'
+                          : 'border-black/10 dark:border-white/10 bg-black/[0.01] dark:bg-white/[0.02] hover:border-primary/40'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                          paymentMethod === 'paymob_card'
+                            ? 'bg-primary text-white shadow-sm'
+                            : 'bg-black/5 dark:bg-white/5 text-espresso dark:text-cream'
+                        }`}>
+                          <CreditCard className="w-5 h-5" />
+                        </div>
+                        <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                          paymentMethod === 'paymob_card' ? 'border-primary bg-primary text-white' : 'border-stone-300 dark:border-stone-600'
+                        }`}>
+                          {paymentMethod === 'paymob_card' && <Check className="w-3 h-3 stroke-[3]" />}
+                        </span>
+                      </div>
+                      <h4 className="font-bold text-xs text-espresso dark:text-cream">بطاقة بنكية (Paymob)</h4>
+                      <p className="text-[11px] text-espresso/60 dark:text-cream/60 mt-1 leading-relaxed">
+                        فيزا، ماستركارد، وبطاقة ميزة الوطنية
+                      </p>
+                      <div className="mt-3 flex items-center gap-1.5 text-[9px] font-black text-espresso/40 dark:text-cream/40">
+                        <span className="px-1.5 py-0.5 rounded bg-black/5 dark:bg-white/10">Visa</span>
+                        <span className="px-1.5 py-0.5 rounded bg-black/5 dark:bg-white/10">Mastercard</span>
+                        <span className="px-1.5 py-0.5 rounded bg-black/5 dark:bg-white/10">ميزة</span>
+                      </div>
+                    </div>
+
+                    {/* Option 2: Mobile Wallet via Paymob */}
+                    <div
+                      onClick={() => setPaymentMethod('paymob_wallet')}
+                      className={`relative p-4 rounded-2xl border cursor-pointer transition-all ${
+                        paymentMethod === 'paymob_wallet'
+                          ? 'border-primary bg-primary/[0.06] shadow-md ring-2 ring-primary/20'
+                          : 'border-black/10 dark:border-white/10 bg-black/[0.01] dark:bg-white/[0.02] hover:border-primary/40'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                          paymentMethod === 'paymob_wallet'
+                            ? 'bg-primary text-white shadow-sm'
+                            : 'bg-black/5 dark:bg-white/5 text-espresso dark:text-cream'
+                        }`}>
+                          <Smartphone className="w-5 h-5" />
+                        </div>
+                        <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                          paymentMethod === 'paymob_wallet' ? 'border-primary bg-primary text-white' : 'border-stone-300 dark:border-stone-600'
+                        }`}>
+                          {paymentMethod === 'paymob_wallet' && <Check className="w-3 h-3 stroke-[3]" />}
+                        </span>
+                      </div>
+                      <h4 className="font-bold text-xs text-espresso dark:text-cream">المحافظ الذكية (Paymob)</h4>
+                      <p className="text-[11px] text-espresso/60 dark:text-cream/60 mt-1 leading-relaxed">
+                        فودافون كاش، أورنج، اتصالات، وي باي
+                      </p>
+                      <div className="mt-3 flex items-center gap-1.5 text-[9px] font-black text-espresso/40 dark:text-cream/40">
+                        <span className="px-1.5 py-0.5 rounded bg-black/5 dark:bg-white/10">Vodafone</span>
+                        <span className="px-1.5 py-0.5 rounded bg-black/5 dark:bg-white/10">Orange</span>
+                        <span className="px-1.5 py-0.5 rounded bg-black/5 dark:bg-white/10">Etisalat</span>
+                      </div>
+                    </div>
+
+                    {/* Option 3: Cash On Delivery */}
+                    <div
+                      onClick={() => setPaymentMethod('cod')}
+                      className={`relative p-4 rounded-2xl border cursor-pointer transition-all ${
+                        paymentMethod === 'cod'
+                          ? 'border-primary bg-primary/[0.06] shadow-md ring-2 ring-primary/20'
+                          : 'border-black/10 dark:border-white/10 bg-black/[0.01] dark:bg-white/[0.02] hover:border-primary/40'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                          paymentMethod === 'cod'
+                            ? 'bg-primary text-white shadow-sm'
+                            : 'bg-black/5 dark:bg-white/5 text-espresso dark:text-cream'
+                        }`}>
+                          <Banknote className="w-5 h-5" />
+                        </div>
+                        <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                          paymentMethod === 'cod' ? 'border-primary bg-primary text-white' : 'border-stone-300 dark:border-stone-600'
+                        }`}>
+                          {paymentMethod === 'cod' && <Check className="w-3 h-3 stroke-[3]" />}
+                        </span>
+                      </div>
+                      <h4 className="font-bold text-xs text-espresso dark:text-cream">الدفع عند الاستلام</h4>
+                      <p className="text-[11px] text-espresso/60 dark:text-cream/60 mt-1 leading-relaxed">
+                        معاينة وفحص القطعة اليدوية قبل السداد للمندوب
+                      </p>
+                      <div className="mt-3 flex items-center gap-1.5 text-[9px] font-black text-espresso/40 dark:text-cream/40">
+                        <span className="px-1.5 py-0.5 rounded bg-black/5 dark:bg-white/10">معاينة القطعة</span>
+                        <span className="px-1.5 py-0.5 rounded bg-black/5 dark:bg-white/10">نقداً</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Security Note */}
+                  <div className="p-3 bg-black/[0.02] dark:bg-white/[0.03] rounded-xl border border-black/5 dark:border-white/5 flex items-center gap-2.5 text-[11px] text-espresso/70 dark:text-cream/70">
+                    <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>
+                      {paymentMethod === 'cod'
+                        ? 'حق المعاينة مكفول: يمكنك فحص القطع المصنوعة يدوياً والتأكد من سلامتها قبل الدفع.'
+                        : 'يتم تشفير وتأمين كافة بيانات المعاملات عبر بوابة Paymob المرخصة رسمياً من البنك المركزي المصري.'}
+                    </span>
+                  </div>
+                </section>
+
                 <div className="pt-4 flex justify-end">
                   <button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isRedirectingPaymob}
                     className="w-full sm:w-auto px-10 py-4 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] font-bold text-sm rounded-2xl shadow-xl flex items-center justify-center gap-2 transition duration-200 disabled:opacity-50 cursor-pointer"
                   >
-                    {isSubmitting ? (
-                      <span>جاري تأكيد وتسجيل طلبك...</span>
+                    {isRedirectingPaymob ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <span>جاري تحويلك لبوابة الدفع Paymob...</span>
+                      </>
+                    ) : isSubmitting ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <span>جاري تسجيل وتأكيد طلبك...</span>
+                      </>
+                    ) : paymentMethod === 'paymob_card' ? (
+                      <>
+                        <CreditCard className="w-5 h-5 text-primary" />
+                        <span>متابعة السداد بالبطاقة البنكية ({checkoutTotal} ج.م)</span>
+                      </>
+                    ) : paymentMethod === 'paymob_wallet' ? (
+                      <>
+                        <Smartphone className="w-5 h-5 text-primary" />
+                        <span>متابعة السداد بالمحفظة الذكية ({checkoutTotal} ج.م)</span>
+                      </>
                     ) : (
                       <>
                         <PackageCheck className="w-5 h-5 text-primary" />
-                        <span>تأكيد الطلب الآن ({checkoutTotal} ج.م)</span>
+                        <span>تأكيد الطلب والدفع عند الاستلام ({checkoutTotal} ج.م)</span>
                       </>
                     )}
                   </button>

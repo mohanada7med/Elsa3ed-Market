@@ -188,7 +188,10 @@ export type PaymentMethod =
   | 'cod'
   | 'cash_on_delivery'
   | 'online_gateway'
-  | 'credit_card';
+  | 'credit_card'
+  | 'paymob'
+  | 'paymob_card'
+  | 'paymob_wallet';
 
 export type PaymentStatus =
   | 'pending'
