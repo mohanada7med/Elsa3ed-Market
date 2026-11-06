@@ -40,11 +40,9 @@ export const OrdersTrackingPage: React.FC = () => {
     if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
     const payment = params.get('payment');
-    if (payment === 'success') {
-      addToast('تم السداد بنجاح', 'تم استلام وتأكيد سداد طلبك إلكترونياً عبر Paymob', 'success');
+    if (payment === 'checking') {
+      addToast('جاري مراجعة الدفع', 'هنحدّث حالة الطلب فور تأكيد Paymob لاستلام المبلغ.', 'info');
       refreshOrders();
-    } else if (payment === 'failed') {
-      addToast('لم يكتمل السداد', 'عملية الدفع لم تكتمل عبر Paymob، يمكنك إعادة المحاولة الآن.', 'error');
     }
   }, []);
 
@@ -419,7 +417,7 @@ export const OrdersTrackingPage: React.FC = () => {
                             if (typeof api?.getPaymentStatus === 'function') {
                               statusData = await api.getPaymentStatus(currentSelected.id);
                             } else if (typeof getPaymentStatus === 'function') {
-                              statusData = await getPaymentStatus(currentSelected.id);
+                              statusData = await getPaymentStatus(currentSelected.id, currentUser);
                             } else {
                               const r = await fetch(`/api/payments/status/${currentSelected.id}`);
                               const j = await r.json();

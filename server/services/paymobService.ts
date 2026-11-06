@@ -46,9 +46,30 @@ export interface InitiatePaymentResult {
   message?: string;
 }
 
+function getPaymobErrorSummary(responseBody: unknown): string | undefined {
+  if (!responseBody || typeof responseBody !== 'object') return undefined;
+
+  const body = responseBody as Record<string, unknown>;
+  for (const key of ['detail', 'message', 'error_description', 'error']) {
+    const value = body[key];
+    if (typeof value === 'string' && value.trim()) {
+      return value.trim().replace(/\s+/g, ' ').slice(0, 300);
+    }
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      const nested = value as Record<string, unknown>;
+      for (const nestedKey of ['message', 'detail', 'code']) {
+        const nestedValue = nested[nestedKey];
+        if (typeof nestedValue === 'string' && nestedValue.trim()) {
+          return nestedValue.trim().replace(/\s+/g, ' ').slice(0, 300);
+        }
+      }
+    }
+  }
+  return undefined;
+}
+
 /**
- * Initiates an online payment with Paymob.
- * Supports both modern Paymob Unified Intention API and fallback simulation if keys are pending.
+ * Initiates a Paymob Unified Checkout intention.
  */
 export async function initiatePaymobPayment(
   order: OrderDocument,
@@ -56,7 +77,18 @@ export async function initiatePaymobPayment(
   requestOrigin?: string
 ): Promise<InitiatePaymentResult> {
   const config = getPaymobConfig();
-  const origin = requestOrigin || process.env.APP_URL || 'http://localhost:3000';
+  const configuredOrigin =
+    requestOrigin ||
+    process.env.APP_URL ||
+    (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3000');
+  if (!configuredOrigin) {
+    throw new Error('إعداد رابط الموقع العام APP_URL مطلوب لتفعيل Paymob');
+  }
+  const appUrl = new URL(configuredOrigin);
+  if (process.env.NODE_ENV === 'production' && appUrl.protocol !== 'https:') {
+    throw new Error('يجب أن يستخدم رابط الموقع APP_URL اتصال HTTPS في بيئة الإنتاج');
+  }
+  const origin = appUrl.origin;
   const amountCents = Math.round(order.total * 100);
 
   // Split buyer name into first and last name
@@ -84,6 +116,23 @@ export async function initiatePaymobPayment(
     state: order.shippingAddress?.governorate || 'قنا'
   };
 
+  if (!config.secretKey || !config.publicKey) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('إعدادات Paymob غير مكتملة. أضف مفاتيح Paymob قبل تفعيل الدفع الإلكتروني.');
+    }
+
+    const simulatedPaymentUrl = `${origin}/api/payments/paymob/simulator?orderId=${encodeURIComponent(order.id)}&orderNumber=${encodeURIComponent(order.orderNumber)}&amount=${encodeURIComponent(order.total)}&method=${encodeURIComponent(methodType)}`;
+    return {
+      paymentUrl: simulatedPaymentUrl,
+      provider: 'paymob_simulated',
+      paymentMethod: methodType,
+      orderId: order.id,
+      orderNumber: order.orderNumber,
+      amount: order.total,
+      message: 'وضع المحاكاة متاح في بيئة التطوير فقط. أضف بيانات Paymob لتفعيل الدفع الفعلي.'
+    };
+  }
+
   // Determine integration IDs (must be valid positive numeric IDs for Paymob)
   const parseIntegrationId = (val?: string): number | null => {
     if (!val) return null;
@@ -99,115 +148,93 @@ export async function initiatePaymobPayment(
   const walletId = parseIntegrationId(config.walletIntegrationId);
 
   const paymentMethods: number[] = [];
-  if (methodType === 'card' && cardId) {
+  if (methodType === 'card') {
+    if (!cardId) throw new Error('إعداد معرّف تكامل بطاقات Paymob غير مكتمل');
     paymentMethods.push(cardId);
-  } else if (methodType === 'wallet' && walletId) {
+  } else if (methodType === 'wallet') {
+    if (!walletId) throw new Error('إعداد معرّف تكامل المحافظ في Paymob غير مكتمل');
     paymentMethods.push(walletId);
   } else {
     if (cardId) paymentMethods.push(cardId);
     if (walletId) paymentMethods.push(walletId);
-  }
-
-  // 1. If live or test Secret Key is provided, use Paymob Unified Checkout (Intention API)
-  if (config.secretKey) {
-    try {
-      Logger.info(`[Paymob] Creating payment intention for order #${order.orderNumber} (${order.total} EGP)`);
-
-      const intentionPayload: any = {
-        amount: amountCents,
-        currency: 'EGP',
-        items: order.items.map((item) => ({
-          name: (item.productTitle || (item as any).title || 'منتج صعيدي').slice(0, 50),
-          amount: Math.round((item.unitPrice || (item as any).price || 0) * 100),
-          description: `${item.sellerName || 'حرفي صعيدي'} - كمية ${item.quantity}`,
-          quantity: item.quantity
-        })),
-        billing_data: billingData,
-        customer: {
-          first_name: firstName,
-          last_name: lastName,
-          email: order.buyerEmail || 'customer@wah-saeed.com',
-          phone_number: order.buyerPhone || '01000000000'
-        },
-        special_reference: order.orderNumber,
-        notification_url: `${origin}/api/payments/paymob/webhook`,
-        redirection_url: `${origin}/api/payments/paymob/processed?orderId=${encodeURIComponent(order.id)}`
-      };
-
-      if (paymentMethods.length > 0) {
-        intentionPayload.payment_methods = paymentMethods;
-      }
-
-      let response = await fetch('https://accept.paymob.com/v1/intention/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Token ${config.secretKey}`
-        },
-        body: JSON.stringify(intentionPayload)
-      });
-
-      let responseData = (await response.json()) as any;
-
-      // If specific integration ID was rejected by Paymob ("does not exist in our system"), retry without payment_methods filter
-      if (!response.ok && intentionPayload.payment_methods) {
-        const errorDetail = JSON.stringify(responseData || '');
-        if (errorDetail.includes('Integration ID') || errorDetail.includes('does not exist') || response.status === 400) {
-          Logger.warn('[Paymob] Integration ID was not found in merchant account, retrying without payment_methods restriction...');
-          delete intentionPayload.payment_methods;
-
-          response = await fetch('https://accept.paymob.com/v1/intention/', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Token ${config.secretKey}`
-            },
-            body: JSON.stringify(intentionPayload)
-          });
-          responseData = (await response.json()) as any;
-        }
-      }
-
-      if (response.ok && responseData?.client_secret) {
-        const clientSecret = responseData.client_secret;
-        const publicKey = config.publicKey || '';
-        const paymentUrl = `https://accept.paymob.com/unifiedcheckout/?publicKey=${publicKey}&clientSecret=${clientSecret}`;
-
-        // Save paymentUrl to order
-        await updateOrderPaymentUrl(order.id, paymentUrl, clientSecret);
-
-        return {
-          paymentUrl,
-          clientSecret,
-          provider: 'paymob',
-          paymentMethod: methodType,
-          orderId: order.id,
-          orderNumber: order.orderNumber,
-          amount: order.total
-        };
-      } else {
-        Logger.warn('[Paymob] Intention API error or missing client_secret, falling back to simulator:', responseData);
-      }
-    } catch (apiError: any) {
-      Logger.error('[Paymob] Failed to contact Paymob Intention API, falling back to simulator:', apiError?.message || apiError);
+    if (paymentMethods.length === 0) {
+      throw new Error('أضف معرّف تكامل بطاقة أو محفظة واحداً على الأقل في إعدادات Paymob');
     }
   }
 
-  // 2. Simulated/Sandbox Fallback
-  // When Paymob credentials are not yet configured in `.env`, provide an in-app interactive simulator
-  // so the payment flow works seamlessly in development and preview without breaking.
-  const simulatedPaymentUrl = `${origin}/api/payments/paymob/simulator?orderId=${encodeURIComponent(order.id)}&orderNumber=${encodeURIComponent(order.orderNumber)}&amount=${encodeURIComponent(order.total)}&method=${encodeURIComponent(methodType)}`;
+  Logger.info(`[Paymob] Creating payment intention for order #${order.orderNumber} (${order.total} EGP)`);
+  const intentionPayload = {
+    amount: amountCents,
+    currency: 'EGP',
+    items: [{
+      name: `طلب سوق وه ${order.orderNumber}`.slice(0, 50),
+      amount: amountCents,
+      description: `طلب يشمل ${order.items.length} منتجاً ورسوم الشحن والخصم إن وجدت`,
+      quantity: 1
+    }],
+    payment_methods: paymentMethods,
+    billing_data: billingData,
+    customer: {
+      first_name: firstName,
+      last_name: lastName,
+      email: order.buyerEmail || 'customer@wah-saeed.com',
+      phone_number: order.buyerPhone || '01000000000'
+    },
+    special_reference: order.orderNumber,
+    notification_url: `${origin}/api/payments/paymob/webhook`,
+    redirection_url: `${origin}/api/payments/paymob/processed?orderId=${encodeURIComponent(order.id)}`
+  };
 
-  await updateOrderPaymentUrl(order.id, simulatedPaymentUrl, 'simulated');
+  let response: Response;
+  let responseData: any;
+  try {
+    response = await fetch('https://accept.paymob.com/v1/intention/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${config.secretKey}`
+      },
+      body: JSON.stringify(intentionPayload)
+    });
+    const responseText = await response.text();
+    try {
+      responseData = responseText ? JSON.parse(responseText) : null;
+    } catch {
+      responseData = null;
+    }
+  } catch (error) {
+    Logger.error('[Paymob] Failed to contact Paymob Intention API:', error);
+    throw new Error('تعذر الاتصال ببوابة Paymob. حاول مرة أخرى بعد قليل.');
+  }
+
+  if (!response.ok || typeof responseData?.client_secret !== 'string' || !responseData.client_secret) {
+    const errorSummary = getPaymobErrorSummary(responseData);
+    const errorCode = responseData && typeof responseData === 'object'
+      ? (responseData as Record<string, unknown>).error_code ??
+        (responseData as Record<string, unknown>).code
+      : undefined;
+    Logger.error('[Paymob] Intention API rejected payment request', {
+      status: response.status,
+      code: typeof errorCode === 'string' || typeof errorCode === 'number' ? errorCode : undefined,
+      message: errorSummary
+    });
+    throw new Error(
+      `رفضت بوابة Paymob بدء الدفع (HTTP ${response.status})${errorSummary ? `: ${errorSummary}` : '. راجع سجل الخادم لمعرفة التفاصيل.'}`
+    );
+  }
+
+  const checkoutUrl = new URL('https://accept.paymob.com/unifiedcheckout/');
+  checkoutUrl.searchParams.set('publicKey', config.publicKey);
+  checkoutUrl.searchParams.set('clientSecret', responseData.client_secret);
 
   return {
-    paymentUrl: simulatedPaymentUrl,
-    provider: 'paymob_simulated',
+    paymentUrl: checkoutUrl.toString(),
+    clientSecret: responseData.client_secret,
+    provider: 'paymob',
     paymentMethod: methodType,
     orderId: order.id,
     orderNumber: order.orderNumber,
-    amount: order.total,
-    message: 'تم تفعيل بوابة الدفع. لربط حساب Paymob الفعلي، ضع PAYMOB_SECRET_KEY و PAYMOB_PUBLIC_KEY في ملف .env'
+    amount: order.total
   };
 }
 
@@ -216,13 +243,10 @@ export async function initiatePaymobPayment(
  */
 export function verifyPaymobHmac(queryOrBody: any, receivedHmac?: string): boolean {
   const config = getPaymobConfig();
-  if (!config.hmacSecret) {
-    // If HMAC secret is not configured, accept in test mode
-    return config.environment === 'test';
-  }
+  if (!config.hmacSecret) return false;
 
   const hmac = receivedHmac || queryOrBody?.hmac;
-  if (!hmac) return false;
+  if (typeof hmac !== 'string' || !/^[a-f\d]{128}$/i.test(hmac)) return false;
 
   const obj = queryOrBody?.obj || queryOrBody;
 
@@ -256,7 +280,9 @@ export function verifyPaymobHmac(queryOrBody: any, receivedHmac?: string): boole
     .update(concatenated)
     .digest('hex');
 
-  return calculatedHmac.toLowerCase() === hmac.toLowerCase();
+  const received = Buffer.from(hmac, 'hex');
+  const calculated = Buffer.from(calculatedHmac, 'hex');
+  return received.length === calculated.length && crypto.timingSafeEqual(received, calculated);
 }
 
 /**
@@ -267,6 +293,7 @@ export async function markOrderPaidByPaymob(
   transactionDetails: {
     transactionId?: string | number;
     paymentMethod?: string;
+    integrationId?: string | number;
     paidAmount?: number;
     rawPayload?: any;
   }
@@ -299,11 +326,41 @@ export async function markOrderPaidByPaymob(
     return { success: false, error: 'الطلب غير موجود في النظام' };
   }
 
+  if (!['paymob', 'paymob_card', 'paymob_wallet'].includes(order.paymentMethod)) {
+    return { success: false, error: 'طريقة الدفع لهذا الطلب ليست Paymob' };
+  }
+
+  if (
+    !transactionDetails.transactionId ||
+    !Number.isFinite(transactionDetails.paidAmount) ||
+    Math.round((transactionDetails.paidAmount as number) * 100) !== Math.round(order.total * 100)
+  ) {
+    return { success: false, error: 'مبلغ الدفع أو رقم المعاملة غير صحيح' };
+  }
+
+  if (transactionDetails.integrationId !== undefined) {
+    const config = getPaymobConfig();
+    const integrationId = String(transactionDetails.integrationId);
+    const expectedIntegrationIds =
+      order.paymentMethod === 'paymob_wallet'
+        ? [config.walletIntegrationId]
+        : order.paymentMethod === 'paymob_card'
+          ? [config.cardIntegrationId]
+          : [config.cardIntegrationId, config.walletIntegrationId];
+    if (
+      !expectedIntegrationIds.some(
+        (expectedId) => expectedId && Number.isSafeInteger(Number(expectedId)) && Number(expectedId) === Number(integrationId)
+      )
+    ) {
+      return { success: false, error: 'معرّف تكامل Paymob لا يطابق طريقة دفع الطلب' };
+    }
+  }
+
   if (order.paymentStatus === 'paid') {
     return { success: true, order };
   }
 
-  const txId = transactionDetails.transactionId ? String(transactionDetails.transactionId) : `TXN-${Date.now()}`;
+  const txId = String(transactionDetails.transactionId);
   const methodLabel = transactionDetails.paymentMethod === 'wallet'
     ? 'محفظة إلكترونية (Paymob)'
     : 'بطاقة بنكية (Paymob)';
@@ -311,8 +368,8 @@ export async function markOrderPaidByPaymob(
   // Update in Mongo
   if (isMongo && db) {
     try {
-      await db.collection('orders').updateOne(
-        { id: order.id },
+      const result = await db.collection('orders').updateOne(
+        { id: order.id, paymentStatus: { $ne: 'paid' } },
         {
           $set: {
             paymentStatus: 'paid',
@@ -323,15 +380,22 @@ export async function markOrderPaidByPaymob(
           $push: {
             timeline: {
               status: 'processing',
-              label: 'تم تأكيد الدفع الإلكتروني بنجاح',
-              timestamp: nowIso,
-              description: `تم سداد قيمة الطلب (${order.total} ج.م) عبر بوابة Paymob الإلكترونية. رقم المعاملة: ${txId}`
+              title: 'تم تأكيد الدفع الإلكتروني بنجاح',
+              time: 'الآن',
+              description: `تم سداد قيمة الطلب (${order.total} ج.م) عبر بوابة Paymob الإلكترونية. رقم المعاملة: ${txId}`,
+              done: true
             } as any
           }
         }
       );
+      if (result.matchedCount === 0) {
+        const latestOrder = (await db.collection('orders').findOne({ id: order.id })) as unknown as OrderDocument | null;
+        if (latestOrder?.paymentStatus === 'paid') return { success: true, order: latestOrder };
+        return { success: false, error: 'تعذر تحديث حالة دفع الطلب' };
+      }
     } catch (e) {
       Logger.error('[Paymob] Mongo update order error:', e);
+      throw e;
     }
   }
 
@@ -370,27 +434,4 @@ export async function markOrderPaidByPaymob(
   Logger.info(`[Paymob] Order #${order.orderNumber} successfully marked as PAID (Tx: ${txId})`);
 
   return { success: true, order };
-}
-
-/**
- * Helper to update order paymentUrl in database
- */
-async function updateOrderPaymentUrl(orderId: string, paymentUrl: string, clientSecret?: string): Promise<void> {
-  const { db, isMongo } = await getDatabase();
-  const updateData: any = { paymentUrl };
-  if (clientSecret) updateData.paymentReference = clientSecret;
-
-  if (isMongo && db) {
-    try {
-      await db.collection('orders').updateOne({ id: orderId }, { $set: updateData });
-    } catch (e) {
-      Logger.error('[Paymob] Update order paymentUrl error:', e);
-    }
-  }
-
-  const memOrder = memoryDb.orders.find((o) => o.id === orderId);
-  if (memOrder) {
-    memOrder.paymentUrl = paymentUrl;
-    if (clientSecret) memOrder.paymentReference = clientSecret;
-  }
 }

@@ -245,7 +245,7 @@ export async function createOrder(
     paymentStatus: initialPaymentStatus,
     paymentReference:
       paymentReference?.trim() ||
-      (paymentMethod !== 'cod' && paymentMethod !== 'cash_on_delivery'
+      (paymentMethod === 'instapay' || paymentMethod === 'vodafone_cash'
         ? `REF-${Math.floor(100000 + Math.random() * 900000)}`
         : undefined),
     subtotal: cartSummary.subtotal,

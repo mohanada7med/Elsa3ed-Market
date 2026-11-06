@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Governorate, Order } from '../../types';
 import { api, initiatePaymobPayment } from '../../services/api';
@@ -47,6 +47,40 @@ export const CheckoutPage: React.FC = () => {
   const [isRedirectingPaymob, setIsRedirectingPaymob] = useState(false);
   const [completedOrder, setCompletedOrder] = useState<Order | null>(null);
   const [paymobPayUrl, setPaymobPayUrl] = useState<string | null>(null);
+  const [paymentOptions, setPaymentOptions] = useState({
+    card: false,
+    wallet: false,
+    cashOnDelivery: true
+  });
+  const [isPaymentConfigLoaded, setIsPaymentConfigLoaded] = useState(false);
+
+  useEffect(() => {
+    let isCurrent = true;
+    api.getPublicPaymentConfig().then((config) => {
+      if (!isCurrent) return;
+
+      const options = {
+        card: config.isOnlinePaymentActive && config.isPaymobCardActive,
+        wallet: config.isOnlinePaymentActive && config.isPaymobWalletActive,
+        cashOnDelivery: config.isCashOnDeliveryActive
+      };
+      setPaymentOptions(options);
+      setPaymentMethod((current) => {
+        if (current === 'cod' && options.cashOnDelivery) return current;
+        if (current === 'paymob_card' && options.card) return current;
+        if (current === 'paymob_wallet' && options.wallet) return current;
+        if (options.card) return 'paymob_card';
+        if (options.wallet) return 'paymob_wallet';
+        if (options.cashOnDelivery) return 'cod';
+        return current;
+      });
+      setIsPaymentConfigLoaded(true);
+    });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, []);
 
   const cartSellers = Array.from(
     new Map(
@@ -179,10 +213,20 @@ export const CheckoutPage: React.FC = () => {
               </div>
               <div className="space-y-1">
                 <h1 className="text-2xl sm:text-3xl font-main text-espresso dark:text-cream">
-                  تم استلام وتأكيد طلبك بنجاح!
+                  {completedOrder.paymentStatus !== 'paid' &&
+                  (completedOrder.paymentMethod === 'paymob_card' ||
+                    completedOrder.paymentMethod === 'paymob_wallet' ||
+                    completedOrder.paymentMethod === 'paymob')
+                    ? 'تم تسجيل طلبك وبانتظار تأكيد السداد'
+                    : 'تم استلام وتأكيد طلبك بنجاح!'}
                 </h1>
                 <p className="text-sm text-espresso/60 dark:text-cream/60">
-                  شكراً لدعمك المباشر لحرفيي صعيد مصر، جاري الآن إبلاغ الورش لبدء تجهيز طلبك
+                  {completedOrder.paymentStatus !== 'paid' &&
+                  (completedOrder.paymentMethod === 'paymob_card' ||
+                    completedOrder.paymentMethod === 'paymob_wallet' ||
+                    completedOrder.paymentMethod === 'paymob')
+                    ? 'أكمل الدفع عبر Paymob، وسيتم تحديث حالة طلبك بعد تأكيد عملية السداد.'
+                    : 'شكراً لدعمك المباشر لحرفيي صعيد مصر، جاري الآن إبلاغ الورش لبدء تجهيز طلبك'}
                 </p>
               </div>
 
@@ -570,6 +614,7 @@ export const CheckoutPage: React.FC = () => {
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {/* Option 1: Card via Paymob */}
+                    {paymentOptions.card && (
                     <div
                       onClick={() => setPaymentMethod('paymob_card')}
                       className={`relative p-4 rounded-2xl border cursor-pointer transition-all ${
@@ -602,8 +647,10 @@ export const CheckoutPage: React.FC = () => {
                         <span className="px-1.5 py-0.5 rounded bg-black/5 dark:bg-white/10">ميزة</span>
                       </div>
                     </div>
+                    )}
 
                     {/* Option 2: Mobile Wallet via Paymob */}
+                    {paymentOptions.wallet && (
                     <div
                       onClick={() => setPaymentMethod('paymob_wallet')}
                       className={`relative p-4 rounded-2xl border cursor-pointer transition-all ${
@@ -636,8 +683,10 @@ export const CheckoutPage: React.FC = () => {
                         <span className="px-1.5 py-0.5 rounded bg-black/5 dark:bg-white/10">Etisalat</span>
                       </div>
                     </div>
+                    )}
 
                     {/* Option 3: Cash On Delivery */}
+                    {paymentOptions.cashOnDelivery && (
                     <div
                       onClick={() => setPaymentMethod('cod')}
                       className={`relative p-4 rounded-2xl border cursor-pointer transition-all ${
@@ -669,6 +718,15 @@ export const CheckoutPage: React.FC = () => {
                         <span className="px-1.5 py-0.5 rounded bg-black/5 dark:bg-white/10">نقداً</span>
                       </div>
                     </div>
+                    )}
+
+                    {!paymentOptions.card &&
+                      !paymentOptions.wallet &&
+                      !paymentOptions.cashOnDelivery && (
+                      <p className="sm:col-span-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-center text-sm font-bold text-amber-900 dark:text-amber-200">
+                        لا توجد طرق دفع متاحة حالياً. يرجى المحاولة لاحقاً.
+                      </p>
+                    )}
                   </div>
 
                   {/* Security Note */}
@@ -685,7 +743,14 @@ export const CheckoutPage: React.FC = () => {
                 <div className="pt-4 flex justify-end">
                   <button
                     type="submit"
-                    disabled={isSubmitting || isRedirectingPaymob}
+                    disabled={
+                      !isPaymentConfigLoaded ||
+                      (!paymentOptions.card &&
+                        !paymentOptions.wallet &&
+                        !paymentOptions.cashOnDelivery) ||
+                      isSubmitting ||
+                      isRedirectingPaymob
+                    }
                     className="w-full sm:w-auto px-10 py-4 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] font-bold text-sm rounded-2xl shadow-xl flex items-center justify-center gap-2 transition duration-200 disabled:opacity-50 cursor-pointer"
                   >
                     {isRedirectingPaymob ? (

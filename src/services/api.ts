@@ -980,9 +980,13 @@ export async function initiatePaymobPayment(
   return json.data;
 }
 
-export async function getPaymentStatus(orderId: string): Promise<any> {
+export async function getPaymentStatus(
+  orderId: string,
+  user?: { id?: string; role?: string }
+): Promise<any> {
   const res = await fetch(`${API_BASE}/payments/status/${orderId}`, {
-    credentials: 'include'
+    credentials: 'include',
+    headers: getAuthHeaders(user)
   });
   const json: ApiResponse<any> = await res.json();
   return json.data || null;
@@ -1937,6 +1941,8 @@ export const api = {
   async getPublicPaymentConfig(): Promise<{
     isOnlinePaymentActive: boolean;
     isCashOnDeliveryActive: boolean;
+    isPaymobCardActive: boolean;
+    isPaymobWalletActive: boolean;
     instaPayAccount?: string;
     vodafoneCashNumber?: string;
     instaPayInstructions?: string;
@@ -1954,6 +1960,8 @@ export const api = {
     return {
       isOnlinePaymentActive: true,
       isCashOnDeliveryActive: true,
+      isPaymobCardActive: false,
+      isPaymobWalletActive: false,
       instaPayAccount: 'elsa3ed@instapay',
       vodafoneCashNumber: '01158969931',
       instaPayInstructions: 'قم بالتحويل عبر تطبيق إنستاباي إلى المعرف الموضح أعلاه واضغط على "تم التحويل".',

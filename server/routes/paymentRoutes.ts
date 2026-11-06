@@ -1,7 +1,10 @@
 import express from 'express';
 import type { Request, Response } from 'express';
+import { requireBuyer } from '../middleware/auth.ts';
+import type { AuthenticatedRequest } from '../middleware/auth.ts';
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
 import type { OrderDocument } from '../models/types.ts';
+import { getPaymentConfig } from '../services/paymentConfigService.ts';
 import {
   initiatePaymobPayment,
   verifyPaymobHmac,
@@ -16,7 +19,7 @@ const router = express.Router();
  * GET /api/payments/status/:orderId
  * Get current payment status of an order
  */
-router.get('/status/:orderId', async (req: Request, res: Response) => {
+router.get('/status/:orderId', requireBuyer, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { orderId } = req.params;
     const { db, isMongo } = await getDatabase();
@@ -42,6 +45,14 @@ router.get('/status/:orderId', async (req: Request, res: Response) => {
       });
     }
 
+    if (order.buyerId !== req.user!.id) {
+      return res.status(404).json({
+        success: false,
+        error: 'الطلب غير موجود',
+        code: 'NOT_FOUND'
+      });
+    }
+
     res.json({
       success: true,
       data: {
@@ -49,8 +60,6 @@ router.get('/status/:orderId', async (req: Request, res: Response) => {
         orderNumber: order.orderNumber,
         paymentStatus: order.paymentStatus,
         paymentMethod: order.paymentMethod,
-        paymentUrl: order.paymentUrl,
-        paymentReference: order.paymentReference,
         total: order.total
       }
     });
@@ -66,14 +75,29 @@ router.get('/status/:orderId', async (req: Request, res: Response) => {
  * POST /api/payments/paymob/initiate
  * Initiate Paymob online payment for an order
  */
-router.post('/paymob/initiate', async (req: Request, res: Response) => {
+router.post('/paymob/initiate', requireBuyer, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { orderId, methodType = 'all' } = req.body;
 
-    if (!orderId) {
+    if (typeof orderId !== 'string' || !orderId.trim()) {
       return res.status(400).json({
         success: false,
         error: 'رقم تعريف الطلب مطلوب'
+      });
+    }
+
+    if (methodType !== 'card' && methodType !== 'wallet') {
+      return res.status(400).json({
+        success: false,
+        error: 'طريقة دفع Paymob غير صالحة'
+      });
+    }
+
+    const paymentConfig = await getPaymentConfig();
+    if (paymentConfig.isOnlinePaymentActive === false) {
+      return res.status(403).json({
+        success: false,
+        error: 'الدفع الإلكتروني غير متاح حالياً'
       });
     }
 
@@ -99,15 +123,25 @@ router.post('/paymob/initiate', async (req: Request, res: Response) => {
       });
     }
 
-    // Determine request host for redirection
-    const proto = req.headers['x-forwarded-proto'] || 'http';
-    const host = req.headers['x-forwarded-host'] || req.headers.host || 'localhost:3000';
-    const requestOrigin = `${proto}://${host}`;
+    if (order.buyerId !== req.user!.id) {
+      return res.status(404).json({
+        success: false,
+        error: 'الطلب المطلوب غير موجود'
+      });
+    }
+
+    const expectedPaymentMethod = methodType === 'wallet' ? 'paymob_wallet' : 'paymob_card';
+    if (order.paymentMethod !== expectedPaymentMethod || order.paymentStatus === 'paid') {
+      return res.status(400).json({
+        success: false,
+        error: 'طريقة الدفع أو حالة الطلب لا تسمح ببدء عملية الدفع'
+      });
+    }
 
     const result = await initiatePaymobPayment(
       order,
-      methodType as 'card' | 'wallet' | 'all',
-      requestOrigin
+      methodType,
+      process.env.APP_URL
     );
 
     res.json({
@@ -134,30 +168,49 @@ router.post('/paymob/webhook', async (req: Request, res: Response) => {
 
     const obj = payload?.obj || payload;
     const isSuccess = Boolean(obj?.success === true || obj?.success === 'true');
+    const isFinal =
+      obj?.pending !== true &&
+      obj?.pending !== 'true' &&
+      obj?.is_refunded !== true &&
+      obj?.is_refunded !== 'true' &&
+      obj?.is_voided !== true &&
+      obj?.is_voided !== 'true';
     const orderRef = obj?.order?.merchant_order_id || obj?.special_reference || obj?.merchant_order_id;
     const transactionId = obj?.id;
-    const paidAmount = obj?.amount_cents ? obj.amount_cents / 100 : undefined;
+    const amountCents = Number(obj?.amount_cents);
+    const paidAmount = Number.isSafeInteger(amountCents) && amountCents > 0 ? amountCents / 100 : undefined;
     const methodType = obj?.source_data?.type || 'card';
+    const integrationId = obj?.integration_id;
 
-    // Verify HMAC if configured
+    // Verify the signature before trusting any transaction fields.
     const hmacHeader = (req.headers['x-paymob-hmac'] || req.query.hmac) as string | undefined;
     const isHmacValid = verifyPaymobHmac(payload, hmacHeader);
 
     if (!isHmacValid) {
-      Logger.warn('[Paymob Webhook] HMAC validation mismatch or missing signature');
+      Logger.warn('[Paymob Webhook] Rejected notification with invalid or missing HMAC');
+      return res.status(401).json({ success: false, error: 'توقيع إشعار Paymob غير صالح' });
     }
 
-    if (isSuccess && orderRef) {
-      await markOrderPaidByPaymob(orderRef, {
-        transactionId,
-        paymentMethod: methodType,
-        paidAmount,
-        rawPayload: obj
-      });
+    if (!isSuccess || !isFinal || obj?.error_occured === true || obj?.error_occured === 'true') {
+      return res.status(200).json({ success: true, received: true });
     }
 
-    // Paymob expects 200 OK
-    res.status(200).json({ success: true, received: true });
+    if (!orderRef || !transactionId || !integrationId || !Number.isFinite(paidAmount)) {
+      return res.status(400).json({ success: false, error: 'بيانات معاملة Paymob غير مكتملة' });
+    }
+
+    const result = await markOrderPaidByPaymob(String(orderRef), {
+      transactionId,
+      paymentMethod: methodType,
+      integrationId,
+      paidAmount,
+      rawPayload: obj
+    });
+    if (!result.success) {
+      return res.status(400).json({ success: false, error: result.error });
+    }
+
+    return res.status(200).json({ success: true, received: true });
   } catch (error: any) {
     Logger.error('[Paymob Webhook] Processing error:', error);
     res.status(500).json({ success: false, error: error?.message });
@@ -171,20 +224,7 @@ router.post('/paymob/webhook', async (req: Request, res: Response) => {
 router.get('/paymob/processed', async (req: Request, res: Response) => {
   try {
     const { orderId } = req.query;
-    const isSuccess = String(req.query.success).toLowerCase() === 'true';
-    const txnId = req.query.id || req.query.txn_response_code;
-
-    if (orderId && isSuccess) {
-      await markOrderPaidByPaymob(String(orderId), {
-        transactionId: txnId ? String(txnId) : undefined
-      });
-    }
-
-    const redirectPath = isSuccess
-      ? `/orders?orderId=${encodeURIComponent(String(orderId || ''))}&payment=success`
-      : `/orders?orderId=${encodeURIComponent(String(orderId || ''))}&payment=failed`;
-
-    res.redirect(302, redirectPath);
+    res.redirect(302, `/orders?orderId=${encodeURIComponent(String(orderId || ''))}&payment=checking`);
   } catch (error: any) {
     Logger.error('[Paymob Redirection] Error:', error);
     res.redirect(302, '/orders?payment=error');
@@ -196,6 +236,10 @@ router.get('/paymob/processed', async (req: Request, res: Response) => {
  * Interactive test simulator when Paymob test credentials are being configured
  */
 router.get('/paymob/simulator', (req: Request, res: Response) => {
+  if (process.env.NODE_ENV === 'production') {
+    return res.sendStatus(404);
+  }
+
   const { orderId, orderNumber, amount, method } = req.query;
   const config = getPaymobConfig();
 
@@ -356,16 +400,32 @@ router.get('/paymob/simulator', (req: Request, res: Response) => {
  */
 const handleSimulateSuccess = async (req: Request, res: Response) => {
   try {
+    if (process.env.NODE_ENV === 'production') {
+      return res.sendStatus(404);
+    }
+
     const orderId = req.body?.orderId || req.query?.orderId;
     const method = req.body?.method || req.query?.method;
     if (orderId) {
-      await markOrderPaidByPaymob(String(orderId), {
+      const { db, isMongo } = await getDatabase();
+      let order: OrderDocument | null = null;
+      if (isMongo && db) {
+        order = (await db.collection('orders').findOne({ id: String(orderId) })) as unknown as OrderDocument | null;
+      }
+      if (!order) order = memoryDb.orders.find((candidate) => candidate.id === String(orderId)) || null;
+
+      if (!order) return res.status(404).send('الطلب غير موجود');
+
+      const result = await markOrderPaidByPaymob(order.id, {
         transactionId: `PAYMOB-SIM-${Math.floor(100000 + Math.random() * 900000)}`,
-        paymentMethod: method || 'card'
+        paymentMethod: method || 'card',
+        paidAmount: order.total
       });
+      if (!result.success) return res.status(400).send(result.error);
     }
-    res.redirect(302, `/orders?orderId=${encodeURIComponent(String(orderId || ''))}&payment=success`);
+    res.redirect(302, `/orders?orderId=${encodeURIComponent(String(orderId || ''))}&payment=checking`);
   } catch (err: any) {
+    Logger.error('[Paymob Simulator] Could not process simulated payment:', err);
     res.redirect(302, '/orders?payment=error');
   }
 };

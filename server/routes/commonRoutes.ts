@@ -5,6 +5,7 @@ import { validateAndCalculateDiscount } from '../services/discountService.ts';
 import { getProductReviews, createProductReview } from '../services/reviewService.ts';
 import { getRecommendedProducts } from '../services/recommendationService.ts';
 import { getPaymentConfig } from '../services/paymentConfigService.ts';
+import { getPaymobConfig } from '../services/paymobService.ts';
 import { requireBuyer } from '../middleware/auth.ts';
 import type { AuthenticatedRequest } from '../middleware/auth.ts';
 
@@ -158,11 +159,23 @@ router.get('/recommendations', async (req: Request, res: Response) => {
 router.get(['/payment-config', '/payment/config'], async (_req: Request, res: Response) => {
   try {
     const config = await getPaymentConfig();
+    const paymobConfig = getPaymobConfig();
+    const hasCredentials = Boolean(paymobConfig.secretKey && paymobConfig.publicKey);
+    const canUseSimulator = process.env.NODE_ENV !== 'production' && !hasCredentials;
+    const hasValidIntegrationId = (value?: string) =>
+      Boolean(value && /^\d+$/.test(value) && Number(value) > 0);
+
     res.json({
       success: true,
       data: {
         isOnlinePaymentActive: config.isOnlinePaymentActive !== false,
         isCashOnDeliveryActive: config.isCashOnDeliveryActive !== false,
+        isPaymobCardActive:
+          config.isOnlinePaymentActive !== false &&
+          (canUseSimulator || (hasCredentials && hasValidIntegrationId(paymobConfig.cardIntegrationId))),
+        isPaymobWalletActive:
+          config.isOnlinePaymentActive !== false &&
+          (canUseSimulator || (hasCredentials && hasValidIntegrationId(paymobConfig.walletIntegrationId))),
         instaPayAccount: config.instaPayAccount,
         vodafoneCashNumber: config.vodafoneCashNumber,
         instaPayInstructions: config.instaPayInstructions,
