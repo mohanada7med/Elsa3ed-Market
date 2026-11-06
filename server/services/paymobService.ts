@@ -5,7 +5,6 @@ import { Logger } from '../utils/logger.ts';
 import { createNotification } from './notificationService.ts';
 
 export interface PaymobConfig {
-  apiKey?: string;
   secretKey?: string;
   publicKey?: string;
   cardIntegrationId?: string;
@@ -16,9 +15,9 @@ export interface PaymobConfig {
 }
 
 export function getPaymobConfig(): PaymobConfig {
+  const environment = process.env.PAYMOB_ENVIRONMENT?.trim().toLowerCase();
   return {
-    apiKey: process.env.PAYMOB_API_KEY?.trim(),
-    secretKey: (process.env.PAYMOB_SECRET_KEY || process.env.PAYMOB_API_KEY)?.trim(),
+    secretKey: process.env.PAYMOB_SECRET_KEY?.trim(),
     publicKey: process.env.PAYMOB_PUBLIC_KEY?.trim(),
     cardIntegrationId: (
       process.env.PAYMOB_INTEGRATION_ID_CARD ||
@@ -31,7 +30,7 @@ export function getPaymobConfig(): PaymobConfig {
     )?.trim(),
     iframeId: process.env.PAYMOB_IFRAME_ID?.trim(),
     hmacSecret: process.env.PAYMOB_HMAC_SECRET?.trim(),
-    environment: (process.env.PAYMOB_ENVIRONMENT === 'live' ? 'live' : 'test') as 'live' | 'test'
+    environment: environment === 'live' ? 'live' : 'test'
   };
 }
 
@@ -118,7 +117,7 @@ export async function initiatePaymobPayment(
 
   if (!config.secretKey || !config.publicKey) {
     if (process.env.NODE_ENV === 'production') {
-      throw new Error('إعدادات Paymob غير مكتملة. أضف مفاتيح Paymob قبل تفعيل الدفع الإلكتروني.');
+      throw new Error('إعدادات Paymob غير مكتملة. يلزم PAYMOB_SECRET_KEY وPAYMOB_PUBLIC_KEY لإنشاء الدفع الفعلي.');
     }
 
     const simulatedPaymentUrl = `${origin}/api/payments/paymob/simulator?orderId=${encodeURIComponent(order.id)}&orderNumber=${encodeURIComponent(order.orderNumber)}&amount=${encodeURIComponent(order.total)}&method=${encodeURIComponent(methodType)}`;
@@ -138,8 +137,8 @@ export async function initiatePaymobPayment(
     if (!val) return null;
     const clean = val.trim();
     if (/^\d+$/.test(clean)) {
-      const num = parseInt(clean, 10);
-      return num > 0 ? num : null;
+      const num = Number(clean);
+      return Number.isSafeInteger(num) && num > 0 ? num : null;
     }
     return null;
   };
@@ -162,7 +161,11 @@ export async function initiatePaymobPayment(
     }
   }
 
-  Logger.info(`[Paymob] Creating payment intention for order #${order.orderNumber} (${order.total} EGP)`);
+  Logger.info(`[Paymob] Creating payment intention for order #${order.orderNumber} (${order.total} EGP)`, {
+    environment: config.environment,
+    payment_method: methodType,
+    integration_id: paymentMethods[0]
+  });
   const intentionPayload = {
     amount: amountCents,
     currency: 'EGP',
@@ -219,13 +222,16 @@ export async function initiatePaymobPayment(
       : undefined;
     Logger.error('[Paymob] Intention API rejected payment request', {
       status: response.status,
+      environment: config.environment,
+      payment_method: methodType,
+      integration_id: paymentMethods[0],
       code: typeof errorCode === 'string' || typeof errorCode === 'number' ? errorCode : undefined,
       reason: isUnknownIntegration ? 'integration_not_found' : undefined,
       message: isUnknownIntegration ? undefined : errorSummary
     });
     if (isUnknownIntegration) {
       throw new Error(
-        `معرّف تكامل ${methodType === 'wallet' ? 'المحفظة' : 'البطاقة'} غير موجود في حساب Paymob المستخدم. انسخ معرّف التكامل من Developers → Payment Integrations، وتأكد أنه من نفس حساب وبيئة مفاتيح PAYMOB_SECRET_KEY وPAYMOB_PUBLIC_KEY.`
+        `رفض Paymob معرّف تكامل ${methodType === 'wallet' ? 'المحفظة' : 'البطاقة'} في بيئة ${config.environment.toUpperCase()}. تحقق أن المعرّف موجود ومفعّل كتكامل أونلاين وطريقة الدفع المطلوبة، وأنه تابع لنفس حساب وبيئة PAYMOB_SECRET_KEY. نوع UIG أو قناة online_new وحدهما لا يثبتان أن التكامل مفعّل للمحافظ.`
       );
     }
     throw new Error(
