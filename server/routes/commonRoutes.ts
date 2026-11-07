@@ -5,7 +5,7 @@ import { validateAndCalculateDiscount } from '../services/discountService.ts';
 import { getProductReviews, createProductReview } from '../services/reviewService.ts';
 import { getRecommendedProducts } from '../services/recommendationService.ts';
 import { getPaymentConfig } from '../services/paymentConfigService.ts';
-import { getPaymobConfig } from '../services/paymobService.ts';
+import { getPaymobConfig, isIntegrationVerified } from '../services/paymobService.ts';
 import { requireBuyer } from '../middleware/auth.ts';
 import type { AuthenticatedRequest } from '../middleware/auth.ts';
 
@@ -162,20 +162,27 @@ router.get(['/payment-config', '/payment/config'], async (_req: Request, res: Re
     const paymobConfig = getPaymobConfig();
     const hasCredentials = Boolean(paymobConfig.secretKey && paymobConfig.publicKey);
     const canUseSimulator = process.env.NODE_ENV !== 'production' && !hasCredentials;
-    const hasValidIntegrationId = (value?: string) =>
-      Boolean(value && /^\d+$/.test(value) && Number(value) > 0);
+
+    let isPaymobCardActive = false;
+    let isPaymobWalletActive = false;
+
+    if (config.isOnlinePaymentActive !== false) {
+      if (canUseSimulator) {
+        isPaymobCardActive = true;
+        isPaymobWalletActive = true;
+      } else if (hasCredentials) {
+        isPaymobCardActive = await isIntegrationVerified('card');
+        isPaymobWalletActive = await isIntegrationVerified('wallet');
+      }
+    }
 
     res.json({
       success: true,
       data: {
         isOnlinePaymentActive: config.isOnlinePaymentActive !== false,
         isCashOnDeliveryActive: config.isCashOnDeliveryActive !== false,
-        isPaymobCardActive:
-          config.isOnlinePaymentActive !== false &&
-          (canUseSimulator || (hasCredentials && hasValidIntegrationId(paymobConfig.cardIntegrationId))),
-        isPaymobWalletActive:
-          config.isOnlinePaymentActive !== false &&
-          (canUseSimulator || (hasCredentials && hasValidIntegrationId(paymobConfig.walletIntegrationId))),
+        isPaymobCardActive,
+        isPaymobWalletActive,
         instaPayAccount: config.instaPayAccount,
         vodafoneCashNumber: config.vodafoneCashNumber,
         instaPayInstructions: config.instaPayInstructions,

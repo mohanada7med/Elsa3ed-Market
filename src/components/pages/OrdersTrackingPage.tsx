@@ -40,7 +40,13 @@ export const OrdersTrackingPage: React.FC = () => {
     if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
     const payment = params.get('payment');
-    if (payment === 'checking') {
+    if (payment === 'success') {
+      addToast('تم تأكيد الدفع والطلب!', 'تم استلام وتأكيد سداد طلبك بنجاح عبر Paymob، وجاري الآن بدء التجهيز بالورشة.', 'success');
+      refreshOrders();
+    } else if (payment === 'failed') {
+      addToast('لم يكتمل الدفع', 'لم يتم تأكيد طلبك لعدم اكتمال السداد. اضغط على زر "إتمام السداد وتأكيد الطلب" للمحاولة مجدداً.', 'error');
+      refreshOrders();
+    } else if (payment === 'checking') {
       addToast('جاري مراجعة الدفع', 'هنحدّث حالة الطلب فور تأكيد Paymob لاستلام المبلغ.', 'info');
       refreshOrders();
     }
@@ -342,9 +348,9 @@ export const OrdersTrackingPage: React.FC = () => {
                               : 'bg-blue-500/20 text-blue-800 dark:text-blue-300'
                         }`}>
                           {currentSelected.paymentStatus === 'paid'
-                            ? 'تم السداد بنجاح ✓'
+                            ? 'تم السداد وتأكيد الطلب ✓'
                             : currentSelected.paymentMethod?.startsWith('paymob')
-                              ? 'في انتظار استكمال السداد'
+                              ? 'غير مؤكد - بانتظار السداد'
                               : 'الدفع عند المعاينة'}
                         </span>
                       </div>
@@ -352,7 +358,7 @@ export const OrdersTrackingPage: React.FC = () => {
                         {currentSelected.paymentStatus === 'paid'
                           ? `رقم العملية المعتمدة: ${currentSelected.paymentReference || 'Paymob Transaction'}`
                           : currentSelected.paymentMethod?.startsWith('paymob')
-                            ? 'سدد الآن إلكترونياً لتأكيد وتثبيت حجز طلبك في ورش الصعيد فورياً'
+                            ? 'لم يتم تأكيد طلبك للورشة بعد. سدد الآن إلكترونياً لتأكيد الطلب وبدء تجهيزه بالورش.'
                             : 'سيتم تحصيل المبلغ نقداً عند تسليمك ومعاينة الشحنة'}
                       </p>
                     </div>
@@ -369,21 +375,36 @@ export const OrdersTrackingPage: React.FC = () => {
                           try {
                             setIsPaying(true);
                             const methodType = currentSelected.paymentMethod === 'paymob_wallet' ? 'wallet' : 'card';
-                            let payRes: any = null;
-                            if (typeof api?.initiatePaymobPayment === 'function') {
-                              payRes = await api.initiatePaymobPayment(currentUser, currentSelected.id, methodType);
-                            } else if (typeof initiatePaymobPayment === 'function') {
-                              payRes = await initiatePaymobPayment(currentUser, currentSelected.id, methodType);
-                            } else {
+                            const requestPay = async (type: 'card' | 'wallet') => {
+                              if (typeof api?.initiatePaymobPayment === 'function') {
+                                return api.initiatePaymobPayment(currentUser, currentSelected.id, type);
+                              }
+                              if (typeof initiatePaymobPayment === 'function') {
+                                return initiatePaymobPayment(currentUser, currentSelected.id, type);
+                              }
                               const r = await fetch('/api/payments/paymob/initiate', {
                                 method: 'POST',
                                 credentials: 'include',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ orderId: currentSelected.id, methodType })
+                                body: JSON.stringify({ orderId: currentSelected.id, methodType: type })
                               });
                               const j = await r.json();
-                              payRes = j?.data;
+                              if (!j.success || !j.data) throw new Error(j.error || 'تعذر بدء الدفع');
+                              return j.data;
+                            };
+
+                            let payRes: any = null;
+                            try {
+                              payRes = await requestPay(methodType);
+                            } catch (firstErr: any) {
+                              if (methodType === 'wallet') {
+                                console.warn('[OrdersTracking] Wallet unavailable, falling back to card payment:', firstErr?.message);
+                                payRes = await requestPay('card');
+                              } else {
+                                throw firstErr;
+                              }
                             }
+
                             if (payRes?.paymentUrl) {
                               window.location.href = payRes.paymentUrl;
                             }
@@ -404,7 +425,7 @@ export const OrdersTrackingPage: React.FC = () => {
                         ) : (
                           <>
                             <ExternalLink className="w-3.5 h-3.5" />
-                            <span>سداد الآن عبر Paymob</span>
+                            <span>إتمام السداد وتأكيد الطلب الآن</span>
                           </>
                         )}
                       </button>

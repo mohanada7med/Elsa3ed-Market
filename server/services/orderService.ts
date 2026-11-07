@@ -181,44 +181,84 @@ export async function createOrder(
 
   const nowIso = new Date().toISOString();
 
+  const isOnlinePaymob = ['paymob', 'paymob_card', 'paymob_wallet'].includes(paymentMethod);
+
   // Initial timeline
-  const timeline = [
-    {
-      status: 'pending' as OrderStatus,
-      title: 'تم تسجيل الطلب بنجاح',
-      description: `تم إنشاء الطلب برقم ${orderNumber} وإرساله للورش الحرفية بالصعيد`,
-      time: 'الآن',
-      done: true
-    },
-    {
-      status: 'confirmed' as OrderStatus,
-      title: 'تأكيد الورشة والتجهيز',
-      description: 'جاري تأكيد جاهزية القطع التراثية المطلوبة',
-      time: 'خلال ساعتين',
-      done: false
-    },
-    {
-      status: 'processing' as OrderStatus,
-      title: 'فحص الجودة والتغليف الآمن',
-      description: 'تغليف خاص ومحكم لحماية الفخار والمشغولات اليدوية',
-      time: 'خلال 24 ساعة',
-      done: false
-    },
-    {
-      status: 'shipped' as OrderStatus,
-      title: 'الشحن من محافظات الصعيد',
-      description: 'تسليم الطرد لشركة شحن صعيد إكسبريس',
-      time: 'خلال 48 ساعة',
-      done: false
-    },
-    {
-      status: 'delivered' as OrderStatus,
-      title: 'التسليم للمشتري',
-      description: 'توصيل الطلب إلى باب المنزل',
-      time: 'خلال 3 - 4 أيام عمل',
-      done: false
-    }
-  ];
+  const timeline = isOnlinePaymob
+    ? [
+        {
+          status: 'pending' as OrderStatus,
+          title: 'بانتظار إتمام السداد الإلكتروني',
+          description: `تم إنشاء الطلب برقم ${orderNumber}. في انتظار تأكيد السداد عبر Paymob لتأكيد الطلب رسمياً وإرساله للورش الحرفية.`,
+          time: 'الآن',
+          done: true
+        },
+        {
+          status: 'confirmed' as OrderStatus,
+          title: 'تأكيد السداد والطلب',
+          description: 'يتم تأكيد الطلب وإرساله للورش فور إتمام عملية الدفع بنجاح',
+          time: 'بعد السداد',
+          done: false
+        },
+        {
+          status: 'processing' as OrderStatus,
+          title: 'فحص الجودة والتغليف الآمن',
+          description: 'تغليف خاص ومحكم لحماية الفخار والمشغولات اليدوية',
+          time: 'خلال 24 ساعة من الدفع',
+          done: false
+        },
+        {
+          status: 'shipped' as OrderStatus,
+          title: 'الشحن من محافظات الصعيد',
+          description: 'تسليم الطرد لشركة شحن صعيد إكسبريس',
+          time: 'خلال 48 ساعة',
+          done: false
+        },
+        {
+          status: 'delivered' as OrderStatus,
+          title: 'التسليم للمشتري',
+          description: 'توصيل الطلب إلى باب المنزل',
+          time: 'خلال 3 - 4 أيام عمل',
+          done: false
+        }
+      ]
+    : [
+        {
+          status: 'pending' as OrderStatus,
+          title: 'تم تسجيل الطلب بنجاح',
+          description: `تم إنشاء الطلب برقم ${orderNumber} وإرساله للورش الحرفية بالصعيد`,
+          time: 'الآن',
+          done: true
+        },
+        {
+          status: 'confirmed' as OrderStatus,
+          title: 'تأكيد الورشة والتجهيز',
+          description: 'جاري تأكيد جاهزية القطع التراثية المطلوبة',
+          time: 'خلال ساعتين',
+          done: false
+        },
+        {
+          status: 'processing' as OrderStatus,
+          title: 'فحص الجودة والتغليف الآمن',
+          description: 'تغليف خاص ومحكم لحماية الفخار والمشغولات اليدوية',
+          time: 'خلال 24 ساعة',
+          done: false
+        },
+        {
+          status: 'shipped' as OrderStatus,
+          title: 'الشحن من محافظات الصعيد',
+          description: 'تسليم الطرد لشركة شحن صعيد إكسبريس',
+          time: 'خلال 48 ساعة',
+          done: false
+        },
+        {
+          status: 'delivered' as OrderStatus,
+          title: 'التسليم للمشتري',
+          description: 'توصيل الطلب إلى باب المنزل',
+          time: 'خلال 3 - 4 أيام عمل',
+          done: false
+        }
+      ];
 
   // Orders via InstaPay and Vodafone Cash are placed with 'payment_pending_verification' until manually verified by Admin
   const initialPaymentStatus: PaymentStatus =
@@ -297,34 +337,50 @@ export async function createOrder(
   // 9. Persistent Notifications
   try {
     // Notify Buyer
-    await createNotification({
-      userId: buyer.id,
-      recipientId: buyer.id,
-      title: `تم استلام طلبك التراثي #${orderNumber}`,
-      message: `شكراً لتسوقك من سوق الصعيد! تم تسجيل طلبك رقم #${orderNumber} بقيمة ${orderDocument.total.toLocaleString('ar-EG')} ج.م بنجاح وجاري متابعة التجهيز.`,
-      type: 'new_order',
-      link: 'orders',
-      recipientRole: 'buyer',
-      metadata: { orderId: orderDocument.id, orderNumber }
-    });
-
-    // Notify relevant sellers
-    for (const sId of distinctSellerIds) {
-      let sellerUserId = await resolveSellerUserId(sId);
-      if (!sellerUserId) sellerUserId = sId;
-
+    if (isOnlinePaymob) {
       await createNotification({
-        userId: sellerUserId,
-        recipientId: sId,
-        title: `طلب شراء جديد لمنتجات ورشتك #${orderNumber}`,
-        message: sellerTipSellerId === sId
-          ? `لديك طلب شراء جديد #${orderNumber}، ويتضمن دعمًا اختياريًا لورشتك بقيمة ${sellerTipAmount.toLocaleString('ar-EG')} ج.م. يرجى مراجعة وتجهيز المنتجات.`
-          : `لديك طلب شراء جديد يتضمن منتجات من ورشتك بالطلب رقم #${orderNumber}. يرجى مراجعة وتجهيز المنتجات.`,
+        userId: buyer.id,
+        recipientId: buyer.id,
+        title: `طلبك #${orderNumber} بانتظار استكمال السداد`,
+        message: `تم إنشاء طلبك رقم #${orderNumber} بقيمة ${orderDocument.total.toLocaleString('ar-EG')} ج.م. يرجى إتمام السداد عبر Paymob لتأكيد الطلب رسمياً وإرساله للورش الحرفية.`,
         type: 'new_order',
-        link: 'seller-orders',
-        recipientRole: 'seller',
-        metadata: { orderId: orderDocument.id, orderNumber, sellerId: sId }
+        link: 'orders',
+        recipientRole: 'buyer',
+        metadata: { orderId: orderDocument.id, orderNumber }
       });
+    } else {
+      await createNotification({
+        userId: buyer.id,
+        recipientId: buyer.id,
+        title: `تم استلام طلبك التراثي #${orderNumber}`,
+        message: `شكراً لتسوقك من سوق الصعيد! تم تسجيل طلبك رقم #${orderNumber} بقيمة ${orderDocument.total.toLocaleString('ar-EG')} ج.م بنجاح وجاري متابعة التجهيز.`,
+        type: 'new_order',
+        link: 'orders',
+        recipientRole: 'buyer',
+        metadata: { orderId: orderDocument.id, orderNumber }
+      });
+    }
+
+    // Notify relevant sellers ONLY if order is already confirmed (e.g. COD)
+    // For online Paymob, sellers are notified immediately once payment succeeds in markOrderPaidByPaymob!
+    if (!isOnlinePaymob) {
+      for (const sId of distinctSellerIds) {
+        let sellerUserId = await resolveSellerUserId(sId);
+        if (!sellerUserId) sellerUserId = sId;
+
+        await createNotification({
+          userId: sellerUserId,
+          recipientId: sId,
+          title: `طلب شراء جديد لمنتجات ورشتك #${orderNumber}`,
+          message: sellerTipSellerId === sId
+            ? `لديك طلب شراء جديد #${orderNumber}، ويتضمن دعمًا اختياريًا لورشتك بقيمة ${sellerTipAmount.toLocaleString('ar-EG')} ج.م. يرجى مراجعة وتجهيز المنتجات.`
+            : `لديك طلب شراء جديد يتضمن منتجات من ورشتك بالطلب رقم #${orderNumber}. يرجى مراجعة وتجهيز المنتجات.`,
+          type: 'new_order',
+          link: 'seller-orders',
+          recipientRole: 'seller',
+          metadata: { orderId: orderDocument.id, orderNumber, sellerId: sId }
+        });
+      }
     }
 
     // Notify Admins
@@ -581,11 +637,27 @@ export async function cancelBuyerOrder(
 export async function getSellerOrders(sellerId: string): Promise<OrderDocument[]> {
   const { db, isMongo } = await getDatabase();
 
+  const isConfirmedForSeller = (ord: OrderDocument) => {
+    // Online Paymob orders must NOT appear to sellers until payment is confirmed (paid)
+    if (['paymob', 'paymob_card', 'paymob_wallet'].includes(ord.paymentMethod)) {
+      return ord.paymentStatus === 'paid';
+    }
+    return true;
+  };
+
   if (isMongo && db) {
     try {
       const mongoOrders = (await db
         .collection('orders')
-        .find({ sellerIds: sellerId })
+        .find({
+          sellerIds: sellerId,
+          $nor: [
+            {
+              paymentMethod: { $in: ['paymob', 'paymob_card', 'paymob_wallet'] },
+              paymentStatus: { $ne: 'paid' }
+            }
+          ]
+        })
         .sort({ createdAt: -1 })
         .toArray()) as unknown as OrderDocument[];
       if (mongoOrders.length > 0) return mongoOrders;
@@ -595,7 +667,7 @@ export async function getSellerOrders(sellerId: string): Promise<OrderDocument[]
   }
 
   return memoryDb.orders
-    .filter((ord) => ord.sellerIds && ord.sellerIds.includes(sellerId))
+    .filter((ord) => ord.sellerIds && ord.sellerIds.includes(sellerId) && isConfirmedForSeller(ord))
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 }
 

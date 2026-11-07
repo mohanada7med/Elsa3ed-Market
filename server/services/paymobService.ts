@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import type { OrderDocument } from '../models/types.ts';
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
 import { Logger } from '../utils/logger.ts';
-import { createNotification } from './notificationService.ts';
+import { createNotification, resolveSellerUserId } from './notificationService.ts';
 
 export interface PaymobConfig {
   secretKey?: string;
@@ -60,21 +60,37 @@ function getPaymobErrorSummary(responseBody: unknown): string | undefined {
   if (!responseBody || typeof responseBody !== 'object') return undefined;
 
   const body = responseBody as Record<string, unknown>;
-  for (const key of ['detail', 'message', 'error_description', 'error']) {
+  for (const key of ['detail', 'message', 'error_description', 'error', 'merchant_order_id']) {
     const value = body[key];
     if (typeof value === 'string' && value.trim()) {
       return value.trim().replace(/\s+/g, ' ').slice(0, 300);
     }
+    if (Array.isArray(value) && typeof value[0] === 'string' && value[0].trim()) {
+      return value[0].trim().replace(/\s+/g, ' ').slice(0, 300);
+    }
     if (value && typeof value === 'object' && !Array.isArray(value)) {
       const nested = value as Record<string, unknown>;
-      for (const nestedKey of ['message', 'detail', 'code']) {
+      for (const nestedKey of ['message', 'detail', 'code', 'error']) {
         const nestedValue = nested[nestedKey];
         if (typeof nestedValue === 'string' && nestedValue.trim()) {
           return nestedValue.trim().replace(/\s+/g, ' ').slice(0, 300);
         }
+        if (Array.isArray(nestedValue) && typeof nestedValue[0] === 'string' && nestedValue[0].trim()) {
+          return nestedValue[0].trim().replace(/\s+/g, ' ').slice(0, 300);
+        }
       }
     }
   }
+
+  for (const [key, value] of Object.entries(body)) {
+    if (typeof value === 'string' && value.trim()) {
+      return `${key}: ${value.trim()}`.slice(0, 300);
+    }
+    if (Array.isArray(value) && typeof value[0] === 'string' && value[0].trim()) {
+      return `${key}: ${value[0].trim()}`.slice(0, 300);
+    }
+  }
+
   return undefined;
 }
 
@@ -84,6 +100,75 @@ function sanitizePaymobErrorSummary(summary: string | undefined, config: PaymobC
   return [config.secretKey, config.hmacSecret]
     .filter((secret): secret is string => Boolean(secret))
     .reduce((message, secret) => message.split(secret).join('[REDACTED]'), summary);
+}
+
+const integrationProbeCache: Record<string, { result: boolean; checkedAt: number }> = {};
+
+/**
+ * Checks whether an integration ID is valid and active with the configured Paymob credentials.
+ * Results are cached in memory for 10 minutes to avoid redundant API round-trips.
+ */
+export async function isIntegrationVerified(methodType: 'card' | 'wallet'): Promise<boolean> {
+  const config = getPaymobConfig();
+  if (!config.secretKey || !config.publicKey) {
+    return process.env.NODE_ENV !== 'production';
+  }
+
+  const id = methodType === 'wallet' ? config.walletIntegrationId : config.cardIntegrationId;
+  if (!id || !/^\d+$/.test(id) || Number(id) <= 0) {
+    return false;
+  }
+
+  const cacheKey = `${config.environment}:${config.secretKey.slice(0, 10)}:${methodType}:${id}`;
+  const cached = integrationProbeCache[cacheKey];
+  const now = Date.now();
+  if (cached && (now - cached.checkedAt) < 10 * 60 * 1000) {
+    return cached.result;
+  }
+
+  try {
+    const probePayload = {
+      amount: 1000,
+      currency: 'EGP',
+      items: [{ name: 'probe', amount: 1000, description: 'probe', quantity: 1 }],
+      payment_methods: [Number(id)],
+      billing_data: {
+        first_name: 'Verification',
+        last_name: 'Probe',
+        phone_number: '01000000000',
+        email: 'probe@wah-saeed.com',
+        apartment: 'NA',
+        floor: 'NA',
+        street: 'NA',
+        building: 'NA',
+        postal_code: 'NA',
+        city: 'Qena',
+        country: 'EGY',
+        state: 'Qena'
+      },
+      customer: {
+        first_name: 'Verification',
+        last_name: 'Probe',
+        email: 'probe@wah-saeed.com',
+        phone_number: '01000000000'
+      }
+    };
+
+    const response = await fetch('https://accept.paymob.com/v1/intention/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${config.secretKey}`
+      },
+      body: JSON.stringify(probePayload)
+    });
+
+    const isSuccess = response.status === 200 || response.status === 201;
+    integrationProbeCache[cacheKey] = { result: isSuccess, checkedAt: now };
+    return isSuccess;
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -214,7 +299,7 @@ export async function initiatePaymobPayment(
       email: order.buyerEmail || 'customer@wah-saeed.com',
       phone_number: order.buyerPhone || '01000000000'
     },
-    special_reference: order.orderNumber,
+    special_reference: `${order.orderNumber}-${Date.now().toString().slice(-6)}`,
     notification_url: `${origin}/api/payments/paymob/webhook`,
     redirection_url: `${origin}/api/payments/paymob/processed?orderId=${encodeURIComponent(order.id)}`
   };
@@ -348,14 +433,18 @@ export async function markOrderPaidByPaymob(
   const { db, isMongo } = await getDatabase();
   const nowIso = new Date().toISOString();
 
+  const cleanOrderIdentifier = String(orderIdentifier || '').trim();
+  const baseOrderNumber = cleanOrderIdentifier.replace(/-\d{4,}$/, '').trim();
+
   // Find order by id or orderNumber
   let order: OrderDocument | null = null;
   if (isMongo && db) {
     try {
       order = (await db.collection('orders').findOne({
         $or: [
-          { id: orderIdentifier },
-          { orderNumber: orderIdentifier }
+          { id: cleanOrderIdentifier },
+          { orderNumber: cleanOrderIdentifier },
+          { orderNumber: baseOrderNumber }
         ]
       })) as unknown as OrderDocument | null;
     } catch (e) {
@@ -365,7 +454,10 @@ export async function markOrderPaidByPaymob(
 
   if (!order) {
     order = memoryDb.orders.find(
-      (o) => o.id === orderIdentifier || o.orderNumber === orderIdentifier
+      (o) =>
+        o.id === cleanOrderIdentifier ||
+        o.orderNumber === cleanOrderIdentifier ||
+        o.orderNumber === baseOrderNumber
     ) || null;
   }
 
@@ -420,16 +512,16 @@ export async function markOrderPaidByPaymob(
         {
           $set: {
             paymentStatus: 'paid',
-            status: order.status === 'pending' ? 'processing' : order.status,
+            status: 'confirmed',
             paymentReference: txId,
             updatedAt: nowIso
           },
           $push: {
             timeline: {
-              status: 'processing',
-              title: 'تم تأكيد الدفع الإلكتروني بنجاح',
+              status: 'confirmed',
+              title: 'تم تأكيد الدفع والطلب بنجاح ✓',
               time: 'الآن',
-              description: `تم سداد قيمة الطلب (${order.total} ج.م) عبر بوابة Paymob الإلكترونية. رقم المعاملة: ${txId}`,
+              description: `تم سداد قيمة الطلب (${order.total} ج.م) عبر بوابة Paymob (${methodLabel}). تم تأكيد الطلب رسمياً وإرساله للورش الحرفية للبدء في التجهيز. رقم المعاملة: ${txId}`,
               done: true
             } as any
           }
@@ -448,16 +540,14 @@ export async function markOrderPaidByPaymob(
 
   // Update in Memory DB
   order.paymentStatus = 'paid';
-  if (order.status === 'pending') {
-    order.status = 'processing';
-  }
+  order.status = 'confirmed';
   order.paymentReference = txId;
   order.updatedAt = nowIso;
   order.timeline = order.timeline || [];
   order.timeline.push({
-    status: 'processing',
-    title: 'تم تأكيد الدفع الإلكتروني بنجاح',
-    description: `تم سداد قيمة الطلب (${order.total} ج.م) عبر بوابة Paymob (${methodLabel}). رقم المعاملة: ${txId}`,
+    status: 'confirmed',
+    title: 'تم تأكيد الدفع والطلب بنجاح ✓',
+    description: `تم سداد قيمة الطلب (${order.total} ج.م) عبر بوابة Paymob (${methodLabel}). تم تأكيد الطلب رسمياً وإرساله للورش الحرفية للبدء في التجهيز. رقم المعاملة: ${txId}`,
     time: 'الآن',
     done: true
   });
@@ -467,15 +557,32 @@ export async function markOrderPaidByPaymob(
     await createNotification({
       userId: order.buyerId,
       recipientId: order.buyerId,
-      title: `تم تأكيد سداد طلبك #${order.orderNumber}`,
-      message: `تم استلام دفعتك بقيمة ${order.total} ج.م بنجاح عبر Paymob. جاري تجهيز منتجاتك بالورشة.`,
+      title: `تم تأكيد سداد وطلبك #${order.orderNumber} بنجاح!`,
+      message: `تم استلام دفعتك بقيمة ${order.total} ج.م بنجاح عبر Paymob. تم تأكيد طلبك رسمياً وجاري بدء تجهيز منتجاتك بالورشة.`,
       type: 'order_status',
       link: 'orders',
       recipientRole: 'buyer',
       metadata: { orderId: order.id, orderNumber: order.orderNumber }
     });
+
+    // Notify all sellers now that the order is confirmed and paid
+    for (const sId of order.sellerIds || []) {
+      let sellerUserId = await resolveSellerUserId(sId);
+      if (!sellerUserId) sellerUserId = sId;
+
+      await createNotification({
+        userId: sellerUserId,
+        recipientId: sId,
+        title: `طلب شراء جديد مدفوع ومؤكد #${order.orderNumber}`,
+        message: `تم سداد وتأكيد طلب شراء جديد #${order.orderNumber} بقيمة ${order.total.toLocaleString('ar-EG')} ج.م لمنتجات ورشتك. يرجى البدء في التجهيز والتغليف.`,
+        type: 'new_order',
+        link: 'seller-orders',
+        recipientRole: 'seller',
+        metadata: { orderId: order.id, orderNumber: order.orderNumber, sellerId: sId }
+      });
+    }
   } catch (notifErr) {
-    Logger.warn('[Paymob] Failed to create buyer notification:', notifErr);
+    Logger.warn('[Paymob] Failed to create notifications:', notifErr);
   }
 
   Logger.info(`[Paymob] Order #${order.orderNumber} successfully marked as PAID (Tx: ${txId})`);

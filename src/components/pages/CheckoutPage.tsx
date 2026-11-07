@@ -27,6 +27,7 @@ export const CheckoutPage: React.FC = () => {
     cartTotal,
     currentUser,
     createOrder,
+    cancelOrder,
     setActivePage,
     addToast
   } = useApp();
@@ -146,19 +147,37 @@ export const CheckoutPage: React.FC = () => {
         setIsRedirectingPaymob(true);
         try {
           const methodType = paymentMethod === 'paymob_wallet' ? 'wallet' : 'card';
-          const payRes = await requestPaymobSession(newOrder.id, methodType);
+          let payRes: any = null;
+          try {
+            payRes = await requestPaymobSession(newOrder.id, methodType);
+          } catch (firstErr: any) {
+            if (methodType === 'wallet' && paymentOptions.card) {
+              console.warn('[Paymob] Wallet integration unavailable, attempting card fallback:', firstErr?.message);
+              payRes = await requestPaymobSession(newOrder.id, 'card');
+            } else {
+              throw firstErr;
+            }
+          }
+
           if (payRes?.paymentUrl) {
             setPaymobPayUrl(payRes.paymentUrl);
-            setCompletedOrder(newOrder);
-            addToast('جاري التحويل لـ Paymob', 'يتم تحويلك الآن لبوابة الدفع الآمنة لإتمام السداد', 'info');
+            addToast('جاري التحويل لـ Paymob', 'يتم تحويلك الآن لبوابة الدفع الآمنة لإتمام السداد وتأكيد الطلب...', 'info');
             setTimeout(() => {
               window.location.href = payRes.paymentUrl;
-            }, 800);
+            }, 600);
             return;
           }
         } catch (payErr: any) {
-          console.error('[Paymob] Initiate checkout error:', payErr);
-          addToast('تم إنشاء الطلب', 'تم تسجيل طلبك بنجاح. يمكنك استكمال السداد الإلكتروني عبر Paymob من تفاصيل الطلب.', 'info');
+          console.warn('[Paymob] Initiate checkout error:', payErr?.message || payErr);
+          try {
+            await cancelOrder(newOrder.id, 'فشل الاتصال ببوابة الدفع Paymob');
+          } catch (cancelErr) {
+            console.warn('[Checkout] Failed to cancel unconfirmed order:', cancelErr);
+          }
+          addToast('لم يتم تأكيد الطلب', 'تعذر بدء جلسة الدفع الإلكتروني عبر Paymob. لم يتم تأكيد طلبك. يرجى المحاولة مجدداً أو اختيار طريقة دفع أخرى.', 'error');
+          setIsRedirectingPaymob(false);
+          setIsSubmitting(false);
+          return;
         } finally {
           setIsRedirectingPaymob(false);
         }
@@ -217,7 +236,7 @@ export const CheckoutPage: React.FC = () => {
                   (completedOrder.paymentMethod === 'paymob_card' ||
                     completedOrder.paymentMethod === 'paymob_wallet' ||
                     completedOrder.paymentMethod === 'paymob')
-                    ? 'تم تسجيل طلبك وبانتظار تأكيد السداد'
+                    ? 'الطلب بانتظار إتمام السداد لتأكيده'
                     : 'تم استلام وتأكيد طلبك بنجاح!'}
                 </h1>
                 <p className="text-sm text-espresso/60 dark:text-cream/60">
@@ -225,7 +244,7 @@ export const CheckoutPage: React.FC = () => {
                   (completedOrder.paymentMethod === 'paymob_card' ||
                     completedOrder.paymentMethod === 'paymob_wallet' ||
                     completedOrder.paymentMethod === 'paymob')
-                    ? 'أكمل الدفع عبر Paymob، وسيتم تحديث حالة طلبك بعد تأكيد عملية السداد.'
+                    ? 'لم يتم تأكيد طلبك للورش بعد. يرجى إتمام الدفع الإلكتروني عبر Paymob لتأكيد الطلب وبدء تجهيزه بالورش.'
                     : 'شكراً لدعمك المباشر لحرفيي صعيد مصر، جاري الآن إبلاغ الورش لبدء تجهيز طلبك'}
                 </p>
               </div>
@@ -276,10 +295,10 @@ export const CheckoutPage: React.FC = () => {
                         : 'bg-amber-500/15 text-amber-800 dark:text-amber-300'
                   }`}>
                     {completedOrder.paymentStatus === 'paid'
-                      ? 'تم السداد بنجاح ✓'
+                      ? 'تم السداد وتأكيد الطلب ✓'
                       : completedOrder.paymentMethod === 'cod' || completedOrder.paymentMethod === 'cash_on_delivery'
                         ? 'الدفع عند المعاينة والاستلام'
-                        : 'في انتظار إتمام السداد الإلكتروني'}
+                        : 'غير مؤكد - في انتظار إتمام السداد'}
                   </span>
                 </div>
 
@@ -317,8 +336,19 @@ export const CheckoutPage: React.FC = () => {
                       try {
                         setIsRedirectingPaymob(true);
                         const methodType = completedOrder.paymentMethod === 'paymob_wallet' ? 'wallet' : 'card';
-                        const res = await requestPaymobSession(completedOrder.id, methodType);
+                        let res: any = null;
+                        try {
+                          res = await requestPaymobSession(completedOrder.id, methodType);
+                        } catch (primaryErr: any) {
+                          if (methodType === 'wallet') {
+                            console.warn('[Checkout] Wallet unavailable, trying card fallback:', primaryErr?.message);
+                            res = await requestPaymobSession(completedOrder.id, 'card');
+                          } else {
+                            throw primaryErr;
+                          }
+                        }
                         if (res?.paymentUrl) {
+                          setPaymobPayUrl(res.paymentUrl);
                           window.location.href = res.paymentUrl;
                         }
                       } catch (err: any) {

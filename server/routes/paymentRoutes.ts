@@ -130,12 +130,32 @@ router.post('/paymob/initiate', requireBuyer, async (req: AuthenticatedRequest, 
       });
     }
 
-    const expectedPaymentMethod = methodType === 'wallet' ? 'paymob_wallet' : 'paymob_card';
-    if (order.paymentMethod !== expectedPaymentMethod || order.paymentStatus === 'paid') {
+    const isPaymobMethod =
+      order.paymentMethod === 'paymob_card' ||
+      order.paymentMethod === 'paymob_wallet' ||
+      order.paymentMethod === 'paymob';
+    if (!isPaymobMethod || order.paymentStatus === 'paid') {
       return res.status(400).json({
         success: false,
         error: 'طريقة الدفع أو حالة الطلب لا تسمح ببدء عملية الدفع'
       });
+    }
+
+    const targetMethod = methodType === 'wallet' ? 'paymob_wallet' : 'paymob_card';
+    if (order.paymentMethod !== targetMethod) {
+      order.paymentMethod = targetMethod;
+      if (isMongo && db) {
+        try {
+          await db.collection('orders').updateOne(
+            { id: order.id },
+            { $set: { paymentMethod: targetMethod, updatedAt: new Date().toISOString() } }
+          );
+        } catch (e) {
+          Logger.warn('[PaymentRoutes] Failed to update order paymentMethod in Mongo:', e);
+        }
+      }
+      const memOrder = memoryDb.orders.find((o) => o.id === order!.id);
+      if (memOrder) memOrder.paymentMethod = targetMethod;
     }
 
     const result = await initiatePaymobPayment(
@@ -149,6 +169,20 @@ router.post('/paymob/initiate', requireBuyer, async (req: AuthenticatedRequest, 
       data: result
     });
   } catch (error: any) {
+    const isIntegrationError =
+      error?.message?.includes('Integration ID') ||
+      error?.message?.includes('معرّف تكامل') ||
+      error?.message?.includes('HTTP 404');
+
+    if (isIntegrationError) {
+      Logger.warn('[PaymentRoutes] Paymob integration rejected:', error?.message);
+      return res.status(400).json({
+        success: false,
+        code: 'PAYMOB_INTEGRATION_ERROR',
+        error: error?.message || 'معرّف التكامل غير معرّف أو غير مفعّل في حساب Paymob'
+      });
+    }
+
     Logger.error('[PaymentRoutes] Paymob initiate error:', error);
     res.status(500).json({
       success: false,
@@ -223,7 +257,18 @@ router.post('/paymob/webhook', async (req: Request, res: Response) => {
  */
 router.get('/paymob/processed', async (req: Request, res: Response) => {
   try {
-    const { orderId } = req.query;
+    const { orderId, success } = req.query;
+    const isSuccess = success === 'true' || success === '1';
+    const isExplicitFail = success === 'false' || success === '0';
+
+    if (isExplicitFail) {
+      return res.redirect(302, `/orders?orderId=${encodeURIComponent(String(orderId || ''))}&payment=failed`);
+    }
+
+    if (isSuccess) {
+      return res.redirect(302, `/orders?orderId=${encodeURIComponent(String(orderId || ''))}&payment=success`);
+    }
+
     res.redirect(302, `/orders?orderId=${encodeURIComponent(String(orderId || ''))}&payment=checking`);
   } catch (error: any) {
     Logger.error('[Paymob Redirection] Error:', error);
