@@ -1445,3 +1445,21 @@ h6 {
     transition-duration: 0.01ms;
   }
 }
+
+@media (min-width: 1536px) {
+  #wah-app-shell [class~="max-w-7xl"],
+  #wah-app-shell [class~="max-w-[1200px]"],
+  #wah-app-shell [class~="max-w-[1360px]"],
+  #wah-app-shell [class~="max-w-[1400px]"],
+  #wah-app-shell [class~="max-w-[1440px]"],
+  #wah-app-shell [class~="max-w-[1500px]"],
+  #wah-app-shell [class~="max-w-[1550px]"],
+  #wah-app-shell [class~="max-w-[1600px]"],
+  #wah-app-shell [class~="max-w-[1650px]"],
+  #wah-app-shell [class~="max-w-[1680px]"],
+  #wah-app-shell [class~="max-w-[1700px]"],
+  #wah-app-shell [class~="max-w-[1720px]"],
+  #wah-app-shell [class~="max-w-[1800px]"] {
+    max-width: min(calc(100% - clamp(2rem, 5vw, 6rem)), 3200px) !important;
+  }
+}

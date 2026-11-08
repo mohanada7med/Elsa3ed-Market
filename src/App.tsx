@@ -464,7 +464,7 @@ const MainContent: React.FC = () => {
   }
 
   return (
-    <main className="min-h-screen flex flex-col justify-between bg-[#FFF9EE] dark:bg-[#1B1009] text-[#3B1E0E] dark:text-[#FFF9EE] transition-colors duration-500">
+    <main id="wah-app-shell" className="min-h-screen flex flex-col justify-between bg-[#FFF9EE] dark:bg-[#1B1009] text-[#3B1E0E] dark:text-[#FFF9EE] transition-colors duration-500">
       <div>
         <Header />
         <DynamicBreadcrumbs />

@@ -61,6 +61,7 @@ export const MobileBottomBar: React.FC = () => {
       activePage === 'admin-dashboard');
 
   if (
+    activePage === 'product-detail' ||
     activePage === 'product-details' ||
     activePage === 'checkout' ||
     activePage === 'reels'

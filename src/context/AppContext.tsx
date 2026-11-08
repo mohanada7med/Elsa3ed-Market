@@ -1128,7 +1128,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setToasts((prev) => [newToast, ...prev.slice(0, 4)]);
     setTimeout(() => {
       removeToast(id);
-    }, 4500);
+    }, 6000);
   }, []);
 
   const removeToast = useCallback((id: string) => {

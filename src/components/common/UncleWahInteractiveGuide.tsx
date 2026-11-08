@@ -1,8 +1,23 @@
+
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Sparkles, MessageCircle, RefreshCw, Volume2 } from 'lucide-react';
+import {
+  Sparkles,
+  MessageCircle,
+  RefreshCw,
+  Star,
+  Zap,
+  Heart,
+  ArrowLeft,
+} from 'lucide-react';
 
-export type UncleWahContextType = 'places' | 'food' | 'governorate' | 'crafts' | 'people' | 'events';
+export type UncleWahContextType =
+  | 'places'
+  | 'food'
+  | 'governorate'
+  | 'crafts'
+  | 'people'
+  | 'events';
 
 export interface UncleWahInteractiveGuideProps {
   context: UncleWahContextType;
@@ -23,7 +38,6 @@ interface ReactionData {
 
 const CONTEXT_REACTIONS: Record<UncleWahContextType, ReactionData> = {
   places: {
-    // الجدية والوقار عند الحديث عن الآثار والمعالم العتيقة
     primaryImg: '/mascot/athar.png',
     secondaryImg: '/mascot/fav.png',
     role: 'عم وه حارس الآثار والعتيق',
@@ -36,7 +50,6 @@ const CONTEXT_REACTIONS: Record<UncleWahContextType, ReactionData> = {
     soundEffectText: 'صوت هيبة التاريخ',
   },
   food: {
-    // الفرح والشهية والبهجة عند الحديث عن الأكلات البلدي
     primaryImg: '/mascot/foods.png',
     secondaryImg: '/mascot/fav.png',
     role: 'سفرة عم وه وخير بيوتنا',
@@ -49,7 +62,6 @@ const CONTEXT_REACTIONS: Record<UncleWahContextType, ReactionData> = {
     soundEffectText: 'ريحة الفرن البلدي',
   },
   governorate: {
-    // الترحاب الفياض وفخر الدليل المحلي بأهله
     primaryImg: '/mascot/saaed.png',
     secondaryImg: '/mascot/fav.png',
     role: 'دليل عم وه لديار الجنوب',
@@ -62,7 +74,6 @@ const CONTEXT_REACTIONS: Record<UncleWahContextType, ReactionData> = {
     soundEffectText: 'كرم الضيافة الصعيدي',
   },
   crafts: {
-    // تاجر الصنعة الخبير المقدر لشغل اليد الحرفي
     primaryImg: '/mascot/make.png',
     secondaryImg: '/mascot/fav.png',
     role: 'عم وه تاجر الصنعة والبركة',
@@ -75,7 +86,6 @@ const CONTEXT_REACTIONS: Record<UncleWahContextType, ReactionData> = {
     soundEffectText: 'دقة الصنعة في الورشة',
   },
   people: {
-    // هيبة ووقار المضايف عند الحديث عن الكبار
     primaryImg: '/mascot/fan.png',
     secondaryImg: '/mascot/fav.png',
     role: 'عم وه في مضايف الأكابر',
@@ -87,7 +97,6 @@ const CONTEXT_REACTIONS: Record<UncleWahContextType, ReactionData> = {
     soundEffectText: 'واجب المضايف',
   },
   events: {
-    // البهجة والتحطيب والموالد
     primaryImg: '/mascot/events.png',
     secondaryImg: '/mascot/fav.png',
     role: 'عم وه في ليالي الموالد',
@@ -100,7 +109,9 @@ const CONTEXT_REACTIONS: Record<UncleWahContextType, ReactionData> = {
   },
 };
 
-export const UncleWahInteractiveGuide: React.FC<UncleWahInteractiveGuideProps> = ({
+export const UncleWahInteractiveGuide: React.FC<
+  UncleWahInteractiveGuideProps
+> = ({
   context,
   title,
   locationName,
@@ -108,11 +119,14 @@ export const UncleWahInteractiveGuide: React.FC<UncleWahInteractiveGuideProps> =
   className = '',
 }) => {
   const data = CONTEXT_REACTIONS[context] || CONTEXT_REACTIONS.places;
+
   const [quoteIndex, setQuoteIndex] = useState(0);
   const [isAltReaction, setIsAltReaction] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
 
-  const activeImage = isAltReaction ? data.secondaryImg : data.primaryImg;
+  const activeImage = isAltReaction
+    ? data.secondaryImg
+    : data.primaryImg;
 
   const currentQuote =
     customQuote && quoteIndex === 0
@@ -126,121 +140,191 @@ export const UncleWahInteractiveGuide: React.FC<UncleWahInteractiveGuideProps> =
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 14 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+    <motion.section
+      initial={{ opacity: 0, scale: 0.96, y: 15 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
       dir="rtl"
-      className={`relative overflow-hidden rounded-3xl sm:rounded-4xl border border-primary/25 bg-gradient-to-r from-surface-subtle/95 via-surface-subtle/85 to-primary/10 p-4 sm:p-5 shadow-lg backdrop-blur-xl transition-all duration-300 hover:border-primary/40 ${className}`}
+      className={`
+        relative isolate overflow-hidden rounded-[30px]
+        border-[2px] border-[#B24C2B]/25
+        bg-[#FAF7F2] dark:bg-[#241E1A]
+        shadow-[0_10px_0_rgba(38,70,83,0.12)]
+        ${className}
+      `}
     >
-      {/* Decorative ambient subtle lights */}
-      <div className="pointer-events-none absolute -left-12 -top-12 h-36 w-36 rounded-full bg-primary/15 blur-2xl" />
-      <div className="pointer-events-none absolute -right-12 -bottom-12 h-36 w-36 rounded-full bg-amber-500/15 blur-2xl" />
-
-      <div className="relative z-10 flex flex-col sm:flex-row items-center sm:items-center gap-4 sm:gap-6">
-        {/* INTERACTIVE MASCOT WITH CRISP-EDGES & HOVER / CLICK REACTION */}
-        <div
-          role="button"
-          tabIndex={0}
-          onClick={handleNextQuote}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              handleNextQuote();
-            }
+      {/* Comic background */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute inset-0 opacity-[0.10] dark:opacity-[0.08]"
+          style={{
+            backgroundImage: 'radial-gradient(#B24C2B 1.3px, transparent 1.3px)',
+            backgroundSize: '13px 13px',
           }}
-          title="اضغط على عم وه لتبديل الحكاية والرياكشن"
-          className="group relative flex flex-col items-center justify-end shrink-0 cursor-pointer select-none focus:outline-hidden"
-        >
-          {/* Subtle glow ring behind Uncle Wah */}
-          <div className="absolute -inset-2 rounded-full bg-primary/20 blur-md opacity-60 group-hover:opacity-100 transition-opacity" />
+        />
 
-          {/* Floating animated avatar with crisp-edges */}
+        <div className="absolute -right-20 -top-24 h-64 w-64 rounded-full bg-[#D97724]/20 blur-3xl" />
+        <div className="absolute -bottom-24 -left-20 h-64 w-64 rounded-full bg-[#D97724]/15 blur-3xl" />
+
+        <motion.div
+          animate={{ rotate: [0, 10, -10, 0], scale: [1, 1.15, 1] }}
+          transition={{ duration: 5, repeat: Infinity }}
+          className="absolute right-[45%] top-5 text-[#D97724]/60"
+        >
+          <Zap size={30} fill="currentColor" />
+        </motion.div>
+      </div>
+
+      {/* Comic top strip */}
+      <div className="relative z-20 flex items-center justify-between px-5 pt-5 sm:px-7">
+        <div className="flex items-center gap-2">
+          <span className="flex h-9 w-9 rotate-[-8deg] items-center justify-center rounded-xl bg-[#B24C2B] text-white shadow-[3px_3px_0_#78311E]">
+            <Sparkles size={17} />
+          </span>
+          <div>
+            <p className="text-sm font-black text-[#241E1A] dark:text-[#FAF7F2]">
+              عم وه!
+            </p>
+            <p className="text-[9px] font-black tracking-widest text-[#B24C2B]">
+              THE STORYTELLER
+            </p>
+          </div>
+        </div>
+
+        <div className="rotate-2 rounded-lg border-2 border-[#D97724] bg-[#D97724]/10 px-3 py-1.5 text-[9px] font-black text-[#A95B16] dark:text-[#F1B36D]">
+          {data.badge}
+        </div>
+      </div>
+
+      {/* Comic stage */}
+      <div className="relative z-10 grid items-center gap-1 px-4 pb-5 pt-3 sm:grid-cols-[1fr_1.15fr_1fr] sm:gap-2 sm:px-6 sm:pb-7">
+
+        {/* First speech bubble */}
+        <div className="relative z-20 order-2 sm:order-1">
           <motion.div
-            key={activeImage}
-            initial={{ scale: 0.9, rotate: -2 }}
-            animate={{ scale: 1, rotate: 0 }}
-            whileHover={{ scale: 1.06, rotate: 1 }}
-            whileTap={{ scale: 0.94 }}
-            transition={{ type: 'spring', stiffness: 350, damping: 20 }}
-            className="relative z-10"
+            initial={{ opacity: 0, x: 20, rotate: 4 }}
+            animate={{ opacity: 1, x: 0, rotate: -2 }}
+            transition={{ delay: 0.2 }}
+            className="relative rounded-[25px] rounded-bl-[5px] border-[3px] border-[#B24C2B] bg-white p-3 shadow-[5px_6px_0_#B24C2B]/20 dark:bg-[#332820] sm:p-4"
           >
-            <img
-              src={activeImage}
-              alt={data.role}
-              style={{
-                imageRendering: 'crisp-edges',
-                WebkitFontSmoothing: 'antialiased',
-              }}
-              className="h-28 sm:h-32 lg:h-36 w-auto object-contain drop-shadow-[0_14px_22px_rgba(0,0,0,0.25)] transition-all"
-              loading="eager"
-            />
+            <div className="absolute -top-3 right-4 rounded-full bg-[#D97724] px-3 py-1 text-[9px] font-black text-white">
+              اسمع يا غالي!
+            </div>
+
+            <p className="mt-2 text-[11px] font-bold leading-[2] text-[#241E1A] dark:text-[#FAF7F2]">
+              {data.role}
+            </p>
+
+            <div className="mt-2 flex items-center gap-1 text-[#D97724]">
+              <Star size={11} fill="currentColor" />
+              <Star size={11} fill="currentColor" />
+              <Star size={11} fill="currentColor" />
+            </div>
           </motion.div>
 
-          {/* Synchronized ground shadow */}
-          <div className="w-20 sm:w-24 h-1.5 rounded-[100%] bg-black/40 blur-xs mx-auto -mt-1 group-hover:scale-90 transition-transform" />
+          <div className="mt-3 hidden text-center text-[10px] font-bold text-[#D97724]/60 dark:text-[#C0D5DA] sm:block">
+            الحكاية ورا كل حاجة
+          </div>
+        </div>
 
-          {/* Interactive poke hint badge */}
-          <span className="mt-1.5 inline-flex items-center gap-1 rounded-full bg-black/40 dark:bg-white/10 px-2 py-0.5 text-[9px] font-bold text-amber-300 backdrop-blur-xs transition-colors group-hover:bg-primary group-hover:text-white">
-            <RefreshCw size={9} className="shrink-0 group-hover:rotate-180 transition-transform duration-500" />
-            <span>{hasInteracted ? 'حكاية تانية' : 'انقر على عم وه'}</span>
+        {/* Main mascot pop-out */}
+        <div className="relative order-1 flex min-h-[245px] items-center justify-center sm:order-2 sm:min-h-[290px]">
+
+          {/* Comic burst */}
+          <motion.div
+            animate={{ rotate: [0, 3, -3, 0], scale: [1, 1.035, 1] }}
+            transition={{ duration: 6, repeat: Infinity }}
+            className="absolute h-[225px] w-[225px] sm:h-[265px] sm:w-[265px]"
+          >
+            <svg viewBox="0 0 300 300" className="h-full w-full overflow-visible">
+              <path
+                d="M150 5 L177 42 L220 17 L227 65 L278 63 L263 112 L300 150 L263 188 L278 237 L227 235 L220 283 L177 258 L150 295 L123 258 L80 283 L73 235 L22 237 L37 188 L0 150 L37 112 L22 63 L73 65 L80 17 L123 42 Z"
+                fill="#D97724"
+                stroke="#B24C2B"
+                strokeWidth="5"
+                strokeLinejoin="round"
+              />
+              <circle cx="150" cy="150" r="105" fill="#FAF7F2" opacity=".85" />
+            </svg>
+          </motion.div>
+
+          {/* Character */}
+          <motion.img
+            key={activeImage}
+            src={activeImage}
+            alt={data.role}
+            initial={{ scale: 0.6, rotate: -12, opacity: 0 }}
+            animate={{ scale: 1, rotate: 0, opacity: 1 }}
+            transition={{ type: 'spring', stiffness: 180, damping: 14 }}
+            whileHover={{ scale: 1.06, rotate: 2 }}
+            className="relative z-10 h-[235px] w-auto max-w-[95%] object-contain drop-shadow-[0_13px_8px_rgba(0,0,0,0.25)] sm:h-[275px]"
+          />
+
+          {/* Comic sound effect */}
+          <motion.div
+            animate={{ rotate: [8, -5, 8], y: [0, -4, 0] }}
+            transition={{ duration: 2.5, repeat: Infinity }}
+            className="absolute left-0 top-5 z-20 -rotate-6 rounded-xl border-[3px] border-white bg-[#B24C2B] px-3 py-2 text-sm font-black text-white shadow-[3px_4px_0_#19343D]"
+          >
+            وه!
+          </motion.div>
+
+          <div className="absolute bottom-0 z-20 rounded-full border-2 border-white bg-[#B24C2B] px-5 py-1.5 text-[10px] font-black text-white shadow-[0_4px_0_#78311E] dark:border-[#241E1A]">
+            صاحب المنصة ✦
+          </div>
+        </div>
+
+        {/* Second speech bubble */}
+        <div className="relative z-20 order-3">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={quoteIndex}
+              initial={{ opacity: 0, x: -18, rotate: -4, scale: 0.9 }}
+              animate={{ opacity: 1, x: 0, rotate: 2, scale: 1 }}
+              exit={{ opacity: 0, x: 12, scale: 0.9 }}
+              transition={{ duration: 0.3 }}
+              className="relative rounded-[25px] rounded-tr-[5px] border-[3px] border-[#D97724] bg-white p-3 shadow-[5px_6px_0_rgba(38,70,83,0.17)] dark:bg-[#332820] dark:border-[#D97724] sm:p-4"
+            >
+              <div className="absolute -top-3 left-4 rounded-full bg-[#D97724] px-3 py-1 text-[9px] font-black text-white dark:bg-[#D97724]">
+                حكاية من القلب
+              </div>
+
+              <div className="mt-2 flex items-center gap-1 text-[#D97724]">
+                <MessageCircle size={13} />
+                <span className="text-[9px] font-black">عم وه بيقولك</span>
+              </div>
+
+              <p className="mt-2 text-[11px] font-bold leading-[2] text-[#241E1A] dark:text-[#FAF7F2] sm:text-xs">
+                {currentQuote}
+              </p>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
+
+      {/* Comic footer */}
+      <div className="relative z-20 flex flex-wrap items-center justify-between gap-3 border-t-2 border-[#B24C2B]/15 bg-[#E8E1D9]/70 px-5 py-3 dark:bg-[#3B3029]/80 sm:px-7">
+        <div className="flex items-center gap-2">
+          <Heart size={14} fill="currentColor" className="text-[#B24C2B]" />
+          <span className="text-[10px] font-black text-[#D97724] dark:text-[#F0DED0]">
+            {locationName
+              ? `من ديار ${locationName}`
+              : title || 'الحكاية ورا كل حاجة'}
           </span>
         </div>
 
-        {/* NARRATIVE & SPEECH BUBBLE */}
-        <div className="flex-1 text-right space-y-2 min-w-0 w-full">
-          {/* Top badges bar */}
-          <div className="flex flex-wrap items-center justify-between sm:justify-start gap-2">
-            <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary text-white text-[10px] font-black shadow-2xs">
-                <Sparkles size={11} className="shrink-0" />
-                <span>«عم وه» صاحب المنصة</span>
-              </span>
-
-              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-primary px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/20">
-                {data.role}
-              </span>
-            </div>
-
-            <span className="text-[10px] font-bold text-amber-800 dark:text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
-              {data.badge}
-            </span>
-          </div>
-
-          {/* Speech Bubble */}
-          <div className="relative rounded-2xl bg-background/85 border border-primary/20 p-3 sm:p-3.5 shadow-xs backdrop-blur-md">
-            <AnimatePresence mode="wait">
-              <motion.p
-                key={quoteIndex}
-                initial={{ opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -4 }}
-                transition={{ duration: 0.2 }}
-                className="text-xs sm:text-[13px] font-bold text-foreground/95 leading-relaxed"
-              >
-                {currentQuote}
-              </motion.p>
-            </AnimatePresence>
-
-            {/* Bubble footer with interaction trigger */}
-            <div className="mt-2 flex items-center justify-between border-t border-border-subtle/70 pt-1.5 text-[10px] text-foreground-disabled">
-              <span className="font-medium">
-                {locationName ? `من وحي ديار ${locationName}` : title ? `عن: ${title}` : 'توثيق صعيدى أصيل'}
-              </span>
-
-              <button
-                type="button"
-                onClick={handleNextQuote}
-                className="inline-flex items-center gap-1 text-primary hover:text-primary-hover font-black cursor-pointer transition-colors"
-              >
-                <MessageCircle size={11} />
-                <span>حكاية كمان مع عم وه ←</span>
-              </button>
-            </div>
-          </div>
-        </div>
+        <motion.button
+          type="button"
+          onClick={handleNextQuote}
+          whileHover={{ scale: 1.06, y: -2 }}
+          whileTap={{ scale: 0.94 }}
+          className="flex items-center gap-2 rounded-xl border-2 border-[#B24C2B] bg-[#B24C2B] px-4 py-2 text-[10px] font-black text-white shadow-[0_4px_0_#78311E] transition-colors hover:bg-[#963D23]"
+        >
+          <RefreshCw size={13} />
+          {hasInteracted ? 'يلا حكاية جديدة' : 'اضغط وشوف حكاية'}
+          <ArrowLeft size={12} />
+        </motion.button>
       </div>
-    </motion.div>
+    </motion.section>
   );
 };
 
