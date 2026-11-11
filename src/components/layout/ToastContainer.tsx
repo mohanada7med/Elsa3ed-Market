@@ -10,14 +10,14 @@ import { motion, AnimatePresence } from 'motion/react';
 import { createPortal } from 'react-dom';
 
 const TOAST_ASSETS = {
-  success: '../mascot/success.png',
-  error: '../mascot/wrong.png',
-  warning: '../mascot/warning.png',
-  info: '../mascot/info.png',
+  success: '/mascot/success.png',
+  error: '/mascot/wrong.png',
+  warning: '/mascot/warning.png',
+  info: '/mascot/info.png',
 
-  background: '../mascot/toast-bg.png',
-  sparkles: '../mascot/sparkles.png',
-  heart: '../mascot/heart.png',
+  background: '/mascot/toast-bg.png',
+  sparkles: '/mascot/sparkles.png',
+  heart: '/mascot/heart.png',
 };
 
 const toastThemes = {

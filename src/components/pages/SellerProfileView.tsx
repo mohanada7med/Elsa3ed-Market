@@ -1,25 +1,15 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ProductCard } from '../products/ProductCard';
 import {
   Store,
   MapPin,
   Star,
-  CheckCircle2,
+  BadgeCheck,
   ChevronRight,
-  Phone,
-  Calendar,
-  Sparkles,
-  Award,
   Share2,
   MessageCircle,
-  Package,
-  Layers,
-  ArrowDownLeft,
-  ShoppingBag,
   Heart,
-  WandSparkles,
-  Quote,
   Edit2,
 } from 'lucide-react';
 import { UncleWahInteractiveGuide } from '../common/UncleWahInteractiveGuide';
@@ -27,10 +17,23 @@ import { updatePageSEO, generateStoreSchema } from '../../utils/seo';
 import { api } from '../../services/api';
 import { QrCodeModal } from '../common/QrCodeModal';
 
+type SortKey = 'default' | 'price-asc' | 'price-desc';
+
+/** زخرفة مثلثات متكررة (مستوحاة من الوشم والنسيج النوبي/الصعيدي) تُستخدم كقناع */
+const ZIGZAG_MASK = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='16' viewBox='0 0 32 16'%3E%3Cpath d='M0 16 L8 0 L16 16 L24 0 L32 16 Z' fill='black'/%3E%3C/svg%3E")`;
+
+const toWhatsAppNumber = (raw?: string) => {
+  if (!raw) return null;
+  const digits = String(raw).replace(/\D/g, '');
+  if (!digits) return null;
+  if (digits.startsWith('00')) return digits.slice(2);
+  if (digits.startsWith('0')) return `20${digits.slice(1)}`;
+  return digits;
+};
+
 export const SellerProfileView: React.FC = () => {
   const {
     sellers,
-    refreshSellers,
     selectedSellerId,
     products,
     setActivePage,
@@ -43,18 +46,13 @@ export const SellerProfileView: React.FC = () => {
 
   const effectiveSellerId =
     selectedSellerId ||
-    (typeof window !== 'undefined' &&
-      window.location.pathname.startsWith('/sellers/')
-      ? decodeURIComponent(
-        window.location.pathname.split('/')[2] || ''
-      )
+    (typeof window !== 'undefined' && window.location.pathname.startsWith('/sellers/')
+      ? decodeURIComponent(window.location.pathname.split('/')[2] || '')
       : null);
 
   const matchedSeller = useMemo(() => {
     if (!effectiveSellerId) return sellers[0] || null;
-
     const trimmed = effectiveSellerId.trim();
-
     return (
       sellers.find(
         (s) =>
@@ -69,20 +67,15 @@ export const SellerProfileView: React.FC = () => {
 
   const [directSeller, setDirectSeller] = useState<any>(null);
   const [isLoadingDirect, setIsLoadingDirect] = useState(false);
-  const [liked, setLiked] = useState(false);
   const [followState, setFollowState] = useState({ following: false, followersCount: 0 });
   const [isFollowLoading, setIsFollowLoading] = useState(false);
-  const [visibleSections, setVisibleSections] = useState<
-    Record<string, boolean>
-  >({});
-
-  const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
+  const [sortBy, setSortBy] = useState<SortKey>('default');
+  const [activeCategory, setActiveCategory] = useState<string>('all');
 
   useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setSortBy('default');
+    setActiveCategory('all');
   }, [effectiveSellerId]);
 
   useEffect(() => {
@@ -90,72 +83,31 @@ export const SellerProfileView: React.FC = () => {
       setDirectSeller(null);
       return;
     }
-
     let isMounted = true;
-
     setIsLoadingDirect(true);
-
     fetch(`/api/sellers/${encodeURIComponent(effectiveSellerId)}`, { cache: 'no-store' })
       .then((res) => res.json())
       .then((json) => {
-        if (isMounted && json?.data) {
-          setDirectSeller(json.data);
-        }
+        if (isMounted && json?.data) setDirectSeller(json.data);
       })
-      .catch(() => { })
+      .catch(() => {})
       .finally(() => {
-        if (isMounted) {
-          setIsLoadingDirect(false);
-        }
+        if (isMounted) setIsLoadingDirect(false);
       });
-
     return () => {
       isMounted = false;
     };
   }, [matchedSeller, effectiveSellerId]);
 
-  useEffect(() => {
-    const observers: IntersectionObserver[] = [];
-
-    Object.entries(sectionRefs.current).forEach(([key, element]) => {
-      if (!element) return;
-
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setVisibleSections((prev) => ({
-              ...prev,
-              [key]: true,
-            }));
-
-            observer.disconnect();
-          }
-        },
-        {
-          threshold: 0.12,
-          rootMargin: '0px 0px -60px 0px',
-        }
-      );
-
-      observer.observe(element);
-      observers.push(observer);
-    });
-
-    return () => {
-      observers.forEach((observer) => observer.disconnect());
-    };
-  }, []);
-
   const seller = matchedSeller || directSeller;
+
   const isOwnSellerProfile = Boolean(
     seller &&
-    isAuthenticated &&
-    currentUser.role === 'seller' &&
-    (
-      currentUser.id === seller.id ||
-      currentUser.id === seller.userId ||
-      currentUser.sellerId === seller.id
-    )
+      isAuthenticated &&
+      currentUser.role === 'seller' &&
+      (currentUser.id === seller.id ||
+        currentUser.id === seller.userId ||
+        currentUser.sellerId === seller.id)
   );
 
   useEffect(() => {
@@ -163,15 +115,13 @@ export const SellerProfileView: React.FC = () => {
       setFollowState({ following: false, followersCount: 0 });
       return;
     }
-
     let active = true;
-    api.getSellerFollowState(currentUser, seller.id)
+    api
+      .getSellerFollowState(currentUser, seller.id)
       .then((state) => {
         if (active) setFollowState(state);
       })
-      .catch((error) => {
-        console.error('[SellerProfileView] Failed to load follow state:', error);
-      });
+      .catch((error) => console.error('[SellerProfileView] Failed to load follow state:', error));
     return () => {
       active = false;
     };
@@ -184,7 +134,6 @@ export const SellerProfileView: React.FC = () => {
       return;
     }
     if (currentUser.role !== 'buyer' || !seller?.id) return;
-
     setIsFollowLoading(true);
     try {
       const state = followState.following
@@ -193,7 +142,9 @@ export const SellerProfileView: React.FC = () => {
       setFollowState(state);
       addToast(
         state.following ? 'بدأت متابعة الورشة' : 'تم إلغاء متابعة الورشة',
-        state.following ? 'هيوصلك تنبيه عند نشر منتجات أو حكايات جديدة' : 'يمكنك متابعة الورشة مرة أخرى في أي وقت',
+        state.following
+          ? 'هيوصلك تنبيه عند نشر منتجات أو حكايات جديدة'
+          : 'يمكنك متابعة الورشة مرة أخرى في أي وقت',
         'success'
       );
     } catch (error) {
@@ -206,12 +157,15 @@ export const SellerProfileView: React.FC = () => {
   useEffect(() => {
     if (!seller) return;
     const sellerName = seller.brandName || seller.name || 'حرفي من الصعيد';
-    const sellerBio = seller.bio || `ورشة ومنتجات ${sellerName} الحرفية في ${seller.governorate || 'صعيد مصر'}. صناعة يدوية وتراثية 100%.`;
-
+    const sellerBio =
+      seller.bio ||
+      `ورشة ومنتجات ${sellerName} الحرفية في ${seller.governorate || 'صعيد مصر'}. صناعة يدوية وتراثية 100%.`;
     updatePageSEO({
       title: `${sellerName} — ورشة وصانع بصعيد مصر`,
       description: sellerBio.slice(0, 160),
-      image: seller.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png',
+      image:
+        seller.avatar ||
+        'https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png',
       type: 'website',
       schema: generateStoreSchema({
         id: seller.id || seller.userId || 'artisan',
@@ -220,42 +174,52 @@ export const SellerProfileView: React.FC = () => {
         bio: sellerBio,
         avatar: seller.avatar,
         governorate: seller.governorate || 'صعيد مصر',
-        phone: seller.phone
-      })
+        phone: seller.phone,
+      }),
     });
   }, [seller]);
 
+  const sellerProducts = useMemo(() => {
+    if (!seller) return [];
+    return (products || []).filter(
+      (p) =>
+        (p.sellerId === seller.id ||
+          (seller.userId && p.sellerId === seller.userId) ||
+          (seller.brandName && p.sellerName === seller.brandName)) &&
+        p.approvalStatus === 'approved'
+    );
+  }, [products, seller]);
+
+  const categories = useMemo(() => {
+    const set = new Set<string>();
+    sellerProducts.forEach((p) => {
+      const c = (p as any).category;
+      if (typeof c === 'string' && c.trim()) set.add(c.trim());
+    });
+    return Array.from(set);
+  }, [sellerProducts]);
+
+  const visibleProducts = useMemo(() => {
+    let list = sellerProducts;
+    if (activeCategory !== 'all') {
+      list = list.filter((p) => String((p as any).category || '').trim() === activeCategory);
+    }
+    if (sortBy === 'price-asc') {
+      list = [...list].sort((a, b) => Number((a as any).price || 0) - Number((b as any).price || 0));
+    } else if (sortBy === 'price-desc') {
+      list = [...list].sort((a, b) => Number((b as any).price || 0) - Number((a as any).price || 0));
+    }
+    return list;
+  }, [sellerProducts, activeCategory, sortBy]);
+
+  /* ---------------- loading / not found ---------------- */
+
   if (isLoadingDirect || (!seller && sellers.length === 0)) {
     return (
-      <div
-        dir="rtl"
-        className="min-h-[70vh] flex items-center justify-center px-5"
-      >
-        <div className="relative text-center">
-          <div className="absolute inset-0 blur-3xl bg-primary/10 rounded-full scale-150" />
-
-          <div className="relative">
-            {/* عم وه */}
-            <div className="relative w-20 h-20 mx-auto flex items-center justify-center">
-              <div className="absolute inset-0 rounded-full bg-primary/10 blur-xl animate-pulse" />
-
-              <img
-                src="/mascot/make.png"
-                alt="عم وه"
-                className="relative z-10 w-20 h-20 object-contain animate-[pulse_2s_ease-in-out_infinite]"
-              />
-            </div>
-
-            <p className="mt-5 text-sm font-black text-foreground">
-              بنفتحلك ديار الصانع...
-            </p>
-
-            <div className="flex justify-center gap-1 mt-3">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" />
-              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce [animation-delay:150ms]" />
-              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce [animation-delay:300ms]" />
-            </div>
-          </div>
+      <div dir="rtl" className="flex min-h-[70vh] items-center justify-center px-5">
+        <div className="text-center">
+          <img src="/mascot/make.png" alt="عم وه" className="mx-auto h-20 w-20 animate-pulse object-contain" />
+          <p className="mt-5 text-sm font-black text-foreground">بنفتحلك ديار الصانع...</p>
         </div>
       </div>
     );
@@ -263,710 +227,400 @@ export const SellerProfileView: React.FC = () => {
 
   if (!seller) {
     return (
-      <div
-        dir="rtl"
-        className="min-h-[70vh] flex items-center justify-center px-5"
-      >
-        <div className="relative w-full max-w-md overflow-hidden rounded-[2.5rem] border border-border-subtle bg-surface-subtle p-8 sm:p-12 text-center shadow-2xl">
-          <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/10 blur-3xl rounded-full" />
-          <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-primary/10 blur-3xl rounded-full" />
-
-          <div className="relative">
-            <div className="w-20 h-20 rounded-[1.75rem] bg-primary/10 text-primary flex items-center justify-center mx-auto">
-              <Store className="w-9 h-9" />
-            </div>
-
-            <h3 className="mt-6 text-2xl font-cairo font-bold text-foreground">
-              الورشة دي مش معروضة دلوقتي
-            </h3>
-
-            <p className="mt-3 text-sm text-foreground-muted leading-7">
-              قد تكون الورشة قيد مراجعة الجودة أو تم تحديث بياناتها؛
-              تصفح بقية شيوخ الصنعة في الجنوب.
-            </p>
-
-            <button
-              type="button"
-              onClick={() => setActivePage('sellers')}
-              className="mt-7 w-full py-4 rounded-2xl bg-foreground text-background hover:bg-primary hover:text-white transition-all duration-300 font-black text-sm shadow-lg hover:-translate-y-1"
-            >
-              شوف باقي شيوخ الصنعة
-            </button>
+      <div dir="rtl" className="flex min-h-[70vh] items-center justify-center px-5">
+        <div className="w-full max-w-md rounded-[2rem] border border-border-subtle bg-surface-subtle p-8 text-center shadow-xl sm:p-12">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-primary/10 text-primary">
+            <Store className="h-9 w-9" />
           </div>
+          <h3 className="mt-6 text-2xl font-cairo font-bold text-foreground">الورشة دي مش معروضة دلوقتي</h3>
+          <p className="mt-3 text-sm leading-7 text-foreground-muted">
+            ممكن تكون الورشة قيد مراجعة الجودة أو بياناتها بتتحدّث. تصفّح باقي الصنّاع في الجنوب.
+          </p>
+          <button
+            type="button"
+            onClick={() => setActivePage('sellers')}
+            className="mt-7 w-full rounded-2xl bg-foreground py-4 text-sm font-black text-background transition-colors hover:bg-primary hover:text-white"
+          >
+            شوف باقي الصنّاع
+          </button>
         </div>
       </div>
     );
   }
 
-  const sellerProducts = (products || []).filter(
-    (p) =>
-      (p.sellerId === seller.id ||
-        (seller.userId && p.sellerId === seller.userId) ||
-        (seller.brandName && p.sellerName === seller.brandName)) &&
-      p.approvalStatus === 'approved'
-  );
+  /* ---------------- values ---------------- */
 
-  const brandTitle =
-    seller.brandName || seller.name || 'ورشة الحرفي';
+  const brandTitle = seller.brandName || seller.name || 'ورشة الحرفي';
+  const ownerName = seller.name || 'حرفي الجنوب';
+  const specialty = seller.specialty || 'مشغولات يدوية';
+  const governorate = seller.governorate || 'صعيد مصر';
 
   const coverImg =
     seller.coverImage ||
     'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=1600&q=85';
-
   const avatarImg =
-    seller.avatar ||
-    'https://res.cloudinary.com/kuana1nl/image/upload/v1788710904/user.jpg';
+    seller.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1788710904/user.jpg';
 
-  const joinedYear = String(
-    seller.joinedDate || '2023'
-  ).slice(0, 4);
+  const joinedYear = String(seller.joinedDate || '2023').slice(0, 4);
   const craftYears = seller.craftSinceYear
     ? Math.max(0, new Date().getFullYear() - seller.craftSinceYear)
     : null;
 
-  const handleShare = () => {
-    const shareUrl = `${window.location.origin}/sellers/${encodeURIComponent(
-      seller.id || effectiveSellerId || ''
-    )}`;
+  const hasRating = Number(seller.rating) > 0;
+  const hasSales = Number(seller.salesCount) > 0;
+  const whatsappNumber = toWhatsAppNumber(seller.phone);
 
+  const profileUrl = () =>
+    `${window.location.origin}/sellers/${encodeURIComponent(seller.id || effectiveSellerId || '')}`;
+
+  const copyLink = (url: string) => {
+    navigator.clipboard?.writeText(url);
+    addToast('تم نسخ الرابط', 'تم نسخ رابط ورشة الحرفي بنجاح', 'info');
+  };
+
+  const handleShare = () => {
+    const url = profileUrl();
     if (navigator.share) {
       navigator
-        .share({
-          title: brandTitle,
-          text: `ورشة ${brandTitle} - شيوخ صنعة صعيد مصر على منصة وه`,
-          url: shareUrl,
-        })
-        .catch(() => {
-          navigator.clipboard?.writeText(shareUrl);
-          addToast(
-            'تم نسخ الرابط',
-            'تم نسخ رابط ورشة الحرفي بنجاح',
-            'info'
-          );
-        });
+        .share({ title: brandTitle, text: `ورشة ${brandTitle} - شيوخ صنعة صعيد مصر على منصة وه`, url })
+        .catch(() => copyLink(url));
     } else {
-      navigator.clipboard?.writeText(shareUrl);
-      addToast(
-        'تم نسخ الرابط',
-        'تم نسخ رابط ورشة الحرفي بنجاح',
-        'info'
-      );
+      copyLink(url);
     }
   };
+
   const handleShareOnWhatsApp = () => {
-    const shareUrl = `${window.location.origin}/sellers/${encodeURIComponent(
-      seller.id || effectiveSellerId || ''
-    )}`;
-    const message = `ورشة ${brandTitle} - اكتشف منتجاتها على سوق وه: ${shareUrl}`;
+    const message = `ورشة ${brandTitle} - اكتشف منتجاتها على سوق وه: ${profileUrl()}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
   };
 
+  const handleContactSeller = () => {
+    if (!whatsappNumber) return;
+    const message = `السلام عليكم، شفت ورشتك "${brandTitle}" على سوق وه وحابب أستفسر عن منتجاتك.`;
+    window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
+  };
+
+  const stats = [
+    { value: String(sellerProducts.length), label: 'قطعة متاحة' },
+    hasRating && { value: String(seller.rating), label: 'تقييم', star: true },
+    hasSales && { value: String(seller.salesCount), label: 'مبيعة' },
+    followState.followersCount > 0 && { value: String(followState.followersCount), label: 'متابع' },
+    craftYears !== null && { value: String(craftYears), label: 'سنة خبرة' },
+  ].filter(Boolean) as { value: string; label: string; star?: boolean }[];
+
+  const iconBtn =
+    'inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur-md transition-colors hover:bg-white/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white';
+
+  /* ---------------- render ---------------- */
+
   return (
-    <div
-      dir="rtl"
-      className="min-h-screen bg-background text-foreground overflow-hidden"
-    >
-      {/* =========================================================
-          BACKGROUND DECORATION
-      ========================================================= */}
+    <div dir="rtl" className="min-h-screen bg-background text-foreground">
+      {/* ==================== HERO (full-bleed) ==================== */}
+      <section className="relative isolate overflow-hidden bg-black">
+        <img src={coverImg} alt="" className="absolute inset-0 -z-10 h-full w-full object-cover opacity-80" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black via-black/60 to-black/20" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-l from-black/70 via-transparent to-transparent" />
 
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[8%] -right-40 w-[28rem] h-[28rem] rounded-full bg-primary/[0.055] blur-3xl" />
-        <div className="absolute top-[45%] -left-40 w-[28rem] h-[28rem] rounded-full bg-orange-500/[0.035] blur-3xl" />
-        <div className="absolute bottom-[5%] right-[35%] w-[20rem] h-[20rem] rounded-full bg-amber-500/[0.025] blur-3xl" />
-      </div>
+        <div className="mx-auto flex min-h-[600px] max-w-[1400px] flex-col px-4 pb-24 pt-5 sm:px-6 lg:min-h-[680px] lg:px-10">
+          {/* breadcrumb + share */}
+          <div className="flex items-center justify-between gap-4">
+            <nav aria-label="مسار التنقل" className="flex items-center gap-2 overflow-hidden text-xs font-bold text-white/70">
+              <button type="button" onClick={() => setActivePage('home')} className="shrink-0 hover:text-white">
+                الرئيسية
+              </button>
+              <ChevronRight className="h-3 w-3 shrink-0 rotate-180 opacity-50" />
+              <button type="button" onClick={() => setActivePage('sellers')} className="shrink-0 hover:text-white">
+                دليل الصنّاع
+              </button>
+            </nav>
 
-      <div className="relative max-w-[1650px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-14 py-5 sm:py-8">
-        {/* =========================================================
-            BREADCRUMB
-        ========================================================= */}
-
-        <nav className="flex items-center justify-between gap-4 mb-6">
-          <div className="flex items-center gap-2 text-[11px] sm:text-xs font-bold text-foreground-disabled overflow-hidden">
-            <button
-              type="button"
-              onClick={() => setActivePage('home')}
-              className="hover:text-primary transition-colors shrink-0"
-            >
-              الرئيسية
-            </button>
-
-            <ChevronRight className="w-3 h-3 rotate-180 opacity-30 shrink-0" />
-
-            <button
-              type="button"
-              onClick={() => setActivePage('sellers')}
-              className="hover:text-primary transition-colors shrink-0"
-            >
-              دليل الصنّاع
-            </button>
-
-            <ChevronRight className="w-3 h-3 rotate-180 opacity-30 shrink-0" />
-
-            <span className="text-foreground truncate">
-              {brandTitle}
-            </span>
+            <div className="flex items-center gap-2">
+              <button type="button" onClick={handleShare} aria-label="مشاركة الورشة" className={iconBtn}>
+                <Share2 className="h-4 w-4" />
+              </button>
+              <button type="button" onClick={handleShareOnWhatsApp} aria-label="مشاركة على واتساب" className={iconBtn}>
+                <MessageCircle className="h-4 w-4" />
+              </button>
+              <QrCodeModal title={brandTitle} url={`/sellers/${encodeURIComponent(seller.id)}`} entityLabel="الورشة" />
+            </div>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
+          {/* identity */}
+          <div className="mt-auto grid grid-cols-1 items-end gap-10 pt-16 lg:grid-cols-[1fr_auto]">
+            <div className="order-2 lg:order-1">
+              <p className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm font-bold text-white/80">
+                <span className="inline-flex items-center gap-1.5">
+                  <MapPin className="h-4 w-4 text-primary" />
+                  {governorate}
+                </span>
+                <span className="text-white/90">{specialty}</span>
+                {seller.verified && (
+                  <span className="inline-flex items-center gap-1.5 text-emerald-300">
+                    <BadgeCheck className="h-4 w-4" />
+                    صانع موثّق
+                  </span>
+                )}
+              </p>
 
+              <h1 className="max-w-4xl text-5xl font-main font-black leading-[1.1] text-white sm:text-7xl lg:text-8xl">
+                {brandTitle}
+              </h1>
 
-            <button
-              type="button"
-              onClick={handleShare}
-              className="h-10 px-3.5 sm:px-4 rounded-xl border border-border-subtle bg-surface-subtle hover:border-primary/30 hover:text-primary inline-flex items-center gap-2 transition-all duration-300 hover:-translate-y-0.5"
-            >
-              <Share2 className="w-4 h-4" />
-              <span className="hidden sm:inline text-[11px] font-black">
-                مشاركة
-              </span>
-            </button>
-            <QrCodeModal
-              title={brandTitle}
-              url={`/sellers/${encodeURIComponent(seller.id)}`}
-              entityLabel="الورشة"
-            />
-            {isOwnSellerProfile && (
-              <>
-                <button
-                  type="button"
-                  onClick={() => setActivePage('seller-account')}
-                  className="h-10 px-3.5 sm:px-4 rounded-xl bg-primary text-white hover:bg-primary-hover inline-flex items-center gap-2 transition-all duration-300 hover:-translate-y-0.5"
-                >
-                  <Edit2 className="w-4 h-4" />
-                  <span className="hidden sm:inline text-[11px] font-black">
+              <p className="mt-4 text-base text-white/80 sm:text-lg">
+                بإدارة الصانع <span className="font-black text-white">{ownerName}</span>
+              </p>
+
+              <p className="mt-5 max-w-xl text-sm leading-8 text-white/75 sm:text-base">
+                {seller.bio ||
+                  'ورشة متخصصة في المشغولات الصعيدية التراثية المتوارثة أباً عن جد؛ بنصنع بعناية ونوصّل الحكاية من يد الصانع لباب بيتك.'}
+              </p>
+
+              <div className="mt-7 flex flex-wrap items-center gap-3">
+                {isOwnSellerProfile ? (
+                  <button
+                    type="button"
+                    onClick={() => setActivePage('seller-account')}
+                    className="inline-flex h-12 items-center gap-2 rounded-full bg-primary px-7 text-sm font-black text-white transition-colors hover:bg-primary-hover"
+                  >
+                    <Edit2 className="h-4 w-4" />
                     تعديل البروفايل
-                  </span>
-                </button>
-              </>
-            )}
-            <button
-              type="button"
-              onClick={handleShareOnWhatsApp}
-              aria-label="مشاركة الورشة على واتساب"
-              className="h-10 w-10 rounded-xl border border-border-subtle bg-surface-subtle hover:border-green-500/40 hover:text-green-600 inline-flex items-center justify-center transition-all duration-300 hover:-translate-y-0.5"
-            >
-              <MessageCircle className="w-4 h-4" />
-            </button>
-          </div>
-        </nav>
-
-        {/* UNCLE WAH INTERACTIVE GUIDE */}
-        <div className="mb-6">
-          <UncleWahInteractiveGuide
-            context="crafts"
-            title={brandTitle}
-            locationName={seller?.governorate}
-            customQuote={`«عم وه زار ورشة ${brandTitle} في ${seller?.governorate || 'الصعيد'}، وشاف سر الصنعة وخطوات الشغل اليدوي بعينه.. صنايعي شاطر من رجالة بلدنا وأمين على التراث الصعيدي!»`}
-          />
-        </div>
-
-        {/* =========================================================
-            HERO
-        ========================================================= */}
-
-        <section
-          ref={(el) => {
-            sectionRefs.current.hero = el;
-          }}
-          className={`transition-all duration-1000 ${visibleSections.hero
-            ? 'opacity-100 translate-y-0'
-            : 'opacity-0 translate-y-8'
-            }`}
-        >
-          <div className="relative overflow-hidden rounded-[2rem] sm:rounded-[3rem] min-h-[480px] sm:min-h-[580px] lg:min-h-[620px] border border-white/10 shadow-2xl group">
-            {/* IMAGE */}
-
-            <img
-              src={coverImg}
-              alt={brandTitle}
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1800ms] ease-out group-hover:scale-[1.045]"
-            />
-
-            {/* DARK GRADIENT */}
-
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-black/5" />
-
-            <div className="absolute inset-0 bg-gradient-to-l from-black/50 via-transparent to-transparent" />
-
-            {/* MOVING LIGHT */}
-
-            <div className="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-primary/20 blur-3xl opacity-60 group-hover:opacity-90 transition-opacity duration-1000" />
-
-            {/* HERO CONTENT */}
-
-            <div className="absolute inset-0 flex flex-col justify-end p-5 sm:p-8 lg:p-12">
-              <div className="max-w-4xl">
-                {/* BADGES */}
-
-                <div className="flex flex-wrap items-center gap-2 mb-5">
-                  <span className="inline-flex items-center gap-2 rounded-full bg-black/45 backdrop-blur-xl border border-white/15 text-white px-3.5 py-2 text-[10px] sm:text-xs font-black shadow-lg">
-                    <MapPin className="w-3.5 h-3.5 text-primary" />
-                    {seller.governorate || 'الصعيد'}
-                  </span>
-
-                  <span className="inline-flex items-center gap-2 rounded-full bg-primary/90 backdrop-blur-xl text-white px-3.5 py-2 text-[10px] sm:text-xs font-black shadow-lg">
-                    <Sparkles className="w-3.5 h-3.5" />
-                    {seller.specialty || 'مشغولات يدوية'}
-                  </span>
-
-                  {seller.verified && (
-                    <span className="inline-flex items-center gap-2 rounded-full bg-emerald-500/90 text-white px-3.5 py-2 text-[10px] sm:text-xs font-black shadow-lg">
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                      صانع موثّق
-                    </span>
-                  )}
-                </div>
-
-                {/* TITLE */}
-
-                <div className="flex items-end gap-4 sm:gap-6">
-                  <div className="relative shrink-0">
-                    <div className="absolute inset-0 rounded-[1.4rem] bg-primary/50 blur-xl animate-pulse" />
-
-                    <img
-                      src={avatarImg}
-                      alt={seller.name || brandTitle}
-                      className="relative w-20 h-20 sm:w-28 sm:h-28 rounded-[1.4rem] object-cover border-2 border-white/30 shadow-2xl bg-background transition-transform duration-500 group-hover:-translate-y-2"
-                    />
-
-                    {seller.verified && (
-                      <div className="absolute -bottom-2 -left-2 w-7 h-7 rounded-full bg-emerald-500 border-2 border-white/80 text-white flex items-center justify-center shadow-lg">
-                        <CheckCircle2 className="w-4 h-4" />
-                      </div>
+                  </button>
+                ) : (
+                  <>
+                    {(currentUser.role === 'buyer' || !isAuthenticated) && (
+                      <button
+                        type="button"
+                        onClick={handleFollowSeller}
+                        disabled={isFollowLoading}
+                        aria-pressed={followState.following}
+                        className={`inline-flex h-12 items-center gap-2 rounded-full px-7 text-sm font-black transition-colors disabled:cursor-wait disabled:opacity-60 ${
+                          followState.following
+                            ? 'border border-white/40 bg-white/10 text-white backdrop-blur-md hover:bg-white/20'
+                            : 'bg-primary text-white hover:bg-primary-hover'
+                        }`}
+                      >
+                        <Heart className={`h-4 w-4 ${followState.following ? 'fill-current text-rose-300' : ''}`} />
+                        {isFollowLoading ? 'لحظة...' : followState.following ? 'بتتابع الورشة' : 'تابع الورشة'}
+                      </button>
                     )}
-                  </div>
-
-                  <div className="min-w-0">
-                    <p className="text-white/65 text-[10px] sm:text-xs font-bold mb-1">
-                      ورشة من قلب صعيد مصر
-                    </p>
-
-                    <h1 className="text-3xl sm:text-5xl lg:text-6xl font-main font-black text-white leading-[1.05] tracking-tight">
-                      {brandTitle}
-                    </h1>
-
-                    <p className="mt-2 text-white/70 text-xs sm:text-sm">
-                      بإدارة الصانع:
-                      <span className="text-white font-black mr-1">
-                        {seller.name || 'حرفي الجنوب'}
-                      </span>
-                    </p>
-                  </div>
-                </div>
-
-                {/* DESCRIPTION */}
-
-                <p className="max-w-2xl mt-6 text-white/75 text-xs sm:text-sm leading-7">
-                  {seller.bio ||
-                    'ورشة متخصصة في المشغولات الصعيدية التراثية المتوارثة أباً عن جد؛ نصنع بعناية ونوصل الحكاية من يد الصانع لباب بيتك.'}
-                </p>
-
-                <div className="mt-5 flex flex-wrap items-center gap-3">
-                  {(currentUser.role === 'buyer' || !isAuthenticated) && (
-                    <button
-                      type="button"
-                      onClick={handleFollowSeller}
-                      disabled={isFollowLoading}
-                      className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-white/25 bg-white/10 px-4 py-2.5 text-xs font-black text-white backdrop-blur-md transition-all hover:bg-white/20 disabled:cursor-wait disabled:opacity-60"
-                    >
-                      <Heart className={`h-4 w-4 ${followState.following ? 'fill-current text-rose-300' : ''}`} />
-                      {isFollowLoading
-                        ? 'لحظة...'
-                        : followState.following
-                          ? 'إلغاء متابعة الورشة'
-                          : 'تابع الورشة'}
-                      {followState.followersCount > 0 && (
-                        <span className="rounded-full bg-black/20 px-2 py-0.5 text-[10px]">
-                          {followState.followersCount}
-                        </span>
-                      )}
-                    </button>
-                  )}
-
-                </div>
-
-                {/* STATS */}
-
-                <div className="grid grid-cols-3 max-w-xl mt-7 rounded-2xl sm:rounded-3xl border border-white/10 bg-black/25 backdrop-blur-xl overflow-hidden">
-                  <div className="px-3 py-4 sm:px-6 sm:py-5 text-center">
-                    <div className="flex items-center justify-center gap-1.5 text-amber-400">
-                      <Star className="w-4 h-4 fill-current" />
-                      <span className="text-sm sm:text-base font-black">
-                        {seller.rating ?? 0}
-                      </span>
-                    </div>
-                    <span className="block mt-1 text-[9px] sm:text-[10px] text-white/50 font-bold">
-                      التقييم
-                    </span>
-                  </div>
-
-                  <div className="px-3 py-4 sm:px-6 sm:py-5 text-center border-x border-white/10">
-                    <span className="block text-sm sm:text-base font-black text-white">
-                      {seller.salesCount ?? 0}
-                    </span>
-                    <span className="block mt-1 text-[9px] sm:text-[10px] text-white/50 font-bold">
-                      مبيعة
-                    </span>
-                  </div>
-
-                  <div className="px-3 py-4 sm:px-6 sm:py-5 text-center">
-                    <span className="block text-sm sm:text-base font-black text-white">
-                      {sellerProducts.length}
-                    </span>
-                    <span className="block mt-1 text-[9px] sm:text-[10px] text-white/50 font-bold">
-                      قطعة
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* FLOATING CORNER */}
-
-            <div className="absolute top-5 left-5 sm:top-8 sm:left-8 hidden sm:flex items-center gap-2 px-3 py-2 rounded-full bg-white/10 backdrop-blur-xl border border-white/10 text-white/80 text-[10px] font-bold">
-              <WandSparkles className="w-3.5 h-3.5 text-primary" />
-              صناعة بإيدين مصرية
-            </div>
-          </div>
-        </section>
-
-        <section className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-[1.05fr_0.95fr]">
-          <article className="relative overflow-hidden rounded-[2rem] border border-border-subtle bg-surface-subtle p-6 sm:p-9">
-            <div className="absolute -left-16 -top-16 h-48 w-48 rounded-full bg-primary/10 blur-3xl" />
-            <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center">
-              <img
-                src={avatarImg}
-                alt={`صورة الصانع ${seller.name || brandTitle}`}
-                className="h-28 w-28 shrink-0 rounded-[1.75rem] border-4 border-background object-cover shadow-xl sm:h-36 sm:w-36"
-              />
-              <div>
-                <div className="mb-2 inline-flex items-center gap-2 text-xs font-black text-primary">
-                  <Award className="h-4 w-4" />
-                  الصانع وراء كل قطعة
-                </div>
-                <h2 className="text-2xl font-black sm:text-3xl">
-                  {seller.name || brandTitle}
-                </h2>
-                <p className="mt-2 text-sm font-bold text-foreground-muted">
-                  {seller.specialty || 'صانع وحرفي'} · {seller.governorate || 'صعيد مصر'}
-                </p>
-                {craftYears !== null && (
-                  <p className="mt-4 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-xs font-black text-primary">
-                    <Sparkles className="h-4 w-4" />
-                    {seller.craftSinceYear} — خبرة {craftYears} سنة
-                  </p>
+                    
+                  </>
                 )}
               </div>
             </div>
-            {seller.bio && (
-              <p className="relative mt-7 border-t border-border-subtle pt-5 text-sm leading-8 text-foreground-muted">
-                {seller.bio}
+
+            {/* arch portrait */}
+            <div className="order-1 mx-auto lg:order-2 lg:mx-0">
+              <div className="relative">
+                <img
+                  src={avatarImg}
+                  alt={ownerName}
+                  className="h-64 w-48 rounded-t-full rounded-b-[2rem] border-[6px] border-white/90 bg-background object-cover shadow-2xl sm:h-80 sm:w-60 lg:h-[26rem] lg:w-72"
+                />
+                {seller.verified && (
+                  <span className="absolute -bottom-3 left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-emerald-500 px-4 py-1.5 text-xs font-black text-white shadow-lg">
+                    <BadgeCheck className="h-4 w-4" />
+                    موثّق
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* zigzag edge */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 bottom-0 h-4 bg-background"
+          style={{
+            WebkitMaskImage: ZIGZAG_MASK,
+            maskImage: ZIGZAG_MASK,
+            WebkitMaskRepeat: 'repeat-x',
+            maskRepeat: 'repeat-x',
+            WebkitMaskSize: '32px 16px',
+            maskSize: '32px 16px',
+          }}
+        />
+      </section>
+
+      {/* ==================== STATS RIBBON ==================== */}
+      <div className="mx-auto -mt-1 max-w-[1400px] px-4 sm:px-6 lg:px-10">
+        <dl className="flex flex-wrap items-stretch justify-center divide-x divide-x-reverse divide-border-subtle border-b border-border-subtle py-6">
+          {stats.map((s) => (
+            <div key={s.label} className="flex min-w-[110px] flex-1 flex-col items-center px-4 py-2 text-center">
+              <dd className="flex items-center gap-1.5 text-3xl font-main font-black sm:text-4xl">
+                {s.star && <Star className="h-5 w-5 fill-current text-amber-500" />}
+                {s.value}
+              </dd>
+              <dt className="mt-1 text-xs font-bold text-foreground-muted">{s.label}</dt>
+            </div>
+          ))}
+        </dl>
+      </div>
+
+      {/* ==================== BODY ==================== */}
+      <div className="mx-auto grid max-w-[1400px] grid-cols-1 gap-12 px-4 py-12 sm:px-6 lg:grid-cols-[1fr_340px] lg:gap-14 lg:px-10 lg:py-16">
+        <main className="min-w-0 space-y-16">
+          {/* story */}
+          <section aria-labelledby="story-title">
+            <h2 id="story-title" className="text-3xl font-main font-black leading-snug sm:text-4xl">
+              {seller.story ? 'حكاية بدأت بإيدين بتحب الصنعة' : `كل قطعة من ${brandTitle} وراها حكاية`}
+            </h2>
+
+            {seller.story ? (
+              <p className="mt-6 max-w-2xl whitespace-pre-line border-r-4 border-primary pr-6 text-lg leading-10 text-foreground-muted">
+                {seller.story}
+              </p>
+            ) : (
+              <p className="mt-6 max-w-2xl border-r-4 border-primary pr-6 text-lg leading-10 text-foreground-muted">
+                وراها وقت ومهارة واختيار للخامة. اكتشف شغل {brandTitle} وتعرّف على الصنعة من خلال المنتجات.
               </p>
             )}
-          </article>
 
-          <article className="relative overflow-hidden rounded-[2rem] border border-primary/15 bg-primary/[0.06] p-6 sm:p-9">
-            <div className="inline-flex items-center gap-2 text-xs font-black text-primary">
-              <Layers className="h-4 w-4" />
-              شغل الورشة
-            </div>
-            <h2 className="mt-3 text-2xl font-black sm:text-3xl">
-              إيه اللي بنقدمه؟
-            </h2>
-            <p className="mt-4 whitespace-pre-line text-sm leading-8 text-foreground-muted">
-              {seller.offerings || seller.specialty || `منتجات ${brandTitle} اليدوية، بتفاصيلها وخاماتها الأصيلة.`}
-            </p>
-            <div className="mt-6 flex flex-wrap gap-2">
-              {[seller.specialty, seller.governorate].filter(Boolean).map((tag) => (
-                <span key={tag} className="rounded-full border border-border-subtle bg-background/70 px-3 py-1.5 text-xs font-bold">
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </article>
-        </section>
+            {(seller.offerings || seller.specialty) && (
+              <div className="mt-10 rounded-3xl bg-surface-subtle p-6 sm:p-8">
+                <h3 className="text-lg font-black">إيه اللي بنقدمه؟</h3>
+                <p className="mt-3 whitespace-pre-line text-sm leading-8 text-foreground-muted">
+                  {seller.offerings || seller.specialty}
+                </p>
+              </div>
+            )}
+          </section>
 
-        {(seller.achievementOrdersCount != null ||
-          seller.craftSinceYear ||
-          seller.achievementSkills?.length) && (
-          <section className="mt-5 rounded-[2rem] border border-primary/15 bg-primary/[0.04] p-6 sm:p-8">
-            <div className="mb-5 flex items-center gap-2 text-primary">
-              <Award className="h-5 w-5" />
-              <h2 className="text-lg font-black">إنجازات الحرفي</h2>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              {seller.achievementOrdersCount != null && (
-                <div className="min-w-36 rounded-2xl border border-border-subtle bg-background/70 p-4">
-                  <span className="block text-[10px] font-bold text-foreground-disabled">طلبات نفذها الحرفي</span>
-                  <span className="mt-1 block text-xl font-black text-primary">
-                    {seller.achievementOrdersCount.toLocaleString('ar-EG')}
-                  </span>
-                </div>
-              )}
-              {seller.craftSinceYear && (
-                <div className="min-w-36 rounded-2xl border border-border-subtle bg-background/70 p-4">
-                  <span className="block text-[10px] font-bold text-foreground-disabled">سنوات الخبرة بحسب الحرفي</span>
-                  <span className="mt-1 block text-xl font-black text-primary">
-                    {craftYears} سنة
-                  </span>
-                </div>
+          {/* products */}
+          <section aria-labelledby="products-title">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h2 id="products-title" className="text-3xl font-main font-black sm:text-4xl">
+                  شغل إيدين {brandTitle}
+                </h2>
+                <p className="mt-1 text-sm text-foreground-muted">{sellerProducts.length} قطعة جاهزة للطلب</p>
+              </div>
+
+              {sellerProducts.length > 1 && (
+                <label className="inline-flex items-center gap-2 text-xs font-bold text-foreground-muted">
+                  ترتيب
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value as SortKey)}
+                    className="rounded-full border border-border-subtle bg-surface-subtle px-4 py-2 text-xs font-black text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  >
+                    <option value="default">الافتراضي</option>
+                    <option value="price-asc">السعر: الأقل أولاً</option>
+                    <option value="price-desc">السعر: الأعلى أولاً</option>
+                  </select>
+                </label>
               )}
             </div>
-            {!!seller.achievementSkills?.length && (
-              <div className="mt-4 flex flex-wrap gap-2">
-                {seller.achievementSkills.map((skill) => (
-                  <span key={skill} className="rounded-full border border-primary/15 bg-background/70 px-3 py-1.5 text-xs font-bold">
-                    {skill}
-                  </span>
+
+            {categories.length > 1 && (
+              <div className="mt-5 flex flex-wrap gap-2">
+                {['all', ...categories].map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => setActiveCategory(c)}
+                    aria-pressed={activeCategory === c}
+                    className={`rounded-full border px-4 py-2 text-xs font-black transition-colors ${
+                      activeCategory === c
+                        ? 'border-foreground bg-foreground text-background'
+                        : 'border-border-subtle hover:border-foreground/40'
+                    }`}
+                  >
+                    {c === 'all' ? 'الكل' : c}
+                  </button>
                 ))}
               </div>
             )}
-            <p className="mt-4 text-[10px] text-foreground-disabled">
-              هذه المعلومات يضيفها الحرفي بنفسه.
-            </p>
+
+            <div className="mt-8">
+              {sellerProducts.length === 0 ? (
+                <div className="rounded-3xl border border-dashed border-border-subtle p-12 text-center sm:p-16">
+                  <Store className="mx-auto h-10 w-10 text-foreground-disabled opacity-60" />
+                  <h3 className="mt-4 text-lg font-cairo font-bold">الصانع شغال على قطع جديدة</h3>
+                  <p className="mx-auto mt-2 max-w-sm text-sm leading-7 text-foreground-muted">
+                    تابع الورشة عشان يوصلك تنبيه أول ما تنزل مشغولات جديدة.
+                  </p>
+                </div>
+              ) : visibleProducts.length === 0 ? (
+                <p className="rounded-2xl bg-surface-subtle p-8 text-center text-sm text-foreground-muted">
+                  مفيش قطع في القسم ده حالياً.
+                </p>
+              ) : (
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                  {visibleProducts.map((p) => (
+                    <ProductCard key={p.id} product={p} />
+                  ))}
+                </div>
+              )}
+            </div>
           </section>
-        )}
 
-        {/* =========================================================
-            INFO STRIP
-        ========================================================= */}
+          
+        </main>
 
-        <section
-          ref={(el) => {
-            sectionRefs.current.info = el;
-          }}
-          className={`mt-5 sm:mt-7 transition-all duration-1000 delay-150 ${visibleSections.info
-            ? 'opacity-100 translate-y-0'
-            : 'opacity-0 translate-y-8'
-            }`}
-        >
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
-            <div className="group rounded-2xl border border-border-subtle bg-surface-subtle p-4 sm:p-5 hover:border-primary/30 transition-all duration-300 hover:-translate-y-1">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Calendar className="w-4.5 h-4.5" />
-                </div>
+        {/* ==================== SIDEBAR ==================== */}
+        <aside className="lg:sticky lg:top-6 lg:self-start">
+          <div className="overflow-hidden rounded-3xl border border-border-subtle bg-surface-subtle">
+            <div className="h-3 bg-primary" style={{
+              WebkitMaskImage: ZIGZAG_MASK,
+              maskImage: ZIGZAG_MASK,
+              WebkitMaskRepeat: 'repeat-x',
+              maskRepeat: 'repeat-x',
+              WebkitMaskSize: '24px 12px',
+              maskSize: '24px 12px',
+            }} aria-hidden="true" />
 
-                <div>
-                  <span className="block text-[9px] text-foreground-disabled font-bold">
-                    موجود على وه من
-                  </span>
-                  <span className="block mt-0.5 text-xs font-black">
-                    {joinedYear}
-                  </span>
+            <div className="p-6">
+              <div className="flex items-center gap-4">
+                <img src={avatarImg} alt="" className="h-16 w-16 rounded-full object-cover" />
+                <div className="min-w-0">
+                  <h2 className="truncate text-lg font-black">{ownerName}</h2>
+                  <p className="truncate text-xs font-bold text-foreground-muted">صانع {specialty}</p>
                 </div>
               </div>
-            </div>
 
-            {seller.craftSinceYear && (
-              <div className="group rounded-2xl border border-border-subtle bg-surface-subtle p-4 sm:p-5 hover:border-primary/30 transition-all duration-300 hover:-translate-y-1">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Sparkles className="w-4.5 h-4.5" />
+              <dl className="mt-6 divide-y divide-border-subtle text-sm">
+                <div className="flex items-center justify-between py-3">
+                  <dt className="text-foreground-muted">مكان الورشة</dt>
+                  <dd className="font-black">{governorate}</dd>
+                </div>
+                {seller.craftSinceYear && (
+                  <div className="flex items-center justify-between py-3">
+                    <dt className="text-foreground-muted">بداية الحرفة</dt>
+                    <dd className="font-black">{seller.craftSinceYear}</dd>
                   </div>
-
-                  <div>
-                    <span className="block text-[9px] text-foreground-disabled font-bold">
-                      بداية الحرفة
-                    </span>
-                    <span className="block mt-0.5 text-xs font-black">
-                      منذ {seller.craftSinceYear} · {craftYears} سنة خبرة
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <div className="group rounded-2xl border border-border-subtle bg-surface-subtle p-4 sm:p-5 hover:border-primary/30 transition-all duration-300 hover:-translate-y-1">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Sparkles className="w-4.5 h-4.5" />
-                </div>
-
-                <div>
-                  <span className="block text-[9px] text-foreground-disabled font-bold">
-                    الصنعة
-                  </span>
-                  <span className="block mt-0.5 text-xs font-black">
-                    {seller.specialty || 'مشغولات يدوية'}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="group rounded-2xl border border-border-subtle bg-surface-subtle p-4 sm:p-5 hover:border-primary/30 transition-all duration-300 hover:-translate-y-1">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <MapPin className="w-4.5 h-4.5" />
-                </div>
-
-                <div>
-                  <span className="block text-[9px] text-foreground-disabled font-bold">
-                    مكان الورشة
-                  </span>
-                  <span className="block mt-0.5 text-xs font-black">
-                    {seller.governorate || 'صعيد مصر'}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* =========================================================
-            PRODUCTS HEADER
-        ========================================================= */}
-
-        <section
-          ref={(el) => {
-            sectionRefs.current.products = el;
-          }}
-          className={`mt-12 sm:mt-16 transition-all duration-1000 delay-200 ${visibleSections.products
-            ? 'opacity-100 translate-y-0'
-            : 'opacity-0 translate-y-10'
-            }`}
-        >
-          <div className="relative">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-5">
-              <div>
-                <div className="inline-flex items-center gap-2 text-primary text-[10px] sm:text-xs font-black mb-2">
-                  <Package className="w-4 h-4" />
-                  <span>المعروضات الجاهزة للطلب</span>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <h2 className="text-3xl sm:text-4xl font-main font-black">
-                    شغل إيدين {brandTitle}
-                  </h2>
-
-                  <div className="hidden sm:block w-12 h-1 rounded-full bg-primary/70" />
-                </div>
-
-                <p className="mt-2 text-xs sm:text-sm text-foreground-muted">
-                  كل قطعة بتطلع من الورشة بحكاية لوحدها
-                </p>
-              </div>
-
-              <div className="inline-flex self-start sm:self-auto items-center gap-2 px-4 py-2.5 rounded-2xl bg-surface-subtle border border-border-subtle text-xs font-black">
-                <ShoppingBag className="w-4 h-4 text-primary" />
-                {sellerProducts.length} قطعة متاحة
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* =========================================================
-            PRODUCTS
-        ========================================================= */}
-
-        <section
-          className={`mt-6 transition-all duration-1000 delay-300 ${visibleSections.products
-            ? 'opacity-100 translate-y-0'
-            : 'opacity-0 translate-y-10'
-            }`}
-        >
-          {sellerProducts.length === 0 ? (
-            <div className="relative overflow-hidden rounded-[2.5rem] border border-border-subtle bg-surface-subtle p-12 sm:p-20 text-center">
-              <div className="absolute top-0 right-1/2 translate-x-1/2 w-72 h-72 bg-primary/5 blur-3xl rounded-full" />
-
-              <div className="relative">
-                <div className="w-20 h-20 rounded-[1.75rem] bg-background border border-border-subtle flex items-center justify-center mx-auto shadow-lg">
-                  <Store className="w-9 h-9 text-foreground-disabled opacity-50" />
-                </div>
-
-                <h4 className="mt-6 font-bold text-lg font-cairo">
-                  الصانع شغال على قطع جديدة
-                </h4>
-
-                <p className="mt-2 text-xs sm:text-sm text-foreground-disabled max-w-sm mx-auto leading-7">
-                  تابع الورشة قريباً لمشاهدة المشغولات اليدوية الجديدة فور توفرها.
-                </p>
-              </div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
-              {sellerProducts.map((p, index) => (
-                <div
-                  key={p.id}
-                  className="group relative transition-all duration-500 hover:-translate-y-2"
-                  style={{
-                    transitionDelay: `${Math.min(index * 70, 350)}ms`,
-                  }}
-                >
-                  <div className="absolute -inset-1 rounded-[2rem] bg-primary/0 group-hover:bg-primary/[0.035] blur-xl transition-all duration-500 pointer-events-none" />
-
-                  <div className="relative">
-                    <ProductCard product={p} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-
-        {/* =========================================================
-            BOTTOM STORY
-        ========================================================= */}
-
-        <section
-          ref={(el) => {
-            sectionRefs.current.story = el;
-          }}
-          className={`mt-14 sm:mt-20 transition-all duration-1000 ${visibleSections.story
-            ? 'opacity-100 translate-y-0'
-            : 'opacity-0 translate-y-10'
-            }`}
-        >
-          <div className="relative overflow-hidden rounded-[2.5rem] sm:rounded-[3rem] border border-border-subtle bg-surface-subtle p-6 sm:p-10 lg:p-14">
-            <div className="absolute -top-32 -left-32 w-72 h-72 rounded-full bg-primary/10 blur-3xl" />
-
-            <div className="relative grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-8 items-center">
-              <div>
-                <div className="inline-flex items-center gap-2 text-primary text-[10px] font-black mb-3">
-                  <Layers className="w-4 h-4" />
-                  حكاية الصانع والورشة
-                </div>
-
-                <h2 className="text-2xl sm:text-3xl font-main font-black">
-                  {seller.story ? 'حكاية بدأت بإيدين بتحب الصنعة...' : 'مش مجرد ورشة...'}
-                  <br />
-                  <br />
-                  <span className="text-primary dark:text-primary-hover">
-                    {seller.story ? 'وكل قطعة فصل جديد.' : 'دي حكاية بتكمل.'}
-                  </span>
-                </h2>
-
-                {seller.story ? (
-                  <p className="mt-5 max-w-3xl whitespace-pre-line text-sm sm:text-base text-foreground-muted leading-8">
-                    {seller.story}
-                  </p>
-                ) : (
-                  <p className="mt-5 max-w-2xl text-xs sm:text-sm text-foreground-muted leading-7">
-                    كل قطعة في الورشة وراها وقت ومهارة واختيار للخامة. اكتشف شغل {brandTitle} وتعرّف على الصنعة من خلال المنتجات والحكايات المصورة.
-                  </p>
                 )}
-
-                <div className="mt-6 flex items-center gap-3 text-xs font-black text-foreground-muted">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
-                    <Quote className="h-4 w-4" />
-                  </span>
-                  {seller.name || brandTitle} · صانع {seller.specialty || 'حرف يدوية'}
+                <div className="flex items-center justify-between py-3">
+                  <dt className="text-foreground-muted">على وه من</dt>
+                  <dd className="font-black">{joinedYear}</dd>
                 </div>
-              </div>
+                {seller.achievementOrdersCount != null && (
+                  <div className="flex items-center justify-between py-3">
+                    <dt className="text-foreground-muted">طلبات نفّذها</dt>
+                    <dd className="font-black">{seller.achievementOrdersCount.toLocaleString('ar-EG')}</dd>
+                  </div>
+                )}
+              </dl>
 
-              <div className="hidden sm:flex h-48 w-48 items-center justify-center rounded-full border border-primary/20 bg-primary/5 p-3">
-                <img src={avatarImg} alt="" className="h-full w-full rounded-full object-cover" />
-              </div>
+              {!!seller.achievementSkills?.length && (
+                <div className="mt-5">
+                  <h3 className="text-sm font-black">مهارات الحرفي</h3>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {seller.achievementSkills.map((skill: string) => (
+                      <span key={skill} className="rounded-full bg-background px-3 py-1.5 text-xs font-bold">
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                  <p className="mt-3 text-[11px] text-foreground-muted">هذه المعلومات يضيفها الحرفي بنفسه.</p>
+                </div>
+              )}
+
+              
             </div>
           </div>
-        </section>
-
-        {/* =========================================================
-            CONTACT FOOTER
-        ========================================================= */}
-
-
+        </aside>
       </div>
     </div>
   );
