@@ -1002,6 +1002,7 @@ export interface UpperEgyptFood {
   slug: string;
   governorateName: string;
   governorateId: string;
+  governorateSlug?: string;
   description: string;
   category?: string;
   ingredients: string[];
@@ -1012,6 +1013,7 @@ export interface UpperEgyptFood {
   story?: string;
   occasionOrTradition?: string;
   coverImage: string;
+  gallery?: string[];
   status: VerificationStatus;
   createdAt: string;
   updatedAt: string;
