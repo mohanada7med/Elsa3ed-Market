@@ -41,7 +41,6 @@ import {
   UploadCloud
 } from 'lucide-react';
 import { PlaceEditorModal } from './PlaceEditorModal';
-import { UncleWahInteractiveGuide } from '../common/UncleWahInteractiveGuide';
 
 export const PlaceDetailPage: React.FC = () => {
   const {

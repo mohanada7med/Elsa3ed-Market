@@ -31,10 +31,18 @@ const TOAST_ASSETS = {
     webp: '/mascot/info.webp',
     placeholder: (toastMascotPlaceholders as Record<string, string>).info || '',
   },
+  // Additional decorative assets
+  sparkles: {
+    png: '/mascot/sparkles.png',
+    webp: '/mascot/sparkles.webp',
+  },
+  heart: {
+    png: '/mascot/heart.png',
+    webp: '/mascot/heart.webp',
+  },
   fallback: '/mascot/welcoming.png',
   background: '/pattern/pat1.svg',
 };
-
 const toastThemes = {
   success: {
     label: 'يا سلام يا غالي!',
@@ -118,9 +126,8 @@ const ToastMascotAvatar: React.FC<{
               setCurrentSrc(TOAST_ASSETS.fallback);
             }
           }}
-          className={`relative z-10 h-full w-full object-contain drop-shadow-lg transition-opacity duration-150 ${
-            isLoaded ? 'opacity-100' : 'opacity-90'
-          }`}
+          className={`relative z-10 h-full w-full object-contain drop-shadow-lg transition-opacity duration-150 ${isLoaded ? 'opacity-100' : 'opacity-90'
+            }`}
           animate={{
             scale: [1, 1.035, 1],
           }}

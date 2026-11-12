@@ -40,7 +40,6 @@ import {
 } from 'lucide-react';
 
 import { getWhatsAppUrl } from '../common/WhatsAppButton';
-import { UncleWahInteractiveGuide } from '../common/UncleWahInteractiveGuide';
 import { QrCodeModal } from '../common/QrCodeModal';
 
 export const ProductDetailsView: React.FC = () => {
@@ -610,16 +609,6 @@ export const ProductDetailsView: React.FC = () => {
           </div>
         </div>
 
-        {/* UNCLE WAH INTERACTIVE GUIDE */}
-        <div className="mb-4 sm:mb-6">
-          <UncleWahInteractiveGuide
-            context="crafts"
-            title={product.title}
-            locationName={product.sellerGovernorate || product.specifications?.originGovernorate}
-            customQuote={`«وأنا بتمشى في ورش الصعيد.. لقيت ${product.title}! شغل يدوي أصيل 100% من إيد شيوخ الصنعة الحقيقيين، متسعر بأمانة وضمان لحد باب دارك.»`}
-            className="hidden sm:block"
-          />
-        </div>
 
         {/* ========================================= */}
         {/* HERO PRODUCT SECTION */}
@@ -2193,9 +2182,9 @@ export const ProductDetailsView: React.FC = () => {
                         يتاح التقييم للمشتري بعد استلام هذا المنتج ضمن طلب مكتمل.
                       </div>
                     ) : (
-                    <form
-                      onSubmit={handleAddReview}
-                      className="
+                      <form
+                        onSubmit={handleAddReview}
+                        className="
                         rounded-3xl
                         border
                         border-black/10
@@ -2204,44 +2193,44 @@ export const ProductDetailsView: React.FC = () => {
                         dark:border-white/10
                         dark:bg-cream/[0.02]
                       "
-                    >
-                      <h4 className="text-sm font-black">
-                        شارك تجربتك
-                      </h4>
+                      >
+                        <h4 className="text-sm font-black">
+                          شارك تجربتك
+                        </h4>
 
-                      <div className="mt-4 flex gap-1">
-                        {[1, 2, 3, 4, 5].map(
-                          (star) => (
-                            <button
-                              key={star}
-                              type="button"
-                              onClick={() =>
-                                setNewRating(star)
-                              }
-                              className="cursor-pointer p-1"
-                            >
-                              <Star
-                                size={20}
-                                className={
-                                  star <= newRating
-                                    ? ' text-primary-hover'
-                                    : 'text-black/15 dark:text-white/15'
+                        <div className="mt-4 flex gap-1">
+                          {[1, 2, 3, 4, 5].map(
+                            (star) => (
+                              <button
+                                key={star}
+                                type="button"
+                                onClick={() =>
+                                  setNewRating(star)
                                 }
-                              />
-                            </button>
-                          )
-                        )}
-                      </div>
+                                className="cursor-pointer p-1"
+                              >
+                                <Star
+                                  size={20}
+                                  className={
+                                    star <= newRating
+                                      ? ' text-primary-hover'
+                                      : 'text-black/15 dark:text-white/15'
+                                  }
+                                />
+                              </button>
+                            )
+                          )}
+                        </div>
 
-                      <textarea
-                        required
-                        value={newComment}
-                        onChange={(e) =>
-                          setNewComment(e.target.value)
-                        }
-                        rows={4}
-                        placeholder="اكتب رأيك في القطعة وجودة الصنع..."
-                        className="
+                        <textarea
+                          required
+                          value={newComment}
+                          onChange={(e) =>
+                            setNewComment(e.target.value)
+                          }
+                          rows={4}
+                          placeholder="اكتب رأيك في القطعة وجودة الصنع..."
+                          className="
                           mt-4
                           w-full
                           resize-none
@@ -2257,11 +2246,11 @@ export const ProductDetailsView: React.FC = () => {
                           dark:border-white/10
                           dark:bg-cream/[0.025]
                         "
-                      />
+                        />
 
-                      <button
-                        type="submit"
-                        className="
+                        <button
+                          type="submit"
+                          className="
                           mt-3
                           inline-flex
                           items-center
@@ -2279,11 +2268,11 @@ export const ProductDetailsView: React.FC = () => {
                           dark:hover:bg-primary-hover
                           cursor-pointer
                         "
-                      >
-                        <Send size={14} />
-                        إرسال التقييم
-                      </button>
-                    </form>
+                        >
+                          <Send size={14} />
+                          إرسال التقييم
+                        </button>
+                      </form>
                     )}
                   </div>
                 </div>

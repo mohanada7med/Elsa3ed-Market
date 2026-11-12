@@ -1174,18 +1174,6 @@ export const DialectDictionaryPage: React.FC = () => {
         </section>
       )}
 
-      {/* تذييل الصفحة - يظهر فقط في الصفحة المستقلة لتجنب الازدواج في الرئيسية */}
-      {!isHomePage && (
-        <footer className="relative z-10 border-t border-black/[0.07] dark:border-white/[0.08] mt-8 pb-12">
-          <div className="mx-auto max-w-[1700px] px-5 py-8 sm:px-8 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-medium text-black/40 dark:text-white/40">
-            <div className="flex items-center gap-2">
-              <CircleDot size={11} className="text-primary dark:text-primary-hover" />
-              <span>وه • توثيق الحكاية واللهجة الصعيدية الأصلية</span>
-            </div>
-            <div>جميع الحقوق محفوظة © {new Date().getFullYear()}</div>
-          </div>
-        </footer>
-      )}
 
     </WrapperTag>
   );

@@ -10,7 +10,6 @@ import {
   Scroll,
   Film,
 } from 'lucide-react';
-import { UncleWahInteractiveGuide } from '../common/UncleWahInteractiveGuide';
 
 export const PersonDetailPage: React.FC = () => {
   const {

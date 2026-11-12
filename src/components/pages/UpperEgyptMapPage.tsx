@@ -613,24 +613,6 @@ export const UpperEgyptMapPage: React.FC = () => {
 
           {/* البحث والتصفية */}
           <div className="mb-8 flex flex-col gap-3 lg:flex-row lg:items-center">
-            <div className="relative flex-1">
-              <Search size={18} className="absolute right-4 top-1/2 -translate-y-1/2 text-black/45 dark:text-white/45" />
-              <input
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="قلّب على بلد، معلم، صنعة يدوية..."
-                className={`h-12 w-full rounded-xl py-3 pr-12 pl-11 text-sm font-bold outline-none placeholder:text-black/35 focus:border-primary dark:placeholder:text-white/35 ${PAPER} ${INK_BORDER}`}
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery('')}
-                  aria-label="مسح البحث"
-                  className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full p-1.5 hover:bg-black/10 dark:hover:bg-white/10 cursor-pointer"
-                >
-                  <X size={15} />
-                </button>
-              )}
-            </div>
             <div className="no-scrollbar flex gap-2 overflow-x-auto">
               {availableRegions.map((region) => {
                 const active = selectedRegionFilter === region;
@@ -730,6 +712,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                           <div className="flex flex-col items-center justify-between border-r-2 border-dashed border-espresso/60 p-3 text-center dark:border-[#C99444]/60">
                             <div>
                               <div className="text-[10px] font-black text-black/50 dark:text-white/50">المحطة</div>
+                              <br />
                               <div className="font-main text-4xl font-black leading-none text-primary">
                                 {String(originalIndex + 1).padStart(2, '0')}
                               </div>

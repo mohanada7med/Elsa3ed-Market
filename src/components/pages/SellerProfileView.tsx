@@ -12,7 +12,6 @@ import {
   Heart,
   Edit2,
 } from 'lucide-react';
-import { UncleWahInteractiveGuide } from '../common/UncleWahInteractiveGuide';
 import { updatePageSEO, generateStoreSchema } from '../../utils/seo';
 import { api } from '../../services/api';
 import { QrCodeModal } from '../common/QrCodeModal';

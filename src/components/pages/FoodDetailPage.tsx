@@ -1,371 +1,528 @@
-import React, { useState, useEffect } from 'react';
+/*  src/components/pages/FoodDetailPage.tsx  */
+import React, { useEffect, useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { wahApi } from '../../services/api';
 import { UpperEgyptFood } from '../../types';
 import {
-  Utensils,
-  MapPin,
-  ArrowLeft,
-  Share2,
-  ChevronLeft,
-  Flame,
+  ArrowRight,
   Clock,
+  MapPin,
+  Share2,
   Sparkles,
-  CheckCircle2,
+  Utensils,
+  Flame,
   BookOpen,
-  Compass,
+  CheckCircle2,
+  Maximize2,
+  ChefHat,
+  ScrollText,
+  Edit3,
+  RotateCcw,
 } from 'lucide-react';
-import { UncleWahInteractiveGuide } from '../common/UncleWahInteractiveGuide';
+import { motion } from 'motion/react';
+import { EventImageLightboxModal } from '../common/EventImageLightboxModal';
 
+/* ---------- Helper ---------- */
+const fallbackCover = '/mascot/welcome.png';
+
+/* ---------- Component ---------- */
 export const FoodDetailPage: React.FC = () => {
+  /* ---------- Context ---------- */
   const {
     selectedFoodSlug,
     navigateToGovernorate,
     setActivePage,
     addToast,
+    currentUser,
+    currentRole,
   } = useApp();
 
+  const isAdmin = currentRole === 'admin' || currentUser?.role === 'admin';
+
+  /* ---------- State ---------- */
   const [food, setFood] = useState<UpperEgyptFood | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [checkedIngredients, setCheckedIngredients] = useState<Record<number, boolean>>({});
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
+  /* ---------- Slug ---------- */
   const slug =
-    selectedFoodSlug ||
+    selectedFoodSlug ??
     (typeof window !== 'undefined' && window.location.pathname.startsWith('/food/')
-      ? decodeURIComponent(window.location.pathname.split('/')[2] || '')
-      : null) ||
+      ? decodeURIComponent(window.location.pathname.split('/')[2])
+      : undefined) ??
+    'saidi-fayesh';
+  selectedFoodSlug ??
+    (typeof window !== 'undefined' &&
+      window.location.pathname.startsWith('/food/') &&
+      decodeURIComponent(window.location.pathname.split('/')[2])) ??
     'saidi-fayesh';
 
+  /* ---------- Fetch food ---------- */
   useEffect(() => {
+    let mounted = true;
     const fetchFood = async () => {
       setIsLoading(true);
       try {
         const data = await wahApi.getFoodBySlug(slug);
-        if (data) {
-          setFood(data);
-          setCheckedIngredients({});
-        }
-      } catch (err) {
-        console.warn('Could not load food details:', err);
+        if (mounted) setFood(data || null);
+      } catch (e) {
+        console.warn('Could not load food details:', e);
+        if (mounted) setFood(null);
       } finally {
-        setIsLoading(false);
+        if (mounted) setIsLoading(false);
       }
     };
     fetchFood();
+    return () => {
+      mounted = false;
+    };
   }, [slug]);
 
+  /* ---------- Share ---------- */
+  const handleShare = async () => {
+    if (typeof window === 'undefined') return;
+    const url = `${window.location.origin}/food/${encodeURIComponent(slug)}`;
+    try {
+      if (navigator.share && typeof navigator.share === 'function') {
+        await navigator.share({
+          title: food?.title ?? 'وصفة صعيدية',
+          text: food?.description ?? '',
+          url,
+        });
+        return;
+      }
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(url);
+        addToast('تم نسخ الرابط', 'تم نسخ رابط الوصفة بنجاح', 'success');
+      }
+    } catch (e) {
+      if (e instanceof DOMException && e.name === 'AbortError') return;
+      console.warn('Could not share food:', e);
+    }
+  };
+
+  /* ---------- Ingredients ---------- */
   const toggleIngredient = (idx: number) => {
-    setCheckedIngredients((prev) => ({
+    setCheckedIngredients(prev => ({
       ...prev,
       [idx]: !prev[idx],
     }));
   };
 
-  const handleShare = () => {
-    const url = `${window.location.origin}/food/${encodeURIComponent(slug)}`;
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(url);
-      addToast('تم نسخ الرابط', 'تم نسخ رابط وصفة الأكلة التراثية بنجاح', 'success');
-    }
-  };
+  const resetIngredients = () => setCheckedIngredients({});
 
-  if (isLoading) {
-    return (
-      <div
-        dir="rtl"
-        className="flex min-h-screen items-center justify-center bg-cream p-6 text-espresso transition-colors duration-500 dark:bg-espresso-900 dark:text-cream"
-      >
-        <div className="space-y-4 text-center">
-          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent dark:border-[#C99444]" />
-          <p className="text-sm font-main tracking-wide text-espresso dark:text-cream">
-            بنجيب سر الاكله دى من بيوت الصعيد...
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!food) {
-    return (
-      <div
-        dir="rtl"
-        className="flex min-h-screen items-center justify-center bg-cream p-6 text-center text-espresso transition-colors duration-500 dark:bg-espresso-900 dark:text-cream"
-      >
-        <div className="w-full max-w-md space-y-5 rounded-[2.5rem] border border-black/10 bg-white/75 p-10 shadow-2xl backdrop-blur-xl dark:border-white/10 dark:bg-espresso-900/90">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary dark:bg-[#C99444]/10 dark:text-[#C99444]">
-            <Utensils size={28} />
-          </div>
-          <h2 className="text-2xl font-black">الأكلة مش موجودة حالياً</h2>
-          <p className="text-xs leading-relaxed text-espresso/70 dark:text-cream/70">
-            ملقيناش بيانات للأكلة المطلوبة، ممكن تكون اتنقلت أو محتاجة توثيق جديد.
-          </p>
-          <button
-            type="button"
-            onClick={() => setActivePage('food')}
-            className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-espresso py-3.5 text-xs font-black text-white shadow-lg transition-all hover:bg-primary dark:bg-[#6B3A1F] dark:text-[#FFF9EE] dark:hover:bg-white"
-          >
-            <span>الرجوع لكل طبالي الصعيد</span>
-            <ArrowLeft size={16} />
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  const ingredientsList = food.ingredients || [];
+  const ingredientsList = food?.ingredients || [];
   const checkedCount = Object.values(checkedIngredients).filter(Boolean).length;
   const progressPercent =
     ingredientsList.length > 0 ? Math.round((checkedCount / ingredientsList.length) * 100) : 0;
 
-  return (
-    <div
-      dir="rtl"
-      className="min-h-screen overflow-x-hidden bg-cream pb-24 text-espresso transition-colors duration-500 selection:bg-primary selection:text-white dark:bg-espresso-900 dark:text-cream"
-    >
-      {/* Decorative Background Rings */}
-      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-        <div className="absolute -right-[260px] top-[15%] h-[600px] w-[600px] rounded-full border border-primary/[0.07] dark:border-[#C99444]/[0.06]" />
-        <div className="absolute -left-[300px] top-[50%] h-[700px] w-[700px] rounded-full border border-primary/[0.05] dark:border-[#C99444]/[0.05]" />
-      </div>
+  /* ---------- Preparation Steps Parser ---------- */
+  const prepSteps = useMemo(() => {
+    const raw = food?.preparationMethod || food?.preparation || '';
+    if (!raw) return [];
+    const lines = raw
+      .split(/\n+/)
+      .map(line => line.replace(/^[\d\-•*.]+\s*/, '').trim())
+      .filter(Boolean);
+    return lines.length > 1 ? lines : [raw];
+  }, [food?.preparationMethod, food?.preparation]);
 
-      {/* TOP NAV BAR */}
-      <nav className="sticky top-0 z-50 border-b border-black/[0.06] bg-cream/70 backdrop-blur-md transition-colors dark:border-white/[0.06] dark:bg-espresso-900/70">
-        <div className="mx-auto flex h-14 max-w-[1700px] items-center justify-between px-4 sm:px-8 lg:px-12 xl:px-16">
+  /* ---------- Lightbox ---------- */
+  const allGalleryImages = useMemo(() => {
+    const list: string[] = [];
+    const cover = food?.coverImage?.trim();
+    if (cover) list.push(cover);
+    food?.gallery?.forEach(img => {
+      const t = img?.trim();
+      if (t && !list.includes(t)) list.push(t);
+    });
+    return list;
+  }, [food?.coverImage, food?.gallery]);
+
+  const openLightbox = (index = 0) => {
+    setLightboxIndex(index);
+    setLightboxOpen(true);
+  };
+
+  /* ---------- Loading ---------- */
+  if (isLoading) {
+    return (
+      <div
+        dir="rtl"
+        className="flex min-h-screen w-full items-center justify-center bg-espresso-900 text-cream"
+      >
+        <div className="flex flex-col items-center gap-4">
+          <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-[#C99444]/20 text-[#C99444] backdrop-blur-md">
+            <Utensils className="animate-bounce" size={32} />
+          </div>
+          <p className="text-sm font-black tracking-widest text-[#C99444]">
+            جاري تحضير التجربة الصعيدية الكاملة …
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  /* ---------- Not Found ---------- */
+  if (!food) {
+    return (
+      <div
+        dir="rtl"
+        className="flex min-h-screen w-full items-center justify-center bg-espresso-900 p-6 text-cream"
+      >
+        <div className="max-w-md rounded-[2.5rem] border border-white/10 bg-espresso-800/90 p-10 text-center shadow-2xl backdrop-blur-xl">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#C99444]/20 text-[#C99444]">
+            <Utensils size={28} />
+          </div>
+          <h2 className="mt-4 text-2xl font-black text-white">الأكلة مش موجودة حالياً</h2>
+          <p className="mt-2 text-xs leading-relaxed text-cream/70">
+            لم نتمكن من العثور على بيانات هذه الوصفة. ربما تم نقلها أو تحتاج إلى توثيق.
+          </p>
           <button
             type="button"
             onClick={() => setActivePage('food')}
-            className="group flex cursor-pointer items-center gap-2 text-xs font-bold transition-colors hover:text-primary dark:hover:text-primary-hover"
+            className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-[#C99444] py-3.5 text-xs font-black text-espresso-900 transition hover:bg-white"
           >
-            <span className="flex h-7 w-7 items-center justify-center rounded-full border border-black/10 transition-colors group-hover:bg-espresso group-hover:text-white dark:border-white/10 dark:group-hover:bg-white dark:group-hover:text-black">
-              <ChevronLeft size={13} className="rotate-180 transition-transform group-hover:-translate-x-0.5" />
-            </span>
-            <span className="text-[11px] sm:text-xs">سفرة وطبالي الصعيد</span>
+            <ArrowRight size={16} />
+            <span>الرجوع لقائمة الأكلات</span>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const foodTitle = food.title || food.name || 'أكلة صعيدية';
+
+  /* ---------- Main UI ---------- */
+  return (
+    <main
+      dir="rtl"
+      className="relative min-h-screen w-full overflow-x-hidden bg-espresso-900 text-cream selection:bg-primary/30"
+    >
+      {/* Full-Screen Immersive Background Image with Heavy Gradient */}
+      <div className="fixed inset-0 z-0 h-full w-full">
+        <img
+          src={food.coverImage ?? fallbackCover}
+          alt={foodTitle}
+          className="h-full w-full object-cover opacity-35 filter blur-sm scale-105"
+          onError={e => (e.currentTarget.src = fallbackCover)}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-espresso-900 via-espresso-900/90 to-espresso-900/60" />
+      </div>
+
+      {/* Floating Header Navigation (Full Width) */}
+      <header className="sticky top-0 z-40 w-full border-b border-white/10 bg-espresso-900/75 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-4 sm:px-12">
+          <button
+            type="button"
+            onClick={() => setActivePage('food')}
+            className="group inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-2.5 text-xs font-black text-cream transition hover:border-[#C99444] hover:text-[#C99444]"
+          >
+            <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+            <span>العودة لكل الأكلات</span>
           </button>
 
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => navigateToGovernorate(food.governorateId || 'qena')}
-              className="flex cursor-pointer items-center gap-1.5 rounded-full border border-black/10 px-3 py-1.5 text-[10px] font-bold transition-colors hover:bg-espresso hover:text-white dark:border-white/10 dark:hover:bg-white dark:hover:text-black sm:text-xs"
-            >
-              <MapPin size={12} className="text-primary dark:text-[#C99444]" />
-              <span>محافظة {food.governorateName}</span>
-            </button>
-
+          <div className="flex items-center gap-3">
+            {isAdmin && (
+              <button
+                type="button"
+                onClick={() => addToast('ميزة التعديل غير مفعلة الآن', '', 'info')}
+                className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-4 py-2.5 text-xs font-bold text-cream transition hover:border-[#C99444]"
+              >
+                <Edit3 size={14} />
+                <span className="hidden sm:inline">تعديل</span>
+              </button>
+            )}
             <button
               type="button"
               onClick={handleShare}
-              className="flex cursor-pointer items-center gap-1.5 rounded-full border border-black/10 p-2 text-xs font-bold transition-colors hover:bg-espresso hover:text-white dark:border-white/10 dark:hover:bg-white dark:hover:text-black sm:px-3.5 sm:py-1.5"
-              title="مشاركة الوصفة"
+              className="inline-flex items-center gap-2 rounded-full bg-[#C99444] px-5 py-2.5 text-xs font-black text-espresso-900 shadow-lg transition hover:bg-white"
             >
-              <Share2 size={13} />
-              <span className="hidden sm:inline">مشاركة</span>
+              <Share2 size={14} />
+              <span>مشاركة الوصفة</span>
             </button>
           </div>
         </div>
-      </nav>
+      </header>
 
-      {/* UNCLE WAH INTERACTIVE GUIDE */}
-      <div className="relative z-10 mx-auto max-w-[1700px] px-4 pt-5 pb-1 sm:px-8 lg:px-12 xl:px-16">
-        <UncleWahInteractiveGuide
-          context="food"
-          title={food.title || food.name}
-          locationName={food.governorateName}
-          customQuote={`«وه! ${food.title || food.name} دي تروق البال وتغذي الروح! يا زين ما نقيت، دا طبيخ صعيدي بلدي أصيل 100%.. بالهنا والشفا على قلبك!»`}
-        />
-      </div>
+      {/* Full-Width Hero Stage */}
+      <section className="relative z-10 mx-auto max-w-[1600px] px-6 pt-10 sm:px-12 lg:pt-16">
+        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12">
 
-      {/* HERO BANNER WITH NATURAL CLEAR IMAGE */}
-      <section className="relative z-10 mx-auto max-w-[1700px] px-4 pt-6 sm:px-8 lg:px-12 xl:px-16">
-        <div className="relative min-h-[420px] w-full overflow-hidden rounded-[2.5rem] border border-black/[0.08] bg-stone-900 shadow-2xl dark:border-white/[0.08] sm:min-h-[480px] lg:min-h-[540px]">
-          <img
-            src={food.coverImage || 'https://images.unsplash.com/photo-1541544741938-0af808871cc0?w=1600'}
-            alt={food.title || food.name || 'أكلة صعيدية'}
-            className="h-full w-full object-cover"
-          />
-          {/* Subtle bottom gradient strictly for text legibility */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
-
-          {/* Content */}
-          <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10 lg:p-14 text-white">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#C99444] px-3.5 py-1 text-[11px] font-black text-black shadow-md">
-                <Sparkles size={12} />
-                {food.category || food.occasionOrTradition || 'أكلات وتراث الصعيد'}
+          {/* Left / Main Hero Typography Column (7 Cols) */}
+          <div className="space-y-6 lg:col-span-7">
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="rounded-full bg-[#C99444]/20 px-4 py-1.5 text-xs font-black text-[#C99444] border border-[#C99444]/30">
+                {food.category || food.occasionOrTradition || 'أكلة صعيدية أصيلة'}
               </span>
-
-              {food.prepTime && (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-black/40 px-3 py-1 text-[11px] font-bold text-white backdrop-blur-md">
-                  <Clock size={12} className="text-[#C99444]" />
-                  {food.prepTime}
-                </span>
+              {food.governorateName && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    food.governorateSlug && navigateToGovernorate?.(food.governorateSlug)
+                  }
+                  className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-4 py-1.5 text-xs font-bold text-cream backdrop-blur-md transition hover:bg-[#C99444] hover:text-espresso-900"
+                >
+                  <MapPin size={14} className="text-[#C99444]" />
+                  <span>{food.governorateName}</span>
+                </button>
               )}
             </div>
 
-            <h1 className="mt-4 text-2xl font-black tracking-tight text-white drop-shadow-md sm:text-5xl lg:text-6xl">
-              {food.title || food.name}
+            <h1 className="text-4xl font-black tracking-tight text-white sm:text-6xl lg:text-7xl">
+              {foodTitle}
             </h1>
 
-            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-white/90 drop-shadow sm:text-base">
-              {food.description}
-            </p>
+            {food.description && (
+              <p className="max-w-2xl text-base leading-8 text-cream/80 sm:text-lg">
+                {food.description}
+              </p>
+            )}
+
+            {/* Quick Metrics Bar */}
+            <div className="grid grid-cols-3 gap-4 pt-4 max-w-xl">
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
+                <div className="flex items-center gap-2 text-[#C99444]">
+                  <Clock size={18} />
+                  <span className="text-xs font-bold text-cream/60">وقت التحضير</span>
+                </div>
+                <p className="mt-2 text-sm font-black text-white">{food.prepTime ?? 'غير محدد'}</p>
+              </div>
+
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
+                <div className="flex items-center gap-2 text-[#C99444]">
+                  <Flame size={18} />
+                  <span className="text-xs font-bold text-cream/60">المكوّنات</span>
+                </div>
+                <p className="mt-2 text-sm font-black text-white">{ingredientsList.length} مكوّن</p>
+              </div>
+
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
+                <div className="flex items-center gap-2 text-[#C99444]">
+                  <BookOpen size={18} />
+                  <span className="text-xs font-bold text-cream/60">المنشأ</span>
+                </div>
+                <p className="mt-2 truncate text-sm font-black text-white">
+                  {food.governorateName ?? 'الصعيد'}
+                </p>
+              </div>
+            </div>
           </div>
+
+          {/* Right / Big Cinematic Cover Image Card (5 Cols) */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6 }}
+            className="lg:col-span-5"
+          >
+            <div className="group relative overflow-hidden rounded-[3rem] border-2 border-white/15 bg-espresso-800 shadow-2xl">
+              <div className="aspect-[4/4] w-full overflow-hidden">
+                <img
+                  src={food.coverImage ?? fallbackCover}
+                  alt={foodTitle}
+                  onClick={() => openLightbox(0)}
+                  className="h-full w-full cursor-zoom-in object-cover transition-transform duration-700 group-hover:scale-105"
+                  onError={e => (e.currentTarget.src = fallbackCover)}
+                />
+              </div>
+
+              <button
+                type="button"
+                onClick={() => openLightbox(0)}
+                className="absolute bottom-5 left-5 inline-flex items-center gap-2 rounded-full bg-espresso-900/80 px-4 py-2.5 text-xs font-black text-cream backdrop-blur-md transition hover:bg-[#C99444] hover:text-espresso-900"
+              >
+                <Maximize2 size={15} />
+                <span>تكبير الصورة بالكامل</span>
+              </button>
+            </div>
+
+            {/* Gallery Thumbnails Strip */}
+            {allGalleryImages.length > 1 && (
+              <div className="mt-4 flex items-center gap-3 overflow-x-auto pb-2">
+                {allGalleryImages.map((img, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => openLightbox(i)}
+                    className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border-2 border-white/10 transition hover:border-[#C99444]"
+                  >
+                    <img
+                      src={img}
+                      alt={`${foodTitle} ${i + 1}`}
+                      className="h-full w-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+          </motion.div>
         </div>
       </section>
 
-      {/* MAIN TWO-COLUMN CONTENT */}
-      <main className="relative z-10 mx-auto max-w-[1700px] px-4 pt-10 sm:px-8 lg:px-12 xl:px-16">
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
-          {/* RIGHT COLUMN: Stories & Method */}
-          <div className="space-y-8 lg:col-span-8">
-            {/* Story */}
-            <article className="relative overflow-hidden rounded-[2rem] border border-black/[0.08] bg-white/70 p-7 shadow-sm backdrop-blur-xl transition-colors dark:border-white/[0.08] dark:bg-espresso-900/80 sm:p-10">
-              <div className="mb-6 flex items-center justify-between border-b border-black/10 pb-5 dark:border-white/10">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary dark:bg-[#C99444]/10 dark:text-primary-hover">
-                    <BookOpen size={20} />
+      {/* Content Grid Sections (Story, Ingredients, Prep) */}
+      <section className="relative z-10 mx-auto max-w-[1600px] px-6 py-16 sm:px-12">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
+
+          {/* Left Column: Story & Ingredients (6 Cols) */}
+          <div className="space-y-10 lg:col-span-6">
+
+            {/* Story Card */}
+            {(food.originStory || food.story) && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="rounded-[2.5rem] border border-[#C99444]/30 bg-espresso-800/80 p-8 shadow-2xl backdrop-blur-xl"
+              >
+                <div className="mb-4 flex items-center gap-3 text-[#C99444]">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#C99444]/20">
+                    <ScrollText size={20} />
                   </div>
-                  <div>
-                    <span className="text-[9px] font-black uppercase tracking-[0.25em] text-primary dark:text-primary-hover">
-                      FOLKLORE & HISTORY
-                    </span>
-                    <h2 className="text-xl font-black sm:text-2xl">أصل الحكاية في بيوت الصعيد</h2>
-                  </div>
+                  <h2 className="text-xl font-black text-white">حكاية الأكلة في التراث الصعيدي</h2>
                 </div>
-              </div>
-
-              <div className="space-y-4 text-sm font-medium leading-8 text-black/70 sm:text-base dark:text-white/70 whitespace-pre-line">
-                {food.originStory || food.story || food.description}
-              </div>
-
-              <div className="mt-8 flex items-center gap-3 rounded-2xl border border-primary/20 bg-primary/5 p-4 dark:border-[#C99444]/20 dark:bg-[#C99444]/5">
-                <Flame size={20} className="shrink-0 text-primary dark:text-primary-hover" />
-                <p className="text-xs font-bold text-espresso dark:text-cream">
-                  توارثتها الأمهات والجدات جيل ورا جيل، وكانت رمز للكرم وعلامة من علامات لَمّة العيلة في المناسبات.
+                <p className="text-base leading-8 text-cream/85">
+                  {food.originStory || food.story}
                 </p>
-              </div>
-            </article>
+              </motion.div>
+            )}
 
-            {/* Preparation / Secret */}
-            {(food.preparationMethod || food.preparation) && (
-              <article className="relative overflow-hidden rounded-[2rem] border border-black/[0.08] bg-white/70 p-7 shadow-sm backdrop-blur-xl transition-colors dark:border-white/[0.08] dark:bg-espresso-900/80 sm:p-10">
-                <div className="mb-6 flex items-center justify-between border-b border-black/10 pb-5 dark:border-white/10">
+            {/* Ingredients Interactive Card */}
+            {ingredientsList.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="rounded-[2.5rem] border border-white/10 bg-espresso-800/80 p-8 shadow-2xl backdrop-blur-xl"
+              >
+                <div className="flex flex-wrap items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary text-white dark:bg-[#C99444] dark:text-[#1B1009]">
-                      <Flame size={20} />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#C99444]/20 text-[#C99444]">
+                      <Utensils size={20} />
                     </div>
                     <div>
-                      <span className="text-[9px] font-black uppercase tracking-[0.25em] text-primary dark:text-primary-hover">
-                        CULINARY TRADITION
-                      </span>
-                      <h2 className="text-xl font-black sm:text-2xl">سر الصنعة والتحضير البلدي</h2>
+                      <h2 className="text-xl font-black text-white">المكوّنات المطلوبة</h2>
+                      <p className="text-xs text-cream/50">اضغط لتحديد المكوّنات أثناء التجهيز</p>
                     </div>
                   </div>
+
+                  {checkedCount > 0 && (
+                    <button
+                      type="button"
+                      onClick={resetIngredients}
+                      className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-4 py-2 text-xs font-bold text-cream transition hover:bg-[#C99444] hover:text-espresso-900"
+                    >
+                      <RotateCcw size={13} />
+                      <span>إعادة ضبط</span>
+                    </button>
+                  )}
                 </div>
 
-                <div className="space-y-4 text-sm font-medium leading-8 text-black/70 sm:text-base dark:text-white/70 whitespace-pre-line">
-                  {food.preparationMethod || food.preparation}
-                </div>
-              </article>
-            )}
-          </div>
-
-          {/* LEFT SIDEBAR: Checklist & Location */}
-          <aside className="space-y-6 lg:col-span-4">
-            {/* Ingredients Checklist */}
-            <div className="rounded-[2rem] border border-black/[0.08] bg-white/75 p-6 shadow-sm backdrop-blur-xl dark:border-white/[0.08] dark:bg-espresso-900/80">
-              <div className="mb-5 flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <Utensils size={17} className="text-primary dark:text-primary-hover" />
-                  <h2 className="text-base font-black">المقادير الأصلية</h2>
-                </div>
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-[11px] font-bold text-primary dark:bg-[#C99444]/15 dark:text-primary-hover">
-                  {ingredientsList.length} مكوّنات
-                </span>
-              </div>
-
-              {/* Progress */}
-              {ingredientsList.length > 0 && (
-                <div className="mb-5 rounded-2xl border border-black/[0.06] bg-cream/70 p-3.5 dark:border-white/[0.06] dark:bg-white/[0.03]">
-                  <div className="flex items-center justify-between text-[11px] font-bold text-black/60 dark:text-white/60">
-                    <span>جاهزية المكونات</span>
-                    <span className="font-black text-primary dark:text-primary-hover">{progressPercent}%</span>
+                {/* Progress Bar */}
+                <div className="mt-6">
+                  <div className="flex items-center justify-between text-xs font-bold">
+                    <span className="text-cream/60">تم تجهيز {checkedCount} من {ingredientsList.length}</span>
+                    <span className="font-black text-[#C99444]">{progressPercent}%</span>
                   </div>
-                  <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-black/10 dark:bg-white/10">
+                  <div className="mt-2.5 h-2.5 w-full overflow-hidden rounded-full bg-white/10">
                     <div
-                      className="h-full bg-primary transition-all duration-500 ease-out dark:bg-[#C99444]"
+                      className="h-full rounded-full bg-[#C99444] transition-all duration-500 ease-out"
                       style={{ width: `${progressPercent}%` }}
                     />
                   </div>
                 </div>
-              )}
 
-              {/* Ingredient Items */}
-              <div className="space-y-2">
-                {ingredientsList.map((ing, idx) => {
-                  const isChecked = !!checkedIngredients[idx];
-                  return (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => toggleIngredient(idx)}
-                      className={`group flex w-full cursor-pointer items-center justify-between rounded-xl border p-3 text-right transition-all ${isChecked
-                        ? 'border-primary/40 bg-primary/10 text-primary dark:border-[#C99444]/40 dark:bg-[#C99444]/10 dark:text-primary-hover'
-                        : 'border-black/[0.06] bg-cream/50 text-espresso hover:border-primary/30 dark:border-white/[0.06] dark:bg-white/[0.02] dark:text-cream'
-                        }`}
-                    >
-                      <span className={`text-xs font-bold transition-all ${isChecked ? 'line-through opacity-60' : ''}`}>
-                        {ing}
-                      </span>
-                      <div
-                        className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-lg border transition-all ${isChecked
-                          ? 'border-primary bg-primary text-white dark:border-[#C99444] dark:bg-[#C99444] dark:text-[#1B1009]'
-                          : 'border-black/20 bg-transparent text-transparent group-hover:border-primary dark:border-white/20'
+                {/* Ingredients Grid */}
+                <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  {ingredientsList.map((ing, idx) => {
+                    const isChecked = !!checkedIngredients[idx];
+                    return (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => toggleIngredient(idx)}
+                        className={`group flex items-center justify-between gap-3 rounded-2xl border p-4 text-right transition-all ${isChecked
+                          ? 'border-[#C99444]/50 bg-[#C99444]/15 text-[#C99444]'
+                          : 'border-white/10 bg-white/5 text-cream hover:border-[#C99444]/50'
                           }`}
                       >
-                        <CheckCircle2 size={13} className={isChecked ? 'opacity-100' : 'opacity-0'} />
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-
-              <p className="mt-4 text-center text-[10px] text-black/40 dark:text-white/35">
-                اضغط على المكون لتحديده أثناء تجهيز الطبخ
-              </p>
-            </div>
-
-            {/* Governorate Connection Box */}
-            <div className="relative overflow-hidden rounded-[2rem] border border-black/[0.08] bg-espresso p-6 text-white shadow-xl dark:border-white/[0.08]">
-              <div className="pointer-events-none absolute -left-14 -top-14 h-36 w-36 rounded-full border border-white/10" />
-
-              <div className="relative flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 text-[#C99444]">
-                  <Compass size={20} />
+                        <span className={`text-xs font-bold leading-relaxed ${isChecked ? 'line-through opacity-60' : ''}`}>
+                          {ing}
+                        </span>
+                        <div
+                          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border transition-all ${isChecked
+                            ? 'border-[#C99444] bg-[#C99444] text-espresso-900'
+                            : 'border-white/30 group-hover:border-[#C99444]'
+                            }`}
+                        >
+                          <CheckCircle2 size={13} className={isChecked ? 'opacity-100' : 'opacity-0'} />
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
-                <div>
-                  <h2 className="text-sm font-main">أصل ونشأة الوصفة</h2>
-                  <span className="text-xs text-white/60">محافظة {food.governorateName}</span>
-                </div>
-              </div>
+              </motion.div>
+            )}
 
-              <p className="relative mt-4 text-xs leading-6 text-white/70">
-                كل شبر في {food.governorateName} ليه طريقته في عمايلها وتفاصيل بتخلي طعمها مختلف عن أي مكان تاني.
-              </p>
+          </div>
 
-              <button
-                type="button"
-                onClick={() => navigateToGovernorate(food.governorateId || 'qena')}
-                className="group relative mt-6 flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-primary py-3 text-xs font-black text-white transition-all hover:bg-primary-hover dark:bg-[#C99444] dark:text-[#1B1009] dark:hover:bg-white"
+          {/* Right Column: Preparation Method (6 Cols) */}
+          <div className="lg:col-span-6">
+            {prepSteps.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="rounded-[2.5rem] border border-white/10 bg-espresso-800/80 p-8 shadow-2xl backdrop-blur-xl h-full"
               >
-                <span>استكشف تراث {food.governorateName}</span>
-                <ArrowLeft size={14} className="transition-transform group-hover:-translate-x-1" />
-              </button>
-            </div>
-          </aside>
+                <div className="mb-6 flex items-center gap-3 text-[#C99444]">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#C99444]/20">
+                    <ChefHat size={20} />
+                  </div>
+                  <h2 className="text-xl font-black text-white">طريقة التحضير خطوة بخطوة</h2>
+                </div>
+
+                {prepSteps.length > 1 ? (
+                  <ol className="space-y-4">
+                    {prepSteps.map((step, idx) => (
+                      <li
+                        key={idx}
+                        className="flex items-start gap-4 rounded-2xl border border-white/5 bg-white/5 p-5 transition hover:border-white/15"
+                      >
+                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#C99444] text-xs font-black text-espresso-900 shadow-md">
+                          {idx + 1}
+                        </span>
+                        <p className="text-sm leading-8 text-cream/90">
+                          {step}
+                        </p>
+                      </li>
+                    ))}
+                  </ol>
+                ) : (
+                  <p className="whitespace-pre-line text-base leading-9 text-cream/90">
+                    {prepSteps[0]}
+                  </p>
+                )}
+              </motion.div>
+            )}
+          </div>
+
         </div>
-      </main>
-    </div>
+      </section>
+
+
+
+      {/* Lightbox Modal */}
+      <EventImageLightboxModal
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+        images={allGalleryImages}
+        initialIndex={lightboxIndex}
+        coverImage={food?.coverImage}
+        title={foodTitle}
+      />
+    </main>
   );
 };
 

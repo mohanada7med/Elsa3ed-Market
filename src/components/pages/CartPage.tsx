@@ -22,8 +22,6 @@ import {
   Leaf,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { UncleWahInteractiveGuide } from '../common/UncleWahInteractiveGuide';
-
 export const CartPage: React.FC = () => {
   const {
     cart,
@@ -257,14 +255,6 @@ export const CartPage: React.FC = () => {
           </motion.section>
         ) : (
           <>
-            {/* Uncle Wah guide */}
-            <div className="mb-7">
-              <UncleWahInteractiveGuide
-                context="crafts"
-                title="طلبك من خير الصعيد"
-                customQuote="كل قطعة ليها صاحب وحكاية يا بوي، وإنت كده بتساعد صنّاع الصعيد يوصلوا شغل إيديهم لبيوت أكتر."
-              />
-            </div>
 
             <div className="grid grid-cols-1 items-start gap-7 lg:grid-cols-12 lg:gap-8">
 
