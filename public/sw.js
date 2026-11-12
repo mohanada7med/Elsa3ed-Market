@@ -6,12 +6,20 @@
  * and served instantly with 0ms network latency on subsequent visits.
  */
 
-const IMAGE_CACHE_NAME = 'wah-images-cache-v1';
+const IMAGE_CACHE_NAME = 'wah-images-cache-v2';
 
 // Critical core assets to pre-cache immediately on service worker installation
 const CORE_PRECACHE_IMAGES = [
   '/mascot/logo.png',
   '/mascot/welcoming.png',
+  '/mascot/success.png',
+  '/mascot/wrong.png',
+  '/mascot/warning.png',
+  '/mascot/info.png',
+  '/mascot/success.webp',
+  '/mascot/wrong.webp',
+  '/mascot/warning.webp',
+  '/mascot/info.webp',
   '/mascot/doors.png',
   '/mascot/char.png',
   '/mascot/pro.png',

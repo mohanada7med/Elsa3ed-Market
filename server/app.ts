@@ -67,9 +67,13 @@ export function createApp(): Express {
   app.use(express.json({ limit: bodyLimit }));
   app.use(express.urlencoded({ extended: true, limit: bodyLimit }));
 
-  // 4. Static Uploads folder serving
+  // 4. Static Uploads, Mascots & Patterns folder serving for instant delivery
   const uploadsPath = path.join(process.cwd(), 'public', 'uploads');
+  const mascotPath = path.join(process.cwd(), 'public', 'mascot');
+  const patternPath = path.join(process.cwd(), 'public', 'pattern');
   app.use('/uploads', express.static(uploadsPath, { maxAge: '7d', etag: true }));
+  app.use('/mascot', express.static(mascotPath, { maxAge: '30d', etag: true, immutable: true }));
+  app.use('/pattern', express.static(patternPath, { maxAge: '30d', etag: true, immutable: true }));
 
   // 5. SEO routes (Sitemap & Robots at root level)
   app.use(seoRoutes);

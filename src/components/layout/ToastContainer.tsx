@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import {
   X,
@@ -8,16 +8,31 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { createPortal } from 'react-dom';
+import toastMascotPlaceholders from '../../config/toastMascotPlaceholders.json';
 
 const TOAST_ASSETS = {
-  success: '/mascot/success.png',
-  error: '/mascot/wrong.png',
-  warning: '/mascot/warning.png',
-  info: '/mascot/info.png',
-
-  background: '/mascot/toast-bg.png',
-  sparkles: '/mascot/sparkles.png',
-  heart: '/mascot/heart.png',
+  success: {
+    png: '/mascot/success.png',
+    webp: '/mascot/success.webp',
+    placeholder: (toastMascotPlaceholders as Record<string, string>).success || '',
+  },
+  error: {
+    png: '/mascot/wrong.png',
+    webp: '/mascot/wrong.webp',
+    placeholder: (toastMascotPlaceholders as Record<string, string>).wrong || '',
+  },
+  warning: {
+    png: '/mascot/warning.png',
+    webp: '/mascot/warning.webp',
+    placeholder: (toastMascotPlaceholders as Record<string, string>).warning || '',
+  },
+  info: {
+    png: '/mascot/info.png',
+    webp: '/mascot/info.webp',
+    placeholder: (toastMascotPlaceholders as Record<string, string>).info || '',
+  },
+  fallback: '/mascot/welcoming.png',
+  background: '/pattern/pat1.svg',
 };
 
 const toastThemes = {
@@ -25,30 +40,124 @@ const toastThemes = {
     label: 'يا سلام يا غالي!',
     color: '#24966B',
     soft: '#E1F5E9',
-    image: TOAST_ASSETS.success,
+    image: TOAST_ASSETS.success.png,
+    webp: TOAST_ASSETS.success.webp,
+    placeholder: TOAST_ASSETS.success.placeholder,
   },
   error: {
     label: 'يا ساتر!',
     color: '#D94D55',
     soft: '#FCE5E3',
-    image: TOAST_ASSETS.error,
+    image: TOAST_ASSETS.error.png,
+    webp: TOAST_ASSETS.error.webp,
+    placeholder: TOAST_ASSETS.error.placeholder,
   },
   warning: {
     label: 'خد بالك يا صاحبي!',
     color: '#CB852B',
     soft: '#FFF0D5',
-    image: TOAST_ASSETS.warning,
+    image: TOAST_ASSETS.warning.png,
+    webp: TOAST_ASSETS.warning.webp,
+    placeholder: TOAST_ASSETS.warning.placeholder,
   },
   info: {
     label: 'عم وه عنده كلام!',
     color: '#B16C3C',
     soft: '#F5E7D6',
-    image: TOAST_ASSETS.info,
+    image: TOAST_ASSETS.info.png,
+    webp: TOAST_ASSETS.info.webp,
+    placeholder: TOAST_ASSETS.info.placeholder,
   },
+};
+
+/**
+ * Resilient, high-performance Mascot Avatar for Toasts.
+ * Guarantees zero blank flashes, instant placeholder display, WebP/PNG support,
+ * and graceful fallback.
+ */
+const ToastMascotAvatar: React.FC<{
+  theme: typeof toastThemes.success;
+}> = ({ theme }) => {
+  const [currentSrc, setCurrentSrc] = useState<string>(theme.webp);
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+
+  // When theme changes or on mount, verify cached status
+  useEffect(() => {
+    setCurrentSrc(theme.webp);
+    setIsLoaded(false);
+  }, [theme.webp]);
+
+  return (
+    <div className="relative flex h-full w-full items-center justify-center">
+      {/* 1. Instant blurred placeholder while the image decodes */}
+      {!isLoaded && theme.placeholder && (
+        <img
+          src={theme.placeholder}
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 h-full w-full object-contain filter blur-[1.5px] opacity-70 transition-opacity duration-200"
+        />
+      )}
+
+      {/* 2. Primary crisp image with WebP priority + PNG failover */}
+      <picture className="relative z-10 flex h-full w-full items-center justify-center">
+        <source srcSet={theme.webp} type="image/webp" />
+        <motion.img
+          src={currentSrc}
+          alt="عم وه"
+          loading="eager"
+          decoding="sync"
+          draggable={false}
+          onLoad={() => setIsLoaded(true)}
+          onError={() => {
+            if (currentSrc === theme.webp) {
+              // Try standard PNG
+              setCurrentSrc(theme.image);
+            } else if (currentSrc !== TOAST_ASSETS.fallback) {
+              // Fallback to welcoming mascot
+              setCurrentSrc(TOAST_ASSETS.fallback);
+            }
+          }}
+          className={`relative z-10 h-full w-full object-contain drop-shadow-lg transition-opacity duration-150 ${
+            isLoaded ? 'opacity-100' : 'opacity-90'
+          }`}
+          animate={{
+            scale: [1, 1.035, 1],
+          }}
+          transition={{
+            duration: 2.5,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
+      </picture>
+    </div>
+  );
 };
 
 export const ToastContainer: React.FC = () => {
   const { toasts, removeToast } = useApp();
+
+  // Eagerly pre-warm all 4 mascot images into memory on mount so they appear with 0ms delay
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const preloadList = [
+      TOAST_ASSETS.success.webp,
+      TOAST_ASSETS.success.png,
+      TOAST_ASSETS.error.webp,
+      TOAST_ASSETS.error.png,
+      TOAST_ASSETS.warning.webp,
+      TOAST_ASSETS.warning.png,
+      TOAST_ASSETS.info.webp,
+      TOAST_ASSETS.info.png,
+      TOAST_ASSETS.background,
+    ];
+    preloadList.forEach((src) => {
+      const img = new Image();
+      img.decoding = 'async';
+      img.src = src;
+    });
+  }, []);
 
   if (typeof document === 'undefined') return null;
 
@@ -162,6 +271,9 @@ export const ToastContainer: React.FC = () => {
                   src={TOAST_ASSETS.background}
                   alt=""
                   aria-hidden="true"
+                  onError={(e) => {
+                    (e.target as HTMLElement).style.display = 'none';
+                  }}
                   className="
                     pointer-events-none absolute inset-0
                     h-full w-full object-cover opacity-[0.09]
@@ -201,24 +313,8 @@ export const ToastContainer: React.FC = () => {
                       rounded-full bg-black/15 blur-md
                     " />
 
-                    {/* Character */}
-                    <motion.img
-                      src={theme.image}
-                      alt="عم وه"
-                      draggable={false}
-                      className="
-                        relative z-10 h-full w-full
-                        object-contain drop-shadow-lg
-                      "
-                      animate={{
-                        scale: [1, 1.035, 1],
-                      }}
-                      transition={{
-                        duration: 2.5,
-                        repeat: Infinity,
-                        ease: 'easeInOut',
-                      }}
-                    />
+                    {/* Character with instant loading and fallback */}
+                    <ToastMascotAvatar theme={theme} />
 
                     {/* Floating status glow */}
                     <motion.div
