@@ -773,12 +773,15 @@ export const DialectDictionaryPage: React.FC = () => {
 <section className="mx-auto max-w-[1700px] px-5 pb-12 pt-0 sm:px-8 sm:pb-16 sm:px-12 xl:px-16">
               <div className="grid gap-10 lg:grid-cols-[1fr_420px] lg:items-end lg:gap-20">
               <div>
-                <div className="mb-2 flex items-center gap-3 text-[9px] font-black tracking-[0.28em] text-primary dark:text-primary-hover">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 dark:bg-[#d6aa72]/10">
-                    <Target size={14} className="text-primary dark:text-primary-hover" />
-                  </span>
-                  WAH / DIALECT CHALLENGE
-                </div>
+                <div className="mb-3 flex items-center gap-2 text-[10px] font-extrabold tracking-normal text-primary dark:text-primary-hover sm:mb-6 sm:gap-3 sm:text-xs">
+  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent/10 sm:h-8 sm:w-8">
+    <Target size={14} className="text-accent" />
+  </span>
+
+  <span className="font-['Cairo'] tracking-normal">
+اختبار الصعيد / UPPER EGYPT QUIZ
+   </span>
+</div>
 
                 <h1 className="max-w-6xl text-5xl sm:text-7xl lg:text-[8rem] font-black leading-[0.95] tracking-tight">
                   انت

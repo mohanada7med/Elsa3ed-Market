@@ -27,12 +27,15 @@ export const HomeMarketSection: React.FC = () => {
       <div className="relative z-10 mb-6 sm:mb-16">
         <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
           <div>
-            <div className="mb-3 flex items-center gap-2 text-[9px] font-black tracking-[0.2em] text-primary dark:text-primary-hover sm:mb-6 sm:gap-3 sm:text-[10px] sm:tracking-[0.28em]">
-              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-accent/10 sm:h-8 sm:w-8">
-                <ShoppingBasket size={13} className="text-accent sm:h-[14px] sm:w-[14px]" />
-              </span>
-              BEST SELLERS / الأكتر طلبًا وإقبالًا
-            </div>
+            <div className="mb-3 flex items-center gap-2 text-[10px] font-extrabold tracking-normal text-primary dark:text-primary-hover sm:mb-6 sm:gap-3 sm:text-xs">
+  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent/10 sm:h-8 sm:w-8">
+    <ShoppingBasket size={14} className="text-accent" />
+  </span>
+
+  <span className="font-['Cairo'] tracking-normal">
+ الأكتر طلبًا وإقبالًا / BEST SELLERS
+   </span>
+</div>
 
             <h1 className="flex max-w-6xl flex-col items-start gap-1 text-3xl font-black leading-[0.95] tracking-tight xs:text-4xl sm:gap-2 sm:text-6xl md:text-7xl lg:text-7xl xl:text-[6.5rem]">
               <span>سوق</span>

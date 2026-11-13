@@ -1,6 +1,6 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { Star, MapPin, CheckCircle2, ArrowLeft, Sparkles } from 'lucide-react';
+import { Star, MapPin, CheckCircle2, ArrowLeft, Sparkles, ShoppingBasket, Hammer, Wrench } from 'lucide-react';
 import { motion } from 'motion/react';
 import { WAHBadge } from '../../design-system/WAHBadge';
 
@@ -32,13 +32,15 @@ export const FeaturedSellers: React.FC = () => {
         <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
           <div>
             {/* الشارة العلوية */}
-            <div className="mb-6 flex items-center gap-3 text-[10px] font-black tracking-[0.28em] text-primary dark:text-primary-hover">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 dark:bg-[#d6aa72]/10">
-                <Sparkles size={14} className="text-primary dark:text-primary-hover" />
-              </span>
-              MASTERS / شيوخ الصنعة وحرفيين الصعيد
-            </div>
+            <div className="mb-3 flex items-center gap-2 text-[10px] font-extrabold tracking-normal text-primary dark:text-primary-hover sm:mb-6 sm:gap-3 sm:text-xs">
+  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent/10 sm:h-8 sm:w-8">
+    <Hammer size={14} className="text-accent" />
+  </span>
 
+  <span className="font-['Cairo'] tracking-normal">
+    شيوخ الصنعة / MASTERS OF CRAFT
+  </span>
+</div>
             {/* العنوان التايبوغرافي الضخم */}
             <br />
             <h1 className="max-w-6xl text-5xl sm:text-7xl lg:text-[8rem] font-black leading-[0.95] tracking-tight">
