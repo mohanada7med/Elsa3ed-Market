@@ -33,6 +33,8 @@ import { runHeritagePlacesMigration } from '../utils/heritagePlacesMigration.ts'
 
 dotenv.config();
 
+const INGREDIENT_RESEARCH_VERSION = 1; // Increment when publishing a new researched ingredient set.
+
 interface MongoGlobalCache {
   client: MongoClient | null;
   db: Db | null;
@@ -287,6 +289,37 @@ async function seedMongoDatabase(database: Db) {
     if (foodCount === 0) {
       await database.collection('wah_food').insertMany(AUTHENTIC_WAH_FOOD as any[]);
       Logger.info('[MongoDB] Initialized authentic Upper Egypt food collection');
+    }
+
+    const researchedIngredientUpdates = AUTHENTIC_WAH_FOOD
+      .map((food) => ({
+        updateOne: {
+          filter: {
+            id: food.id,
+            $or: [
+              { ingredientResearchVersion: { $exists: false } },
+              { ingredientResearchVersion: { $lt: INGREDIENT_RESEARCH_VERSION } }
+            ]
+          },
+          update: {
+            $set: {
+              ingredients: food.ingredients,
+              sourceName: food.sourceName,
+              sourceUrl: food.sourceUrl,
+              sourceType: food.sourceType,
+              researchDate: food.researchDate,
+              verificationStatus: food.verificationStatus,
+              ingredientResearchVersion: INGREDIENT_RESEARCH_VERSION,
+              updatedAt: new Date().toISOString()
+            }
+          }
+        }
+      }));
+
+    const ingredientResearchMigration = await database.collection<UpperEgyptFoodDoc>('wah_food')
+      .bulkWrite(researchedIngredientUpdates, { ordered: false });
+    if (ingredientResearchMigration.modifiedCount > 0) {
+      Logger.info(`[MongoDB] Applied researched ingredients to ${ingredientResearchMigration.modifiedCount} food records`);
     }
 
     // Do not forcibly overwrite or upsert any events or seasons - data is fetched strictly from MongoDB

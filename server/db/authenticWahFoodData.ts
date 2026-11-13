@@ -1,8 +1,7 @@
 import type { UpperEgyptFoodDoc } from '../models/types.ts';
 
 /**
- * قاعدة البيانات الموثقة والشاملة للأكلات التراثية الأصيلة لمحافظات صعيد مصر.
- * تم تدقيق كل أكلة لتكون نابعة وحقيقية 100% من تراث المحافظة وبيوتها ومناسباتها الشعبية.
+ * قوائم المكونات مستندة إلى وصفات منشورة، والوصفات التقريبية موسومة بأنها غير موثقة محلياً.
  */
 export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
   // =========================================================================
@@ -19,13 +18,15 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     category: 'مخبوزات وتراث',
     occasionOrTradition: 'فطور الصباح وأعياد الحصاد ومؤونة البيوت',
     ingredients: [
-      'دقيق قمح بلدي فاخر مطحون من غلال بني سويف',
-      'حليب جاموسي طازج كامل الدسم لعمل الخميرة الحية',
-      'سمسم بلدي صعيدي محمص ومطحون خشناً',
-      'محلب بلدي مطحون ناعماً لرائحة الفايش الفواحة',
-      'كركم صعيدي نقي للون الكهرماني الذهبي',
-      'سمن بلدي فلاحي مقدوح',
-      'رشة سكر طبيعي وذرة ملح بحري'
+      'حمص مجروش جاف لعمل الخميرة',
+      'حليب ساخن',
+      'دقيق أبيض',
+      'ماء',
+      'خميرة',
+      'كركم',
+      'ملح',
+      'سكر',
+      'زبدة مذابة أو سمن'
     ],
     preparationMethod: `1. تحضير خميرة اللبن الأصلية: يُغلى الحليب الجاموسي جيداً ويسكب فوراً وهو يغلي في برطمان زجاجي جاف ومعقم به السمسم المطحون، يُحكم إغلاقه ويُلف في قماش صوفي ثقيل ويوضع في مكان دافئ ومعتم لمدة 24 ساعة حتى يرتفع الحليب ويفور كالقشطة وتنبعث رائحة التخمير المميزة.
 2. تحضير الخميرة الوسيطة: يُؤخذ فوران خميرة اللبن ويُعجن بالقليل من الدقيق ليصبح كالعجينة اللينة، ويُترك لساعتين حتى يملأ الإناء فقاعات هوائية.
@@ -43,8 +44,10 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     isFeatured: true,
     status: 'approved',
     verificationStatus: 'verified',
-    sourceName: 'أطلس المأثورات الشعبية المصرية - ثقافة بني سويف',
-    sourceType: 'official_gov',
+    sourceName: 'Tableya - The Breads of Egypt: Fayesh',
+    sourceUrl: 'https://tableya.net/recipes/the-breads-of-egypt-fayesh',
+    sourceType: 'web_recipe',
+    researchDate: '2026-11-14',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -59,13 +62,13 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     category: 'أطباق رئيسية وإيدامات',
     occasionOrTradition: 'غداء الصيف ومواسم حصاد البامية بالريف',
     ingredients: [
-      'بامية صعيدية خضراء كبيرة مقطعة شرائح رفيعة جداً',
-      'مرقة بط أو أوز أو لحم بلدي دسمة وغنية بالمستكة والحبهان',
-      'رأس ثوم صعيدي مهروس ناعماً',
-      'كزبرة جافة مطحونة حديثاً',
-      'ملعقتان كبيرتان سمن بلدي فلاحي',
-      'قرن فلفل أخضر حار مقطع',
-      'ملح وفلفل أسود وذرة كربونات صوديوم لحفظ اللون الأخضر'
+      'بامية كبيرة مقطعة شرائح',
+      'مرقة لحم أو بط',
+      'ثوم مفروم',
+      'كزبرة جافة مطحونة',
+      'سمن',
+      'ملح',
+      'شطة أو فلفل حار حسب الرغبة'
     ],
     preparationMethod: `1. تقطيع البامية: تُغسل قرون البامية جيداً وتُجفف، ثم تُنزع أقماعها وتُقطّع إلى حلقات رقيقة للغاية.
 2. سلق البامية: تُغلى شوربة البط الدسمة في قدر واسع، ثم تُسقط حلقات البامية مع رشة الكربونات وقرن الفلفل وتُترك على نار هادئة حتى تنضج وتلين حباتها تماماً.
@@ -82,8 +85,10 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     isFeatured: false,
     status: 'approved',
     verificationStatus: 'verified',
-    sourceName: 'توثيق المطبخ الريفي - مركز تراث بني سويف',
-    sourceType: 'official_gov',
+    sourceName: 'صدى البلد - الويكة أكلة صعيدية',
+    sourceUrl: 'https://www.elbalad.news/5079863',
+    sourceType: 'web_recipe',
+    researchDate: '2026-11-14',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -98,13 +103,12 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     category: 'مخبوزات وتراث',
     occasionOrTradition: 'صباحيات الأعراس، ضيافة الأعياد، وليالي لمة العيلة',
     ingredients: [
-      'دقيق قمح بلدي صافي منخول',
-      'ماء نقي فاتر للعجن وذرة ملح',
-      'سمن بلدي جاموسي فلاحي طبيعي 100%',
-      'قشطة حليب بلدي طازجة لفرد الوجه',
-      'عسل قصب أسود صعيدي نقي من قنا',
-      'طحينة سمسم بلدي خام',
-      'جبنة قديمة صعيدية معتقة (مش صعيدي)'
+      'دقيق أبيض',
+      'ماء دافئ',
+      'ملح',
+      'زيت نباتي',
+      'سمن بلدي أو زبدة مذابة',
+      'رشة سكر'
     ],
     preparationMethod: `1. العجن والراحة: يُعجن الدقيق بالماء والملح لمدة ثلث ساعة متواصلة حتى نحصل على عجينة ناعمة ومطاطية تماماً، وتُدهن بقليل من الزيت وتترك لترتاح ساعة كاملة.
 2. التوريق باليد: تُقطع العجينة كرات كبيرة، وتُفرد فوق طبلية مدهونة بالسمن بالسحب الرقيق جداً من الداخل للخارج حتى تصبح شفافة كرقعة الحرير.
@@ -121,9 +125,11 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     coordinates: { lat: 29.0661, lng: 31.0994 },
     isFeatured: false,
     status: 'approved',
-    verificationStatus: 'verified',
-    sourceName: 'سجل التراث الغذائي - الهيئة العامة لقصور الثقافة',
-    sourceType: 'official_gov',
+    verificationStatus: 'unverified',
+    sourceName: 'كايرو 24 - الفطير المشلتت الفلاحي (وصفة أقرب، دون الحشوات)',
+    sourceUrl: 'https://www.cairo24.com/2407216',
+    sourceType: 'web_recipe',
+    researchDate: '2026-11-14',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -142,13 +148,15 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     category: 'أطباق رئيسية وشوربات',
     occasionOrTradition: 'وجبة العائلة في الشتاء، والمؤونة السنوية لبيوت المنيا',
     ingredients: [
-      'كرات كشك صعيدي منياوي أصلي مجفف في الشمس',
-      'شوربة بط أو لحم ضاني بلدي دسمة',
-      'بصلتان كبيرتان مقطعتان جوانح رفيعة ومحمرتان حتى القرمشة',
-      'ملعقتان سمن بلدي فلاحي',
-      'فصوص ثوم صعيدي مهروس',
-      'كرات بلدي أخضر مفروم',
-      'ملح وفلفل أسود وكمون مطحون'
+      'كرات كشك صعيدي مجففة',
+      'بصلتان كبيرتان مقطعتان شرائح رفيعة',
+      'بصلة متوسطة مقطعة مكعبات',
+      'فصا ثوم مفرومان',
+      'مرق دجاج',
+      'لبن رائب',
+      'سمن',
+      'زيت لقلي البصل',
+      'ملح وفلفل أسود'
     ],
     preparationMethod: `1. نقع وفرك الكشك: تُنقع كرات الكشك المنياوي الجافة في ماء دافئ لمدة نصف ساعة حتى تلين حبات القمح واللبن الرائب، ثم تُفرك بالأصابع جيداً وتُصفى من الماء الزائد.
 2. تحضير المرق: في قدر واسع، يُشوح القليل من الثوم المهروس في السمن البلدي حتى يصفر، ثم يُسكب مرق البط المغلي ويُترك ليغلي.
@@ -165,8 +173,10 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     isFeatured: true,
     status: 'approved',
     verificationStatus: 'verified',
-    sourceName: 'أطلس المأثورات الشعبية لوسط الصعيد - وزارة الثقافة',
-    sourceType: 'official_gov',
+    sourceName: 'سوبر ماما - طريقة عمل كشك صعيدي',
+    sourceUrl: 'https://www.supermama.me/posts/%D9%83%D8%B4%D9%83-%D8%B5%D8%B9%D9%8A%D8%AF%D9%8A',
+    sourceType: 'web_recipe',
+    researchDate: '2026-11-14',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -181,14 +191,16 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     category: 'طواجن المائدة',
     occasionOrTradition: 'ولائم الجمعة، مواسم الأعياد، وعزائم الكرم الصعيدي',
     ingredients: [
-      'كيلو بامية بلدية صغيرة مقمعة بدقة هرمية',
-      'كيلو لحم ضاني أو بقري بلدي بالعظم',
-      'لتر عصير طماطم بلدي طازج ومصفى',
-      'بصلتان مفرومتان ناعماً',
-      'رأس ثوم كامل مدقوق مع كزبرة يابسة وقرن فلفل حار',
-      'ملعقتان كبيرتان سمن بلدي فلاحي',
-      'قرن فلفل أحمر شطة صعيدي سليم',
-      'حبهان، ورق لورا، مستكة حرة، وملح وفلفل أسود'
+      'بامية',
+      'لحم بقري مكعبات',
+      'ماء ساخن',
+      'عصير طماطم مركز',
+      'بصل مفروم',
+      'ثوم مهروس',
+      'زيت',
+      'صلصة طماطم',
+      'بهارات مشكلة',
+      'ملح وفلفل أسود'
     ],
     preparationMethod: `1. تسوية اللحم: يُشوح اللحم في قدر بالسمن البلدي والمستكة والحبهان وورق اللورا حتى يتغير لونه، ثم يُغمر بالماء المغلي ويُسلق نصف تسوية مع إزالة الرغوة.
 2. تسبيك الصلصة: في قدر منفصل، يُشوح البصل ونصف كمية الثوم المهروس في السمن البلدي حتى يصفر لونهما، ثم يُضاف عصير الطماطم والصلصة وقرن الفلفل الأحمر ويُترك ليتسبك على نار هادئة.
@@ -205,9 +217,11 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     coordinates: { lat: 28.1099, lng: 30.7503 },
     isFeatured: false,
     status: 'approved',
-    verificationStatus: 'verified',
-    sourceName: 'توثيق فنون الطهي التقليدي - الهيئة العامة لقصور الثقافة بالمنيا',
-    sourceType: 'official_gov',
+    verificationStatus: 'unverified',
+    sourceName: 'سوبر ماما - طاجن بامية باللحمة (وصفة قريبة وليست توثيقاً محلياً للمنيا)',
+    sourceUrl: 'https://www.supermama.me/posts/%D8%B7%D8%B1%D9%8A%D9%82%D8%A9-%D8%B9%D9%85%D9%84-%D8%B7%D8%A7%D8%AC%D9%86-%D8%A8%D8%A7%D9%85%D9%8A%D8%A9-%D8%A8%D8%A7%D9%84%D9%84%D8%AD%D9%85%D8%A9',
+    sourceType: 'web_recipe',
+    researchDate: '2026-11-14',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -222,14 +236,15 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     category: 'مخبوزات وتراث',
     occasionOrTradition: 'فطور الفجر، مواسم الموالد والزيارات، وضيافة البيوت',
     ingredients: [
-      'كيلو دقيق قمح بلدي فاخر منخول',
-      'كوب سمن بلدي فلاحي دافئ',
-      'كوب زيت ذرة نقي وخفيف',
-      'كوبان لبن رايب دافئ كامل الدسم',
-      'ملعقتان كبيرتان يانسون بلدي منقى ومحمص خفيفاً',
-      'ملعقة كبيرة شمر بلدي مطحون خشناً',
-      'أربع ملاعق سمسم بلدي محمص',
-      'خميرة بيرة طبيعية، ملعقة سكر، ورشة ملح'
+      'دقيق أبيض',
+      'ملح',
+      'خميرة فورية',
+      'سكر',
+      'سمسم',
+      'يانسون',
+      'زيت نباتي',
+      'سمن',
+      'حليب دافئ للعجن'
     ],
     preparationMethod: `1. تجهيز الأعشاب العطرية: يُحمّص اليانسون والشمر والسمسم في مقلاة جافة لثوانٍ معدودة لتستيقظ الزيوت العطرية الفواحة.
 2. بس الدقيق: يُوضع الدقيق في ماجور العجن ويُضاف الملح والأعشاب المحمصة، ثم يُسكب السمن البلدي والزيت الدافئين، ويُفرك الدقيق جيداً باليدين حتى يتشرب المادة الدهنية بالكامل ويصبح رملي الملمس.
@@ -246,9 +261,11 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     coordinates: { lat: 28.1099, lng: 30.7503 },
     isFeatured: false,
     status: 'approved',
-    verificationStatus: 'verified',
-    sourceName: 'توثيق العادات الغذائية - فرع ثقافة المنيا',
-    sourceType: 'official_gov',
+    verificationStatus: 'unverified',
+    sourceName: 'Arabicook - Rural Milk Bread / Al-Qurs Al-Falahi (وصفة قريبة)',
+    sourceUrl: 'https://www.arabicook.com/2024/10/rural-milk-bread-al-qurs-al-falahi-how.html',
+    sourceType: 'web_recipe',
+    researchDate: '2026-11-14',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -267,14 +284,16 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     category: 'طواجن المائدة',
     occasionOrTradition: 'أعراس الصعيد، وليمة العروسين، ورمز إكرام كبار الضيوف',
     ingredients: [
-      'أربعة أزواج حمام بلدي طازج ومورق الجلد بعناية',
-      'كوبان فريك قمح صعيدي أخضر نقي ومفروك',
-      'كبد وقوانص الحمام مقطعة صغيراً',
-      'بصلتان كبيرتان مفرومتان ناعماً',
-      'ثلاث ملاعق كبيرة سمن بلدي فلاحي',
-      'حبهان مطحون، رشة جوزة الطيب، فلفل أسود مجروش، وملح',
-      'مستكة فصوص طبيعية',
-      'مرقة لحم غنية للتسوية وطاجن فخار أسيوطي'
+      'حمام منظف',
+      'فريك',
+      'بصلة مفرومة',
+      'كبد الحمام المفروم (اختياري)',
+      'بهارات مشكلة',
+      'قرفة',
+      'حبهان',
+      'ملح وفلفل أسود',
+      'بصل وورق غار وحبهان لمرق السلق',
+      'سمن للتحمير'
     ],
     preparationMethod: `1. تنقية وتجهيز الفريك: يُنقى الفريك الأخضر من أي شوائب ويُغسل جيداً بالماء الفاتر ثم يُصفى ويُنقع لمدة ثلث ساعة.
 2. تحضير خلطة الحشو: في مقلاة واسعة، يُقدح السمن البلدي وتُذاب المستكة، ثم يُضاف البصل المفروم مع كبد وقوانص الحمام وتُقلب حتى تذبل، ثم يُضاف الفريك والتوابل (الحبهان، الفلفل الأسود، جوزة الطيب والملح) وتُقلب الحبوب حتى تتحمص وتفوح نكهتها، وتُسقى بنصف كوب مرقة وتترك لتنضج نصف تسوية.
@@ -291,9 +310,11 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     coordinates: { lat: 27.1809, lng: 31.1837 },
     isFeatured: true,
     status: 'approved',
-    verificationStatus: 'verified',
-    sourceName: 'سجل التراث غير المادي - ثقافة أسيوط',
-    sourceType: 'official_gov',
+    verificationStatus: 'unverified',
+    sourceName: 'EEINA - Egyptian Stuffed Pigeon with Freekeh (وصفة مصرية قريبة)',
+    sourceUrl: 'https://eeina.com/en/recipes/stuffed-pigeon.html',
+    sourceType: 'web_recipe',
+    researchDate: '2026-11-14',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -308,14 +329,18 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     category: 'أطباق رئيسية وإيدامات',
     occasionOrTradition: 'أيام الحر الشديد، مواسم الصيام التراثي، وصيدلية المناعة الشعبية',
     ingredients: [
-      'كوبان ملوخية صعيدية جافة منخولة بدقة (خضراء وزاهية النقاء)',
-      'كوبان ماء نقي بارد جداً أو مثلج',
-      'رأس ثوم صعيدي كامل مهروس ناعماً جداً بالهون',
-      'عصير خمس ليمونات بلدية طازجة',
-      'قرن فلفل أحمر شطة صعيدي مفروم ناعماً',
-      'ملعقة صغيرة كزبرة يابسة مطحونة',
-      'ملح بحري ناعم',
-      'قطع عيش شمسي صعيدي ناشف ومحمص للتغميس'
+      'ملوخية يابسة ناعمة',
+      'ثوم',
+      'بصلة',
+      'زبدة',
+      'فلفل حار',
+      'كزبرة يابسة',
+      'فلفل أسود',
+      'كمون',
+      'عصير ليمون',
+      'ماء',
+      'كزبرة خضراء',
+      'طماطم'
     ],
     preparationMethod: `1. تجهيز الدقة الصعيدية: في زبدية فخارية أو وعاء عميق، يُوضع الثوم المهروس مع الملح والكزبرة الجافة والشطة المفرومة وعصير الليمون البلدي، وتُفرك المكونات بظهر الملعقة أو شوكة حتى تمتزج العصارة ويتحول المزيج إلى مستحلب حامض وحار فواح.
 2. إضافة الماء البارد: يُسكب الماء البارد جداً فوق خليط الثوم والليمون ويُقلب جيداً حتى يذوب الملح وتتجانس النكهات.
@@ -332,8 +357,10 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     isFeatured: false,
     status: 'approved',
     verificationStatus: 'verified',
-    sourceName: 'توثيق الموروث الغذائي الشفاهي - قصر ثقافة أسيوط',
-    sourceType: 'official_gov',
+    sourceName: 'حلوها - طريقة عمل الشلولو المصري',
+    sourceUrl: 'https://www.hellooha.com/recipes/dish/%D8%B7%D8%B1%D9%8A%D9%82%D8%A9-%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%B4%D9%84%D9%88%D9%84%D9%88-%D8%A7%D9%84%D9%85%D8%B5%D8%B1%D9%8A%D8%A9_79',
+    sourceType: 'web_recipe',
+    researchDate: '2026-11-14',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -348,12 +375,14 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     category: 'حلويات ومخبوزات',
     occasionOrTradition: 'ليالي الشتاء العائلية، سهرات السمر، ومناسبات الفرح الشعبية',
     ingredients: [
-      'كيلو دقيق قمح أبيض فاخر منخول',
-      'ماء فاتر للعجن وذرة ملح خفيفة',
-      'نشا ذرة بلدي نقي لفرد وتقطيع العجين',
-      'كوب سمن بلدي فلاحي مقدوح وساخن',
-      'عسل قصب صعيدي أسود نقي',
-      'سكر بودرة ومكسرات بلدية حسب الرغبة'
+      'دقيق',
+      'بيض',
+      'فانيليا',
+      'ملح',
+      'سمن بلدي',
+      'سكر',
+      'ماء',
+      'ليمون'
     ],
     preparationMethod: `1. عجن العجين: يُعجن الدقيق بالماء والملح فقط دون أي خميرة حتى نحصل على عجينة يابسة ومتماسكة جداً، وتُترك لترتاح لمدة نصف ساعة.
 2. الفرد والتوريق: تُقسم العجينة إلى كرات وتُفرد بالنشابة الطويلة فوق طبلية خشبية مرشوشة بالنشا حتى تصبح رقيقة وشفافة كشاش القماش.
@@ -371,8 +400,10 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     isFeatured: false,
     status: 'approved',
     verificationStatus: 'verified',
-    sourceName: 'أطلس المأثورات الشعبية لوسط الصعيد - وزارة الثقافة',
-    sourceType: 'official_gov',
+    sourceName: 'شملولة - طريقة عمل المخروطة الصعيدي',
+    sourceUrl: 'https://www.shamlola.com/recipes/%D8%B7%D8%B1%D9%8A%D9%82%D8%A9-%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D9%85%D8%AE%D8%B1%D9%88%D8%B7%D8%A9-%D8%A7%D9%84%D8%B5%D8%B9%D9%8A%D8%AF%D9%89',
+    sourceType: 'web_recipe',
+    researchDate: '2026-11-14',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -391,12 +422,11 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     category: 'مخبوزات وتراث',
     occasionOrTradition: 'أساس كل وجبة في الصعيد، مخبوز أسبوعي مقدس لكل دار',
     ingredients: [
-      'دقيق قمح بلدي كامل الحبة مطحون في مطاحن سوهاج',
-      'خميرة بلدية حامضة بايتة (محتفظ بها من خبيز سابق)',
-      'ماء دافئ نقي للعجن',
-      'ملح بحري ناعم',
-      'ردّة قمح ناعمة لفرد الأرغفة',
-      'مقارص دائرية مصنوعة من الطمي النيلي وقش القمح'
+      'دقيق قمح كامل',
+      'ملح',
+      'خميرة جافة',
+      'ماء دافئ',
+      'ردة أو سميد للرش'
     ],
     preparationMethod: `1. تفعيل الخميرة البايتة: ليلة الخبيز، تُذاب قطعة الخميرة البايتة المحفوظة بالملح والدقيق مع ماء دافئ في قدر فخاري وتُترك حتى تختمر وترتفع.
 2. لتّ العجين فجراً: مع مطلع الفجر، يُنخل الدقيق ويُضاف إليه الملح والماء الدافئ وخميرة الليل، ويتم "لت العجين" بضربات قوية منتظمة بالقبضتين داخل ماجور فخاري كبير حتى يصبح العجين مرناً مطاطياً له عرق قوي.
@@ -414,8 +444,10 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     isFeatured: true,
     status: 'approved',
     verificationStatus: 'verified',
-    sourceName: 'توثيق التراث المادي وغير المادي - ديوان عام محافظة سوهاج',
-    sourceType: 'official_gov',
+    sourceName: 'Shirin Cook - Aish Shamsi (وصفة خبز صعيدي منشورة)',
+    sourceUrl: 'https://www.shirincook.com/aish-shamsi-egyptian-sun-bread/',
+    sourceType: 'web_recipe',
+    researchDate: '2026-11-14',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -430,13 +462,15 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     category: 'أطباق رئيسية وشوربات',
     occasionOrTradition: 'ليالي طوبة وأمشير، موسم البرد القارس، وطعام البناءين والحصادين',
     ingredients: [
-      'أربع حبات بصل صعيدي كبير مفروم خشناً',
-      'أربع ملاعق كبيرة سمن بلدي جاموسي فلاحي',
-      'أربعة أكواب شوربة لحم ضاني أو بط دسمة ومتبلة',
-      'ملعقة صغيرة حلبة حصى مطحونة ناعمة (سر السخينة الصعيدية)',
-      'ملعقة صغيرة كزبرة يابسة وكمون مطحون',
-      'ملح وفلفل أسود حسب الرغبة',
-      'أرغفة عيش شمسي سوهاجي محمص ومجفف مكسر لقطع متوسطة'
+      'بصلتان كبيرتان',
+      'زبدة فلاحي',
+      'مرقة لحم',
+      'رقاق فلاحي جاف',
+      'لحم مسلوق',
+      'فلفل أسود',
+      'كمون',
+      'كزبرة جافة',
+      'ملح'
     ],
     preparationMethod: `1. كرملة البصل: في قدر سميك أو طاجن فخار على نار هادئة، يُوضع السمن البلدي ويُضاف البصل المفروم مع رشة ملح، ويُقلب بصبر وتأنٍ حتى يذبل البصل ويتكرمل ويتحول إلى لون كهرماني بني داكن دون أن يحترق.
 2. إضافة النكهات: تُضاف الحلبة المطحونة والكزبرة والكمون والفلفل الأسود وتُقلب مع البصل المكرمل لثوانٍ معدودة حتى تخرج الزيوت العطرية العميقة.
@@ -454,8 +488,10 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     isFeatured: false,
     status: 'approved',
     verificationStatus: 'verified',
-    sourceName: 'أطلس المأثورات الشعبية المصرية - فرع ثقافة سوهاج',
-    sourceType: 'official_gov',
+    sourceName: 'نجوم مصرية - طريقة عمل السخينة الصعيدي',
+    sourceUrl: 'https://www.ngmisr.com/recipes/%D8%B7%D8%B1%D9%8A%D9%82%D8%A9-%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%B3%D8%AE%D9%8A%D9%86%D8%A9-%D8%A7%D9%84%D8%B5%D8%B9%D9%8A%D8%AF%D9%8A-%D8%B9%D9%84%D9%89-%D8%A3%D8%B5%D9%88%D9%84%D9%87%D8%A7',
+    sourceType: 'web_recipe',
+    researchDate: '2026-11-14',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -470,12 +506,11 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     category: 'مخبوزات وتراث',
     occasionOrTradition: 'مرافق دائم للجبنة القديمة، العسل، وطواجن الخضار',
     ingredients: [
-      'دقيق ذرة بيضاء بلدي مطحون ناعماً',
-      'دقيق قمح بلدي لربط القوام ومنحه المرونة',
-      'حلبة حصى بلدية مطحونة ومنخولة ناعماً',
-      'حبة البركة وسمسم محمص للتزيين',
-      'خميرة بلدية وماء دافئ نقي',
-      'ذرة ملح بحري خفيف'
+      'دقيق ذرة',
+      'دقيق أبيض',
+      'ملح',
+      'خميرة',
+      'ماء للعجن'
     ],
     preparationMethod: `1. خلط الطحين: يُخلط دقيق الذرة البيضاء مع دقيق القمح والحلبة المطحونة والملح في إناء واسع.
 2. عجن المرقد: تُذاب الخميرة في الماء الدافئ وتُسكب فوق الخليط، وتُعجن المكونات لتكوين عجينة شبه سائلة لينة جداً تُعرف عند الصعايدة بـ"عجينة المرقد"، وتُترك لترتاح وتختمر لمدة نصف ساعة.
@@ -493,8 +528,10 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     isFeatured: false,
     status: 'approved',
     verificationStatus: 'verified',
-    sourceName: 'توثيق الحرف والصناعات الغذائية الشعبية - ثقافة سوهاج',
-    sourceType: 'official_gov',
+    sourceName: 'شملولة - طريقة عمل خبز البتاو الصعيدي',
+    sourceUrl: 'https://www.shamlola.com/recipes/%D8%B7%D8%B1%D9%8A%D9%82%D8%A9-%D8%B9%D9%85%D9%84-%D8%AE%D8%A8%D8%B2-%D8%A7%D9%84%D8%A8%D8%AA%D8%A7%D9%88-%D8%A7%D9%84%D8%B5%D8%B9%D9%8A%D8%AF%D9%8A',
+    sourceType: 'web_recipe',
+    researchDate: '2026-11-14',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -513,10 +550,7 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     category: 'حلويات ومشروبات تراثية',
     occasionOrTradition: 'موسم كسر القصب، الموالد، وزيارة أولياء قنا وقطار الصعيد',
     ingredients: [
-      'عصير قصب سكر صعيدي خالص 100% طازج ومعصور في قنا',
-      'قطرات من ماء الورد البلدي أو قشر الليمون الطبيعي',
-      'أقماع فخارية مخروطية مخصصة لصب وتجفيف الجلاب',
-      'خوص نخيل بلدي لربط وتغليف أقماع الجلاب التراثية'
+      'دبس قصب السكر (العسل الأسود)؛ وهو المكوّن المنشور لصناعة حلوى الجلاب'
     ],
     preparationMethod: `1. استخلاص عصير القصب: يُعصر قصب السكر الطازج في عصارات قنا الحجرية وتُنقى عصارته الخضراء النقية من الشوائب.
 2. الطبخ في النحاسات: يُجمع العصير في أوانٍ نحاسية ضخمة تُسمى "النحاسات" فوق أفران موقدة بمخلفات قش القصب الجاف، ويُغلى لساعات طويلة على نار هادرة.
@@ -534,8 +568,10 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     isFeatured: true,
     status: 'approved',
     verificationStatus: 'verified',
-    sourceName: 'أطلس الحرف والمأكولات الشعبية - فرع ثقافة قنا',
-    sourceType: 'official_gov',
+    sourceName: 'Scoop Empire - حكاية الجلاب الصعيدي',
+    sourceUrl: 'https://ar.scoopempire.com/%D8%A7%D9%84%D8%AC%D9%84%D8%A7%D8%A8-%D8%A7%D9%84%D8%B5%D8%B9%D9%8A%D8%AF%D9%8A-%D8%AD%D9%84%D9%88%D9%8A%D8%A7%D8%AA-%D8%AA%D8%B1%D8%A7%D8%AB%D9%8A%D8%A9/',
+    sourceType: 'web_article',
+    researchDate: '2026-11-14',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -550,11 +586,15 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     category: 'حلويات ومخبوزات',
     occasionOrTradition: 'إكرام الضيف المفاجئ، وجبة صباح العيد، وأيام كسر القصب',
     ingredients: [
-      'رقاق بلدي صعيدي طازج ومخبوز للتو على الصاج أو الفرن',
-      'سمن بلدي فلاحي مقدوح وساخن',
-      'عسل قصب أسود قناوي بكر من عصارات نجع حمادي الصافية',
-      'سمسم صعيدي بلدي محمص',
-      'رشة حبهان ناعم مطحون'
+      'دقيق',
+      'سمن',
+      'ماء',
+      'سكر',
+      'فانيليا',
+      'جوز هند للتزيين',
+      'فول سوداني أو مكسرات للتزيين',
+      'زبيب اختياري',
+      'عسل أسود للتقديم (اختياري)'
     ],
     preparationMethod: `1. خبز الرقاق: يُعجن دقيق القمح بالماء والملح ويُفرد رقيقاً ويُخبز على صاج حديدي ساخن حتى ينضج ويبقى طرياً دون أن يجف.
 2. الفرك الساخن: يُوضع الرقاق فور خروجه وهو ساخن جداً في إناء خشبي أو فخاري واسع، ويُفرك بالأصابع بقوة وبسرعة ليتحول إلى فتات ناعم ومفتول.
@@ -571,9 +611,11 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     coordinates: { lat: 26.1551, lng: 32.7160 },
     isFeatured: false,
     status: 'approved',
-    verificationStatus: 'verified',
-    sourceName: 'توثيق العادات الغذائية الشعبية - قصر ثقافة قنا',
-    sourceType: 'official_gov',
+    verificationStatus: 'unverified',
+    sourceName: 'EgyptianRecipe.com - Sad El Hanak (حلوى مصرية قريبة وليست وصفة مفروكة موثقة)',
+    sourceUrl: 'https://egyptianrecipe.com/sad-el-hanak-dessert/',
+    sourceType: 'web_recipe',
+    researchDate: '2026-11-14',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -588,14 +630,17 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     category: 'طواجن المائدة',
     occasionOrTradition: 'ولائم جزر النيل، عزائم الأهل في المواسم، وغداء أيام الجمعة',
     ingredients: [
-      'زوج بط صعيدي بلدي أو أزواج سمان بلدي طازج منظف ومتبل',
-      'لتر ونصف عصير طماطم بلدي حمراء طازجة',
-      'بصلتان كبيرتان مقطعتان جوانح',
-      'رأس ثوم قناوي مدقوق مع كمون صعيدي حصى محمص ومطحون',
-      'ملعقتان كبيرتان سمن بلدي فلاحي',
-      'قرن فلفل صعيدي حار أحمر وأخضر',
-      'حبهان، لورا، كزبرة، فلفل أسود وملح بحري',
-      'طاجن فخار قناوي من قرية المحروسة الشهيرة'
+      'بطة متوسطة',
+      'فريك',
+      'بصلة مفرومة',
+      'بصل مقطع شرائح',
+      'طماطم مبشورة',
+      'زبدة',
+      'زيت',
+      'بهارات دجاج',
+      'ملح وفلفل أسود',
+      'ورق غار',
+      'ماء'
     ],
     preparationMethod: `1. تحمير الطيور: يُقطع البط أو يُترك السمان سليماً، ويُشوح في السمن البلدي الساخن داخل مقلاة حديدية حتى يكتسب لوناً بنياً محمراً وتُقفل مسامه.
 2. تحضير الصلصة: في نفس المقلاة، يُضاف البصل المفروم والثوم والكمون الصعيدي المطحون حديثاً وقرن الفلفل الحار، وتُقلب حتى تفوح رائحة التوابل الصعيدية الزكية، ثم يُسكب عصير الطماطم وتُترك الصلصة لتتسبك حتى يطفو السمن على السطح.
@@ -611,9 +656,11 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     coordinates: { lat: 26.1551, lng: 32.7160 },
     isFeatured: false,
     status: 'approved',
-    verificationStatus: 'verified',
-    sourceName: 'توثيق فنون الطهي الشعبية - ثقافة قنا',
-    sourceType: 'official_gov',
+    verificationStatus: 'unverified',
+    sourceName: 'سوبر ماما - بط محشي بالفريك (وصفة أقرب؛ لا توثق طاجن السمان القناوي)',
+    sourceUrl: 'https://www.supermama.me/posts/%D8%A8%D8%B7-%D9%85%D8%AD%D8%B4%D9%8A-%D8%A8%D8%A7%D9%84%D9%81%D8%B1%D9%8A%D9%83',
+    sourceType: 'web_recipe',
+    researchDate: '2026-11-14',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -632,14 +679,15 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     category: 'أطباق رئيسية وإيدامات',
     occasionOrTradition: 'أعراس الأقصر، مواسم الموالد، وولائم العقيقة والطهور',
     ingredients: [
-      'نصف كيلو لحم بقري أو جملي بلدي طازج ومفروم ناعماً',
-      'كوبان أرز مصري منقوع ومجفف ومطحون طحناً خشناً',
-      'حزمتان شبت وحزمتان كزبرة خضراء مفرومتان ناعماً جداً',
-      'بصلة متوسطة وثمانية فصوص ثوم صعيدي مهروس',
-      'ملعقة كبيرة نعناع جاف مفروك وكمون صعيدي',
-      'بهارات كباب صعيدي، ملح وفلفل أسود',
-      'سمن بلدي فلاحي وفير للتحمير النهائي',
-      'مرقة لحم غنية بالتوابل لسلق حبات الكباب'
+      'لحم بقري مفروم أو خليط لحم بقري وضأن',
+      'طماطم',
+      'بصل',
+      'ثوم',
+      'أعشاب طازجة',
+      'بهارات',
+      'بقسماط',
+      'بيكنج باودر',
+      'ملح وفلفل'
     ],
     preparationMethod: `1. عجن خلطة الكباب: يُخلط اللحم المفروم مع الأرز المطحون خشناً والخضرة والشبت والبصل والثوم والنعناع الجاف والتوابل في وعاء عميق، ويُعجن باليدين جيداً حتى تتداخل المكونات وتصبح عجينة متماسكة وناعمة.
 2. التشكيل: تُبلل اليدان بالماء، وتُشكل العجينة على هيئة كرات دائرية بحجم الليمونة أو أصابع بيضاوية متناسقة ومحكمة.
@@ -656,9 +704,11 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     coordinates: { lat: 25.6872, lng: 32.6396 },
     isFeatured: true,
     status: 'approved',
-    verificationStatus: 'verified',
-    sourceName: 'توثيق تراث الطهي بالأقصر - مركز التراث الحضاري',
-    sourceType: 'official_gov',
+    verificationStatus: 'unverified',
+    sourceName: 'Food52 - Egyptian Kofta (بديل قريب للكباب، وليس وصفة أقصرية)',
+    sourceUrl: 'https://food52.com/recipes/83632-egyptian-kofta',
+    sourceType: 'web_recipe',
+    researchDate: '2026-11-14',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -673,14 +723,17 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     category: 'أطباق رئيسية وإيدامات',
     occasionOrTradition: 'عيد الأضحى المبارك، سبوع المواليد، وولائم الصلح العرفي',
     ingredients: [
-      'أرغفة عيش شمسي أقصري مقمر ومحمص في الفرن ومكسر قطعاً صغيرة',
-      'كيلو ونصف لحم ضأن أو رقبة بلدي بالعظم مسلوق مع المطيبات',
-      'ثلاثة أكواب أرز مصري مطبوخ بالسمن البلدي والمستكة',
-      'مرقة لحم ضاني مركزة ومتبلة بالحبهان وورق الغار',
-      'رأس ثوم كامل مهروس ناعماً',
-      'نصف كوب خل بلدي نقي',
-      'صلصة طماطم بلدي مسبكة بالثوم والفلفل الحار',
-      'سمن بلدي فلاحي لتحمير الثوم واللحم'
+      'خبز بيتا وزيت لقليه',
+      'أرز قصير الحبة',
+      'لحم بقري أو ضأن',
+      'مرقة لحم',
+      'سمن',
+      'بصل وثوم',
+      'ورق غار وقرفة وحبوب فلفل أسود وبذور كزبرة وقرنفل وحبهان',
+      'طماطم طازجة وصلصة طماطم',
+      'خل أبيض',
+      'كزبرة مطحونة',
+      'ملح'
     ],
     preparationMethod: `1. تقمير العيش الشمسي: يُكسر العيش الشمسي المحمص إلى قطع متساوية ويُرص في قاع صينية التقديم النحاسية أو الفخارية.
 2. إعداد دقة الخل والثوم (الطشة): في طاسة على النار، يُقدح السمن البلدي ويُحمر الثوم المهروس حتى يكتسب لوناً ذهبياً، ثم يُسكب الخل الأبيض ورشة كزبرة يابسة لتفور الطشة برائحة تأسر الحواس.
@@ -697,9 +750,11 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     coordinates: { lat: 25.6872, lng: 32.6396 },
     isFeatured: false,
     status: 'approved',
-    verificationStatus: 'verified',
-    sourceName: 'سجل التراث الغذائي - فرع ثقافة الأقصر',
-    sourceType: 'official_gov',
+    verificationStatus: 'unverified',
+    sourceName: 'Munaty Cooking - Egyptian Fattah (وصفة مصرية قريبة)',
+    sourceUrl: 'https://www.munatycooking.com/egyptian-fattah/',
+    sourceType: 'web_recipe',
+    researchDate: '2026-11-14',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -714,13 +769,12 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     category: 'أطباق رئيسية وإيدامات',
     occasionOrTradition: 'طعام البهجة في مطلع الأسبوع، وطاجن الإكرام مع العيش الشمسي',
     ingredients: [
-      'كيلو ملوخية خضراء صعيدية طازجة مقطوفة ومغسولة ومجففة ومخروطة ناعماً',
-      'أربعة أكواب شوربة أرانب أو بط أو لحم بلدي دسمة ومصفاة',
-      'رأس ثوم صعيدي كامل مهروس ناعماً جداً',
-      'ملعقتان كبيرتان كزبرة جافة بلدي مطحونة حديثاً',
-      'ملعقتان كبيرتان سمن بلدي فلاحي',
-      'نصف ملعقة صغيرة كربونات صوديوم (لحفظ الخضار الناصع)',
-      'قرن فلفل أخضر حار مفروم ناعماً'
+      'ملوخية خضراء مفرومة',
+      'مرقة دجاج أو لحم',
+      'ثوم',
+      'كزبرة جافة',
+      'سمن أو زبدة',
+      'ملح'
     ],
     preparationMethod: `1. خرط الملوخية: تُقطف أوراق الملوخية مع جزء صغير من العرق لمنحها قواماً متماسكاً، وتُغسل وتُجفف على قماش قطني في الظل، ثم تُخرط بالمخرطة الحديدية الهلالية حتى تصبح ناعمة جداً.
 2. تسخين المرق: تُسخن الشوربة المتبلة في قدر حتى تصل لدرجة ما قبل الغليان، وتُضاف ذرة الكربونات وقرن الفلفل الحار.
@@ -738,8 +792,10 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     isFeatured: false,
     status: 'approved',
     verificationStatus: 'verified',
-    sourceName: 'أطلس المأثورات الشعبية لجنوب الصعيد - وزارة الثقافة',
-    sourceType: 'official_gov',
+    sourceName: 'Shirin Cook - Traditional Molokhia Soup',
+    sourceUrl: 'https://www.shirincook.com/traditional-molokhia-soup/',
+    sourceType: 'web_recipe',
+    researchDate: '2026-11-14',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -758,14 +814,18 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     category: 'أطباق رئيسية وإيدامات',
     occasionOrTradition: 'أعراس النوبة، التجمعات النيلية، وطعام الضيافة النوبية الأصيلة',
     ingredients: [
-      'حزمتان سبانخ طازجة أو أوراق ملوخية صعيدية خضراء',
-      'كوب بامية خضراء مقطعة رفيعاً أو ملعقتان كبيرتان ويكة نوبية جافة مطحونة',
-      'حزمة شبت وحزمة كزبرة خضراء مفرومتان',
-      'مرقة لحم أو طيور دسمة وغنية',
-      'رأس ثوم كامل مدقوق ناعماً',
-      'كزبرة جافة وتوابل نوبية خاصة (عطرشة وشمار نوبي)',
-      'ملعقتان كبيرتان سمن بلدي فلاحي للطشة',
-      'أرغفة عيش دوكة نوبي (خَمريت) لفرش الصينية'
+      'صدر حمام',
+      'لوبيا سوداء',
+      'ذرة رفيعة',
+      'ذرة',
+      'بازلاء خضراء',
+      'قمح',
+      'حمص',
+      'فول',
+      'ملح وفلفل',
+      'زبدة',
+      'كمون وسمسم وكزبرة ويانسون وشمر اختياري',
+      'شطة اختيارية'
     ],
     preparationMethod: `1. سلق الخضار: تُوضع الشوربة في قدر وتُترك لتغلي، ثم تُسقط أوراق السبانخ أو الملوخية مع شرائح البامية والشبت والكزبرة الخضراء، وتُترك لتنضج على نار هادئة حتى تلين تماماً.
 2. الفرك بالمفراك النوبي: يُستخدم "المفراك النوبي الخشبي" بلفّه بسرعة بين الكفين داخل القدر حتى تذوب الخضروات وتتجانس تماماً مع الشوربة لتعطي قواماً أخضر داكناً ومخملي الملمس.
@@ -782,9 +842,11 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     coordinates: { lat: 24.0889, lng: 32.8998 },
     isFeatured: true,
     status: 'approved',
-    verificationStatus: 'verified',
-    sourceName: 'مركز التراث النوبي - متحف النوبة بأسوان',
-    sourceType: 'official_gov',
+    verificationStatus: 'unverified',
+    sourceName: 'Egyptian Streets - Nubian Argeeh (أقرب وصفة نوبية منشورة؛ ليست الجاكود)',
+    sourceUrl: 'https://egyptianstreets.com/2022/09/26/recipe-a-modern-nubian-dish-symbolizing-love-and-healing/',
+    sourceType: 'web_article',
+    researchDate: '2026-11-14',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -799,11 +861,11 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     category: 'مخبوزات وتراث',
     occasionOrTradition: 'مرافق يومي للأكلات النوبية، وفطور الصباح مع السمن والسكر',
     ingredients: [
-      'كوبان دقيق ذرة رفيعة أو دقيق قمح بلدي فاخر',
-      'كوبان ونصف ماء فاتر نقي للعجن',
-      'نصف ملعقة صغيرة خميرة فورية أو خميرة بايتة',
-      'رشة ملح خفيفة ورشة حلبة مطحونة ناعمة للنكهة',
-      'زيت نباتي خفيف لمسح صاج الدوكة'
+      'دقيق ذرة',
+      'دقيق أبيض',
+      'ملح',
+      'خميرة',
+      'ماء للعجن'
     ],
     preparationMethod: `1. تحضير العجينة السائلة: تُخلط المكونات جيداً مع الماء حتى نحصل على عجينة سائلة تشبه قوام عجينة الكريب أو البان كيك، وتُترك لتختمر لمدة نصف ساعة حتى تظهر فقاعات الهواء على السطح.
 2. تسخين الدوكة: يُسخن صاج "الدوكة" الحديدي الثقيل فوق النار جيداً، وتُمسح أرضيته بقطعة قماش أو قطنة مبللة بقطرات قليلة من الزيت.
@@ -820,9 +882,11 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     coordinates: { lat: 24.0889, lng: 32.8998 },
     isFeatured: false,
     status: 'approved',
-    verificationStatus: 'verified',
-    sourceName: 'توثيق العادات والتقاليد النوبية - جمعية التراث النوبي بأسوان',
-    sourceType: 'official_gov',
+    verificationStatus: 'unverified',
+    sourceName: 'شملولة - خبز البتاو الصعيدي (أقرب وصفة خبز منشورة، لا توثق الخَمْريت)',
+    sourceUrl: 'https://www.shamlola.com/recipes/%D8%B7%D8%B1%D9%8A%D9%82%D8%A9-%D8%B9%D9%85%D9%84-%D8%AE%D8%A8%D8%B2-%D8%A7%D9%84%D8%A8%D8%AA%D8%A7%D9%88-%D8%A7%D9%84%D8%B5%D8%B9%D9%8A%D8%AF%D9%8A',
+    sourceType: 'web_recipe',
+    researchDate: '2026-11-14',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -837,12 +901,14 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     category: 'حلويات ومشروبات تراثية',
     occasionOrTradition: 'مائدة إفطار رمضان في أسوان، مشروب الترحيب بالضيوف في الصيف',
     ingredients: [
-      'رقائق أبريه نوبية تقليدية مصنوعة من دقيق القمح والتوابل',
-      'توابل الأبريه العطرية (حبهان، قرنفل، شمر، قرفة، زنجبيل، وحلبة محمصة)',
-      'عصير ليمون أسواني بلدي طازج',
-      'منقوع كركديه أسواني نقي ومصفى أو تمر هندي طبيعي',
-      'سكر أبيض ناصع حسب الرغبة',
-      'ماء مثلج ومكعبات ثلج نقية وقطرات ماء ورد طبيعي'
+      'رقائق الأبريه المجففة المصنوعة من دقيق الذرة الرفيعة ودقيق القمح',
+      'قرفة',
+      'كمون',
+      'حلبة',
+      'أعشاب برية',
+      'ماء للنقع',
+      'سكر حسب الرغبة',
+      'ليمون أو كركديه للتقديم'
     ],
     preparationMethod: `1. خبز رقائق الأبريه (مسبقاً): يُعجن دقيق القمح بمغلي التوابل النوبية العطرية والتمر هندي ليصبح عجيناً سائلاً بنياً، ويُخبز على صاج الدوكة رقيقاً كقشر البصل، ويُكسر ويُجفف في أكياس قماشية صالحة لسنة كاملة.
 2. إعداد الشراب الأساسي: يُعصر الليمون الأسواني الطازج ويُذاب مع السكر في ماء مثلج مع قطرات ماء الورد (أو يُستخدم منقوع الكركديه الأسواني البارد).
@@ -858,9 +924,11 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     coordinates: { lat: 24.0889, lng: 32.8998 },
     isFeatured: false,
     status: 'approved',
-    verificationStatus: 'verified',
-    sourceName: 'موسوعة المشروبات التراثية النوبية - مركز دراسات أسوان',
-    sourceType: 'official_gov',
+    verificationStatus: 'unverified',
+    sourceName: 'فيديو طريقة إعداد الأبريه النوبي (المكونات تقريبية وتحتاج مراجعة محلية)',
+    sourceUrl: 'https://www.youtube.com/watch?v=WXdFJLD4Y9I',
+    sourceType: 'web_video',
+    researchDate: '2026-11-14',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -875,15 +943,18 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     category: 'أطباق رئيسية وإيدامات',
     occasionOrTradition: 'وجبة الصيادين، غداء الجمعة على ضفاف النيل، وإكرام ضيوف أسوان',
     ingredients: [
-      'كيلو ونصف سمك قشر بياض أو راية أو بلطي نيلي أسواني طازج مقطع جزل',
-      'عصير أربع ليمونات بلدية طازجة',
-      'رأس ثوم كامل مهروس بغزارة',
-      'ملعقتان كبيرتان كمون أسواني وكزبرة جافة وشطة سوداني حامية',
-      'لتر عصير طماطم بلدي طازج ومسبك',
-      'بصلتان مقطعتان جوانح رفيعة',
-      'حزمة كزبرة خضراء مفرومة ناعماً',
-      'قرون فلفل حار وشرائح ليمون للتزيين',
-      'زيت نقي وسمن بلدي للتحمير وطاجن فخار أسواني'
+      'سمك فيليه',
+      'بطاطس',
+      'بصل',
+      'فلفل أخضر وفلفل حار',
+      'طماطم طازجة وعصير طماطم',
+      'بقدونس وكرفس مفرومان',
+      'ثوم',
+      'زيت',
+      'عصير ليمون وشرائح ليمون',
+      'بهارات سمك',
+      'كمون',
+      'ملح وفلفل أسود'
     ],
     preparationMethod: `1. تتبيل السمك: تُخلط التوابل (الثوم، الكمون الأسواني، الكزبرة، الشطة، الليمون والملح)، وتُفرك بها قطع السمك النيلي جيداً وتُترك لنصف ساعة لتتشرب الدقة.
 2. التشويح الأولي: تُقلى جزل السمك نصف قلية سريعة في زيت ساخن حتى تتماسك أنسجته ولا تتفتت أثناء الطهي في الطاجن.
@@ -900,9 +971,11 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     coordinates: { lat: 24.0889, lng: 32.8998 },
     isFeatured: false,
     status: 'approved',
-    verificationStatus: 'verified',
-    sourceName: 'توثيق تراث الصيد والملاحة النيلية - هيئة تنمية بحيرة ناصر',
-    sourceType: 'official_gov',
+    verificationStatus: 'unverified',
+    sourceName: 'سوبر ماما - طاجن السمك الفيليه (أقرب وصفة منشورة)',
+    sourceUrl: 'https://www.supermama.me/posts/%D8%B7%D8%A7%D8%AC%D9%86-%D8%A7%D9%84%D8%B3%D9%85%D9%83-%D8%A7%D9%84%D9%81%D9%8A%D9%84%D9%8A%D9%87',
+    sourceType: 'web_recipe',
+    researchDate: '2026-11-14',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -921,14 +994,14 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     category: 'أطباق رئيسية وإيدامات',
     occasionOrTradition: 'ولائم ضيافة الواحات، مواسم حصاد البلح، وأعراس البادية',
     ingredients: [
-      'منديل خروف ضاني بلدي طازج (غشاء شحم البطن الرقيق كالستارة)',
-      'كوبان أرز مصري منقى ومغسول',
-      'ربع كيلو لحم ضأن واحاتي مفروم خشناً',
-      'بصلة كبيرة مفرومة ناعماً',
-      'نصف كوب لوز وصنوبر محمص',
-      'أعشاب صحراوية واحاتية (زعتر بري، كمون واحاتي حصى، وبردقوش)',
-      'حبهان مطحون، قرفة ناعمة، فلفل أسود وملح بحري',
-      'مرقة لحم غنية للتسوية'
+      'لحم ضأن مفروم',
+      'بصلة مفرومة',
+      'ملح',
+      'فلفل أسود',
+      'بهارات مشكلة',
+      'بقدونس مفروم',
+      'منديل دهن الخروف',
+      'ماء'
     ],
     preparationMethod: `1. تحضير خلطة الحشو: يُشوح البصل المفروم مع اللحم الضاني والمكسرات في ملعقة سمن، ثم يُضاف الأرز والتوابل الصحراوية (الزعتر، الكمون، الحبهان، القرفة، الملح والفلفل). يُسكب كوب مرق ويُترك الأرز لينضج نصف تسوية.
 2. تجهيز المنديل: يُفرد منديل الخروف الشفاف على طاولة نظيفة، ويُقطع بسكين حاد إلى مربعات متساوية الحجم.
@@ -945,9 +1018,11 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     coordinates: { lat: 25.4514, lng: 30.5471 },
     isFeatured: true,
     status: 'approved',
-    verificationStatus: 'verified',
-    sourceName: 'أطلس تراث الواحات المصرية - وزارة الثقافة',
-    sourceType: 'official_gov',
+    verificationStatus: 'unverified',
+    sourceName: 'Africa Food Network - Tarb (أقرب وصفة منشورة؛ لا توثق نسخة الواحات)',
+    sourceUrl: 'https://afrifoodnetwork.com/recipes/main-course-recipes/tarb/',
+    sourceType: 'web_recipe',
+    researchDate: '2026-11-14',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -962,13 +1037,21 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     category: 'حلويات ومشروبات تراثية',
     occasionOrTradition: 'موسم جني التمور (الدميرة)، مؤونة قوافل الصحراء، وطعام الطاقة الشتوي',
     ingredients: [
-      'كيلو تمر واحاتي صعيدي أو سيوي فاخر منزوع النوى ومفروم',
-      'كوب دقيق قمح بلدي محمص على النار',
-      'نصف كوب سمن بلدي فلاحي واحاتي نقي',
-      'أربع ملاعق كبيرة سمسم بلدي محمص',
-      'ملعقتان كبيرتان حبة البركة',
-      'رشة هيل (حبهان) وقرفة ناعمة وجوز هند مبشور',
-      'لوز أو فول سوداني واحاتي مجروش للتزيين'
+      'تمر منزوع النوى',
+      'ماء ساخن',
+      'بيكربونات الصوديوم',
+      'بيض',
+      'فانيليا',
+      'سكر',
+      'زيت نباتي',
+      'حليب',
+      'دقيق',
+      'بيكنج باودر',
+      'ملح',
+      'قرفة',
+      'حبهان',
+      'جوز مفروم',
+      'سكر وزبدة وكريمة لصوص التوفي'
     ],
     preparationMethod: `1. تحميص الدقيق: في قدر سميك على نار هادئة، يُذاب السمن البلدي ويُضاف الدقيق ويُقلب باستمرار حتى يتحمص الدقيق ويكتسب لوناً ذهبياً جميلاً ورائحة عطرية زكية.
 2. دمج التمر: يُضاف التمر الواحاتي المفروم تدريجياً إلى الدقيق والسمن الساخنين، وتُهدأ النار تماماً، ويتم هرس التمر وتقليبه بملعقة خشبية قوية حتى يندمج مع الدقيق والسمن ويصبح عجينة تمرية ناعمة ولامعة.
@@ -985,9 +1068,11 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     coordinates: { lat: 25.4514, lng: 30.5471 },
     isFeatured: false,
     status: 'approved',
-    verificationStatus: 'verified',
-    sourceName: 'توثيق صناعات التمور التراثية - ديوان عام محافظة الوادي الجديد',
-    sourceType: 'official_gov',
+    verificationStatus: 'unverified',
+    sourceName: 'EgyptianRecipe.com - Egyptian Date Cake (حلوى تمر قريبة وليست المجلوبة الواحاتية)',
+    sourceUrl: 'https://egyptianrecipe.com/egyptian-date-cake-easy/',
+    sourceType: 'web_recipe',
+    researchDate: '2026-11-14',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -1002,10 +1087,11 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     category: 'مخبوزات وتراث',
     occasionOrTradition: 'خبز الرحلات الصحراوية، ولائم الأعياد، وفطور الشتاء الواحاتي',
     ingredients: [
-      'دقيق قمح بلدي كامل الحبة مطحون ناعماً',
-      'ماء نقي دافئ للعجن وذرة ملح بحري',
-      'سمن بلدي واحاتي نقي مقدوح',
-      'شوربة لحم غنم أو إبل واحاتية متبلة بالزعتر الصحراوي والكمون الحصى'
+      'دقيق ذرة',
+      'دقيق أبيض',
+      'ملح',
+      'خميرة',
+      'ماء للعجن'
     ],
     preparationMethod: `1. عجن العجينة: يُعجن دقيق القمح بالماء والملح فقط بدون أي خميرة حتى تتكون عجينة ناعمة وطرية ومرنة، وتُترك لترتاح ثلث ساعة.
 2. التقطيع والفرد: تُقسم العجينة إلى كرات صغيرة بحجم البيضة، وتُفرد بالنشابة الخشبية فوق سطح مرشوش بالدقيق حتى تصبح رقيقة جداً وشفافة تشبه رقائق الخبز الصاج.
@@ -1022,9 +1108,11 @@ export const AUTHENTIC_WAH_FOOD: UpperEgyptFoodDoc[] = [
     coordinates: { lat: 25.4514, lng: 30.5471 },
     isFeatured: false,
     status: 'approved',
-    verificationStatus: 'verified',
-    sourceName: 'أطلس المأثورات الشعبية للصحراء الغربية - وزارة الثقافة',
-    sourceType: 'official_gov',
+    verificationStatus: 'unverified',
+    sourceName: 'شملولة - خبز البتاو الصعيدي (أقرب وصفة خبز مسطح منشورة)',
+    sourceUrl: 'https://www.shamlola.com/recipes/%D8%B7%D8%B1%D9%8A%D9%82%D8%A9-%D8%B9%D9%85%D9%84-%D8%AE%D8%A8%D8%B2-%D8%A7%D9%84%D8%A8%D8%AA%D8%A7%D9%88-%D8%A7%D9%84%D8%B5%D8%B9%D9%8A%D8%AF%D9%8A',
+    sourceType: 'web_recipe',
+    researchDate: '2026-11-14',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   }

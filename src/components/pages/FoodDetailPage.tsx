@@ -374,6 +374,30 @@ export const FoodDetailPage: React.FC = () => {
         )}
       </div>
 
+      {(food?.sourceName || food?.sourceUrl) && (
+        <aside className="mt-4 rounded-xl border border-[var(--line)] bg-[var(--surface)] p-3 text-sm leading-6 text-[var(--muted)]" role="note">
+          {food.verificationStatus === 'unverified' ? (
+            <p className="font-bold text-[var(--ink)]">
+              تنبيه: هذه مكونات وصفة منشورة قريبة، وليست توثيقاً مؤكداً للوصفة المحلية بهذا الاسم.
+            </p>
+          ) : (
+            <p className="font-bold text-[var(--ink)]">مصدر المكونات</p>
+          )}
+          {food.sourceUrl ? (
+            <a
+              href={food.sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-1 inline-block underline decoration-[var(--gold)] underline-offset-2"
+            >
+              {food.sourceName || food.sourceUrl}
+            </a>
+          ) : food.sourceName ? (
+            <p>{food.sourceName}</p>
+          ) : null}
+        </aside>
+      )}
+
       <ul className="mt-5 border-t border-[var(--line)]">
         {ingredientsList.map((ing, idx) => {
           const isChecked = !!checkedIngredients[idx];

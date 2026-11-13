@@ -1014,6 +1014,7 @@ export interface UpperEgyptFoodDoc {
   sourceType?: 'official_gov' | 'unesco' | 'academic' | string;
   researchDate?: string;
   verificationStatus?: VerificationStatus;
+  ingredientResearchVersion?: number;
   createdAt: string;
   updatedAt: string;
 }

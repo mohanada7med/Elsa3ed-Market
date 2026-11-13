@@ -1020,6 +1020,11 @@ export interface UpperEgyptFood {
   coverImage: string;
   gallery?: string[];
   status: VerificationStatus;
+  sourceName?: string;
+  sourceUrl?: string;
+  sourceType?: string;
+  researchDate?: string;
+  verificationStatus?: VerificationStatus;
   createdAt: string;
   updatedAt: string;
 }
