@@ -409,13 +409,13 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
   return (
     <div
       dir="rtl"
-      className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-5 bg-black/75 backdrop-blur-md animate-in fade-in duration-200"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-5 bg-black/75 backdrop-blur-md animate-in fade-in duration-200"
     >
       <div
         className="
-          relative w-full max-w-4xl max-h-[92vh]
-          flex flex-col
-          rounded-[2.5rem]
+          relative w-full max-w-4xl max-h-[calc(100dvh-1rem)] sm:max-h-[92vh]
+          flex min-h-0 flex-col
+          rounded-2xl sm:rounded-[2.5rem]
           bg-cream text-espresso
           dark:bg-espresso-900 dark:text-cream
           border border-black/10 dark:border-white/10
@@ -424,21 +424,21 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 sm:px-8 py-5 border-b border-black/10 dark:border-white/10 flex items-center justify-between bg-black/[0.02] dark:bg-white/[0.02]">
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-primary/15 text-primary flex items-center justify-center border border-primary/20">
+        <div className="px-3 py-3 sm:px-8 sm:py-5 border-b border-black/10 dark:border-white/10 flex items-start sm:items-center justify-between gap-2 bg-black/[0.02] dark:bg-white/[0.02]">
+          <div className="flex min-w-0 flex-1 items-start sm:items-center gap-2 sm:gap-3">
+            <div className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-primary/20 bg-primary/15 text-primary sm:mt-0 sm:h-11 sm:w-11 sm:rounded-2xl">
               <Landmark className="w-5 h-5" />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-base sm:text-lg font-main font-black">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <h2 className="min-w-0 break-words text-sm font-main font-black leading-snug sm:text-lg">
                   تعديل محتوى وميديا المعلم التراثي
                 </h2>
-                <span className="px-2 py-0.5 rounded-full bg-primary/20 text-primary text-[10px] font-bold">
+                <span className="shrink-0 rounded-full bg-primary/20 px-2 py-0.5 text-[10px] font-bold text-primary">
                   تحكم مباشر
                 </span>
               </div>
-              <p className="text-xs text-black/60 dark:text-white/60">
+              <p className="mt-1 text-[11px] leading-5 text-black/60 dark:text-white/60 sm:text-xs">
                 تعديل وحفظ فوري للبيانات والنصوص والوسائط في نفس الصفحة دون مغادرتها
               </p>
             </div>
@@ -447,7 +447,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-2.5 rounded-2xl text-black/50 dark:text-white/50 hover:bg-black/10 dark:hover:bg-white/10 cursor-pointer transition-all"
+            className="shrink-0 rounded-xl p-2 text-black/50 transition-all hover:bg-black/10 dark:text-white/50 dark:hover:bg-white/10 sm:rounded-2xl sm:p-2.5"
             aria-label="إغلاق النافذة"
           >
             <X className="w-5 h-5" />
@@ -455,53 +455,53 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
         </div>
 
         {/* Tab Selector */}
-        <div className="px-6 border-b border-black/10 dark:border-white/10 flex items-center gap-1.5 bg-black/[0.01] dark:bg-white/[0.01] overflow-x-auto text-xs font-bold scrollbar-none">
+        <div className="grid grid-cols-2 gap-1.5 border-b border-black/10 bg-black/[0.01] p-2 text-xs font-bold dark:border-white/10 dark:bg-white/[0.01] sm:flex sm:items-center sm:gap-1.5 sm:overflow-x-auto sm:px-6 sm:py-0 scrollbar-none">
           <button
             type="button"
             onClick={() => setActiveTab('basic')}
-            className={`py-3 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${activeTab === 'basic'
+            className={`flex min-w-0 items-center justify-center gap-1.5 border-b-2 px-2 py-2 text-center transition-all sm:shrink-0 sm:px-4 sm:py-3 ${activeTab === 'basic'
               ? 'border-primary text-primary font-black'
               : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
               }`}
           >
             <Compass className="w-3.5 h-3.5" />
-            <span>1. البيانات والموقع</span>
+            <span className="leading-tight">1. البيانات والموقع</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('content')}
-            className={`py-3 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${activeTab === 'content'
+            className={`flex min-w-0 items-center justify-center gap-1.5 border-b-2 px-2 py-2 text-center transition-all sm:shrink-0 sm:px-4 sm:py-3 ${activeTab === 'content'
               ? 'border-primary text-primary font-black'
               : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
               }`}
           >
             <FileText className="w-3.5 h-3.5" />
-            <span>2. التوثيق والتاريخ</span>
+            <span className="leading-tight">2. التوثيق والتاريخ</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('visit')}
-            className={`py-3 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${activeTab === 'visit'
+            className={`flex min-w-0 items-center justify-center gap-1.5 border-b-2 px-2 py-2 text-center transition-all sm:shrink-0 sm:px-4 sm:py-3 ${activeTab === 'visit'
               ? 'border-primary text-primary font-black'
               : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
               }`}
           >
             <Ticket className="w-3.5 h-3.5" />
-            <span>3. التذاكر والزيارة</span>
+            <span className="leading-tight">3. التذاكر والزيارة</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('media')}
-            className={`py-3 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${activeTab === 'media'
+            className={`flex min-w-0 items-center justify-center gap-1.5 border-b-2 px-2 py-2 text-center transition-all sm:shrink-0 sm:px-4 sm:py-3 ${activeTab === 'media'
               ? 'border-primary text-primary font-black'
               : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
               }`}
           >
             <Video className="w-3.5 h-3.5" />
-            <span>4. الصور والفيديوهات</span>
+            <span className="leading-tight">4. الصور والفيديوهات</span>
             {(videoUrl || gallery.length > 0) && (
               <span className="w-2 h-2 rounded-full bg-primary" />
             )}
@@ -510,18 +510,18 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('preview')}
-            className={`py-3 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${activeTab === 'preview'
+            className={`flex min-w-0 items-center justify-center gap-1.5 border-b-2 px-2 py-2 text-center transition-all sm:shrink-0 sm:px-4 sm:py-3 ${activeTab === 'preview'
               ? 'border-primary text-primary font-black'
               : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
               }`}
           >
             <Eye className="w-3.5 h-3.5" />
-            <span>5. معاينة حية</span>
+            <span className="leading-tight">5. معاينة حية</span>
           </button>
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-6">
+        <form onSubmit={handleSubmit} className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-8 space-y-4 sm:space-y-6">
           {/* TAB 1: BASIC & LOCATION */}
           {activeTab === 'basic' && (
             <div className="space-y-5 animate-in fade-in duration-200">
@@ -634,7 +634,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
               {/* Status */}
               <div>
                 <label className="block text-xs font-bold mb-1.5">حالة التحقق والنشر</label>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                   <label className="flex items-center gap-2 cursor-pointer text-xs font-bold">
                     <input
                       type="radio"
@@ -850,7 +850,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
           {activeTab === 'media' && (
             <div className="space-y-6 animate-in fade-in duration-200">
               {/* Cover Image Section */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-black/[0.025] dark:bg-white/[0.025] border border-black/10 dark:border-white/10 space-y-4">
+              <div className="p-3 sm:p-5 rounded-2xl bg-black/[0.025] dark:bg-white/[0.025] border border-black/10 dark:border-white/10 space-y-4">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-2 text-xs font-black text-primary">
                     <ImageIcon className="w-4 h-4" />
@@ -917,8 +917,8 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                           <Eye className="w-3.5 h-3.5" />
                         </button>
                       </div>
-                      <div className="flex items-center justify-between text-white/90 text-xs font-bold">
-                        <span className="truncate max-w-[80%] font-mono text-[10px] opacity-75">{coverImage}</span>
+                      <div className="flex items-center justify-between gap-2 text-white/90 text-xs font-bold">
+                        <span className="min-w-0 truncate max-w-[80%] font-mono text-[10px] opacity-75">{coverImage}</span>
                         <button
                           type="button"
                           onClick={() => coverFileInputRef.current?.click()}
@@ -933,10 +933,10 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
               </div>
 
               {/* Gallery Images Section */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-black/[0.025] dark:bg-white/[0.025] border border-black/10 dark:border-white/10 space-y-4">
+              <div className="p-3 sm:p-5 rounded-2xl bg-black/[0.025] dark:bg-white/[0.025] border border-black/10 dark:border-white/10 space-y-4">
                 {/* Header Bar */}
-                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-black/10 dark:border-white/10 pb-3">
-                  <div className="flex items-center gap-2">
+                <div className="flex flex-col gap-3 border-b border-black/10 pb-3 dark:border-white/10 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex min-w-0 flex-wrap items-center gap-2">
                     <Layers className="w-4 h-4 text-primary" />
                     <span className="text-xs font-black text-primary">معرض صور المعلم التراثي</span>
                     <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-black">
@@ -945,7 +945,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                   </div>
 
                   {/* Top Action Buttons */}
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <button
                       type="button"
                       onClick={() => setShowBulkModal(!showBulkModal)}
@@ -1004,7 +1004,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                     if (!isUploading) galleryFileInputRef.current?.click();
                   }}
                   className={`
-                    relative p-6 rounded-2xl border-2 border-dashed text-center transition-all duration-300 cursor-pointer
+                    relative p-3 sm:p-6 rounded-2xl border-2 border-dashed text-center transition-all duration-300 cursor-pointer
                     flex flex-col items-center justify-center gap-2.5
                     ${isDragOver
                       ? 'border-primary bg-primary/10 scale-[1.01]'
@@ -1021,13 +1021,13 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                     )}
                   </div>
 
-                  <div>
-                    <p className="text-xs font-black text-black/85 dark:text-white/85">
+                  <div className="min-w-0 max-w-full">
+                    <p className="break-words text-xs font-black text-black/85 dark:text-white/85">
                       {isUploading
                         ? uploadStatusText || 'جاري رفع الصور إلى السحابة...'
                         : 'اسحب وأفلت الصور هنا مباشرة، أو انقر للاختيار من جهازك'}
                     </p>
-                    <p className="text-[11px] font-bold text-black/50 dark:text-white/50 mt-1">
+                    <p className="mt-1 break-words text-[11px] font-bold text-black/50 dark:text-white/50">
                       يدعم اختيار صور متعددة دفعة واحدة (JPG, PNG, WebP) ويتم حفظها سحابياً فوراً
                     </p>
                   </div>
@@ -1088,7 +1088,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                 )}
 
                 {/* Single URL Quick Add */}
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
                   <input
                     type="url"
                     value={newGalleryInput}
@@ -1100,12 +1100,12 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                       }
                     }}
                     placeholder="أو اكتب أو الصق رابط صورة سريع هنا واضغط إضافة..."
-                    className="flex-1 px-4 py-2.5 rounded-xl border border-black/15 dark:border-white/15 bg-white/70 dark:bg-black/30 text-xs font-mono focus:ring-2 focus:ring-primary focus:outline-none"
+                    className="w-full min-w-0 flex-1 px-4 py-2.5 rounded-xl border border-black/15 dark:border-white/15 bg-white/70 dark:bg-black/30 text-xs font-mono focus:ring-2 focus:ring-primary focus:outline-none"
                   />
                   <button
                     type="button"
                     onClick={handleAddGalleryImage}
-                    className="px-5 py-2.5 rounded-xl bg-primary text-white text-xs font-black flex items-center gap-1.5 cursor-pointer hover:bg-primary-hover transition-all shrink-0 shadow-sm"
+                    className="flex shrink-0 items-center justify-center gap-1.5 rounded-xl bg-primary px-5 py-2.5 text-xs font-black text-white shadow-sm transition-all hover:bg-primary-hover"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>إضافة الرابط</span>
@@ -1115,8 +1115,8 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                 {/* Gallery Cards Grid */}
                 {gallery.length > 0 ? (
                   <div className="space-y-3 pt-2">
-                    <div className="flex items-center justify-between text-xs font-bold text-black/60 dark:text-white/60">
-                      <span>الصور الحالية بالمعرض (يمكنك تعيين أي صورة كغلاف بنقرة واحدة أو إعادة ترتيبها)</span>
+                    <div className="flex flex-col gap-1 text-xs font-bold text-black/60 dark:text-white/60 sm:flex-row sm:items-center sm:justify-between">
+                      <span className="break-words">الصور الحالية بالمعرض (يمكنك تعيين أي صورة كغلاف بنقرة واحدة أو إعادة ترتيبها)</span>
                       <span className="font-mono text-primary">{gallery.length} صور</span>
                     </div>
 
@@ -1253,7 +1253,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
               </div>
 
               {/* Videos Section */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-black/[0.025] dark:bg-white/[0.025] border border-black/10 dark:border-white/10 space-y-4">
+              <div className="p-3 sm:p-5 rounded-2xl bg-black/[0.025] dark:bg-white/[0.025] border border-black/10 dark:border-white/10 space-y-4">
                 <div className="flex items-center gap-2 text-xs font-black text-primary">
                   <Video className="w-4 h-4" />
                   <span>الفيديوهات التوثيقية واليوتيوب</span>
@@ -1276,18 +1276,18 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                   <label className="block text-[11px] font-bold text-black/70 dark:text-white/70 mb-1.5">
                     إضافة مقطع فيديو إضافي
                   </label>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
                     <input
                       type="url"
                       value={newVideoInput}
                       onChange={(e) => setNewVideoInput(e.target.value)}
                       placeholder="رابط يوتيوب أو فيديو توثيقي آخر..."
-                      className="flex-1 px-4 py-2.5 rounded-xl border border-black/15 dark:border-white/15 bg-white/70 dark:bg-black/30 text-xs font-mono focus:ring-2 focus:ring-primary focus:outline-none"
+                      className="w-full min-w-0 flex-1 px-4 py-2.5 rounded-xl border border-black/15 dark:border-white/15 bg-white/70 dark:bg-black/30 text-xs font-mono focus:ring-2 focus:ring-primary focus:outline-none"
                     />
                     <button
                       type="button"
                       onClick={handleAddVideo}
-                      className="px-5 py-2.5 rounded-xl bg-primary text-white text-xs font-black flex items-center gap-1 cursor-pointer hover:bg-primary-hover transition-all shrink-0"
+                      className="flex shrink-0 items-center justify-center gap-1 rounded-xl bg-primary px-5 py-2.5 text-xs font-black text-white transition-all hover:bg-primary-hover"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       <span>إضافة فيديو</span>
@@ -1300,9 +1300,9 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                     {additionalVideos.map((vid, idx) => (
                       <div
                         key={idx}
-                        className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-black/[0.03] dark:bg-white/[0.03] text-xs font-mono border border-black/5 dark:border-white/5"
+                        className="flex min-w-0 items-center justify-between gap-2 p-2.5 rounded-xl bg-black/[0.03] dark:bg-white/[0.03] text-xs font-mono border border-black/5 dark:border-white/5"
                       >
-                        <span className="truncate max-w-[80%]">{vid}</span>
+                        <span className="min-w-0 truncate max-w-[80%]">{vid}</span>
                         <button
                           type="button"
                           onClick={() => handleRemoveVideo(idx)}
@@ -1320,23 +1320,23 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
               {/* Instant Full-Screen Preview Lightbox Modal */}
               {previewModalUrl && (
                 <div
-                  className="fixed inset-0 z-[10002] flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-in fade-in duration-200"
+                  className="fixed inset-0 z-[10002] flex items-center justify-center bg-black/85 backdrop-blur-md p-2 sm:p-4 animate-in fade-in duration-200"
                   onClick={() => setPreviewModalUrl(null)}
                 >
                   <div
-                    className="relative max-w-4xl max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl bg-black"
+                    className="relative w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl bg-black"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <img
                       src={previewModalUrl}
                       alt="معاينة"
-                      className="w-full h-full max-h-[80vh] object-contain"
+                      className="block h-auto max-h-[70vh] max-w-full object-contain mx-auto"
                     />
-                    <div className="p-4 bg-[#181614] flex items-center justify-between gap-3 text-white border-t border-white/10">
-                      <span className="font-mono text-xs truncate max-w-[70%] text-white/70">
+                    <div className="flex flex-col gap-3 border-t border-white/10 bg-[#181614] p-3 text-white sm:flex-row sm:items-center sm:justify-between sm:p-4">
+                      <span className="w-full break-all font-mono text-xs text-white/70 sm:max-w-[70%]">
                         {previewModalUrl}
                       </span>
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center justify-end gap-2">
                         {coverImage !== previewModalUrl && (
                           <button
                             type="button"
@@ -1419,16 +1419,16 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
           )}
 
           {/* Form Actions Footer */}
-          <div className="pt-4 border-t border-black/10 dark:border-white/10 flex items-center justify-between">
+          <div className="flex flex-col-reverse gap-2 border-t border-black/10 pt-4 dark:border-white/10 sm:flex-row sm:items-center sm:justify-between">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl border border-black/15 dark:border-white/15 text-xs font-bold hover:bg-black/5 dark:hover:bg-white/5 transition-all cursor-pointer"
+              className="w-full rounded-xl border border-black/15 px-5 py-2.5 text-xs font-bold transition-all hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/5 sm:w-auto"
             >
               إلغاء
             </button>
 
-            <div className="flex items-center gap-2">
+            <div className="flex min-w-0 w-full items-stretch gap-2 sm:w-auto sm:items-center">
               {activeTab !== 'preview' ? (
                 <button
                   type="button"
@@ -1438,7 +1438,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                     else if (activeTab === 'visit') setActiveTab('media');
                     else if (activeTab === 'media') setActiveTab('preview');
                   }}
-                  className="px-4 py-2.5 rounded-xl bg-black/5 dark:bg-cream/10 text-xs font-bold hover:bg-black/10 transition-all cursor-pointer"
+                  className="min-w-0 flex-1 rounded-xl bg-black/5 px-2 py-2.5 text-center text-xs font-bold transition-all hover:bg-black/10 sm:flex-none sm:px-4"
                 >
                   التبويب التالي
                 </button>
@@ -1448,10 +1448,12 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                 type="submit"
                 disabled={isSubmitting}
                 className="
-                  px-6 py-2.5 rounded-xl
+                  min-w-0 flex-1 justify-center gap-2 rounded-xl
+                  px-2 py-2.5 sm:flex-none sm:px-6
                   bg-primary hover:bg-primary-hover
                   text-white text-xs font-black
-                  flex items-center gap-2
+                  flex items-center
+                  text-center leading-5
                   transition-all shadow-md
                   cursor-pointer disabled:opacity-50
                 "
