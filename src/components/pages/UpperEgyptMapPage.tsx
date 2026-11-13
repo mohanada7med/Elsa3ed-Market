@@ -509,28 +509,49 @@ export const UpperEgyptMapPage: React.FC = () => {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div
-        dir="rtl"
-        className="min-h-screen w-full flex flex-col items-center justify-center bg-cream dark:bg-espresso-900 text-espresso dark:text-cream gap-4"
-      >
+if (isLoading) {
+  return (
+    <div
+      dir="rtl"
+      className="min-h-screen w-full flex flex-col items-center justify-center bg-cream dark:bg-espresso-900 text-espresso dark:text-cream gap-7 p-4 overflow-hidden"
+    >
+      {/* كروت الصور المتراصة */}
+      <div className="relative h-32 w-28 flex items-center justify-center">
+        {/* كارت خلفي يمين */}
         <motion.div
-          animate={{ rotateY: [0, 180, 360] }}
-          transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
-          style={{ transformPerspective: 600 }}
-          className={`flex h-16 w-16 items-center justify-center rounded-2xl bg-white/80 dark:bg-cream/5 ${INK_BORDER}`}
-        >
-          <img src={LOGO_URL} alt="وه" className="h-10 w-10 object-contain" />
-        </motion.div>
-        <div className="flex items-center gap-2 text-sm font-bold text-primary">
-          <Loader2 className="w-4 h-4 animate-spin" />
-          <span>بنجهّز صور ومحطات الصعيد بأعلى جودة...</span>
-        </div>
-      </div>
-    );
-  }
+          animate={{ rotate: [8, 16, 8], x: [6, 14, 6] }}
+          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+          className={`absolute inset-0 rounded-2xl bg-primary/20 dark:bg-cream/5 ${INK_BORDER}`}
+        />
+        {/* كارت خلفي يسار */}
+        <motion.div
+          animate={{ rotate: [-8, -16, -8], x: [-6, -14, -6] }}
+          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+          className={`absolute inset-0 rounded-2xl bg-espresso/10 dark:bg-cream/10 ${INK_BORDER}`}
+        />
 
+        {/* الكارت الأمامي (برواز الصورة) */}
+        <motion.div
+          animate={{ scale: [0.98, 1.03, 0.98] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+          className={`relative z-10 flex h-full w-full flex-col items-center justify-between rounded-2xl bg-white dark:bg-espresso-800 p-2.5 shadow-lg ${INK_BORDER}`}
+        >
+          <div className="flex h-20 w-full items-center justify-center rounded-xl bg-cream/60 dark:bg-cream/5">
+            <img src={LOGO_URL} alt="وه" className="h-11 w-11 object-contain" />
+          </div>
+          {/* خط صغير أسفل الصورة مثل كروت البولارويد */}
+          <div className="h-1.5 w-10 rounded-full bg-espresso/20 dark:bg-cream/20" />
+        </motion.div>
+      </div>
+
+      {/* النص */}
+      <div className="flex items-center gap-2 text-sm font-bold text-primary">
+        <Loader2 className="w-4 h-4 animate-spin" />
+        <span>بنجهّز صور ومحطات الصعيد بأعلى جودة...</span>
+      </div>
+    </div>
+  );
+}
   return (
     <MotionConfig reducedMotion="user">
       <div
@@ -550,7 +571,6 @@ export const UpperEgyptMapPage: React.FC = () => {
               <span className="hidden sm:block">الرئيسية</span>
             </button>
             <div className="flex items-center gap-2">
-              <img src={LOGO_URL} alt="وه" className="h-7 w-7 object-contain" />
               <span className="text-sm font-black">رحلة الصعيد</span>
             </div>
             <div className="w-10 sm:w-24" aria-hidden />
@@ -632,7 +652,7 @@ export const UpperEgyptMapPage: React.FC = () => {
             </div>
           </div>
 
-          {/* ═════════ التذاكر ═════════ */}
+{/* ═════════ التذاكر ═════════ */}
           <section id="tickets" className="scroll-mt-6">
             {filteredGovernorates.length > 0 ? (
               <motion.div
@@ -640,23 +660,33 @@ export const UpperEgyptMapPage: React.FC = () => {
                 variants={gridVariants}
                 initial="hidden"
                 animate="show"
-                className="grid grid-cols-1 gap-6 md:grid-cols-2 2xl:grid-cols-3"
+                className="grid grid-cols-1 gap-6 md:grid-cols-2 2xl:grid-cols-6"
               >
-                {filteredGovernorates.map((gov) => {
+                {filteredGovernorates.map((gov, index) => {
                   const originalIndex = governorates.findIndex((g) => g.id === gov.id);
                   const counts = countsByGov[gov.id] || { places: 0, crafts: 0 };
                   const stamped = Boolean(visited[gov.id]);
 
+                  // لو الـ 10 تذاكر معروضين كاملين: نطبق رصة (3 - 2 - 3 - 2)
+                  // لو فيه بحث شغال وعددهم أقل: نخليهم 3 في الصف بشكل طبيعي
+                  const isBentoActive = filteredGovernorates.length === 10;
+                  const isWideTicket = isBentoActive && (index % 5 === 3 || index % 5 === 4);
+                  const spanClass = isWideTicket ? "2xl:col-span-3" : "2xl:col-span-2";
+
                   return (
-                    <motion.div key={gov.id} variants={rise}>
+                    <motion.div
+                      key={gov.id}
+                      variants={rise}
+                      className={spanClass}
+                    >
                       <TiltCard
                         onClick={() => openGovernorate(originalIndex)}
                         label={`افتح تذكرة ${gov.name}`}
-                        className="group relative cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                        className="group relative h-full cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary"
                       >
-                        <div className={`relative grid grid-cols-[minmax(0,1fr)_88px] overflow-hidden rounded-2xl shadow-xl transition-shadow group-hover:shadow-2xl sm:grid-cols-[minmax(0,1fr)_108px] ${PAPER} ${INK_BORDER}`}>
+                        <div className={`relative grid h-full grid-cols-[minmax(0,1fr)_88px] overflow-hidden rounded-2xl shadow-xl transition-shadow group-hover:shadow-2xl sm:grid-cols-[minmax(0,1fr)_108px] ${PAPER} ${INK_BORDER}`}>
                           {/* الجزء الرئيسي */}
-                          <div className="min-w-0">
+                          <div className="flex min-w-0 flex-col justify-between">
                             <div className="relative h-36 overflow-hidden sm:h-40">
                               <img
                                 src={getHighQualityImage(gov.coverImage, 800)}
@@ -746,8 +776,8 @@ export const UpperEgyptMapPage: React.FC = () => {
                 <p className="mt-1 text-xs text-black/55 dark:text-white/55">جرّب كلمة تانية أو امسح البحث.</p>
               </div>
             )}
-          </section>
-        </main>
+          </section>       
+          </main>
 
         {/* ═════════ الجواز المفتوح: صفحتين وعلامات كتاب ═════════ */}
         <AnimatePresence>

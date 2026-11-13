@@ -69,18 +69,18 @@ interface GovernorateEditDraft {
 const toMultilineValue = (value: unknown): string =>
   Array.isArray(value)
     ? value
-        .map((item) => {
-          if (typeof item === 'string') return item;
-          if (!item || typeof item !== 'object') return '';
-          const entry = item as Record<string, unknown>;
-          return typeof entry.name === 'string'
-            ? entry.name
-            : typeof entry.title === 'string'
-              ? entry.title
-              : '';
-        })
-        .filter(Boolean)
-        .join('\n')
+      .map((item) => {
+        if (typeof item === 'string') return item;
+        if (!item || typeof item !== 'object') return '';
+        const entry = item as Record<string, unknown>;
+        return typeof entry.name === 'string'
+          ? entry.name
+          : typeof entry.title === 'string'
+            ? entry.title
+            : '';
+      })
+      .filter(Boolean)
+      .join('\n')
     : typeof value === 'string'
       ? value
       : '';
@@ -422,23 +422,23 @@ export const GovernorateDetailPage: React.FC = () => {
     person?.craftTitle || person?.craftOrSkill || person?.titleOrRole || person?.title || 'شخصية من الصعيد';
 
   const getEventDate = (event: any) => event?.eventDate || event?.timeOfYear || event?.startDate || 'موعد الموسم';
-const GOVERNORATE_ARABIC_NAMES: Record<string, string> = {
-  'bani-suef': 'بني سويف',
-  'beni-suef': 'بني سويف',
-  minya: 'المنيا',
-  asyut: 'أسيوط',
-  assiut: 'أسيوط',
-  sohag: 'سوهاج',
-  qena: 'قنا',
-  luxor: 'الأقصر',
-  aswan: 'أسوان',
-  fayoum: 'الفيوم',
-  fayyum: 'الفيوم',
-  'new-valley': 'الوادي الجديد',
-  'red-sea': 'البحر الأحمر',
-};
+  const GOVERNORATE_ARABIC_NAMES: Record<string, string> = {
+    'bani-suef': 'بني سويف',
+    'beni-suef': 'بني سويف',
+    minya: 'المنيا',
+    asyut: 'أسيوط',
+    assiut: 'أسيوط',
+    sohag: 'سوهاج',
+    qena: 'قنا',
+    luxor: 'الأقصر',
+    aswan: 'أسوان',
+    fayoum: 'الفيوم',
+    fayyum: 'الفيوم',
+    'new-valley': 'الوادي الجديد',
+    'red-sea': 'البحر الأحمر',
+  };
 
-if (loading) {
+  if (loading) {
     const loadingGovName =
       governorate?.name || GOVERNORATE_ARABIC_NAMES[slug.toLowerCase()] || slug;
 
@@ -566,8 +566,8 @@ if (loading) {
               ملف خاص عن «{governorate.nickname}»
             </div>
           )}
-<br />
-<br />
+          <br />
+          <br />
           <h1 className="break-words text-4xl font-black leading-tight tracking-tight text-[#261910] dark:text-white sm:text-6xl sm:leading-none md:text-8xl lg:text-[110px]">
             محافظة {governorate.name}
           </h1>
@@ -644,7 +644,7 @@ if (loading) {
             </div>
             <div className="mt-3 flex items-center justify-between text-xs font-bold text-[#6E543C] dark:text-[#BCA892]">
               <span>▲ صورة أرشيفية توثق ملامح العمارة والحياة في محافظة {governorate.name}.</span>
-              <span className="font-mono text-[11px]">ARCHIVE-IMG #{orderFormatted}</span>
+              <span className="font-black text-[11px]">ARCHIVE-IMG #{orderFormatted}</span>
             </div>
           </div>
 
@@ -699,11 +699,10 @@ if (loading) {
                 <button
                   key={section.id}
                   onClick={() => scrollToSection(section.id)}
-                  className={`flex min-w-max items-center gap-2 px-5 py-3 text-xs font-black transition ${
-                    active
+                  className={`flex min-w-max items-center gap-2 px-5 py-3 text-xs font-black transition ${active
                       ? 'bg-[#261910] text-white dark:bg-[#C99444] dark:text-[#150E0A]'
                       : 'text-[#5C4532] hover:bg-[#E2D6C1] dark:text-[#D5C5B0] dark:hover:bg-[#2C1E15]'
-                  }`}
+                    }`}
                 >
                   <span className="opacity-65">{section.number}:</span>
                   <span>{section.label}</span>
@@ -1078,7 +1077,7 @@ if (loading) {
         {/* =======================================================
             PAGE 08: VIDEOS
         ======================================================= */}
-{/* =======================================================
+        {/* =======================================================
             PAGE 08: VIDEOS (الشريط المصور والأرشيف السينمائي)
         ======================================================= */}
         {(governorateVideos.length > 0 || isAdmin) && (
@@ -1098,7 +1097,7 @@ if (loading) {
                   <span>وحدة التوثيق السمعي والبصري — أرشيف وَهْ</span>
                 </div>
 
-                <div className="flex items-center gap-3 font-mono text-[11px] text-[#5C4532] dark:text-[#BCA892]">
+                <div className="flex items-center gap-3 font-black text-[11px] text-[#5C4532] dark:text-[#BCA892]">
                   <span>REEL-REF: #{orderFormatted}-VID</span>
                   <span>•</span>
                   <span>{governorateVideos.length} شريط مسجل</span>
