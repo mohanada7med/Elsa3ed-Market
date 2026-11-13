@@ -1127,6 +1127,7 @@ export interface PlatformSettingsDoc {
   featuredCrafts: string[];
   featuredStories: string[];
   featuredProducts: string[];
+  weeklyStoryEnabled?: boolean;
   heroHeadline: string;
   heroSubheadline: string;
   updatedAt: string;

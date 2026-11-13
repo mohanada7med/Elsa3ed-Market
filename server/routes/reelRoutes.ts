@@ -884,6 +884,7 @@ router.put('/:id', requireAuth, async (req: AuthenticatedRequest, res: Response)
     const sanitizedUpdates: Partial<CraftReelDocument> = {
       updatedAt: new Date().toISOString()
     };
+    const unsetUpdates: Record<string, ''> = {};
 
     if (updates.title !== undefined) sanitizedUpdates.title = updates.title.trim();
     if (updates.description !== undefined) sanitizedUpdates.description = updates.description.trim();
@@ -931,8 +932,15 @@ router.put('/:id', requireAuth, async (req: AuthenticatedRequest, res: Response)
         ? updates.hashtags
         : String(updates.hashtags).split(/[,،\s]+/).filter(Boolean);
     }
-    if (updates.productId !== undefined) sanitizedUpdates.productId = updates.productId || undefined;
-    if (updates.productTitle !== undefined) sanitizedUpdates.productTitle = updates.productTitle || undefined;
+    if (updates.productId === null) {
+      for (const field of ['productId', 'productTitle', 'productPrice', 'productOriginalPrice', 'productImage', 'productRating', 'inStock']) {
+        unsetUpdates[field] = '';
+      }
+    } else {
+      if (updates.productId !== undefined) sanitizedUpdates.productId = updates.productId || undefined;
+      if (updates.productTitle !== undefined) sanitizedUpdates.productTitle = updates.productTitle || undefined;
+      if (updates.productRating !== undefined) sanitizedUpdates.productRating = Number(updates.productRating);
+    }
     if (updates.productPrice !== undefined) sanitizedUpdates.productPrice = updates.productPrice ? Number(updates.productPrice) : undefined;
     if (updates.productOriginalPrice !== undefined) sanitizedUpdates.productOriginalPrice = updates.productOriginalPrice ? Number(updates.productOriginalPrice) : undefined;
     if (updates.productImage !== undefined) sanitizedUpdates.productImage = updates.productImage || undefined;
@@ -955,9 +963,20 @@ router.put('/:id', requireAuth, async (req: AuthenticatedRequest, res: Response)
       ...existingReel,
       ...sanitizedUpdates
     };
+    if (updates.productId === null) {
+      for (const field of Object.keys(unsetUpdates) as Array<keyof CraftReelDocument>) {
+        delete updatedReel[field];
+      }
+    }
 
     if (isMongo && db) {
-      await db.collection('reels').updateOne({ id }, { $set: sanitizedUpdates });
+      await db.collection('reels').updateOne(
+        { id },
+        {
+          $set: sanitizedUpdates,
+          ...(Object.keys(unsetUpdates).length > 0 ? { $unset: unsetUpdates } : {})
+        }
+      );
     }
 
     const memIdx = memoryDb.reels.findIndex((r) => r.id === id);

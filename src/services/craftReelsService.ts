@@ -1,5 +1,6 @@
 import {
   CraftReel,
+  CraftReelUpdates,
   CraftReelComment,
 } from '../types.ts';
 
@@ -345,8 +346,8 @@ export const craftReelsService = {
       sellerId?: string;
     },
     reelId: string,
-    updates: Partial<CraftReel>
-  ): Promise<CraftReel | null> {
+    updates: CraftReelUpdates
+  ): Promise<CraftReel> {
     try {
       const updated =
         await api.updateReel(
@@ -372,15 +373,8 @@ export const craftReelsService = {
 
       return updated;
     } catch (error) {
-      console.warn(
-        '[CraftReels] API update failed:',
-        error
-      );
-
-      return this.updateReel(
-        reelId,
-        updates
-      );
+      console.error('[CraftReels] API update failed:', error);
+      throw error;
     }
   },
 

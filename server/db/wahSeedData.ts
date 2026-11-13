@@ -46,6 +46,7 @@ export const INITIAL_PLATFORM_SETTINGS: PlatformSettingsDoc = {
   featuredCrafts: ['craft-pottery', 'craft-tally', 'craft-akhmeem'],
   featuredStories: [],
   featuredProducts: [],
+  weeklyStoryEnabled: false,
   heroHeadline: 'أصالة الصعيد بين إيديك',
   heroSubheadline: 'من قلب صعيد مصر للعالم كله؛ بنحكي قصص البلاد والناس وبندعم أصحاب الصنعة الحقيقيين',
   updatedAt: new Date().toISOString(),

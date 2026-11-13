@@ -2062,10 +2062,14 @@ router.put('/moderation/status', requireAdmin, async (req: AuthenticatedRequest,
 
 router.get('/settings', async (req: Request, res: Response) => {
   try {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
     const { db, isMongo } = await getMongoOrMemory();
     if (isMongo && db) {
       const settings = await db.collection<PlatformSettingsDoc>('platform_settings').findOne({});
       if (settings) return res.json({ success: true, data: settings });
+    }
+    if (!isMongo) {
+      return res.json({ success: true, data: memoryDb.platformSettings });
     }
     return res.json({
       success: true,
@@ -2075,7 +2079,8 @@ router.get('/settings', async (req: Request, res: Response) => {
         freeShippingThreshold: 500,
         featuredGovernorates: [],
         featuredCrafts: [],
-        featuredStories: []
+        featuredStories: [],
+        weeklyStoryEnabled: false
       }
     });
   } catch (err: any) {
@@ -2095,6 +2100,11 @@ router.put('/settings', requireAdmin, async (req: AuthenticatedRequest, res: Res
         { $set: updateData },
         { upsert: true }
       );
+    } else {
+      memoryDb.platformSettings = {
+        ...memoryDb.platformSettings,
+        ...updateData
+      };
     }
 
     await createAuditLog({

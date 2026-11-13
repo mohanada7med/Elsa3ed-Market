@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext.tsx';
 import { Product, OrderStatus, ProductStatus, Category, Review, CraftStory, Seller, Governorate, CraftReel, Shipment } from '../../types.ts';
-import { api } from '../../services/api.ts';
+import { api, wahApi } from '../../services/api.ts';
 import { craftReelsService } from '../../services/craftReelsService.ts';
 import { AdminPayouts } from './AdminPayouts.tsx';
 import { NotificationsManager } from '../common/NotificationsManager.tsx';
@@ -74,7 +74,8 @@ import {
   StretchHorizontal,
   LayoutGrid,
   MapPin,
-  Phone
+  Phone,
+  PinIcon
 } from 'lucide-react';
 
 const HERITAGE_COVER_PRESETS = [
@@ -115,6 +116,7 @@ export const AdminDashboard: React.FC = () => {
   const {
     adminProducts,
     refreshAdminProducts,
+    refreshPublicProducts,
     pendingProducts,
     approveProduct,
     setProductOfWeek,
@@ -156,12 +158,19 @@ export const AdminDashboard: React.FC = () => {
   } = useApp();
 
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'approvals' | 'categories' | 'craft-stories' | 'craft-reels' | 'reviews' | 'sellers' | 'payouts' | 'orders' | 'coupons' | 'audit' | 'users' | 'password-resets' | 'payment-settings' | 'shipping-settings' | 'notifications' | 'media-library' | 'reports' | 'promotion-requests'
+    'overview' | 'approvals' | 'categories' | 'craft-stories' | 'craft-reels' | 'weekly-story' | 'reviews' | 'sellers' | 'payouts' | 'orders' | 'coupons' | 'audit' | 'users' | 'password-resets' | 'payment-settings' | 'shipping-settings' | 'notifications' | 'media-library' | 'reports' | 'promotion-requests'
   >('overview');
 
 
   const [pendingReportsCount, setPendingReportsCount] = useState(0);
   const [settingWeeklyProductId, setSettingWeeklyProductId] = useState<string | null>(null);
+  const [weeklyStoryEnabled, setWeeklyStoryEnabled] = useState(false);
+  const [weeklyStoryProductId, setWeeklyStoryProductId] = useState('');
+  const [platformSettings, setPlatformSettings] = useState<Record<string, any>>({});
+  const [isLoadingWeeklyStorySettings, setIsLoadingWeeklyStorySettings] = useState(true);
+  const [isSavingWeeklyStorySettings, setIsSavingWeeklyStorySettings] = useState(false);
+  const [isWeeklyStorySettingsAvailable, setIsWeeklyStorySettingsAvailable] = useState(false);
+  const [isWeeklyStoryProductSelectionDirty, setIsWeeklyStoryProductSelectionDirty] = useState(false);
 
   // Reels Management State for Admin (Full Database & Cloud Control)
   const [adminReels, setAdminReels] = useState<CraftReel[]>([]);
@@ -196,6 +205,80 @@ export const AdminDashboard: React.FC = () => {
   const handleAdminReelUpdated = (updatedReel: CraftReel) => {
     refreshAdminReelsFromDb();
     addToast('تم تحديث الفيديو', `تم تعديل بيانات الفيديو "${updatedReel.title}" وحفظها في قاعدة البيانات`, 'success');
+  };
+
+  useEffect(() => {
+    let active = true;
+    wahApi.getPlatformSettings()
+      .then((settings) => {
+        if (!active) return;
+        if (!settings) {
+          console.error('Could not load weekly story settings.');
+          addToast('تعذر تحميل إعدادات حكاية الأسبوع', 'حاول تحديث الصفحة قبل حفظ التعديلات', 'error');
+          return;
+        }
+        setPlatformSettings(settings);
+        setWeeklyStoryEnabled(settings.weeklyStoryEnabled === true);
+        setIsWeeklyStorySettingsAvailable(true);
+      })
+      .finally(() => {
+        if (active) setIsLoadingWeeklyStorySettings(false);
+      })
+      .catch((error) => {
+        if (!active) return;
+        console.error('Could not load weekly story settings:', error);
+        addToast('تعذر تحميل إعدادات حكاية الأسبوع', error?.message || 'حاول تحديث الصفحة', 'error');
+      });
+    return () => {
+      active = false;
+    };
+  }, [addToast]);
+
+  useEffect(() => {
+    if (isWeeklyStoryProductSelectionDirty) return;
+    const selectedProduct = adminProducts.find((product) => product.isProductOfWeek);
+    setWeeklyStoryProductId(selectedProduct?.id || '');
+  }, [adminProducts, isWeeklyStoryProductSelectionDirty]);
+
+  const handleSaveWeeklyStorySettings = async () => {
+    const selectedProduct = adminProducts.find(
+      (product) =>
+        product.id === weeklyStoryProductId &&
+        product.approvalStatus === 'approved' &&
+        product.inStock
+    );
+
+    if (weeklyStoryEnabled && !selectedProduct) {
+      addToast('اختار حكاية الأسبوع', 'اختار منتجًا معتمدًا ومتاحًا قبل تفعيل القسم', 'warning');
+      return;
+    }
+
+    setIsSavingWeeklyStorySettings(true);
+    try {
+      if (weeklyStoryEnabled && selectedProduct && !selectedProduct.isProductOfWeek) {
+        await api.setProductOfWeek(
+          { id: currentUser.id, role: 'admin' },
+          selectedProduct.id
+        );
+        await Promise.all([refreshAdminProducts(), refreshPublicProducts()]);
+      }
+
+      const savedSettings = await wahApi.savePlatformSettings(
+        { ...platformSettings, weeklyStoryEnabled },
+        currentUser
+      );
+      setPlatformSettings(savedSettings || { ...platformSettings, weeklyStoryEnabled });
+      setIsWeeklyStoryProductSelectionDirty(false);
+      addToast(
+        'تم حفظ إعدادات حكاية الأسبوع',
+        weeklyStoryEnabled ? `هيظهر "${selectedProduct?.title}" في الصفحة الرئيسية` : 'تم إخفاء حكاية الأسبوع من الصفحة الرئيسية',
+        'success'
+      );
+    } catch (error: any) {
+      addToast('تعذر حفظ حكاية الأسبوع', error?.message || 'حاول مرة أخرى', 'error');
+    } finally {
+      setIsSavingWeeklyStorySettings(false);
+    }
   };
 
   const handleAdminDeleteReel = (reelId: string, reelTitle: string) => {
@@ -1486,6 +1569,13 @@ export const AdminDashboard: React.FC = () => {
           elementId: 'admin-tab-craft-reels'
         },
         {
+          id: 'weekly-story' as const,
+          label: 'حكاية الأسبوع',
+          sublabel: 'اختيار الحكاية والتحكم في ظهورها',
+          icon: PinIcon,
+          elementId: 'admin-tab-weekly-story'
+        },
+        {
           id: 'media-library' as const,
           label: 'مكتبة وسائط Cloudinary',
           sublabel: 'مكتبة الصور والفيديوهات السحابية',
@@ -1550,6 +1640,7 @@ export const AdminDashboard: React.FC = () => {
     { id: 'orders' as const, label: 'الشحنات', icon: Truck },
     { id: 'reports' as const, label: 'البلاغات والشكاوى', icon: AlertTriangle, badge: pendingReportsCount > 0 ? pendingReportsCount : undefined },
     { id: 'craft-reels' as const, label: 'الريلز', icon: Film },
+    { id: 'weekly-story' as const, label: 'حكاية الأسبوع', icon: Sparkles },
     { id: 'media-library' as const, label: 'الوسائط', icon: ImageIcon },
     { id: 'users' as const, label: 'المستخدمين', icon: Users },
   ];
@@ -2808,7 +2899,7 @@ export const AdminDashboard: React.FC = () => {
           {/* TAB 2: APPROVALS QUEUE & CATALOG AUDIT */}
           {activeTab === 'approvals' && (
             <div className="bg-surface rounded-3xl border border-border p-6 shadow-xs space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex flex-col gap-4">
                 <div>
                   <h3 className="font-bold text-base text-foreground">طابور فحص واعتماد المنتجات التراثية</h3>
                   <p className="text-xs text-foreground-secondary">
@@ -3106,6 +3197,79 @@ export const AdminDashboard: React.FC = () => {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {/* TAB: WEEKLY STORY SETTINGS */}
+          {activeTab === 'weekly-story' && (
+            <div className="space-y-6 animate-in fade-in">
+              <div className="rounded-3xl border border-primary/20 bg-gradient-to-r from-primary/10 via-background to-background-secondary p-6 sm:p-8">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-white">
+                    <PinIcon className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-black text-foreground sm:text-2xl">حكاية الأسبوع</h2>
+                    <p className="mt-2 max-w-2xl text-sm text-foreground-secondary">
+                      تحكم في ظهور القسم بالصفحة الرئيسية واختار المنتج والورشة اللي هتظهر فيه.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-border bg-surface p-4 sm:p-6">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <h3 className="font-bold text-sm text-foreground">إعدادات الظهور والاختيار</h3>
+                    <p className="mt-1 text-xs text-foreground-secondary">
+                      اختار منتجًا معتمدًا ومتاحًا، ثم فعّل القسم واحفظ التغييرات.
+                    </p>
+                  </div>
+                  <label className="inline-flex items-center gap-2 text-xs font-bold text-foreground cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={weeklyStoryEnabled}
+                      disabled={isLoadingWeeklyStorySettings || !isWeeklyStorySettingsAvailable || isSavingWeeklyStorySettings}
+                      onChange={(event) => setWeeklyStoryEnabled(event.target.checked)}
+                      className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
+                    />
+                    إظهار حكاية الأسبوع
+                  </label>
+                </div>
+
+                <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-end">
+                  <label className="flex-1 space-y-1.5 text-xs font-bold text-foreground">
+                    <span>اختيار المنتج / الورشة</span>
+                    <select
+                      value={weeklyStoryProductId}
+                      disabled={isLoadingWeeklyStorySettings || !isWeeklyStorySettingsAvailable || isSavingWeeklyStorySettings}
+                      onChange={(event) => {
+                        setWeeklyStoryProductId(event.target.value);
+                        setIsWeeklyStoryProductSelectionDirty(true);
+                      }}
+                      className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-foreground outline-none focus:border-primary"
+                    >
+                      <option value="">اختار منتجًا معتمدًا ومتاحًا</option>
+                      {adminProducts
+                        .filter((product) => product.approvalStatus === 'approved' && product.inStock)
+                        .map((product) => (
+                          <option key={product.id} value={product.id}>
+                            {product.title} — {product.sellerName}
+                          </option>
+                        ))}
+                    </select>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={handleSaveWeeklyStorySettings}
+                    disabled={isLoadingWeeklyStorySettings || !isWeeklyStorySettingsAvailable || isSavingWeeklyStorySettings}
+                    className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-bold text-white transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {isSavingWeeklyStorySettings ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
+                    {isLoadingWeeklyStorySettings ? 'جارٍ تحميل الإعدادات...' : isSavingWeeklyStorySettings ? 'جارٍ الحفظ...' : 'حفظ الإعدادات'}
+                  </button>
+                </div>
               </div>
             </div>
           )}

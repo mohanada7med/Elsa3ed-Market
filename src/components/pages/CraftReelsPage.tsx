@@ -12,6 +12,7 @@ import { CraftReel, Governorate } from '../../types.ts';
 import { craftReelsService } from '../../services/craftReelsService.ts';
 import { ReelFeed } from '../public/reels/ReelFeed.tsx';
 import { ReelUploadModal } from '../common/ReelUploadModal.tsx';
+import { ReelEditModal } from '../common/ReelEditModal.tsx';
 import {
   Film,
   Play,
@@ -329,6 +330,7 @@ export const CraftReelsPage: React.FC = () => {
   const [selectedContentType, setSelectedContentType] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [reelBeingEdited, setReelBeingEdited] = useState<CraftReel | null>(null);
   const [permissionAlert, setPermissionAlert] = useState<PermissionState>({
     isOpen: false,
     title: '',
@@ -622,6 +624,18 @@ export const CraftReelsPage: React.FC = () => {
           setIsAuthModalOpen(true);
         }}
       />
+      <ReelEditModal
+        isOpen={Boolean(reelBeingEdited)}
+        onClose={() => setReelBeingEdited(null)}
+        reel={reelBeingEdited}
+        onSuccess={(updatedReel) => {
+          setReels((current) => current.map((reel) => reel.id === updatedReel.id ? updatedReel : reel));
+          addToast('تم تحديث الفيديو', `تم تعديل بيانات الفيديو "${updatedReel.title}" وحفظها`, 'success');
+        }}
+        currentUser={currentUser}
+        sellerProducts={sellerProducts}
+        allSellers={sellers}
+      />
     </>
   );
 
@@ -707,6 +721,9 @@ export const CraftReelsPage: React.FC = () => {
               initialReelId={feedInitialId}
               onSelectProduct={navigateToProduct}
               onSelectSeller={navigateToSeller}
+              onEditReel={(reel) => {
+                if (currentUser?.role === 'admin') setReelBeingEdited(reel);
+              }}
               onDeleteReel={(id) => setReels((prev) => prev.filter((r) => r.id !== id))}
               onClose={backToGrid}
               showCloseButton={false}

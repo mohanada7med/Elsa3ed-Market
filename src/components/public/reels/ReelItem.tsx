@@ -37,6 +37,7 @@ interface ReelItemProps {
   onToggleMute: () => void;
   onSelectProduct?: (productId: string) => void;
   onSelectSeller?: (sellerId: string) => void;
+  onEditReel?: (reel: CraftReel) => void;
   onDeleteReel?: (reelId: string) => void;
   onClose?: () => void;
   showCloseButton?: boolean;
@@ -52,6 +53,7 @@ export const ReelItem: React.FC<ReelItemProps> = ({
   onToggleMute,
   onSelectProduct,
   onSelectSeller,
+  onEditReel,
   onDeleteReel,
   onClose,
   showCloseButton = false,
@@ -1415,12 +1417,14 @@ export const ReelItem: React.FC<ReelItemProps> = ({
               isMuted={isMuted}
               copiedLink={copiedLink}
               canDelete={canDelete}
+              isAdmin={currentUser?.role === 'admin' && Boolean(onEditReel)}
               onLike={handleLike}
               onOpenComments={() =>
                 setIsCommentsOpen(true)
               }
               onShare={handleShare}
               onToggleMute={onToggleMute}
+              onRequestEdit={() => onEditReel?.(reel)}
               onRequestDelete={() =>
                 setIsConfirmingDelete(true)
               }

@@ -714,6 +714,10 @@ export interface CraftReel {
   isLiked?: boolean;
 }
 
+export type CraftReelUpdates = Omit<Partial<CraftReel>, 'productId'> & {
+  productId?: string | null;
+};
+
 export interface ReelLike {
   id?: string;
   userId: string;

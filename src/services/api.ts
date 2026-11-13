@@ -11,6 +11,7 @@ import {
   AdminPayoutSummary,
   PayoutMethod,
   CraftReel,
+  CraftReelUpdates,
   CraftReelComment,
   Conversation,
   ChatMessage,
@@ -4155,7 +4156,7 @@ export const api = {
   async updateReel(
     user: { id?: string; role?: string; sellerId?: string },
     id: string,
-    data: Partial<CraftReel>
+    data: CraftReelUpdates
   ): Promise<CraftReel> {
     const res = await fetch(`${API_BASE}/reels/${id}`, {
       method: 'PUT',
@@ -5319,13 +5320,12 @@ export const wahApi = {
 
   // 15. Platform Settings
   async getPlatformSettings(): Promise<any> {
-    try {
-      const res = await fetch(`${API_BASE}/wah/settings`);
-      const json = await res.json();
-      return json.success && json.data ? json.data : null;
-    } catch {
-      return null;
+    const res = await fetch(`${API_BASE}/wah/settings`, { cache: 'no-store' });
+    const json = await res.json();
+    if (!res.ok || !json.success) {
+      throw new Error(json.error || 'فشل تحميل إعدادات المنصة');
     }
+    return json.data || null;
   },
 
   async savePlatformSettings(settings: any, user?: { id?: string; role?: string }): Promise<any> {

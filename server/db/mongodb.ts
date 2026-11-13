@@ -73,6 +73,7 @@ class MemoryStore {
   sellerFollows: Array<{ id: string; userId: string; sellerId: string; createdAt: string }> = [];
   paidPromotionRequests: Array<Record<string, any>> = [];
   paidPromotionSlot: Record<string, any> | null = null;
+  platformSettings: PlatformSettingsDoc = { ...INITIAL_PLATFORM_SETTINGS };
 
   // WAH Cultural Ecosystem Data (Database-driven solely from MongoDB, with rich authentic defaults)
   governorates: GovernorateDoc[] = [];

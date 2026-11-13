@@ -3,7 +3,7 @@ import { motion, useReducedMotion } from 'motion/react';
 import { ArrowLeft, BadgeCheck, MapPin, Sparkles, Store } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { Product } from '../../types';
-import { api } from '../../services/api';
+import { api, wahApi } from '../../services/api';
 import { getOptimizedImageUrl } from '../../utils/cloudinaryMedia';
 
 const getProductStory = (product: Product): string => {
@@ -26,6 +26,7 @@ export const ProductOfWeekSection: React.FC = () => {
   const { products, sellers, navigateToProduct, navigateToSeller } = useApp();
   const reduceMotion = useReducedMotion();
   const [apiProduct, setApiProduct] = useState<Product | null>(null);
+  const [weeklyStoryEnabled, setWeeklyStoryEnabled] = useState<boolean | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -36,14 +37,23 @@ export const ProductOfWeekSection: React.FC = () => {
       console.warn('Failed to clear cached product of the week:', error);
     }
 
-    api.getProductOfWeek()
-      .then((selectedProduct) => {
+    const loadWeeklyStory = async () => {
+      try {
+        const settings = await wahApi.getPlatformSettings();
         if (!active) return;
-        setApiProduct(selectedProduct);
-      })
-      .catch((error) => {
-        console.error('Failed to load product of the week:', error);
-      });
+        const isEnabled = settings?.weeklyStoryEnabled === true;
+        setWeeklyStoryEnabled(isEnabled);
+        if (!isEnabled) return;
+
+        const selectedProduct = await api.getProductOfWeek();
+        if (active) setApiProduct(selectedProduct);
+      } catch (error) {
+        console.error('Failed to load weekly story settings or product:', error);
+        if (active) setWeeklyStoryEnabled(false);
+      }
+    };
+
+    loadWeeklyStory();
     return () => {
       active = false;
     };
@@ -63,6 +73,8 @@ export const ProductOfWeekSection: React.FC = () => {
         item.brandName === product.sellerName
     ) || null;
   }, [product, sellers]);
+
+  if (weeklyStoryEnabled !== true) return null;
 
   if (!product) {
     return (

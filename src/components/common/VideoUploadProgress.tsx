@@ -345,17 +345,17 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
             if (file) handleFileSelect(file);
           }}
           className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-200 ${disabled
-            ? 'border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed'
-            : 'border-amber-300 hover:border-amber-500 bg-amber-50/40 hover:bg-amber-50/80 shadow-xs'
+            ? 'border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800 opacity-60 cursor-not-allowed'
+            : 'border-amber-300 hover:border-amber-500 bg-amber-50/40 hover:bg-amber-50/80 dark:border-amber-800 dark:bg-amber-950/20 dark:hover:bg-amber-950/40 shadow-xs'
             }`}
         >
-          <div className="w-14 h-14 mx-auto mb-3 rounded-full bg-amber-100/80 flex items-center justify-center text-amber-700 shadow-inner">
+          <div className="w-14 h-14 mx-auto mb-3 rounded-full bg-amber-100/80 dark:bg-amber-900/50 flex items-center justify-center text-amber-700 dark:text-amber-300 shadow-inner">
             <Upload className="w-7 h-7 animate-pulse" />
           </div>
-          <h4 className="text-base font-semibold text-gray-900 mb-1">
+          <h4 className="text-base font-semibold text-gray-900 dark:text-cream mb-1">
             اختر أو اسحب مقطع فيديو الريلز هنا
           </h4>
-          <p className="text-xs text-gray-500 max-w-md mx-auto mb-3">
+          <p className="text-xs text-gray-500 dark:text-[#D6C6B1] max-w-md mx-auto mb-3">
             يدعم صيغ MP4, WebM, MOV بحجم يصل حتى {formatFileSize(maxSizeBytes)} مع رفع سحابي مباشر وسريع
           </p>
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors">
@@ -367,17 +367,17 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
 
       {/* SELECTED STATE: Ready to upload */}
       {uploadState === 'selected' && selectedFile && (
-        <div className="border border-amber-200 bg-white rounded-xl p-4 shadow-sm space-y-4">
+        <div className="border border-amber-200 dark:border-amber-800 bg-white dark:bg-[#26160D] rounded-xl p-4 shadow-sm space-y-4">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center text-amber-700">
+              <div className="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center text-amber-700 dark:text-amber-300">
                 <Film className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-900 truncate max-w-xs sm:max-w-md">
+                <p className="text-sm font-semibold text-gray-900 dark:text-cream truncate max-w-xs sm:max-w-md">
                   {selectedFile.name}
                 </p>
-                <div className="flex items-center gap-3 text-xs text-gray-500 mt-0.5">
+                <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-[#D6C6B1] mt-0.5">
                   <span>الحجم: {formatFileSize(selectedFile.size)}</span>
                   <span>•</span>
                   <span>النوع: {selectedFile.type || 'فيديو'}</span>
@@ -387,7 +387,7 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
             <button
               type="button"
               onClick={handleRemoveVideo}
-              className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+              className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg transition-colors"
               title="إلغاء واختيار ملف آخر"
             >
               <X className="w-5 h-5" />
@@ -419,11 +419,11 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
           )}
 
           {/* Upload Button */}
-          <div className="flex items-center justify-between gap-3 pt-2 border-t border-gray-100">
+          <div className="flex items-center justify-between gap-3 pt-2 border-t border-gray-100 dark:border-white/10">
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="text-xs font-medium text-gray-600 hover:text-gray-900 px-3 py-1.5 rounded-md hover:bg-gray-100 transition-colors"
+              className="text-xs font-medium text-gray-600 dark:text-[#D6C6B1] hover:text-gray-900 dark:hover:text-white px-3 py-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
             >
               تغيير الفيديو
             </button>
@@ -442,35 +442,35 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
 
       {/* UPLOADING STATE: Real Progress Indicator */}
       {uploadState === 'uploading' && (
-        <div className="border border-amber-300 bg-amber-50/50 rounded-xl p-5 shadow-sm space-y-4">
+        <div className="border border-amber-300 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/20 rounded-xl p-5 shadow-sm space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-lg bg-amber-600 text-white flex items-center justify-center shadow-xs">
                 <Loader2 className="w-5 h-5 animate-spin" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                <h4 className="text-sm font-bold text-gray-900 dark:text-cream flex items-center gap-2">
                   <span>جاري رفع الفيديو سحابياً...</span>
                   {totalChunks > 1 && (
-                    <span className="text-[11px] font-normal px-2 py-0.5 bg-amber-200/80 text-amber-900 rounded-full font-sans">
+                    <span className="text-[11px] font-normal px-2 py-0.5 bg-amber-200/80 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 rounded-full font-sans">
                       الجزء {currentChunk} من {totalChunks}
                     </span>
                   )}
                 </h4>
-                <p className="text-xs text-amber-800 mt-0.5">
+                <p className="text-xs text-amber-800 dark:text-amber-200 mt-0.5">
                   تم نقل {formatFileSize(loadedBytes)} من إجمالي {formatFileSize(totalBytes)} (مباشر إلى Cloudinary)
                 </p>
               </div>
             </div>
             <div className="text-left">
-              <span className="text-xl font-extrabold text-amber-700 tabular-nums">
+              <span className="text-xl font-extrabold text-amber-700 dark:text-amber-300 tabular-nums">
                 {progressPercent}%
               </span>
             </div>
           </div>
 
           {/* Real progress track */}
-          <div className="relative w-full h-3 bg-amber-200/70 rounded-full overflow-hidden shadow-inner">
+          <div className="relative w-full h-3 bg-amber-200/70 dark:bg-amber-900/50 rounded-full overflow-hidden shadow-inner">
             <div
               className="h-full bg-gradient-to-r from-amber-500 to-amber-600 rounded-full transition-all duration-150 ease-out"
               style={{ width: `${progressPercent}%` }}
@@ -478,13 +478,13 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
           </div>
 
           <div className="flex items-center justify-between text-xs">
-            <span className="text-gray-500 font-medium truncate max-w-[200px]">
+            <span className="text-gray-500 dark:text-[#D6C6B1] font-medium truncate max-w-[200px]">
               {selectedFile?.name}
             </span>
             <button
               type="button"
               onClick={handleCancelUpload}
-              className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-50 hover:bg-red-100 text-red-700 font-semibold rounded-md transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-50 dark:bg-red-950/40 hover:bg-red-100 dark:hover:bg-red-900/60 text-red-700 dark:text-red-300 font-semibold rounded-md transition-colors"
             >
               <X className="w-3.5 h-3.5" />
               <span>إلغاء الرفع</span>
@@ -495,25 +495,25 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
 
       {/* UPLOADED STATE: Exact 100% bytes transfer confirmation */}
       {uploadState === 'uploaded' && (
-        <div className="border border-emerald-300 bg-emerald-50/60 rounded-xl p-5 shadow-sm space-y-4">
+        <div className="border border-emerald-300 dark:border-emerald-800 bg-emerald-50/60 dark:bg-emerald-950/20 rounded-xl p-5 shadow-sm space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-lg bg-emerald-600 text-white flex items-center justify-center shadow-xs">
                 <CheckCircle2 className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-emerald-950">تم رفع الفيديو 100%</h4>
-                <p className="text-xs text-emerald-800 mt-0.5">
+                <h4 className="text-sm font-bold text-emerald-950 dark:text-emerald-200">تم رفع الفيديو 100%</h4>
+                <p className="text-xs text-emerald-800 dark:text-emerald-300 mt-0.5">
                   تم استلام كامل بيانات الفيديو بنجاح وجاري بدء المعالجة السحابية...
                 </p>
               </div>
             </div>
-            <span className="text-sm font-bold text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-full font-sans">
+            <span className="text-sm font-bold text-emerald-700 dark:text-emerald-200 bg-emerald-100 dark:bg-emerald-900/50 px-2.5 py-1 rounded-full font-sans">
               100%
             </span>
           </div>
 
-          <div className="relative w-full h-3 bg-emerald-200/70 rounded-full overflow-hidden">
+          <div className="relative w-full h-3 bg-emerald-200/70 dark:bg-emerald-900/50 rounded-full overflow-hidden">
             <div className="h-full w-full bg-emerald-600 rounded-full" />
           </div>
         </div>
@@ -521,25 +521,25 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
 
       {/* PROCESSING STATE: 100% Uploaded, Cloudinary / Server processing */}
       {uploadState === 'processing' && (
-        <div className="border border-blue-200 bg-blue-50/60 rounded-xl p-5 shadow-sm space-y-4">
+        <div className="border border-blue-200 dark:border-blue-800 bg-blue-50/60 dark:bg-blue-950/20 rounded-xl p-5 shadow-sm space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-lg bg-blue-600 text-white flex items-center justify-center shadow-xs">
                 <Sparkles className="w-5 h-5 animate-spin" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-gray-900">جاري معالجة الفيديو...</h4>
-                <p className="text-xs text-blue-800 mt-0.5">
+                <h4 className="text-sm font-bold text-gray-900 dark:text-cream">جاري معالجة الفيديو...</h4>
+                <p className="text-xs text-blue-800 dark:text-blue-200 mt-0.5">
                   جاري ضغط وترميز الفيديو وتجهيز الغلاف سحابياً (لن يتم إعادة رفع الملف)...
                 </p>
               </div>
             </div>
-            <span className="text-xs font-bold text-blue-700 bg-blue-100 px-2.5 py-1 rounded-full">
+            <span className="text-xs font-bold text-blue-700 dark:text-blue-200 bg-blue-100 dark:bg-blue-900/50 px-2.5 py-1 rounded-full">
               قيد التجهيز
             </span>
           </div>
 
-          <div className="relative w-full h-3 bg-blue-200/70 rounded-full overflow-hidden">
+          <div className="relative w-full h-3 bg-blue-200/70 dark:bg-blue-900/50 rounded-full overflow-hidden">
             <div className="h-full w-full bg-blue-600 rounded-full animate-pulse" />
           </div>
         </div>
@@ -547,15 +547,15 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
 
       {/* SUCCESS / COMPLETED STATE: Video successfully stored */}
       {(uploadState === 'success' || uploadState === 'completed') && (
-        <div className="border border-emerald-200 bg-emerald-50/40 rounded-xl p-4 shadow-sm space-y-3">
+        <div className="border border-emerald-200 dark:border-emerald-800 bg-emerald-50/40 dark:bg-emerald-950/20 rounded-xl p-4 shadow-sm space-y-3">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-300 flex items-center justify-center shrink-0">
                 <CheckCircle2 className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-emerald-950">✓ تم رفع الفيديو بنجاح وتوثيقه</h4>
-                <p className="text-xs text-emerald-700">
+                <h4 className="text-sm font-bold text-emerald-950 dark:text-emerald-200">✓ تم رفع الفيديو بنجاح وتوثيقه</h4>
+                <p className="text-xs text-emerald-700 dark:text-emerald-300">
                   تم حفظ الفيديو سحابياً برابط دائم ومؤمن
                 </p>
               </div>
@@ -565,7 +565,7 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={disabled}
-                className="text-xs font-semibold text-emerald-800 hover:text-emerald-950 bg-emerald-100/80 hover:bg-emerald-200 px-2.5 py-1.5 rounded-lg transition-colors"
+                className="text-xs font-semibold text-emerald-800 dark:text-emerald-200 hover:text-emerald-950 dark:hover:text-white bg-emerald-100/80 dark:bg-emerald-900/50 hover:bg-emerald-200 dark:hover:bg-emerald-800 px-2.5 py-1.5 rounded-lg transition-colors"
                 title="استبدال الفيديو"
               >
                 استبدال
@@ -574,7 +574,7 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
                 type="button"
                 onClick={handleRemoveVideo}
                 disabled={disabled}
-                className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg transition-colors"
                 title="حذف الفيديو"
               >
                 <Trash2 className="w-4 h-4" />
@@ -597,8 +597,8 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
           )}
 
           {uploadedPublicId && (
-            <div className="text-[11px] text-gray-500 font-mono bg-white/80 p-2 rounded-lg border border-emerald-100 truncate">
-              <span className="text-gray-400 font-sans">المعرف السحابي: </span>
+            <div className="text-[11px] text-gray-500 dark:text-[#D6C6B1] font-mono bg-white/80 dark:bg-black/20 p-2 rounded-lg border border-emerald-100 dark:border-emerald-900 truncate">
+              <span className="text-gray-400 dark:text-gray-500 font-sans">المعرف السحابي: </span>
               {uploadedPublicId}
             </div>
           )}
@@ -607,14 +607,14 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
 
       {/* ERROR / FAILED STATE */}
       {(uploadState === 'error' || uploadState === 'failed') && (
-        <div className="border border-red-200 bg-red-50/80 rounded-xl p-4 shadow-sm space-y-3">
+        <div className="border border-red-200 dark:border-red-800 bg-red-50/80 dark:bg-red-950/20 rounded-xl p-4 shadow-sm space-y-3">
           <div className="flex items-start gap-3">
             <div className="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center shrink-0 mt-0.5">
               <AlertCircle className="w-5 h-5" />
             </div>
             <div className="flex-1">
-              <h4 className="text-sm font-bold text-red-950">فشل في رفع الفيديو</h4>
-              <p className="text-xs text-red-700 mt-1 leading-relaxed">
+              <h4 className="text-sm font-bold text-red-950 dark:text-red-200">فشل في رفع الفيديو</h4>
+              <p className="text-xs text-red-700 dark:text-red-300 mt-1 leading-relaxed">
                 {errorMessage || 'حدث خطأ غير متوقع أثناء الرفع السحابي. يرجى إعادة المحاولة.'}
               </p>
             </div>
@@ -624,7 +624,7 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="text-xs font-semibold text-gray-600 hover:text-gray-900 px-3 py-1.5 rounded-lg hover:bg-red-100/50 transition-colors"
+              className="text-xs font-semibold text-gray-600 dark:text-[#D6C6B1] hover:text-gray-900 dark:hover:text-white px-3 py-1.5 rounded-lg hover:bg-red-100/50 dark:hover:bg-red-900/40 transition-colors"
             >
               اختيار ملف آخر
             </button>
@@ -644,14 +644,14 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
 
       {/* CANCELLED STATE */}
       {uploadState === 'cancelled' && (
-        <div className="border border-gray-200 bg-gray-50 rounded-xl p-4 text-center space-y-3">
-          <p className="text-sm font-medium text-gray-700">تم إلغاء عملية رفع الفيديو بنجاح</p>
+        <div className="border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded-xl p-4 text-center space-y-3">
+          <p className="text-sm font-medium text-gray-700 dark:text-[#D6C6B1]">تم إلغاء عملية رفع الفيديو بنجاح</p>
           <div className="flex items-center justify-center gap-2">
             {selectedFile && (
               <button
                 type="button"
                 onClick={() => startUpload()}
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-800 bg-amber-100 hover:bg-amber-200 px-3.5 py-1.5 rounded-lg transition-colors"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-800 dark:text-amber-200 bg-amber-100 dark:bg-amber-900/50 hover:bg-amber-200 dark:hover:bg-amber-800 px-3.5 py-1.5 rounded-lg transition-colors"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 <span>بدء الرفع مجدداً</span>
@@ -660,7 +660,7 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="text-xs font-semibold text-gray-600 hover:text-gray-900 bg-white border border-gray-200 px-3.5 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
+              className="text-xs font-semibold text-gray-600 dark:text-[#D6C6B1] hover:text-gray-900 dark:hover:text-white bg-white dark:bg-[#26160D] border border-gray-200 dark:border-white/10 px-3.5 py-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-white/10 transition-colors"
             >
               اختيار فيديو آخر
             </button>
