@@ -8,11 +8,8 @@ import {
   ArrowLeft,
   ArrowUpLeft,
   CalendarDays,
-  ChevronLeft,
-  ChevronRight,
   Compass,
   Crown,
-  Eye,
   Flame,
   Film,
   Landmark,
@@ -21,7 +18,6 @@ import {
   Mountain,
   Package,
   ScrollText,
-  Search,
   Sparkles,
   Store,
   Utensils,
@@ -29,6 +25,8 @@ import {
   X,
   Pencil,
   Save,
+  BookOpen,
+  Feather,
 } from 'lucide-react';
 
 import {
@@ -71,18 +69,18 @@ interface GovernorateEditDraft {
 const toMultilineValue = (value: unknown): string =>
   Array.isArray(value)
     ? value
-      .map((item) => {
-        if (typeof item === 'string') return item;
-        if (!item || typeof item !== 'object') return '';
-        const entry = item as Record<string, unknown>;
-        return typeof entry.name === 'string'
-          ? entry.name
-          : typeof entry.title === 'string'
-            ? entry.title
-            : '';
-      })
-      .filter(Boolean)
-      .join('\n')
+        .map((item) => {
+          if (typeof item === 'string') return item;
+          if (!item || typeof item !== 'object') return '';
+          const entry = item as Record<string, unknown>;
+          return typeof entry.name === 'string'
+            ? entry.name
+            : typeof entry.title === 'string'
+              ? entry.title
+              : '';
+        })
+        .filter(Boolean)
+        .join('\n')
     : typeof value === 'string'
       ? value
       : '';
@@ -98,10 +96,14 @@ const createGovernorateEditDraft = (governorate: WahGovernorate): GovernorateEdi
   famousFor: toMultilineValue(governorate.famousFor),
   coverImage: governorate.coverImage || '',
   gallery: toMultilineValue(governorate.gallery),
-  videos: toMultilineValue(Array.from(new Set([
-    ...(governorate.videoUrl ? [governorate.videoUrl] : []),
-    ...(Array.isArray(governorate.videos) ? governorate.videos : []),
-  ]))),
+  videos: toMultilineValue(
+    Array.from(
+      new Set([
+        ...(governorate.videoUrl ? [governorate.videoUrl] : []),
+        ...(Array.isArray(governorate.videos) ? governorate.videos : []),
+      ])
+    )
+  ),
   capitalCity: governorate.capitalCity || '',
   nickname: governorate.nickname || '',
   region: governorate.region || '',
@@ -122,12 +124,12 @@ const createGovernorateEditDraft = (governorate: WahGovernorate): GovernorateEdi
 const NILE_ORDER_MAP: Record<string, number> = {
   'bani-suef': 1,
   'beni-suef': 1,
-  'minya': 2,
-  'asyut': 3,
-  'sohag': 4,
-  'qena': 5,
-  'luxor': 6,
-  'aswan': 7,
+  minya: 2,
+  asyut: 3,
+  sohag: 4,
+  qena: 5,
+  luxor: 6,
+  aswan: 7,
   'new-valley': 8,
 };
 
@@ -176,7 +178,8 @@ export const GovernorateDetailPage: React.FC = () => {
   const [editDraft, setEditDraft] = useState<GovernorateEditDraft | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
-  const orderNumber = governorate?.nileOrder || (governorate?.order || (governorate?.slug ? NILE_ORDER_MAP[governorate.slug] : 1));
+  const orderNumber =
+    governorate?.nileOrder || (governorate?.order || (governorate?.slug ? NILE_ORDER_MAP[governorate.slug] : 1));
   const orderFormatted = String(orderNumber).padStart(2, '0');
 
   useEffect(() => {
@@ -197,10 +200,7 @@ export const GovernorateDetailPage: React.FC = () => {
         console.error('Failed to load governorate:', error);
 
         if (mounted && !governorate) {
-          addToast?.(
-            'error',
-            'حصلت مشكلة في تحميل بيانات المحافظة'
-          );
+          addToast?.('error', 'حصلت مشكلة في تحميل بيانات المحافظة');
         }
       } finally {
         if (mounted) {
@@ -238,18 +238,24 @@ export const GovernorateDetailPage: React.FC = () => {
           description: season.description,
           coverImage: season.coverImage,
           locationName: season.cityName || season.governorateName,
-          status: season.status || 'approved'
+          status: season.status || 'approved',
         });
       }
     }
     return combined;
   }, [rawEvents, rawSeasons]);
+
   const products = governorate?.products || [];
   const governorateVideos = useMemo(
-    () => Array.from(new Set([
-      ...(governorate?.videoUrl ? [governorate.videoUrl] : []),
-      ...(Array.isArray(governorate?.videos) ? governorate.videos : [])
-    ].filter(Boolean))),
+    () =>
+      Array.from(
+        new Set(
+          [
+            ...(governorate?.videoUrl ? [governorate.videoUrl] : []),
+            ...(Array.isArray(governorate?.videos) ? governorate.videos : []),
+          ].filter(Boolean)
+        )
+      ),
     [governorate?.videoUrl, governorate?.videos]
   );
 
@@ -333,7 +339,7 @@ export const GovernorateDetailPage: React.FC = () => {
         { id: currentUser?.id, role: 'admin' }
       );
 
-      setGovernorate((current: any) => current ? { ...current, ...updated } : updated);
+      setGovernorate((current: any) => (current ? { ...current, ...updated } : updated));
       setIsEditModalOpen(false);
       addToast('تم الحفظ', 'تم تحديث بيانات المحافظة وروابط الفيديوهات', 'success');
     } catch (error: any) {
@@ -345,61 +351,14 @@ export const GovernorateDetailPage: React.FC = () => {
 
   const sections = useMemo(
     () => [
-      {
-        id: 'overview',
-        number: '01',
-        label: 'الحكاية',
-        icon: ScrollText,
-      },
-      {
-        id: 'places',
-        number: '02',
-        label: 'المعالم',
-        icon: Landmark,
-        count: places.length,
-      },
-      {
-        id: 'crafts',
-        number: '03',
-        label: 'الصنايع',
-        icon: Sparkles,
-        count: crafts.length,
-      },
-      {
-        id: 'people',
-        number: '04',
-        label: 'الناس',
-        icon: Users,
-        count: people.length,
-      },
-      {
-        id: 'food',
-        number: '05',
-        label: 'الأكل',
-        icon: Utensils,
-        count: foods.length,
-      },
-      {
-        id: 'events',
-        number: '06',
-        label: 'المواسم',
-        icon: CalendarDays,
-        count: events.length,
-      },
-      {
-        id: 'market',
-        number: '07',
-        label: 'السوق',
-        icon: Store,
-        count: products.length,
-      },
-      {
-        id: 'videos',
-        number: '08',
-        label: 'الفيديوهات',
-        icon: Film,
-        count: governorateVideos.length,
-      },
+      { id: 'overview', number: 'ص ١', label: 'الافتتاحية والحكاية', icon: ScrollText },
+      { id: 'places', number: 'ص ٢', label: 'شواهد ومعالم', icon: Landmark, count: places.length },
+      { id: 'crafts', number: 'ص ٣', label: 'أهل الصنعة', icon: Sparkles, count: crafts.length },
+      { id: 'people', number: 'ص ٤', label: 'سير وتراجم', icon: Users, count: people.length },
+      { id: 'food', number: 'ص ٥', label: 'زاد البيوت', icon: Utensils, count: foods.length },
+      { id: 'events', number: 'ص ٦', label: 'دفتر المواسم', icon: CalendarDays, count: events.length },
+      { id: 'market', number: 'ص ٧', label: 'وكالة الصعيد', icon: Store, count: products.length },
+      { id: 'videos', number: 'ص ٨', label: 'الشريط المصور', icon: Film, count: governorateVideos.length },
     ],
     [
       places.length,
@@ -435,77 +394,89 @@ export const GovernorateDetailPage: React.FC = () => {
   };
 
   const getPersonImage = (person: any) => {
-    if (!person) return 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=700&q=80';
+    if (!person)
+      return 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=700&q=80';
     const candidates = [
       person.avatarUrl,
       person.photoUrl,
       person.imageUrl,
       person.image,
       person.photo,
-      person.coverImage
+      person.coverImage,
     ].filter((u): u is string => typeof u === 'string' && u.trim().length > 0);
 
     const custom = candidates.find((u) => !u.includes('images.unsplash.com') && !u.includes('placeholder'));
     if (custom) return custom;
 
-    return person.avatarUrl || person.photoUrl || candidates[0] || 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=700&q=80';
+    return (
+      person.avatarUrl ||
+      person.photoUrl ||
+      candidates[0] ||
+      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=700&q=80'
+    );
   };
 
   const getFoodTitle = (food: any) => food?.title || food?.name || 'أكلة من الصعيد';
 
   const getPersonTitle = (person: any) =>
-    person?.craftTitle ||
-    person?.craftOrSkill ||
-    person?.titleOrRole ||
-    person?.title ||
-    'شخصية من الصعيد';
+    person?.craftTitle || person?.craftOrSkill || person?.titleOrRole || person?.title || 'شخصية من الصعيد';
 
-  const getEventDate = (event: any) =>
-    event?.eventDate || event?.timeOfYear || event?.startDate || 'موعد الموسم';
+  const getEventDate = (event: any) => event?.eventDate || event?.timeOfYear || event?.startDate || 'موعد الموسم';
+const GOVERNORATE_ARABIC_NAMES: Record<string, string> = {
+  'bani-suef': 'بني سويف',
+  'beni-suef': 'بني سويف',
+  minya: 'المنيا',
+  asyut: 'أسيوط',
+  assiut: 'أسيوط',
+  sohag: 'سوهاج',
+  qena: 'قنا',
+  luxor: 'الأقصر',
+  aswan: 'أسوان',
+  fayoum: 'الفيوم',
+  fayyum: 'الفيوم',
+  'new-valley': 'الوادي الجديد',
+  'red-sea': 'البحر الأحمر',
+};
 
-  if (loading) {
+if (loading) {
+    const loadingGovName =
+      governorate?.name || GOVERNORATE_ARABIC_NAMES[slug.toLowerCase()] || slug;
+
     return (
       <div
         dir="rtl"
-        className="min-h-screen w-full overflow-x-hidden bg-cream text-espresso dark:bg-espresso-900 dark:text-cream transition-colors duration-500"
+        className="min-h-screen w-full overflow-x-hidden bg-[#F5EFE4] text-[#261910] dark:bg-[#16100C] dark:text-[#EFE6D8]"
       >
         <div className="mx-auto flex min-h-screen max-w-7xl items-center justify-center px-5">
-          <div className="text-center">
-            <div className="mx-auto mb-6 h-14 w-14 animate-spin rounded-full border-2 border-[#E0C79B] border-t-[#C99444] dark:border-[#6B3A1F] dark:border-t-[#C99444]" />
-
-            <p className="text-sm font-bold tracking-wide text-[#8C6F53] dark:text-[#D6C6B1]">
-              بنفتح أرشيف المحافظة...
+          <div className="border-y-4 border-double border-[#261910] py-8 px-12 text-center dark:border-[#C99444]">
+            <Feather className="mx-auto mb-3 h-8 w-8 animate-bounce text-[#9E5A24]" />
+            <p className="text-lg font-black">
+              جاري تجهيز العدد الأرشيفي لمحافظة {loadingGovName}...
             </p>
           </div>
         </div>
       </div>
     );
   }
-
   if (!governorate) {
     return (
       <div
         dir="rtl"
-        className="min-h-screen w-full overflow-x-hidden bg-cream text-espresso dark:bg-espresso-900 dark:text-cream transition-colors duration-500"
+        className="min-h-screen w-full overflow-x-hidden bg-[#F5EFE4] text-[#261910] dark:bg-[#16100C] dark:text-[#EFE6D8]"
       >
-        <div className="mx-auto max-w-[1600px] px-5 py-10 sm:px-8 sm:py-14 lg:px-12">
-          <div className="mx-auto max-w-xl rounded-[32px] border border-[#E0C79B] bg-white p-10 text-center shadow-sm dark:border-[#6B3A1F] dark:bg-[#3B1E0E]">
-            <Landmark className="mx-auto mb-5 h-12 w-12 text-primary dark:text-primary-hover" />
-
-            <h1 className="mb-3 text-2xl font-black">
-              المحافظة مش موجودة
-            </h1>
-
-            <p className="mb-7 text-sm leading-7 text-[#8C6F53] dark:text-[#D6C6B1]">
-              حاول ترجع للخريطة واختار محافظة تانية.
+        <div className="mx-auto max-w-xl px-5 py-20 text-center">
+          <div className="border-4 border-double border-[#261910] bg-[#FAF6EE] p-12 dark:border-[#C99444] dark:bg-[#211710]">
+            <BookOpen className="mx-auto mb-4 h-12 w-12 text-[#9E5A24]" />
+            <h1 className="mb-3 text-2xl font-black">هذا العدد غير متوفر حالياً</h1>
+            <p className="mb-7 text-sm text-[#7A6048] dark:text-[#BCA892]">
+              يمكنك العودة لخريطة الصعيد لاختيار محافظة أخرى.
             </p>
-
             <button
               onClick={() => setActivePage('map')}
-              className="inline-flex items-center gap-2 rounded-full bg-[#3B1E0E] px-6 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-primary dark:bg-[#FFF9EE] dark:text-[#3B1E0E] dark:hover:bg-primary-hover dark:hover:text-white"
+              className="inline-flex items-center gap-2 bg-[#261910] px-6 py-3 text-xs font-black text-white dark:bg-[#C99444] dark:text-[#16100C]"
             >
               <ArrowLeft className="h-4 w-4" />
-              رجوع للخريطة
+              العودة للخريطة
             </button>
           </div>
         </div>
@@ -513,200 +484,230 @@ export const GovernorateDetailPage: React.FC = () => {
     );
   }
 
+  const govPattern = (governorate?.name && GOVERNORATE_PATTERN_CONFIG[governorate.name]) || {
+    position: '0px 0px',
+    transform: 'none',
+    scale: 460,
+  };
+
   return (
     <div
       dir="rtl"
-      className="min-h-screen w-full overflow-x-hidden bg-cream text-espresso dark:bg-espresso-900 dark:text-cream transition-colors duration-500"
+      className="min-h-screen w-full overflow-x-hidden bg-[#F5EFE4] text-[#261910] dark:bg-[#150E0A] dark:text-[#F0E6D8] transition-colors duration-500"
     >
       {/* =========================================================
-          HERO — MUSEUM EXHIBITION
+          BROADSHEET MASTHEAD (ترويسة الجورنال الأرشيفي)
       ========================================================= */}
+      <header className="relative w-full px-3 pt-4 sm:px-6 sm:pt-6 lg:px-10 lg:pt-10 2xl:px-16">
+        {/* Top Utility Strip */}
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#261910]/30 pb-3 text-xs font-bold dark:border-[#C99444]/30">
+          <button
+            onClick={() => setActivePage('map')}
+            className="group inline-flex items-center gap-2 font-black text-[#261910] transition hover:text-primary dark:text-[#F0E6D8] dark:hover:text-[#C99444]"
+          >
+            <ArrowLeft className="h-4 w-4 transition group-hover:-translate-x-1" />
+            <span>العودة إلى أطلس وخريطة الصعيد</span>
+          </button>
 
-      <section className="relative px-4 pb-8 pt-4 sm:px-6 lg:px-8 lg:pt-8">
-        <div className="mx-auto max-w-[1500px]">
-          <div className="relative min-h-[620px] overflow-hidden rounded-[32px] bg-[#3B1E0E] shadow-[0_30px_80px_rgba(36,30,26,0.18)] dark:bg-[#3B1E0E] sm:rounded-[42px] lg:min-h-[680px]">
-            {/* Image */}
-            <div className="absolute inset-0 lg:left-[29%]">
-              <img
-                src={getImage(governorate)}
-                alt={governorate.name}
-                className="h-full w-full object-cover"
-              />
+          <div className="flex items-center gap-4">
+            <span className="hidden text-[#7A6048] dark:text-[#BCA892] sm:inline">
+              سلسلة وثائق التراث المصري — إصدار خاص غير دوري
+            </span>
 
-              <div className="absolute inset-0 bg-gradient-to-l from-[#3B1E0E] via-[#3B1E0E]/75 to-transparent lg:from-[#3B1E0E] lg:via-[#3B1E0E]/40 lg:to-transparent" />
+            {isAdmin && (
+              <button
+                type="button"
+                onClick={openGovernorateEditor}
+                className="inline-flex items-center gap-1.5 bg-primary px-4 py-1.5 text-xs font-black text-white transition hover:bg-primary-hover"
+              >
+                <Pencil className="h-3.5 w-3.5" />
+                <span>تحرير العدد</span>
+              </button>
+            )}
+          </div>
+        </div>
 
-              <div className="absolute inset-0 bg-gradient-to-t from-[#3B1E0E]/90 via-transparent to-[#3B1E0E]/10" />
+        {/* Publication Nameplate */}
+        <div className="mt-4 border-y-4 border-double border-[#261910] py-3 text-center dark:border-[#C99444]">
+          <div className="grid items-center gap-2 text-xs font-bold sm:grid-cols-3">
+            <div className="text-right hidden sm:block">
+              <span>العدد التذكاري رقم ({orderFormatted})</span>
+              <span className="mx-2">•</span>
+              <span>{governorate.nileSegment || 'إقليم الصعيد'}</span>
             </div>
 
-            {/* Decorative museum line */}
-            <div className="absolute bottom-8 right-8 top-8 hidden w-px bg-white/15 lg:block" />
+            <div className="text-center text-sm font-black tracking-[0.15em] text-[#9E5A24] dark:text-[#C99444]">
+              ✦ جورنال أرشيف وَهْ للتراث ✦
+            </div>
 
-            {/* Authentic WAH Heritage Pattern — بصمة فريدة لكل محافظة مع لغة بصرية موحدة */}
-            {(() => {
-              const govPattern = (governorate?.name && GOVERNORATE_PATTERN_CONFIG[governorate.name]) || {
-                position: '0px 0px',
-                transform: 'none',
-                scale: 460
-              };
-              return (
-                <div
-                  className="pointer-events-none absolute inset-0 opacity-[0.065] mix-blend-screen"
-                  style={{
-                    backgroundImage: "url('/pattern/pat2.png')",
-                    backgroundRepeat: 'repeat',
-                    backgroundSize: `${govPattern.scale}px auto`,
-                    backgroundPosition: govPattern.position,
-                    transform: govPattern.transform
-                  }}
-                  aria-hidden="true"
-                />
-              );
-            })()}
-
-            {/* Content */}
-            <div className="relative z-10 flex min-h-[620px] flex-col justify-between p-6 sm:p-10 lg:min-h-[680px] lg:w-[57%] lg:p-16">
-              <div className="flex items-start justify-between gap-5">
-                <div>
-                  <div className="mb-3 flex items-center gap-3 text-xs font-bold tracking-[0.2em] text-white/55">
-                    <span className="h-px w-10 bg-[#C99444]" />
-                    ARCHIVE {orderFormatted}
-                  </div>
-
-                  <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold text-white/80 backdrop-blur-md">
-                    <Compass className="h-3.5 w-3.5" />
-                    أرشيف الصعيد
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  {isAdmin && (
-                    <button
-                      type="button"
-                      onClick={openGovernorateEditor}
-                      className="flex h-11 items-center gap-2 rounded-full border border-white/20 bg-primary px-4 text-xs font-bold text-white shadow-lg transition hover:bg-primary-hover"
-                    >
-                      <Pencil className="h-4 w-4" />
-                      <span className="hidden sm:inline">تعديل بيانات المحافظة</span>
-                      <span className="sm:hidden">تعديل</span>
-                    </button>
-                  )}
-                  <button
-                    onClick={() => setActivePage('map')}
-                    className="group flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur-md transition hover:bg-white hover:text-[#3B1E0E]"
-                    aria-label="رجوع"
-                  >
-                    <ArrowLeft className="h-5 w-5 transition group-hover:-translate-x-0.5" />
-                  </button>
-                </div>
-              </div>
-
-              <div className="max-w-2xl">
-                <div className="mb-5 flex items-end gap-4">
-                  <span className="text-[72px] font-black leading-none tracking-[-0.08em] text-white/10 sm:text-[110px]">
-                    {orderFormatted}
-                  </span>
-
-                  <div className="mb-2 h-px flex-1 bg-white/15" />
-                </div>
-
-                <p className="mb-4 text-sm font-bold text-[#E8B19D]">
-                  {governorate.capitalCity
-                    ? `العاصمة • ${governorate.capitalCity}`
-                    : 'من أرشيف الصعيد'}
-                </p>
-
-                <h1 className="max-w-3xl text-5xl font-black leading-[0.95] tracking-[-0.045em] text-white sm:text-7xl lg:text-[92px]">
-                  {governorate.name}
-                </h1>
-
-                <p className="mt-7 max-w-xl text-base leading-8 text-white/70 sm:text-lg">
-                  {governorate.shortIntro ||
-                    'حكاية مكان، وذاكرة ناس، وتراث لسه عايش.'}
-                </p>
-
-                <div className="mt-9 flex flex-wrap gap-3">
-                  <button
-                    onClick={() => scrollToSection('places')}
-                    className="group inline-flex items-center gap-2 rounded-full bg-espresso text-white dark:bg-cream dark:text-espresso px-6 py-3.5 text-sm font-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary dark:hover:bg-primary dark:hover:text-white cursor-pointer shadow-md"                  >
-                    اكتشف المعالم
-                    <ArrowLeft className="h-4 w-4 transition group-hover:-translate-x-1" />
-                  </button>
-
-                  <button
-                    onClick={() => scrollToSection('market')}
-                    className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-6 py-3.5 text-sm font-bold text-white backdrop-blur-md transition hover:bg-white/15"
-                  >
-                    <Store className="h-4 w-4" />
-                    سوق المحافظة
-                  </button>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3 pt-8 sm:grid-cols-4">
-                {[
-                  ['المعالم', places.length],
-                  ['الصنايع', crafts.length],
-                  ['الناس', people.length],
-                  ['الأكلات', foods.length],
-                ].map(([label, count]) => (
-                  <div
-                    key={String(label)}
-                    className="border-r border-white/15 pr-4 first:border-r-0"
-                  >
-                    <div className="text-2xl font-black text-white sm:text-3xl">
-                      {count}
-                    </div>
-                    <div className="mt-1 text-xs font-bold text-white/45">
-                      {label}
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <div className="text-left hidden sm:block">
+              <span>الحاضرة: {governorate.capitalCity || governorate.name}</span>
+              <span className="mx-2">•</span>
+              <span>وثيقة معتمدة</span>
             </div>
           </div>
         </div>
-      </section>
+
+        {/* Giant Headline Banner */}
+        <div className="relative overflow-hidden border-b-2 border-[#261910] py-8 text-center dark:border-[#C99444]/60 sm:py-12">
+          <div
+            className="pointer-events-none absolute inset-0 opacity-[0.045]"
+            style={{
+              backgroundImage: "url('/pattern/pat2.png')",
+              backgroundRepeat: 'repeat',
+              backgroundSize: `${govPattern.scale}px auto`,
+              backgroundPosition: govPattern.position,
+            }}
+            aria-hidden="true"
+          />
+
+          {governorate.nickname && (
+            <div className="mb-3 inline-block border border-[#261910] bg-[#EAE0CE] px-4 py-1 text-xs font-black dark:border-[#C99444] dark:bg-[#261910] dark:text-[#C99444]">
+              ملف خاص عن «{governorate.nickname}»
+            </div>
+          )}
+<br />
+<br />
+          <h1 className="break-words text-4xl font-black leading-tight tracking-tight text-[#261910] dark:text-white sm:text-6xl sm:leading-none md:text-8xl lg:text-[110px]">
+            محافظة {governorate.name}
+          </h1>
+
+          <p className="mx-auto mt-5 max-w-3xl text-base font-bold leading-8 text-[#5C4532] dark:text-[#D5C5B0] sm:text-xl">
+            {governorate.shortIntro || 'حكاية مكان، وذاكرة ناس، وتراث لسه عايش في كل شارع وبيت.'}
+          </p>
+        </div>
+
+        {/* =====================================================
+            FRONT-PAGE 3-COLUMN NEWSPAPER GRID
+        ===================================================== */}
+        <div className="grid border-b-4 border-double border-[#261910] dark:border-[#C99444] lg:grid-cols-12">
+          {/* Right Column (3 cols): Identity & Key Facts */}
+          <div className="flex flex-col justify-between border-b border-[#261910]/30 p-4 dark:border-[#C99444]/30 sm:p-6 lg:col-span-3 lg:border-b-0 lg:border-l">
+            <div>
+              <div className="mb-4 border-b-2 border-[#261910] pb-2 text-xs font-black uppercase dark:border-[#C99444]">
+                بطاقة تعريف الإقليم
+              </div>
+
+              <dl className="space-y-3 text-xs">
+                <div className="flex justify-between border-b border-dashed border-[#261910]/20 pb-2 dark:border-white/10">
+                  <dt className="font-bold text-[#7A6048] dark:text-[#BCA892]">ترتيب النيل:</dt>
+                  <dd className="font-black">المحطة رقم {orderFormatted}</dd>
+                </div>
+                <div className="flex justify-between border-b border-dashed border-[#261910]/20 pb-2 dark:border-white/10">
+                  <dt className="font-bold text-[#7A6048] dark:text-[#BCA892]">العاصمة:</dt>
+                  <dd className="font-black">{governorate.capitalCity || governorate.name}</dd>
+                </div>
+                <div className="flex justify-between border-b border-dashed border-[#261910]/20 pb-2 dark:border-white/10">
+                  <dt className="font-bold text-[#7A6048] dark:text-[#BCA892]">النطاق:</dt>
+                  <dd className="font-black">{governorate.nileSegment || 'صعيد مصر'}</dd>
+                </div>
+                <div className="flex justify-between pb-1">
+                  <dt className="font-bold text-[#7A6048] dark:text-[#BCA892]">المصدر:</dt>
+                  <dd className="font-black">{governorate.sourceName || 'أرشيف وه'}</dd>
+                </div>
+              </dl>
+
+              {(governorate.famousFor || []).length > 0 && (
+                <div className="mt-6">
+                  <div className="mb-2.5 text-xs font-black text-[#9E5A24] dark:text-[#C99444]">
+                    علامات مسجلة باسم المحافظة:
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {(governorate.famousFor || []).map((item: any, idx: number) => (
+                      <span
+                        key={idx}
+                        className="border border-[#261910]/40 bg-[#EAE0CE] px-2.5 py-1 text-[11px] font-bold dark:border-[#C99444]/40 dark:bg-[#261910]"
+                      >
+                        {typeof item === 'string' ? item : item?.name || item?.title}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-8 border-t-2 border-[#261910] pt-4 text-[11px] leading-6 text-[#6E543C] dark:border-[#C99444] dark:text-[#BCA892]">
+              يُحفظ هذا السجل ضمن مشروع توثيق التراث العمراني والشعبي لمحافظات صعيد مصر.
+            </div>
+          </div>
+
+          {/* Center Column (6 cols): Main Archival Photograph */}
+          <div className="border-b border-[#261910]/30 p-3 dark:border-[#C99444]/30 sm:p-6 lg:col-span-6 lg:border-b-0 lg:border-l">
+            <div className="overflow-hidden border-2 border-[#261910] bg-[#261910] p-2 dark:border-[#C99444]">
+              <div className="relative aspect-[16/10] overflow-hidden">
+                <img
+                  src={getImage(governorate)}
+                  alt={governorate.name}
+                  className="h-full w-full object-cover contrast-[1.05] sepia-[0.1]"
+                />
+              </div>
+            </div>
+            <div className="mt-3 flex items-center justify-between text-xs font-bold text-[#6E543C] dark:text-[#BCA892]">
+              <span>▲ صورة أرشيفية توثق ملامح العمارة والحياة في محافظة {governorate.name}.</span>
+              <span className="font-mono text-[11px]">ARCHIVE-IMG #{orderFormatted}</span>
+            </div>
+          </div>
+
+          {/* Left Column (3 cols): Table of Contents / Issue Index */}
+          <div className="flex flex-col justify-between p-4 sm:p-6 lg:col-span-3">
+            <div>
+              <div className="mb-4 border-b-2 border-[#261910] pb-2 text-xs font-black uppercase dark:border-[#C99444]">
+                فهرس أبواب العدد
+              </div>
+
+              <div className="divide-y divide-dashed divide-[#261910]/25 dark:divide-white/15">
+                {sections.map((sec) => (
+                  <button
+                    key={sec.id}
+                    onClick={() => scrollToSection(sec.id)}
+                    className="group flex w-full items-center justify-between py-2.5 text-right transition hover:pr-1.5"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] font-black text-[#9E5A24] dark:text-[#C99444]">{sec.number}</span>
+                      <span className="text-xs font-black group-hover:underline">{sec.label}</span>
+                    </div>
+                    {typeof sec.count === 'number' && (
+                      <span className="bg-[#EAE0CE] px-2 py-0.5 text-[10px] font-black dark:bg-[#261910] dark:text-[#C99444]">
+                        {sec.count} مادة
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <button
+              onClick={() => scrollToSection('market')}
+              className="mt-6 flex w-full items-center justify-center gap-2 border-2 border-[#261910] bg-[#261910] py-3 text-xs font-black text-white transition hover:bg-primary dark:border-[#C99444] dark:bg-[#C99444] dark:text-[#150E0A]"
+            >
+              <Store className="h-4 w-4" />
+              تصفح وكالة وسوق المحافظة
+            </button>
+          </div>
+        </div>
+      </header>
 
       {/* =========================================================
-          MUSEUM INDEX
+          STICKY NEWSPAPER RIBBON
       ========================================================= */}
-
-      <div className="sticky top-0 z-40 border-y border-black/10 bg-cream/90 backdrop-blur-xl dark:border-white/10 dark:bg-espresso-900/90">
-        <div className="mx-auto max-w-[1500px]">
-          <div className="no-scrollbar flex overflow-x-auto">
+      <div className="sticky top-0 z-40 border-b-2 border-[#261910] bg-[#EFE7D8]/95 backdrop-blur-md dark:border-[#C99444] dark:bg-[#1E140E]/95">
+        <div className="w-full px-3 sm:px-6 lg:px-10 2xl:px-16">
+          <div className="no-scrollbar flex items-center divide-x divide-x-reverse divide-[#261910]/20 overflow-x-auto dark:divide-white/15">
             {sections.map((section) => {
-              const Icon = section.icon;
               const active = activeSection === section.id;
-
               return (
                 <button
                   key={section.id}
                   onClick={() => scrollToSection(section.id)}
-                  className={`group flex min-w-max items-center gap-3 border-l border-[#E0C79B] px-4 py-4 text-right transition first:border-l-0 dark:border-[#6B3A1F] sm:px-6 ${active
-                    ? 'bg-[#3B1E0E] text-white dark:bg-[#FFF9EE] dark:text-[#3B1E0E]'
-                    : 'text-[#8C6F53] hover:bg-white hover:text-[#3B1E0E] dark:text-[#D6C6B1] dark:hover:bg-[#3B1E0E] dark:hover:text-white'
-                    }`}
+                  className={`flex min-w-max items-center gap-2 px-5 py-3 text-xs font-black transition ${
+                    active
+                      ? 'bg-[#261910] text-white dark:bg-[#C99444] dark:text-[#150E0A]'
+                      : 'text-[#5C4532] hover:bg-[#E2D6C1] dark:text-[#D5C5B0] dark:hover:bg-[#2C1E15]'
+                  }`}
                 >
-                  <span className="text-[10px] font-black opacity-40">
-                    {section.number}
-                  </span>
-
-                  <Icon className="h-4 w-4" />
-
-                  <span className="text-xs font-black">
-                    {section.label}
-                  </span>
-
-                  {typeof section.count === 'number' && (
-                    <span
-                      className={`rounded-full px-2 py-0.5 text-[10px] font-black ${active
-                        ? 'bg-white/10'
-                        : 'bg-[#EEE6DE] dark:bg-[#2A211D]'
-                        }`}
-                    >
-                      {section.count}
-                    </span>
-                  )}
+                  <span className="opacity-65">{section.number}:</span>
+                  <span>{section.label}</span>
+                  {typeof section.count === 'number' && <span>({section.count})</span>}
                 </button>
               );
             })}
@@ -714,485 +715,356 @@ export const GovernorateDetailPage: React.FC = () => {
         </div>
       </div>
 
-      <main className="mx-auto max-w-[1500px] px-4 sm:px-6 lg:px-8">
+      {/* =========================================================
+          MAIN NEWSPAPER PAGES
+      ========================================================= */}
+      <main className="w-full px-3 py-8 sm:px-6 sm:py-12 lg:px-10 lg:py-16 2xl:px-16">
         {/* =======================================================
-            OVERVIEW
+            PAGE 01: EDITORIAL STORY (الافتتاحية والحكاية)
         ======================================================= */}
+        <section id="overview" className="scroll-mt-20 pb-20">
+          <BroadsheetHeader
+            pageNumber="صفحة (١)"
+            category="الافتتاحية والتاريخ الشفهي"
+            title="المحافظة مش مجرد حدود.. دي ذاكرة ناس وحجر"
+          />
 
-        <section
-          id="overview"
-          className="scroll-mt-20 py-16 sm:py-24 lg:py-32"
-        >
-          <div className="grid gap-10 lg:grid-cols-[0.8fr_1.8fr] lg:gap-20">
-            <div>
-              <div className="mb-5 flex items-center gap-3 text-xs font-black tracking-[0.18em] text-primary dark:text-primary-hover">
-                <span>01</span>
-                <span className="h-px w-10 bg-current" />
-                الحكاية
-              </div>
-
-              <h2 className="max-w-md text-4xl font-black leading-tight tracking-[-0.035em] sm:text-5xl">
-                المحافظة مش مجرد مكان.
-                <span className="block text-primary dark:text-primary-hover">
-                  دي ذاكرة.
-                </span>
-              </h2>
-
-              <p className="mt-6 max-w-md text-sm leading-8 text-[#8C6F53] dark:text-[#D6C6B1]">
-                رحلة جوه تفاصيل المكان، من الحجر والشارع لحد الصنعة والحكاية
-                والأكل والناس.
-              </p>
-            </div>
-
-            <div className="relative">
-              <div className="absolute -right-3 top-6 h-full w-px bg-[#E0C79B] dark:bg-[#6B3A1F]" />
-
-              <div className="pr-7 sm:pr-12">
-                <span className="text-6xl font-black leading-none text-[#3B1E0E]/10 dark:text-white/10 sm:text-8xl">
-                  “
-                </span>
-
-                <p className="mt-[-18px] text-2xl font-bold leading-[1.8] tracking-[-0.02em] text-[#332A24] dark:text-[#F3E8DF] sm:text-3xl lg:text-4xl">
+          <div className="mt-8 grid gap-8 lg:grid-cols-12">
+            {/* Lead Article Text */}
+            <div className="lg:col-span-8">
+              <div className="border-l-0 border-[#261910]/25 lg:border-l lg:pl-8 dark:border-white/15">
+                <p className="text-xl font-bold leading-[2.1] text-[#261910] dark:text-[#F0E6D8] sm:text-2xl">
+                  <span className="float-right ml-3 mt-1 bg-[#261910] px-3 py-1 text-3xl font-black text-[#F5EFE4] dark:bg-[#C99444] dark:text-[#150E0A]">
+                    فـ
+                  </span>
                   {governorate.history ||
                     governorate.shortIntro ||
-                    'كل شارع هنا شايل حكاية، وكل حكاية بتفتح باب على جزء من تاريخ الصعيد.'}
+                    'ي كل زاوية من زوايا هذه المحافظة العريقة تقف الشواهد التاريخية جنباً إلى جنب مع الحكايات الشعبية المتوارثة، لتصنع نسيجاً ثقافياً فريداً يحفظ للصعيد هويته الأصيلة عبر القرون.'}
                 </p>
+              </div>
+            </div>
 
-                <div className="mt-9 flex flex-wrap gap-3">
-                  {(governorate.famousFor || [])
-                    .slice(0, 5)
-                    .map((item: any, index: number) => (
-                      <span
-                        key={index}
-                        className="rounded-full border border-[#E0C79B] bg-white px-4 py-2 text-xs font-bold text-[#8C6F53] dark:border-[#6B3A1F] dark:bg-[#3B1E0E] dark:text-[#D6C6B1]"
-                      >
-                        {typeof item === 'string'
-                          ? item
-                          : item?.name || item?.title}
-                      </span>
-                    ))}
+            {/* Side Pull-Quote & Cultural Pillars */}
+            <div className="flex flex-col justify-between gap-6 lg:col-span-4">
+              <blockquote className="border-y-2 border-[#261910] bg-[#EAE0CE]/60 p-6 dark:border-[#C99444] dark:bg-[#221710]">
+                <div className="mb-2 text-xs font-black text-[#9E5A24] dark:text-[#C99444]">
+                  ✦ من طباع وهوية المكان
                 </div>
+                <p className="text-base font-black leading-8">
+                  «
+                  {typeof governorate.culturalTraditions === 'string'
+                    ? governorate.culturalTraditions
+                    : Array.isArray(governorate.culturalTraditions) && governorate.culturalTraditions.length > 0
+                      ? governorate.culturalTraditions.join(' • ')
+                      : 'تقاليد متوارثة بتتغير مع الزمن من غير ما تفقد روحها وأصالتها.'}
+                  »
+                </p>
+              </blockquote>
+
+              <div className="border border-[#261910]/30 bg-[#FAF6EE] p-5 dark:border-[#C99444]/30 dark:bg-[#1E140E]">
+                <div className="mb-1 text-xs font-black text-[#9E5A24] dark:text-[#C99444]">الموقع والمزاج العام</div>
+                <p className="text-xs font-bold leading-6 text-[#5C4532] dark:text-[#D5C5B0]">
+                  {governorate.shortIntro || 'جغرافيا النيل والجبل صنعت شخصية المكان الفريدة.'}
+                </p>
               </div>
             </div>
           </div>
-
-          {/* Cultural strip */}
-          {governorate.culturalTraditions && (
-            <div className="mt-16 grid gap-5 lg:grid-cols-3">
-              {[
-                {
-                  icon: Crown,
-                  title: 'الهوية',
-                  text:
-                    typeof governorate.culturalTraditions === 'string'
-                      ? governorate.culturalTraditions
-                      : 'تقاليد متوارثة بتتغير مع الزمن من غير ما تفقد روحها.',
-                },
-                {
-                  icon: Mountain,
-                  title: 'المكان',
-                  text: governorate.shortIntro || 'جغرافيا صنعت شخصية المكان.',
-                },
-                {
-                  icon: Flame,
-                  title: 'الذاكرة',
-                  text:
-                    governorate.history ||
-                    'حكايات متوارثة من جيل لجيل.',
-                },
-              ].map((item) => {
-                const Icon = item.icon;
-
-                return (
-                  <div
-                    key={item.title}
-                    className="group rounded-[28px] border border-[#E0C79B] bg-white p-7 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-[#3B1E0E]/5 dark:border-[#6B3A1F] dark:bg-[#3B1E0E] dark:hover:shadow-black/20"
-                  >
-                    <Icon className="mb-8 h-6 w-6 text-primary dark:text-primary-hover" />
-
-                    <h3 className="mb-3 text-lg font-black">
-                      {item.title}
-                    </h3>
-
-                    <p className="text-sm leading-7 text-[#8C6F53] dark:text-[#D6C6B1]">
-                      {item.text}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-          )}
         </section>
 
         {/* =======================================================
-            PLACES
+            PAGE 02: PLACES (تحقيق مصور: المعالم)
         ======================================================= */}
-
-        <section id="places" className="scroll-mt-20 py-16 sm:py-24">
-          <SectionHeading
-            number="02"
-            eyebrow="PLACES"
-            title="أماكن تستاهل تتشاف"
-            description="من المعابد للمساجد والأديرة والقرى، كل مكان له شخصية وحكاية."
-            icon={Landmark}
+        <section id="places" className="scroll-mt-20 pb-20">
+          <BroadsheetHeader
+            pageNumber="صفحة (٢)"
+            category="تحقيق مصور • شواهد العمارة والتاريخ"
+            title="أماكن ومعالم تستاهل تتشاف"
+            count={places.length}
           />
 
           {places.length > 0 ? (
-            <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-12">
-              {places.slice(0, 6).map((place: HeritagePlace, index: number) => {
-                const large = index === 0 || index === 3;
-
-                return (
-                  <button
-                    key={place.id || place.slug || index}
-                    onClick={() => navigateToPlace(place.slug || place.id)}
-                    className={`group relative overflow-hidden rounded-[30px] text-right ${large
-                      ? 'min-h-[480px] lg:col-span-7'
-                      : 'min-h-[330px] lg:col-span-5'
-                      }`}
-                  >
-                    <img
-                      src={getImage(place)}
-                      alt={place.title}
-                      className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
-                    />
-
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-transparent" />
-
-                    <div className="absolute left-6 top-6">
-                      <span className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/20 text-xs font-black text-white backdrop-blur-md">
-                        {String(index + 1).padStart(2, '0')}
-                      </span>
+            <div className="mt-8 grid border-t border-r border-[#261910] dark:border-[#C99444]/50 md:grid-cols-2 lg:grid-cols-3">
+              {places.slice(0, 6).map((place: HeritagePlace, index: number) => (
+                <button
+                  key={place.id || place.slug || index}
+                  onClick={() => navigateToPlace(place.slug || place.id)}
+                  className="group flex flex-col justify-between border-b border-l border-[#261910] bg-[#FAF6EE] p-6 text-right transition hover:bg-[#EAE0CE] dark:border-[#C99444]/50 dark:bg-[#1D140E] dark:hover:bg-[#281C14]"
+                >
+                  <div>
+                    <div className="mb-3 flex items-center justify-between text-xs font-black text-[#9E5A24] dark:text-[#C99444]">
+                      <span>شاهد رقم ({index + 1})</span>
+                      <span>{place.governorateName || governorate.name}</span>
                     </div>
 
-                    <div className="absolute right-6 top-6 flex flex-wrap items-center gap-2">
+                    <div className="relative aspect-[16/10] overflow-hidden border border-[#261910] dark:border-[#C99444]/40">
+                      <img
+                        src={getImage(place)}
+                        alt={place.title}
+                        className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                      />
                       {place.visitInfo?.visitStatus && place.visitInfo.visitStatus !== 'open' && (
-                        <span
-                          className={`rounded-full px-3 py-1 text-[10px] font-black shadow-lg ${place.visitInfo.visitStatus === 'closed_to_public'
-                            ? 'bg-red-600/90 text-white border border-red-400/40'
-                            : place.visitInfo.visitStatus === 'closed_for_restoration'
-                              ? 'bg-amber-600/90 text-white border border-amber-400/40'
-                              : place.visitInfo.visitStatus === 'public_landmark'
-                                ? 'bg-emerald-600/90 text-white border border-emerald-400/40'
-                                : place.visitInfo.visitStatus === 'active_institution'
-                                  ? 'bg-indigo-600/90 text-white border border-indigo-400/40'
-                                  : 'bg-orange-600/90 text-white border border-orange-400/40'
-                            }`}
-                        >
-                          {place.visitInfo.visitStatus === 'closed_to_public' && ' مغلق أمام الجمهور'}
-                          {place.visitInfo.visitStatus === 'closed_for_restoration' && ' مغلق للترميم'}
-                          {place.visitInfo.visitStatus === 'public_landmark' && ' معلم عام مفتوح'}
-                          {place.visitInfo.visitStatus === 'active_institution' && ' صرح تعليمي وديني'}
-                          {place.visitInfo.visitStatus === 'requires_safari_permit' && ' محمية وسفاري'}
+                        <span className="absolute right-2 top-2 bg-[#261910] px-2.5 py-1 text-[10px] font-black text-white">
+                          {place.visitInfo.visitStatus === 'closed_to_public' && 'مغلق للجمهور'}
+                          {place.visitInfo.visitStatus === 'closed_for_restoration' && 'تحت الترميم'}
+                          {place.visitInfo.visitStatus === 'public_landmark' && 'معلم مفتوح'}
+                          {place.visitInfo.visitStatus === 'active_institution' && 'صرح نشط'}
+                          {place.visitInfo.visitStatus === 'requires_safari_permit' && 'تصريح سفاري'}
                         </span>
                       )}
                     </div>
 
-                    <div className="absolute inset-x-6 bottom-6">
-                      <div className="mb-3 flex items-center gap-2 text-xs font-bold text-white/60">
-                        <MapPin className="h-3.5 w-3.5" />
-                        {place.governorateName || governorate.name}
-                      </div>
+                    <h3 className="mt-4 text-2xl font-black group-hover:underline">{place.title}</h3>
 
-                      <h3 className="text-2xl font-black text-white sm:text-3xl">
-                        {place.title}
-                      </h3>
-
-                      <div className="mt-4 flex items-center gap-2 text-xs font-bold text-white/70 transition group-hover:text-white">
-                        اكتشف المكان
-                        <ArrowLeft className="h-4 w-4 transition group-hover:-translate-x-1" />
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          ) : (
-            <EmptyState text="لسه بنضيف معالم المحافظة للأرشيف." />
-          )}
-        </section>
-
-        {/* =======================================================
-            CRAFTS
-        ======================================================= */}
-
-        <section id="crafts" className="scroll-mt-20 py-16 sm:py-24">
-          <SectionHeading
-            number="03"
-            eyebrow="CRAFTS"
-            title="الصنعة لسه عايشة"
-            description="إيد بتشتغل، وخبرة بتتنقل، وتفاصيل اتولدت في الصعيد ولسه مستمرة."
-            icon={Sparkles}
-          />
-
-          {crafts.length > 0 ? (
-            <div className="mt-12 divide-y divide-[#E0C79B] border-y border-[#E0C79B] dark:divide-[#6B3A1F] dark:border-[#6B3A1F]">
-              {crafts.slice(0, 7).map((craft: CulturalCraft, index: number) => (
-                <button
-                  key={craft.id || craft.slug || index}
-                  onClick={() => navigateToCraft(craft.slug || craft.id)}
-                  className="group grid w-full grid-cols-[60px_92px_1fr_auto] items-center gap-4 py-5 text-right transition hover:px-3 sm:grid-cols-[80px_150px_1fr_auto] sm:gap-6"
-                >
-                  <span className="text-xs font-black text-primary dark:text-primary-hover">
-                    {String(index + 1).padStart(2, '0')}
-                  </span>
-
-                  <div className="h-20 overflow-hidden rounded-2xl sm:h-24">
-                    <img
-                      src={getImage(craft)}
-                      alt={craft.title}
-                      className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
-                    />
-                  </div>
-
-                  <div>
-                    <h3 className="text-lg font-black sm:text-2xl">
-                      {craft.title || 'حرفة تراثية'}
-                    </h3>
-
-                    <p className="mt-1 line-clamp-2 text-xs leading-6 text-[#8C6F53] dark:text-[#D6C6B1] sm:text-sm">
-                      {craft.shortDescription ||
-                        craft.history ||
-                        'صنعة متوارثة من أهل المكان.'}
+                    <p className="mt-2 line-clamp-3 text-xs font-bold leading-6 text-[#5C4532] dark:text-[#BCA892]">
+                      {place.shortDescription || 'أحد أبرز المعالم التاريخية والتراثية الموثقة داخل المحافظة.'}
                     </p>
                   </div>
 
-                  <ArrowLeft className="hidden h-5 w-5 text-[#8C6F53] transition group-hover:-translate-x-1 group-hover:text-primary dark:group-hover:text-[#C99444] sm:block" />
+                  <div className="mt-5 flex items-center justify-between border-t border-dashed border-[#261910]/30 pt-3 text-xs font-black dark:border-white/15">
+                    <span>اقرأ التقرير الكامل للمعلم</span>
+                    <ArrowUpLeft className="h-4 w-4" />
+                  </div>
                 </button>
               ))}
             </div>
           ) : (
-            <EmptyState text="لسه بنوثق صنايع المحافظة." />
+            <EmptyState text="لم يتم إدراج معالم في هذا الباب بعد." />
           )}
         </section>
 
         {/* =======================================================
-            PEOPLE
+            PAGE 03: CRAFTS (ملف الصنايع والحرف)
         ======================================================= */}
+        <section id="crafts" className="scroll-mt-20 pb-20">
+          <BroadsheetHeader
+            pageNumber="صفحة (٣)"
+            category="ملف الإنتاج المحلي والمهارات اليدوية"
+            title="الصنعة لسه عايشة في إيد أهلها"
+            count={crafts.length}
+          />
 
-        <section id="people" className="scroll-mt-20 py-16 sm:py-24">
-          <SectionHeading
-            number="04"
-            eyebrow="PEOPLE"
-            title="الناس هم التراث"
-            description="أصحاب الصنعة، الرواة، والشخصيات اللي بتحافظ على روح المكان."
-            icon={Users}
+          {crafts.length > 0 ? (
+            <div className="mt-8 grid gap-6 md:grid-cols-2">
+              {crafts.slice(0, 8).map((craft: CulturalCraft, index: number) => (
+                <button
+                  key={craft.id || craft.slug || index}
+                  onClick={() => navigateToCraft(craft.slug || craft.id)}
+                  className="group flex flex-col overflow-hidden border-2 border-[#261910] bg-[#FAF6EE] text-right transition hover:bg-[#EAE0CE] dark:border-[#C99444]/50 dark:bg-[#1D140E] sm:flex-row"
+                >
+                  <div className="h-48 w-full shrink-0 overflow-hidden border-b border-[#261910] sm:h-auto sm:w-44 sm:border-b-0 sm:border-l dark:border-[#C99444]/50">
+                    <img
+                      src={getImage(craft)}
+                      alt={craft.title}
+                      className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                    />
+                  </div>
+
+                  <div className="flex flex-1 flex-col justify-between p-5">
+                    <div>
+                      <span className="text-[11px] font-black text-[#9E5A24] dark:text-[#C99444]">
+                        حرفة تقليدية • رقم ({index + 1})
+                      </span>
+                      <h3 className="mt-1 text-xl font-black group-hover:underline">{craft.title || 'حرفة تراثية'}</h3>
+                      <p className="mt-2 line-clamp-2 text-xs font-bold leading-6 text-[#5C4532] dark:text-[#BCA892]">
+                        {craft.shortDescription || craft.history || 'صنعة متوارثة من أهل المكان.'}
+                      </p>
+                    </div>
+
+                    <div className="mt-4 flex items-center gap-1 text-xs font-black text-[#261910] dark:text-[#C99444]">
+                      <span>مطالعة تفاصيل الصنعة</span>
+                      <ArrowLeft className="h-3.5 w-3.5 transition group-hover:-translate-x-1" />
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <EmptyState text="لم يتم إدراج حرف يدوية في هذا الباب بعد." />
+          )}
+        </section>
+
+        {/* =======================================================
+            PAGE 04: PEOPLE (سير وتراجم أهل المكان)
+        ======================================================= */}
+        <section id="people" className="scroll-mt-20 pb-20">
+          <BroadsheetHeader
+            pageNumber="صفحة (٤)"
+            category="باب السير والتراجم الشعبية"
+            title="الناس هم التراث.. وجوه صنعت ذاكرة المكان"
+            count={people.length}
           />
 
           {people.length > 0 ? (
-            <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-8 grid border-t border-r border-[#261910] dark:border-[#C99444]/50 sm:grid-cols-2 lg:grid-cols-4">
               {people.slice(0, 8).map((person: LocalPerson, index: number) => (
                 <button
                   key={person.id || person.slug || index}
                   onClick={() => navigateToPerson(person.slug || person.id)}
-                  className="group overflow-hidden rounded-[28px] border border-[#E0C79B] bg-white text-right transition hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5 dark:border-[#6B3A1F] dark:bg-[#3B1E0E] dark:hover:shadow-black/20"
+                  className="group flex flex-col justify-between border-b border-l border-[#261910] bg-[#FAF6EE] p-5 text-right transition hover:bg-[#EAE0CE] dark:border-[#C99444]/50 dark:bg-[#1D140E]"
                 >
-                  <div className="relative aspect-[4/5] overflow-hidden">
-                    <img
-                      src={getPersonImage(person)}
-                      alt={person.name}
-                      className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
-                    />
+                  <div>
+                    <div className="aspect-[4/4.2] overflow-hidden border border-[#261910] dark:border-[#C99444]/40">
+                      <img
+                        src={getPersonImage(person)}
+                        alt={person.name}
+                        className="h-full w-full object-cover grayscale-[20%] transition duration-500 group-hover:scale-105 group-hover:grayscale-0"
+                      />
+                    </div>
 
-                    <span className="absolute left-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-black/25 text-xs font-black text-white backdrop-blur-md">
-                      {String(index + 1).padStart(2, '0')}
-                    </span>
+                    <div className="mt-4">
+                      <span className="text-[11px] font-black text-[#9E5A24] dark:text-[#C99444]">
+                        {getPersonTitle(person)}
+                      </span>
+                      <h3 className="mt-1 text-xl font-black group-hover:underline">
+                        {person.name || 'شخصية من المحافظة'}
+                      </h3>
+                      <p className="mt-2 line-clamp-3 text-xs font-bold leading-6 text-[#5C4532] dark:text-[#BCA892]">
+                        {person.bio || person.biography || 'واحد من الناس اللي شايلين ذاكرة المكان.'}
+                      </p>
+                    </div>
                   </div>
 
-                  <div className="p-5">
-                    <h3 className="text-lg font-black">
-                      {person.name || 'شخصية من المحافظة'}
-                    </h3>
-
-                    <p className="mt-1 text-xs font-bold text-primary dark:text-primary-hover">
-                      {getPersonTitle(person)}
-                    </p>
-
-                    <p className="mt-3 line-clamp-2 text-xs leading-6 text-[#8C6F53] dark:text-[#D6C6B1]">
-                      {person.bio ||
-                        person.biography ||
-                        'واحد من الناس اللي شايلين ذاكرة المكان.'}
-                    </p>
+                  <div className="mt-4 border-t border-dashed border-[#261910]/30 pt-2.5 text-xs font-black dark:border-white/15">
+                    قراءة السيرة الكاملة ←
                   </div>
                 </button>
               ))}
             </div>
           ) : (
-            <EmptyState text="لسه بنوثق الشخصيات المؤثرة." />
+            <EmptyState text="لم يتم إدراج سير وتراجم في هذا الباب بعد." />
           )}
         </section>
 
         {/* =======================================================
-            FOOD
+            PAGE 05: FOOD (زاد البيوت والمطبخ الصعيدي)
         ======================================================= */}
-
-        <section id="food" className="scroll-mt-20 py-16 sm:py-24">
-          <SectionHeading
-            number="05"
-            eyebrow="FOOD"
-            title="طعم المكان"
-            description="الأكل جزء من الحكاية، وكل وصفة ليها مناسبة وذاكرة."
-            icon={Utensils}
+        <section id="food" className="scroll-mt-20 pb-20">
+          <BroadsheetHeader
+            pageNumber="صفحة (٥)"
+            category="ملحق المائدة التراثية"
+            title="طعم المكان.. وصفات من خزين البيوت"
+            count={foods.length}
           />
 
           {foods.length > 0 ? (
-            <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {foods.slice(0, 8).map((food: UpperEgyptFood, index: number) => (
                 <button
                   key={food.id || food.slug || index}
                   onClick={() => navigateToFood(food.slug || food.id)}
-                  className="group relative min-h-[330px] overflow-hidden rounded-[28px] text-right"
+                  className="group border-2 border-[#261910] bg-[#FAF6EE] p-4 text-right transition hover:-translate-y-1 dark:border-[#C99444]/50 dark:bg-[#1D140E]"
                 >
-                  <img
-                    src={getImage(food)}
-                    alt={getFoodTitle(food)}
-                    className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
-                  />
-
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
-
-                  <div className="absolute left-5 top-5">
-                    <span className="rounded-full bg-white/10 px-3 py-1.5 text-[10px] font-black text-white backdrop-blur-md">
-                      {food.category ||
-                        food.occasionOrTradition ||
-                        'أكلة شعبية'}
+                  <div className="relative aspect-[4/3] overflow-hidden border border-[#261910] dark:border-[#C99444]/40">
+                    <img
+                      src={getImage(food)}
+                      alt={getFoodTitle(food)}
+                      className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                    />
+                    <span className="absolute right-2 top-2 bg-[#261910] px-2.5 py-0.5 text-[10px] font-black text-white">
+                      {food.category || food.occasionOrTradition || 'أكلة شعبية'}
                     </span>
                   </div>
 
-                  <div className="absolute inset-x-5 bottom-5">
-                    <div className="mb-2 text-[10px] font-black tracking-widest text-white/45">
-                      FOOD {String(index + 1).padStart(2, '0')}
-                    </div>
-
-                    <h3 className="text-xl font-black text-white">
-                      {getFoodTitle(food)}
-                    </h3>
-
-                    <p className="mt-2 line-clamp-2 text-xs leading-6 text-white/65">
-                      {food.story ||
-                        food.originStory ||
-                        food.description ||
-                        'طعم من ذاكرة المكان.'}
-                    </p>
-                  </div>
+                  <h3 className="mt-3.5 text-lg font-black group-hover:underline">{getFoodTitle(food)}</h3>
+                  <p className="mt-1.5 line-clamp-2 text-xs font-bold leading-6 text-[#5C4532] dark:text-[#BCA892]">
+                    {food.story || food.originStory || food.description || 'طعم من ذاكرة المكان.'}
+                  </p>
                 </button>
               ))}
             </div>
           ) : (
-            <EmptyState text="لسه بنوثق أكلات المحافظة." />
+            <EmptyState text="لم يتم إدراج وصفات في هذا الباب بعد." />
           )}
         </section>
 
         {/* =======================================================
-            EVENTS
+            PAGE 06: EVENTS (روزنامة المواسم)
         ======================================================= */}
-
-        <section id="events" className="scroll-mt-20 py-16 sm:py-24">
-          <SectionHeading
-            number="06"
-            eyebrow="SEASONS"
+        <section id="events" className="scroll-mt-20 pb-20">
+          <BroadsheetHeader
+            pageNumber="صفحة (٦)"
+            category="الروزنامة السنوية والموالد"
             title="المواسم اللي بتجمع الناس"
-            description="مناسبات وأحداث بتحرك الذاكرة وتجمع أهل المكان."
-            icon={CalendarDays}
+            count={events.length}
           />
 
           {events.length > 0 ? (
-            <div className="mt-12 border-y border-[#E0C79B] dark:border-[#6B3A1F]">
+            <div className="mt-8 divide-y-2 divide-[#261910] border-y-2 border-[#261910] dark:divide-[#C99444]/50 dark:border-[#C99444]/50">
               {events.slice(0, 7).map((event: CulturalEvent, index: number) => (
                 <button
                   key={event.id || event.slug || index}
                   onClick={() => navigateToEvent(event.slug || event.id)}
-                  className="group grid w-full gap-5 border-b border-[#E0C79B] py-7 text-right last:border-b-0 dark:border-[#6B3A1F] md:grid-cols-[120px_1fr_auto] md:items-center"
+                  className="group grid w-full items-center gap-4 py-6 text-right transition hover:bg-[#EAE0CE]/60 dark:hover:bg-[#221710] md:grid-cols-[200px_1fr_auto] md:px-4"
                 >
                   <div>
-                    <div className="text-2xl font-black text-primary dark:text-primary-hover">
-                      {String(index + 1).padStart(2, '0')}
-                    </div>
-
-                    <div className="mt-1 text-[10px] font-bold text-[#8B7D73] dark:text-[#8F8178]">
+                    <span className="inline-block bg-[#261910] px-3 py-1 text-xs font-black text-white dark:bg-[#C99444] dark:text-[#150E0A]">
                       {getEventDate(event)}
-                    </div>
+                    </span>
                   </div>
 
                   <div>
-                    <h3 className="text-xl font-black transition group-hover:text-primary dark:group-hover:text-[#C99444]">
+                    <h3 className="text-xl font-black group-hover:underline">
                       {event.title || 'فعالية من المحافظة'}
                     </h3>
-
-                    <p className="mt-2 line-clamp-2 text-sm leading-7 text-[#8C6F53] dark:text-[#D6C6B1]">
-                      {event.description ||
-                        'موعد من مواسم المكان.'}
+                    <p className="mt-1.5 line-clamp-2 text-xs font-bold leading-6 text-[#5C4532] dark:text-[#BCA892]">
+                      {event.description || 'موعد من مواسم المكان.'}
                     </p>
                   </div>
 
-                  <ArrowLeft className="hidden h-5 w-5 text-[#8C6F53] transition group-hover:-translate-x-1 group-hover:text-primary dark:group-hover:text-[#C99444] md:block" />
+                  <ArrowLeft className="hidden h-5 w-5 transition group-hover:-translate-x-1 md:block" />
                 </button>
               ))}
             </div>
           ) : (
-            <EmptyState text="لسه بنضيف مواسم وأحداث المحافظة." />
+            <EmptyState text="لم يتم إدراج مواسم في هذا الباب بعد." />
           )}
         </section>
 
         {/* =======================================================
-            MARKET
+            PAGE 07: MARKET (إعلانات وكالة الصعيد)
         ======================================================= */}
-
-        <section id="market" className="scroll-mt-20 py-16 sm:py-24 lg:py-32">
-          <div className="relative overflow-hidden rounded-[36px] bg-[#3B1E0E] p-7 text-white sm:p-10 lg:p-14 dark:bg-[#3B1E0E]">
-            <div className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full border border-white/10" />
-            <div className="pointer-events-none absolute -left-12 -top-12 h-48 w-48 rounded-full border border-white/10" />
-
-            <div className="relative z-10 flex flex-col justify-between gap-10 lg:flex-row lg:items-end">
-              <div className="max-w-2xl">
-                <div className="mb-5 flex items-center gap-3 text-xs font-black tracking-[0.18em] text-[#E8B19D]">
-                  <span>07</span>
-                  <span className="h-px w-10 bg-[#C99444]" />
-                  MARKET
+        <section id="market" className="scroll-mt-20 pb-20">
+          <div className="border-4 border-double border-[#261910] bg-[#EAE0CE] p-7 dark:border-[#C99444] dark:bg-[#221710] sm:p-10">
+            <div className="flex flex-col justify-between gap-6 border-b-2 border-[#261910] pb-6 dark:border-[#C99444] lg:flex-row lg:items-end">
+              <div>
+                <div className="text-xs font-black text-[#9E5A24] dark:text-[#C99444]">
+                  صفحة (٧) • وكالة وسوق الحرفيين بمحافظة {governorate.name}
                 </div>
-
-                <h2 className="text-4xl font-black tracking-[-0.035em] sm:text-6xl">
-                  خد حتة من الحكاية معاك.
-                </h2>
-
-                <p className="mt-5 max-w-xl text-sm leading-8 text-white/60 sm:text-base">
-                  منتجات من أهل الصعيد، معمولة بإيد أصحابها، وكل قطعة وراها
-                  قصة.
+                <h2 className="mt-2 text-3xl font-black sm:text-5xl">خد حتة من الحكاية معاك</h2>
+                <p className="mt-2 max-w-xl text-sm font-bold leading-7 text-[#5C4532] dark:text-[#D5C5B0]">
+                  معروضات أصلية من شغل إيد الحرفيين في {governorate.name}، متاحة للشراء المباشر.
                 </p>
               </div>
 
               <button
                 onClick={() => setActivePage('market')}
-                className="group inline-flex w-fit items-center gap-3 rounded-full bg-white px-7 py-4 text-sm font-black text-[#3B1E0E] transition hover:-translate-y-1 hover:bg-[#C99444] hover:text-white dark:text-white dark:hover:bg-[#C99444] "
+                className="inline-flex w-fit items-center gap-2 bg-[#261910] px-7 py-4 text-xs font-black text-white transition hover:bg-primary dark:bg-[#C99444] dark:text-[#150E0A]"
               >
                 <Store className="h-4 w-4" />
-                ادخل السوق
-                <ArrowLeft className="h-4 w-4 transition group-hover:-translate-x-1" />
+                الدخول إلى السوق العام
               </button>
             </div>
 
             {products.length > 0 && (
-              <div className="relative z-10 mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
                 {products.slice(0, 4).map((product: Product, index: number) => (
                   <button
                     key={product.id || index}
                     onClick={() => navigateToProduct(product.id)}
-                    className="group overflow-hidden rounded-[24px] border border-white/10 bg-white/5 text-right backdrop-blur-sm transition hover:bg-white/10"
+                    className="group border-2 border-[#261910] bg-[#FAF6EE] p-3 text-right transition hover:-translate-y-1 dark:border-[#C99444]/50 dark:bg-[#16100C]"
                   >
-                    <div className="aspect-square overflow-hidden">
+                    <div className="aspect-square overflow-hidden border border-[#261910]/30">
                       <img
                         src={getImage(product)}
                         alt={product.title}
-                        className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                       />
                     </div>
-
-                    <div className="p-4">
-                      <div className="mb-1 text-[10px] font-bold text-white/40">
+                    <div className="pt-3">
+                      <div className="text-[10px] font-black text-[#9E5A24] dark:text-[#C99444]">
                         {product.categoryName || 'منتج تراثي'}
                       </div>
-
-                      <h3 className="line-clamp-1 text-sm font-black text-white">
+                      <h3 className="mt-1 line-clamp-1 text-sm font-black group-hover:underline">
                         {product.title || 'منتج من الصعيد'}
                       </h3>
                     </div>
@@ -1203,30 +1075,70 @@ export const GovernorateDetailPage: React.FC = () => {
           </div>
         </section>
 
+        {/* =======================================================
+            PAGE 08: VIDEOS
+        ======================================================= */}
+{/* =======================================================
+            PAGE 08: VIDEOS (الشريط المصور والأرشيف السينمائي)
+        ======================================================= */}
         {(governorateVideos.length > 0 || isAdmin) && (
-          <section id="videos" className="scroll-mt-20 py-16 sm:py-24">
-            <VisitorMediaGallery
-              id="governorate-videos"
-              title={`فيديوهات محافظة ${governorate.name}`}
-              entityType="governorate"
-              entityId={governorate.id || governorate.slug}
-              entitySlug={governorate.slug}
-              entityTitle={governorate.name}
-              coverImage={governorate.coverImage}
-              gallery={governorate.gallery || EMPTY_MEDIA_LIST}
-              videoUrl={governorate.videoUrl}
-              videos={governorate.videos || EMPTY_MEDIA_LIST}
-              initialTab="videos"
-              onVideoChange={(videoUrl, videos) => {
-                setGovernorate((current: any) => current
-                  ? { ...current, videoUrl: videoUrl || undefined, videos: videos || [] }
-                  : current);
-              }}
+          <section id="videos" className="scroll-mt-20 pb-10">
+            <BroadsheetHeader
+              pageNumber="صفحة (٨)"
+              category="الأرشيف المرئي والتوثيق الميداني"
+              title={`الشريط المصور لمحافظة ${governorate.name}`}
+              count={governorateVideos.length}
             />
-          </section>
-        )}
-      </main>
 
+            <div className="mt-8 border-2 border-[#261910] bg-[#FAF6EE] p-4 shadow-[6px_6px_0px_#261910] dark:border-[#C99444]/60 dark:bg-[#1D140E] dark:shadow-[6px_6px_0px_#C99444] sm:p-7">
+              {/* Top Archival Film Strip Meta Bar */}
+              <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b-2 border-dashed border-[#261910]/25 pb-4 text-xs font-black text-[#9E5A24] dark:border-[#C99444]/30 dark:text-[#C99444]">
+                <div className="flex items-center gap-2">
+                  <Film className="h-4 w-4" />
+                  <span>وحدة التوثيق السمعي والبصري — أرشيف وَهْ</span>
+                </div>
+
+                <div className="flex items-center gap-3 font-mono text-[11px] text-[#5C4532] dark:text-[#BCA892]">
+                  <span>REEL-REF: #{orderFormatted}-VID</span>
+                  <span>•</span>
+                  <span>{governorateVideos.length} شريط مسجل</span>
+                </div>
+              </div>
+
+              {/* Media Gallery Component Inside Newspaper Frame */}
+              <div className="overflow-hidden border border-[#261910]/20 bg-[#F5EFE4]/60 p-2 dark:border-[#C99444]/20 dark:bg-[#150E0A]/60 sm:p-4">
+                <VisitorMediaGallery
+                  id="governorate-videos"
+                  title={`الشريط المصور لمحافظة ${governorate.name}`}
+                  entityType="governorate"
+                  entityId={governorate.id || governorate.slug}
+                  entitySlug={governorate.slug}
+                  entityTitle={governorate.name}
+                  coverImage={governorate.coverImage}
+                  gallery={governorate.gallery || EMPTY_MEDIA_LIST}
+                  videoUrl={governorate.videoUrl}
+                  videos={governorate.videos || EMPTY_MEDIA_LIST}
+                  initialTab="videos"
+                  onVideoChange={(videoUrl, videos) => {
+                    setGovernorate((current: any) =>
+                      current ? { ...current, videoUrl: videoUrl || undefined, videos: videos || [] } : current
+                    );
+                  }}
+                />
+              </div>
+
+              {/* Bottom Archival Caption Footer */}
+              <div className="mt-5 flex flex-wrap items-center justify-between gap-2 border-t border-[#261910]/20 pt-3 text-[11px] font-bold text-[#6E543C] dark:border-white/10 dark:text-[#BCA892]">
+                <span>▲ المواد الفيلمية والصور المرفقة موثقة ضمن السجل البصري لمحافظة {governorate.name}.</span>
+                <span>نهاية العدد الأرشيفي ({orderFormatted})</span>
+              </div>
+            </div>
+          </section>
+        )}      </main>
+
+      {/* =========================================================
+          ADMIN EDIT MODAL
+      ========================================================= */}
       {isEditModalOpen && editDraft && isAdmin && (
         <div
           className="fixed inset-0 z-[10020] flex items-center justify-center bg-black/75 p-3 backdrop-blur-sm sm:p-6"
@@ -1236,9 +1148,9 @@ export const GovernorateDetailPage: React.FC = () => {
         >
           <form
             onSubmit={handleSaveGovernorate}
-            className="flex max-h-[94vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-[#E0C79B] bg-cream shadow-2xl dark:border-[#6B3A1F] dark:bg-[#1c1a18]"
+            className="flex max-h-[94vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border-2 border-[#261910] bg-[#FAF6EE] shadow-2xl dark:border-[#C99444] dark:bg-[#1c1a18]"
           >
-            <header className="flex items-center justify-between border-b border-[#E0C79B] p-4 sm:p-6 dark:border-[#6B3A1F]">
+            <header className="flex items-center justify-between border-b border-[#C8B396] p-4 sm:p-6 dark:border-[#6B3A1F]">
               <div>
                 <h2 id="governorate-editor-title" className="text-lg font-black">
                   تعديل بيانات محافظة {governorate.name}
@@ -1265,7 +1177,7 @@ export const GovernorateDetailPage: React.FC = () => {
                   required
                   value={editDraft.name}
                   onChange={(event) => setEditDraft({ ...editDraft, name: event.target.value })}
-                  className="mt-1.5 w-full rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                  className="mt-1.5 w-full rounded-xl border border-[#C8B396] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
                 />
               </label>
               <label className="text-xs font-bold">
@@ -1275,7 +1187,7 @@ export const GovernorateDetailPage: React.FC = () => {
                   dir="ltr"
                   value={editDraft.slug}
                   onChange={(event) => setEditDraft({ ...editDraft, slug: event.target.value })}
-                  className="mt-1.5 w-full rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                  className="mt-1.5 w-full rounded-xl border border-[#C8B396] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
                 />
               </label>
               <label className="text-xs font-bold">
@@ -1283,7 +1195,7 @@ export const GovernorateDetailPage: React.FC = () => {
                 <input
                   value={editDraft.capitalCity}
                   onChange={(event) => setEditDraft({ ...editDraft, capitalCity: event.target.value })}
-                  className="mt-1.5 w-full rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                  className="mt-1.5 w-full rounded-xl border border-[#C8B396] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
                 />
               </label>
               <label className="text-xs font-bold">
@@ -1291,7 +1203,7 @@ export const GovernorateDetailPage: React.FC = () => {
                 <input
                   value={editDraft.nickname}
                   onChange={(event) => setEditDraft({ ...editDraft, nickname: event.target.value })}
-                  className="mt-1.5 w-full rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                  className="mt-1.5 w-full rounded-xl border border-[#C8B396] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
                 />
               </label>
               <label className="text-xs font-bold">
@@ -1299,7 +1211,7 @@ export const GovernorateDetailPage: React.FC = () => {
                 <input
                   value={editDraft.region}
                   onChange={(event) => setEditDraft({ ...editDraft, region: event.target.value })}
-                  className="mt-1.5 w-full rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                  className="mt-1.5 w-full rounded-xl border border-[#C8B396] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
                 />
               </label>
               <label className="text-xs font-bold">
@@ -1307,19 +1219,25 @@ export const GovernorateDetailPage: React.FC = () => {
                 <input
                   value={editDraft.nileSegment}
                   onChange={(event) => setEditDraft({ ...editDraft, nileSegment: event.target.value })}
-                  className="mt-1.5 w-full rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                  className="mt-1.5 w-full rounded-xl border border-[#C8B396] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
                 />
               </label>
               <label className="text-xs font-bold">
                 حالة التوثيق
                 <select
                   value={editDraft.status}
-                  onChange={(event) => setEditDraft({ ...editDraft, status: event.target.value as WahGovernorate['status'] })}
-                  className="mt-1.5 w-full rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                  onChange={(event) =>
+                    setEditDraft({ ...editDraft, status: event.target.value as WahGovernorate['status'] })
+                  }
+                  className="mt-1.5 w-full rounded-xl border border-[#C8B396] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
                 >
-                  {['draft', 'pending_review', 'approved', 'rejected', 'archived', 'verified', 'unverified'].map((status) => (
-                    <option key={status} value={status}>{status}</option>
-                  ))}
+                  {['draft', 'pending_review', 'approved', 'rejected', 'archived', 'verified', 'unverified'].map(
+                    (status) => (
+                      <option key={status} value={status}>
+                        {status}
+                      </option>
+                    )
+                  )}
                 </select>
               </label>
               <label className="text-xs font-bold">
@@ -1327,7 +1245,7 @@ export const GovernorateDetailPage: React.FC = () => {
                 <input
                   value={editDraft.sourceName}
                   onChange={(event) => setEditDraft({ ...editDraft, sourceName: event.target.value })}
-                  className="mt-1.5 w-full rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                  className="mt-1.5 w-full rounded-xl border border-[#C8B396] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
                 />
               </label>
               <label className="text-xs font-bold">
@@ -1336,7 +1254,7 @@ export const GovernorateDetailPage: React.FC = () => {
                   value={editDraft.sourceType}
                   onChange={(event) => setEditDraft({ ...editDraft, sourceType: event.target.value })}
                   placeholder="official_gov / unesco / academic"
-                  className="mt-1.5 w-full rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                  className="mt-1.5 w-full rounded-xl border border-[#C8B396] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
                 />
               </label>
               <label className="text-xs font-bold">
@@ -1346,7 +1264,7 @@ export const GovernorateDetailPage: React.FC = () => {
                   dir="ltr"
                   value={editDraft.sourceUrl}
                   onChange={(event) => setEditDraft({ ...editDraft, sourceUrl: event.target.value })}
-                  className="mt-1.5 w-full rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                  className="mt-1.5 w-full rounded-xl border border-[#C8B396] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
                 />
               </label>
               <label className="text-xs font-bold">
@@ -1355,19 +1273,28 @@ export const GovernorateDetailPage: React.FC = () => {
                   type="date"
                   value={editDraft.researchDate}
                   onChange={(event) => setEditDraft({ ...editDraft, researchDate: event.target.value })}
-                  className="mt-1.5 w-full rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                  className="mt-1.5 w-full rounded-xl border border-[#C8B396] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
                 />
               </label>
               <label className="text-xs font-bold">
                 حالة التحقق
                 <select
                   value={editDraft.verificationStatus}
-                  onChange={(event) => setEditDraft({ ...editDraft, verificationStatus: event.target.value as WahGovernorate['status'] })}
-                  className="mt-1.5 w-full rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                  onChange={(event) =>
+                    setEditDraft({
+                      ...editDraft,
+                      verificationStatus: event.target.value as WahGovernorate['status'],
+                    })
+                  }
+                  className="mt-1.5 w-full rounded-xl border border-[#C8B396] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
                 >
-                  {['draft', 'pending_review', 'approved', 'rejected', 'archived', 'verified', 'unverified'].map((status) => (
-                    <option key={status} value={status}>{status}</option>
-                  ))}
+                  {['draft', 'pending_review', 'approved', 'rejected', 'archived', 'verified', 'unverified'].map(
+                    (status) => (
+                      <option key={status} value={status}>
+                        {status}
+                      </option>
+                    )
+                  )}
                 </select>
               </label>
               <label className="text-xs font-bold sm:col-span-2">
@@ -1376,7 +1303,7 @@ export const GovernorateDetailPage: React.FC = () => {
                   rows={2}
                   value={editDraft.shortIntro}
                   onChange={(event) => setEditDraft({ ...editDraft, shortIntro: event.target.value })}
-                  className="mt-1.5 w-full resize-y rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                  className="mt-1.5 w-full resize-y rounded-xl border border-[#C8B396] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
                 />
               </label>
               <label className="text-xs font-bold sm:col-span-2">
@@ -1385,7 +1312,7 @@ export const GovernorateDetailPage: React.FC = () => {
                   rows={4}
                   value={editDraft.history}
                   onChange={(event) => setEditDraft({ ...editDraft, history: event.target.value })}
-                  className="mt-1.5 w-full resize-y rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                  className="mt-1.5 w-full resize-y rounded-xl border border-[#C8B396] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
                 />
               </label>
               <label className="text-xs font-bold">
@@ -1394,7 +1321,7 @@ export const GovernorateDetailPage: React.FC = () => {
                   rows={4}
                   value={editDraft.famousFor}
                   onChange={(event) => setEditDraft({ ...editDraft, famousFor: event.target.value })}
-                  className="mt-1.5 w-full resize-y rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                  className="mt-1.5 w-full resize-y rounded-xl border border-[#C8B396] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
                 />
               </label>
               <label className="text-xs font-bold">
@@ -1403,7 +1330,7 @@ export const GovernorateDetailPage: React.FC = () => {
                   rows={4}
                   value={editDraft.culturalTraditions}
                   onChange={(event) => setEditDraft({ ...editDraft, culturalTraditions: event.target.value })}
-                  className="mt-1.5 w-full resize-y rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                  className="mt-1.5 w-full resize-y rounded-xl border border-[#C8B396] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
                 />
               </label>
               <label className="text-xs font-bold">
@@ -1413,7 +1340,7 @@ export const GovernorateDetailPage: React.FC = () => {
                   dir="ltr"
                   value={editDraft.traditionalCraftsIds}
                   onChange={(event) => setEditDraft({ ...editDraft, traditionalCraftsIds: event.target.value })}
-                  className="mt-1.5 w-full resize-y rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                  className="mt-1.5 w-full resize-y rounded-xl border border-[#C8B396] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
                 />
               </label>
               <label className="text-xs font-bold">
@@ -1423,7 +1350,7 @@ export const GovernorateDetailPage: React.FC = () => {
                   dir="ltr"
                   value={editDraft.traditionalFoodIds}
                   onChange={(event) => setEditDraft({ ...editDraft, traditionalFoodIds: event.target.value })}
-                  className="mt-1.5 w-full resize-y rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                  className="mt-1.5 w-full resize-y rounded-xl border border-[#C8B396] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
                 />
               </label>
               <label className="text-xs font-bold sm:col-span-2">
@@ -1433,7 +1360,7 @@ export const GovernorateDetailPage: React.FC = () => {
                   dir="ltr"
                   value={editDraft.coverImage}
                   onChange={(event) => setEditDraft({ ...editDraft, coverImage: event.target.value })}
-                  className="mt-1.5 w-full rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                  className="mt-1.5 w-full rounded-xl border border-[#C8B396] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
                 />
               </label>
               <label className="text-xs font-bold sm:col-span-2">
@@ -1443,7 +1370,7 @@ export const GovernorateDetailPage: React.FC = () => {
                   dir="ltr"
                   value={editDraft.gallery}
                   onChange={(event) => setEditDraft({ ...editDraft, gallery: event.target.value })}
-                  className="mt-1.5 w-full resize-y rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                  className="mt-1.5 w-full resize-y rounded-xl border border-[#C8B396] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
                 />
               </label>
               <label className="text-xs font-bold sm:col-span-2">
@@ -1454,11 +1381,8 @@ export const GovernorateDetailPage: React.FC = () => {
                   placeholder={'https://www.youtube.com/watch?v=...\nhttps://...'}
                   value={editDraft.videos}
                   onChange={(event) => setEditDraft({ ...editDraft, videos: event.target.value })}
-                  className="mt-1.5 w-full resize-y rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                  className="mt-1.5 w-full resize-y rounded-xl border border-[#C8B396] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
                 />
-                <span className="mt-1 block font-normal text-[#8C6F53] dark:text-[#D6C6B1]">
-                  أول رابط في القائمة سيكون الفيديو الرئيسي. اترك الحقل فارغًا لإزالة كل الروابط.
-                </span>
               </label>
               <label className="text-xs font-bold">
                 خط العرض
@@ -1467,7 +1391,7 @@ export const GovernorateDetailPage: React.FC = () => {
                   step="any"
                   value={editDraft.mapLatitude}
                   onChange={(event) => setEditDraft({ ...editDraft, mapLatitude: event.target.value })}
-                  className="mt-1.5 w-full rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                  className="mt-1.5 w-full rounded-xl border border-[#C8B396] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
                 />
               </label>
               <label className="text-xs font-bold">
@@ -1477,17 +1401,17 @@ export const GovernorateDetailPage: React.FC = () => {
                   step="any"
                   value={editDraft.mapLongitude}
                   onChange={(event) => setEditDraft({ ...editDraft, mapLongitude: event.target.value })}
-                  className="mt-1.5 w-full rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                  className="mt-1.5 w-full rounded-xl border border-[#C8B396] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
                 />
               </label>
             </div>
 
-            <footer className="flex justify-end gap-2 border-t border-[#E0C79B] p-4 dark:border-[#6B3A1F]">
+            <footer className="flex justify-end gap-2 border-t border-[#C8B396] p-4 dark:border-[#6B3A1F]">
               <button
                 type="button"
                 onClick={() => setIsEditModalOpen(false)}
                 disabled={isSaving}
-                className="rounded-xl border border-[#E0C79B] px-4 py-2.5 text-xs font-bold text-[#8C6F53] disabled:opacity-50 dark:border-[#6B3A1F] dark:text-[#D6C6B1]"
+                className="rounded-xl border border-[#C8B396] px-4 py-2.5 text-xs font-bold text-[#8C6F53] disabled:opacity-50 dark:border-[#6B3A1F] dark:text-[#D6C6B1]"
               >
                 إلغاء
               </button>
@@ -1507,43 +1431,31 @@ export const GovernorateDetailPage: React.FC = () => {
       {/* =========================================================
           MOBILE FLOATING INDEX
       ========================================================= */}
-
-      <div className="fixed bottom-5 left-5 z-50 lg:hidden">
+      <div className="fixed bottom-20 left-4 z-50 lg:hidden">
         <button
           onClick={() => setMobileMenuOpen((value) => !value)}
-          className="flex h-14 w-14 items-center justify-center rounded-full bg-[#3B1E0E] text-white shadow-2xl transition hover:scale-105 dark:bg-[#FFF9EE] dark:text-[#3B1E0E]"
-          aria-label="فتح الفهرس"
+          className="flex h-13 w-13 items-center justify-center border-2 border-[#261910] bg-[#FAF6EE] text-[#261910] shadow-xl dark:border-[#C99444] dark:bg-[#1D140E] dark:text-[#C99444]"
+          aria-label="فهرس العدد"
         >
-          {mobileMenuOpen ? (
-            <X className="h-5 w-5" />
-          ) : (
-            <Menu className="h-5 w-5" />
-          )}
+          {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
 
         {mobileMenuOpen && (
-          <div className="absolute bottom-16 left-0 w-60 overflow-hidden rounded-[24px] border border-[#E0C79B] bg-white p-2 shadow-2xl dark:border-[#6B3A1F] dark:bg-[#3B1E0E]">
-            {sections.map((section) => {
-              const Icon = section.icon;
-
-              return (
-                <button
-                  key={section.id}
-                  onClick={() => scrollToSection(section.id)}
-                  className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-right transition hover:bg-[#F6F1EA] dark:hover:bg-[#2A211D]"
-                >
-                  <span className="text-[10px] font-black text-primary dark:text-primary-hover">
-                    {section.number}
-                  </span>
-
-                  <Icon className="h-4 w-4 text-[#8C6F53] dark:text-[#D6C6B1]" />
-
-                  <span className="text-xs font-bold">
-                    {section.label}
-                  </span>
-                </button>
-              );
-            })}
+          <div className="absolute bottom-16 left-0 w-64 border-2 border-[#261910] bg-[#FAF6EE] p-2 shadow-2xl dark:border-[#C99444] dark:bg-[#1D140E]">
+            {sections.map((section) => (
+              <button
+                key={section.id}
+                onClick={() => scrollToSection(section.id)}
+                className="flex w-full items-center justify-between px-3 py-2.5 text-right transition hover:bg-[#EAE0CE] dark:hover:bg-[#281C14]"
+              >
+                <span className="text-xs font-black">
+                  {section.number} — {section.label}
+                </span>
+                {typeof section.count === 'number' && (
+                  <span className="text-[10px] font-bold">({section.count})</span>
+                )}
+              </button>
+            ))}
           </div>
         )}
       </div>
@@ -1552,64 +1464,33 @@ export const GovernorateDetailPage: React.FC = () => {
 };
 
 /* =============================================================
-   SECTION HEADING
+   BROADSHEET SECTION HEADER
 ============================================================= */
 
-interface SectionHeadingProps {
-  number: string;
-  eyebrow: string;
+const BroadsheetHeader: React.FC<{
+  pageNumber: string;
+  category: string;
   title: string;
-  description: string;
-  icon: React.ElementType;
-}
-
-const SectionHeading: React.FC<SectionHeadingProps> = ({
-  number,
-  eyebrow,
-  title,
-  description,
-  icon: Icon,
-}) => {
-  return (
-    <div className="grid gap-7 lg:grid-cols-[170px_1fr] lg:items-end">
-      <div className="flex items-center gap-4 lg:block">
-        <div className="text-5xl font-black leading-none tracking-[-0.06em] text-[#3B1E0E]/10 dark:text-white/10 lg:text-7xl">
-          {number}
-        </div>
-
-        <div className="h-px flex-1 bg-[#E0C79B] dark:bg-[#6B3A1F] lg:mt-7 lg:w-20" />
-      </div>
-
-      <div className="max-w-3xl">
-        <div className="mb-4 flex items-center gap-3 text-[10px] font-black tracking-[0.2em] text-primary dark:text-primary-hover">
-          <Icon className="h-4 w-4" />
-          {eyebrow}
-        </div>
-
-        <h2 className="text-4xl font-black tracking-[-0.04em] sm:text-5xl lg:text-6xl">
-          {title}
-        </h2>
-
-        <p className="mt-4 max-w-2xl text-sm leading-7 text-[#8C6F53] dark:text-[#D6C6B1] sm:text-base">
-          {description}
-        </p>
-      </div>
+  count?: number;
+}> = ({ pageNumber, category, title, count }) => (
+  <div className="border-y-4 border-double border-[#261910] py-4 dark:border-[#C99444]">
+    <div className="mb-2 flex items-center justify-between text-xs font-black text-[#9E5A24] dark:text-[#C99444]">
+      <span>{category}</span>
+      <span>
+        {pageNumber} {typeof count === 'number' ? `• (${count} مادة موثقة)` : ''}
+      </span>
     </div>
-  );
-};
+    <h2 className="text-3xl font-black tracking-tight sm:text-5xl">{title}</h2>
+  </div>
+);
 
 /* =============================================================
    EMPTY STATE
 ============================================================= */
 
-const EmptyState: React.FC<{ text: string }> = ({ text }) => {
-  return (
-    <div className="mt-10 rounded-[28px] border border-dashed border-[#E0C79B] bg-white/50 px-6 py-14 text-center dark:border-[#6B3A1F] dark:bg-[#3B1E0E]/50">
-      <Package className="mx-auto mb-4 h-8 w-8 text-[#8C6F53] dark:text-[#74665D]" />
-
-      <p className="text-sm font-bold text-[#8C6F53] dark:text-[#D6C6B1]">
-        {text}
-      </p>
-    </div>
-  );
-};
+const EmptyState: React.FC<{ text: string }> = ({ text }) => (
+  <div className="mt-8 border-2 border-dashed border-[#261910]/40 bg-[#FAF6EE]/50 px-6 py-14 text-center dark:border-[#C99444]/40 dark:bg-[#1D140E]/50">
+    <Package className="mx-auto mb-3 h-8 w-8 text-[#9E5A24]" />
+    <p className="text-sm font-bold text-[#5C4532] dark:text-[#BCA892]">{text}</p>
+  </div>
+);
