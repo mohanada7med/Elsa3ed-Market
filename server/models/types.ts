@@ -779,6 +779,9 @@ export interface GovernorateDoc {
   famousFor: string[];
   coverImage: string;
   gallery: string[];
+  videoUrl?: string;
+  videos?: string[];
+  videoResearchVersion?: number;
   capitalCity: string;
   nickname?: string;
   region?: 'جنوب الصعيد' | 'وسط الصعيد' | 'شمال الصعيد' | 'الواحات والصحراء الغربية' | 'أقصى جنوب الصعيد';
@@ -862,6 +865,7 @@ export interface HeritagePlaceDoc {
   galleryImages?: string[];
   videoUrl?: string;
   videos?: string[];
+  videoResearchVersion?: number;
   relatedCrafts?: string[];
   coordinates?: { lat: number; lng: number };
   isFeatured?: boolean;
@@ -968,6 +972,9 @@ export interface LocalPersonDoc {
   avatarUrl: string;
   photoUrl?: string;
   imageUrl?: string;
+  videoUrl?: string;
+  videos?: string[];
+  videoResearchVersion?: number;
   quote?: string;
   yearsOfExperience?: number;
   originVillage?: string;
@@ -1047,6 +1054,7 @@ export interface CulturalEventDoc {
   gallery?: string[];
   videoUrl?: string;
   videos?: string[];
+  videoResearchVersion?: number;
   coordinates?: { lat: number; lng: number };
   isFeatured?: boolean;
   status: VerificationStatus;

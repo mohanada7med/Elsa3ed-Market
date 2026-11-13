@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { wahApi } from '../../services/api';
+import { VisitorMediaGallery } from '../common/VisitorMediaGallery';
+import type { WahGovernorate } from '../../types';
 
 import {
   ArrowLeft,
@@ -12,6 +14,7 @@ import {
   Crown,
   Eye,
   Flame,
+  Film,
   Landmark,
   MapPin,
   Menu,
@@ -24,6 +27,8 @@ import {
   Utensils,
   Users,
   X,
+  Pencil,
+  Save,
 } from 'lucide-react';
 
 import {
@@ -34,6 +39,85 @@ import {
   CulturalEvent,
   Product,
 } from '../../types';
+
+const EMPTY_MEDIA_LIST: string[] = [];
+
+interface GovernorateEditDraft {
+  name: string;
+  slug: string;
+  shortIntro: string;
+  history: string;
+  famousFor: string;
+  coverImage: string;
+  gallery: string;
+  videos: string;
+  capitalCity: string;
+  nickname: string;
+  region: string;
+  nileSegment: string;
+  mapLatitude: string;
+  mapLongitude: string;
+  traditionalCraftsIds: string;
+  traditionalFoodIds: string;
+  culturalTraditions: string;
+  status: WahGovernorate['status'];
+  sourceName: string;
+  sourceUrl: string;
+  sourceType: string;
+  researchDate: string;
+  verificationStatus: NonNullable<WahGovernorate['verificationStatus']>;
+}
+
+const toMultilineValue = (value: unknown): string =>
+  Array.isArray(value)
+    ? value
+      .map((item) => {
+        if (typeof item === 'string') return item;
+        if (!item || typeof item !== 'object') return '';
+        const entry = item as Record<string, unknown>;
+        return typeof entry.name === 'string'
+          ? entry.name
+          : typeof entry.title === 'string'
+            ? entry.title
+            : '';
+      })
+      .filter(Boolean)
+      .join('\n')
+    : typeof value === 'string'
+      ? value
+      : '';
+
+const parseMultilineValue = (value: string): string[] =>
+  Array.from(new Set(value.split(/\r?\n/).map((item) => item.trim()).filter(Boolean)));
+
+const createGovernorateEditDraft = (governorate: WahGovernorate): GovernorateEditDraft => ({
+  name: governorate.name || '',
+  slug: governorate.slug || '',
+  shortIntro: governorate.shortIntro || '',
+  history: governorate.history || '',
+  famousFor: toMultilineValue(governorate.famousFor),
+  coverImage: governorate.coverImage || '',
+  gallery: toMultilineValue(governorate.gallery),
+  videos: toMultilineValue(Array.from(new Set([
+    ...(governorate.videoUrl ? [governorate.videoUrl] : []),
+    ...(Array.isArray(governorate.videos) ? governorate.videos : []),
+  ]))),
+  capitalCity: governorate.capitalCity || '',
+  nickname: governorate.nickname || '',
+  region: governorate.region || '',
+  nileSegment: governorate.nileSegment || '',
+  mapLatitude: governorate.mapCoordinates?.lat === undefined ? '' : String(governorate.mapCoordinates.lat),
+  mapLongitude: governorate.mapCoordinates?.lng === undefined ? '' : String(governorate.mapCoordinates.lng),
+  traditionalCraftsIds: toMultilineValue(governorate.traditionalCraftsIds),
+  traditionalFoodIds: toMultilineValue(governorate.traditionalFoodIds),
+  culturalTraditions: toMultilineValue(governorate.culturalTraditions),
+  status: governorate.status || 'approved',
+  sourceName: governorate.sourceName || '',
+  sourceUrl: governorate.sourceUrl || '',
+  sourceType: governorate.sourceType || '',
+  researchDate: governorate.researchDate?.slice(0, 10) || '',
+  verificationStatus: governorate.verificationStatus || governorate.status || 'approved',
+});
 
 const NILE_ORDER_MAP: Record<string, number> = {
   'bani-suef': 1,
@@ -71,8 +155,11 @@ export const GovernorateDetailPage: React.FC = () => {
     navigateToProduct,
     setActivePage,
     addToast,
+    currentUser,
+    currentRole,
   } = useApp();
 
+  const isAdmin = currentRole === 'admin' || currentUser?.role === 'admin';
   const slug =
     selectedGovernorateSlug ||
     (typeof window !== 'undefined' && window.location.pathname.startsWith('/governorates/')
@@ -85,6 +172,9 @@ export const GovernorateDetailPage: React.FC = () => {
   const [loading, setLoading] = useState(() => !cachedGov);
   const [activeSection, setActiveSection] = useState('overview');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editDraft, setEditDraft] = useState<GovernorateEditDraft | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const orderNumber = governorate?.nileOrder || (governorate?.order || (governorate?.slug ? NILE_ORDER_MAP[governorate.slug] : 1));
   const orderFormatted = String(orderNumber).padStart(2, '0');
@@ -155,6 +245,103 @@ export const GovernorateDetailPage: React.FC = () => {
     return combined;
   }, [rawEvents, rawSeasons]);
   const products = governorate?.products || [];
+  const governorateVideos = useMemo(
+    () => Array.from(new Set([
+      ...(governorate?.videoUrl ? [governorate.videoUrl] : []),
+      ...(Array.isArray(governorate?.videos) ? governorate.videos : [])
+    ].filter(Boolean))),
+    [governorate?.videoUrl, governorate?.videos]
+  );
+
+  const openGovernorateEditor = () => {
+    if (!isAdmin || !governorate) return;
+    setEditDraft(createGovernorateEditDraft(governorate as WahGovernorate));
+    setIsEditModalOpen(true);
+  };
+
+  const handleSaveGovernorate = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!isAdmin || !governorate || !editDraft || isSaving) return;
+
+    const videoLinks = parseMultilineValue(editDraft.videos);
+    for (const link of videoLinks) {
+      try {
+        const parsed = new URL(link);
+        if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+          throw new Error();
+        }
+      } catch {
+        addToast('رابط فيديو غير صالح', `تأكد من الرابط: ${link}`, 'error');
+        return;
+      }
+    }
+
+    const hasLatitude = editDraft.mapLatitude.trim() !== '';
+    const hasLongitude = editDraft.mapLongitude.trim() !== '';
+    if (hasLatitude !== hasLongitude) {
+      addToast('إحداثيات غير مكتملة', 'أدخل خط العرض والطول معًا أو اتركهما فارغين', 'error');
+      return;
+    }
+
+    let mapCoordinates: WahGovernorate['mapCoordinates'] | null = null;
+    if (hasLatitude && hasLongitude) {
+      const lat = Number(editDraft.mapLatitude);
+      const lng = Number(editDraft.mapLongitude);
+      if (!Number.isFinite(lat) || lat < -90 || lat > 90 || !Number.isFinite(lng) || lng < -180 || lng > 180) {
+        addToast('إحداثيات غير صالحة', 'خط العرض من -90 إلى 90 والطول من -180 إلى 180', 'error');
+        return;
+      }
+      mapCoordinates = { lat, lng };
+    }
+
+    const name = editDraft.name.trim();
+    const updatedSlug = editDraft.slug.trim();
+    if (!name || !updatedSlug) {
+      addToast('بيانات ناقصة', 'اسم ورابط المحافظة مطلوبان', 'error');
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const updated = await wahApi.updateGovernorate(
+        governorate.id || governorate.slug,
+        {
+          name,
+          slug: updatedSlug,
+          shortIntro: editDraft.shortIntro.trim(),
+          history: editDraft.history.trim(),
+          famousFor: parseMultilineValue(editDraft.famousFor),
+          coverImage: editDraft.coverImage.trim(),
+          gallery: parseMultilineValue(editDraft.gallery),
+          videoUrl: videoLinks[0] || null,
+          videos: videoLinks,
+          capitalCity: editDraft.capitalCity.trim(),
+          nickname: editDraft.nickname.trim(),
+          region: editDraft.region.trim(),
+          nileSegment: editDraft.nileSegment.trim(),
+          mapCoordinates,
+          traditionalCraftsIds: parseMultilineValue(editDraft.traditionalCraftsIds),
+          traditionalFoodIds: parseMultilineValue(editDraft.traditionalFoodIds),
+          culturalTraditions: parseMultilineValue(editDraft.culturalTraditions),
+          status: editDraft.status,
+          sourceName: editDraft.sourceName.trim(),
+          sourceUrl: editDraft.sourceUrl.trim(),
+          sourceType: editDraft.sourceType.trim(),
+          researchDate: editDraft.researchDate,
+          verificationStatus: editDraft.verificationStatus,
+        },
+        { id: currentUser?.id, role: 'admin' }
+      );
+
+      setGovernorate((current: any) => current ? { ...current, ...updated } : updated);
+      setIsEditModalOpen(false);
+      addToast('تم الحفظ', 'تم تحديث بيانات المحافظة وروابط الفيديوهات', 'success');
+    } catch (error: any) {
+      addToast('تعذر الحفظ', error?.message || 'فشل تحديث بيانات المحافظة', 'error');
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const sections = useMemo(
     () => [
@@ -206,6 +393,13 @@ export const GovernorateDetailPage: React.FC = () => {
         icon: Store,
         count: products.length,
       },
+      {
+        id: 'videos',
+        number: '08',
+        label: 'الفيديوهات',
+        icon: Film,
+        count: governorateVideos.length,
+      },
     ],
     [
       places.length,
@@ -214,6 +408,7 @@ export const GovernorateDetailPage: React.FC = () => {
       foods.length,
       events.length,
       products.length,
+      governorateVideos.length,
     ]
   );
 
@@ -383,13 +578,26 @@ export const GovernorateDetailPage: React.FC = () => {
                   </div>
                 </div>
 
-                <button
-                  onClick={() => setActivePage('map')}
-                  className="group flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur-md transition hover:bg-white hover:text-[#3B1E0E]"
-                  aria-label="رجوع"
-                >
-                  <ArrowLeft className="h-5 w-5 transition group-hover:-translate-x-0.5" />
-                </button>
+                <div className="flex items-center gap-2">
+                  {isAdmin && (
+                    <button
+                      type="button"
+                      onClick={openGovernorateEditor}
+                      className="flex h-11 items-center gap-2 rounded-full border border-white/20 bg-primary px-4 text-xs font-bold text-white shadow-lg transition hover:bg-primary-hover"
+                    >
+                      <Pencil className="h-4 w-4" />
+                      <span className="hidden sm:inline">تعديل بيانات المحافظة</span>
+                      <span className="sm:hidden">تعديل</span>
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setActivePage('map')}
+                    className="group flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur-md transition hover:bg-white hover:text-[#3B1E0E]"
+                    aria-label="رجوع"
+                  >
+                    <ArrowLeft className="h-5 w-5 transition group-hover:-translate-x-0.5" />
+                  </button>
+                </div>
               </div>
 
               <div className="max-w-2xl">
@@ -994,7 +1202,307 @@ export const GovernorateDetailPage: React.FC = () => {
             )}
           </div>
         </section>
+
+        {(governorateVideos.length > 0 || isAdmin) && (
+          <section id="videos" className="scroll-mt-20 py-16 sm:py-24">
+            <VisitorMediaGallery
+              id="governorate-videos"
+              title={`فيديوهات محافظة ${governorate.name}`}
+              entityType="governorate"
+              entityId={governorate.id || governorate.slug}
+              entitySlug={governorate.slug}
+              entityTitle={governorate.name}
+              coverImage={governorate.coverImage}
+              gallery={governorate.gallery || EMPTY_MEDIA_LIST}
+              videoUrl={governorate.videoUrl}
+              videos={governorate.videos || EMPTY_MEDIA_LIST}
+              initialTab="videos"
+              onVideoChange={(videoUrl, videos) => {
+                setGovernorate((current: any) => current
+                  ? { ...current, videoUrl: videoUrl || undefined, videos: videos || [] }
+                  : current);
+              }}
+            />
+          </section>
+        )}
       </main>
+
+      {isEditModalOpen && editDraft && isAdmin && (
+        <div
+          className="fixed inset-0 z-[10020] flex items-center justify-center bg-black/75 p-3 backdrop-blur-sm sm:p-6"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="governorate-editor-title"
+        >
+          <form
+            onSubmit={handleSaveGovernorate}
+            className="flex max-h-[94vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-[#E0C79B] bg-cream shadow-2xl dark:border-[#6B3A1F] dark:bg-[#1c1a18]"
+          >
+            <header className="flex items-center justify-between border-b border-[#E0C79B] p-4 sm:p-6 dark:border-[#6B3A1F]">
+              <div>
+                <h2 id="governorate-editor-title" className="text-lg font-black">
+                  تعديل بيانات محافظة {governorate.name}
+                </h2>
+                <p className="mt-1 text-xs text-[#8C6F53] dark:text-[#D6C6B1]">
+                  التغييرات متاحة للأدمن فقط ويتم حفظها مباشرة على بيانات المحافظة.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsEditModalOpen(false)}
+                disabled={isSaving}
+                className="rounded-xl p-2 text-[#8C6F53] transition hover:bg-red-500/10 hover:text-red-600 disabled:opacity-50"
+                aria-label="إغلاق محرر المحافظة"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </header>
+
+            <div className="grid gap-4 overflow-y-auto p-4 sm:grid-cols-2 sm:p-6">
+              <label className="text-xs font-bold">
+                اسم المحافظة *
+                <input
+                  required
+                  value={editDraft.name}
+                  onChange={(event) => setEditDraft({ ...editDraft, name: event.target.value })}
+                  className="mt-1.5 w-full rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                />
+              </label>
+              <label className="text-xs font-bold">
+                الرابط المختصر (Slug) *
+                <input
+                  required
+                  dir="ltr"
+                  value={editDraft.slug}
+                  onChange={(event) => setEditDraft({ ...editDraft, slug: event.target.value })}
+                  className="mt-1.5 w-full rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                />
+              </label>
+              <label className="text-xs font-bold">
+                العاصمة
+                <input
+                  value={editDraft.capitalCity}
+                  onChange={(event) => setEditDraft({ ...editDraft, capitalCity: event.target.value })}
+                  className="mt-1.5 w-full rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                />
+              </label>
+              <label className="text-xs font-bold">
+                اللقب
+                <input
+                  value={editDraft.nickname}
+                  onChange={(event) => setEditDraft({ ...editDraft, nickname: event.target.value })}
+                  className="mt-1.5 w-full rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                />
+              </label>
+              <label className="text-xs font-bold">
+                الإقليم
+                <input
+                  value={editDraft.region}
+                  onChange={(event) => setEditDraft({ ...editDraft, region: event.target.value })}
+                  className="mt-1.5 w-full rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                />
+              </label>
+              <label className="text-xs font-bold">
+                قطاع النيل
+                <input
+                  value={editDraft.nileSegment}
+                  onChange={(event) => setEditDraft({ ...editDraft, nileSegment: event.target.value })}
+                  className="mt-1.5 w-full rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                />
+              </label>
+              <label className="text-xs font-bold">
+                حالة التوثيق
+                <select
+                  value={editDraft.status}
+                  onChange={(event) => setEditDraft({ ...editDraft, status: event.target.value as WahGovernorate['status'] })}
+                  className="mt-1.5 w-full rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                >
+                  {['draft', 'pending_review', 'approved', 'rejected', 'archived', 'verified', 'unverified'].map((status) => (
+                    <option key={status} value={status}>{status}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="text-xs font-bold">
+                اسم المصدر
+                <input
+                  value={editDraft.sourceName}
+                  onChange={(event) => setEditDraft({ ...editDraft, sourceName: event.target.value })}
+                  className="mt-1.5 w-full rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                />
+              </label>
+              <label className="text-xs font-bold">
+                نوع المصدر
+                <input
+                  value={editDraft.sourceType}
+                  onChange={(event) => setEditDraft({ ...editDraft, sourceType: event.target.value })}
+                  placeholder="official_gov / unesco / academic"
+                  className="mt-1.5 w-full rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                />
+              </label>
+              <label className="text-xs font-bold">
+                رابط المصدر
+                <input
+                  type="url"
+                  dir="ltr"
+                  value={editDraft.sourceUrl}
+                  onChange={(event) => setEditDraft({ ...editDraft, sourceUrl: event.target.value })}
+                  className="mt-1.5 w-full rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                />
+              </label>
+              <label className="text-xs font-bold">
+                تاريخ البحث
+                <input
+                  type="date"
+                  value={editDraft.researchDate}
+                  onChange={(event) => setEditDraft({ ...editDraft, researchDate: event.target.value })}
+                  className="mt-1.5 w-full rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                />
+              </label>
+              <label className="text-xs font-bold">
+                حالة التحقق
+                <select
+                  value={editDraft.verificationStatus}
+                  onChange={(event) => setEditDraft({ ...editDraft, verificationStatus: event.target.value as WahGovernorate['status'] })}
+                  className="mt-1.5 w-full rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                >
+                  {['draft', 'pending_review', 'approved', 'rejected', 'archived', 'verified', 'unverified'].map((status) => (
+                    <option key={status} value={status}>{status}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="text-xs font-bold sm:col-span-2">
+                نبذة قصيرة
+                <textarea
+                  rows={2}
+                  value={editDraft.shortIntro}
+                  onChange={(event) => setEditDraft({ ...editDraft, shortIntro: event.target.value })}
+                  className="mt-1.5 w-full resize-y rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                />
+              </label>
+              <label className="text-xs font-bold sm:col-span-2">
+                التاريخ والحكاية
+                <textarea
+                  rows={4}
+                  value={editDraft.history}
+                  onChange={(event) => setEditDraft({ ...editDraft, history: event.target.value })}
+                  className="mt-1.5 w-full resize-y rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                />
+              </label>
+              <label className="text-xs font-bold">
+                تشتهر بـ (كل عنصر في سطر)
+                <textarea
+                  rows={4}
+                  value={editDraft.famousFor}
+                  onChange={(event) => setEditDraft({ ...editDraft, famousFor: event.target.value })}
+                  className="mt-1.5 w-full resize-y rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                />
+              </label>
+              <label className="text-xs font-bold">
+                التقاليد الثقافية (كل عنصر في سطر)
+                <textarea
+                  rows={4}
+                  value={editDraft.culturalTraditions}
+                  onChange={(event) => setEditDraft({ ...editDraft, culturalTraditions: event.target.value })}
+                  className="mt-1.5 w-full resize-y rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                />
+              </label>
+              <label className="text-xs font-bold">
+                روابط الحرف المرتبطة (ID لكل سطر)
+                <textarea
+                  rows={3}
+                  dir="ltr"
+                  value={editDraft.traditionalCraftsIds}
+                  onChange={(event) => setEditDraft({ ...editDraft, traditionalCraftsIds: event.target.value })}
+                  className="mt-1.5 w-full resize-y rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                />
+              </label>
+              <label className="text-xs font-bold">
+                روابط الأكلات المرتبطة (ID لكل سطر)
+                <textarea
+                  rows={3}
+                  dir="ltr"
+                  value={editDraft.traditionalFoodIds}
+                  onChange={(event) => setEditDraft({ ...editDraft, traditionalFoodIds: event.target.value })}
+                  className="mt-1.5 w-full resize-y rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                />
+              </label>
+              <label className="text-xs font-bold sm:col-span-2">
+                رابط صورة الغلاف
+                <input
+                  type="url"
+                  dir="ltr"
+                  value={editDraft.coverImage}
+                  onChange={(event) => setEditDraft({ ...editDraft, coverImage: event.target.value })}
+                  className="mt-1.5 w-full rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                />
+              </label>
+              <label className="text-xs font-bold sm:col-span-2">
+                روابط صور المعرض (رابط لكل سطر)
+                <textarea
+                  rows={3}
+                  dir="ltr"
+                  value={editDraft.gallery}
+                  onChange={(event) => setEditDraft({ ...editDraft, gallery: event.target.value })}
+                  className="mt-1.5 w-full resize-y rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                />
+              </label>
+              <label className="text-xs font-bold sm:col-span-2">
+                روابط الفيديوهات (رابط لكل سطر، مثل YouTube)
+                <textarea
+                  rows={4}
+                  dir="ltr"
+                  placeholder={'https://www.youtube.com/watch?v=...\nhttps://...'}
+                  value={editDraft.videos}
+                  onChange={(event) => setEditDraft({ ...editDraft, videos: event.target.value })}
+                  className="mt-1.5 w-full resize-y rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                />
+                <span className="mt-1 block font-normal text-[#8C6F53] dark:text-[#D6C6B1]">
+                  أول رابط في القائمة سيكون الفيديو الرئيسي. اترك الحقل فارغًا لإزالة كل الروابط.
+                </span>
+              </label>
+              <label className="text-xs font-bold">
+                خط العرض
+                <input
+                  type="number"
+                  step="any"
+                  value={editDraft.mapLatitude}
+                  onChange={(event) => setEditDraft({ ...editDraft, mapLatitude: event.target.value })}
+                  className="mt-1.5 w-full rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                />
+              </label>
+              <label className="text-xs font-bold">
+                خط الطول
+                <input
+                  type="number"
+                  step="any"
+                  value={editDraft.mapLongitude}
+                  onChange={(event) => setEditDraft({ ...editDraft, mapLongitude: event.target.value })}
+                  className="mt-1.5 w-full rounded-xl border border-[#E0C79B] bg-white px-3 py-2.5 text-sm outline-none focus:border-primary dark:border-[#6B3A1F] dark:bg-[#2A211D]"
+                />
+              </label>
+            </div>
+
+            <footer className="flex justify-end gap-2 border-t border-[#E0C79B] p-4 dark:border-[#6B3A1F]">
+              <button
+                type="button"
+                onClick={() => setIsEditModalOpen(false)}
+                disabled={isSaving}
+                className="rounded-xl border border-[#E0C79B] px-4 py-2.5 text-xs font-bold text-[#8C6F53] disabled:opacity-50 dark:border-[#6B3A1F] dark:text-[#D6C6B1]"
+              >
+                إلغاء
+              </button>
+              <button
+                type="submit"
+                disabled={isSaving}
+                className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-xs font-bold text-white transition hover:bg-primary-hover disabled:opacity-50"
+              >
+                <Save className="h-4 w-4" />
+                {isSaving ? 'جاري الحفظ...' : 'حفظ كل البيانات'}
+              </button>
+            </footer>
+          </form>
+        </div>
+      )}
 
       {/* =========================================================
           MOBILE FLOATING INDEX

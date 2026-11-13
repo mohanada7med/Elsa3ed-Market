@@ -8,9 +8,10 @@ import React, {
 import { createPortal } from 'react-dom';
 
 import { useApp } from '../../context/AppContext';
-import { adminMediaApi } from '../../services/api';
+import { adminMediaApi, api } from '../../services/api';
 import { AdminMediaUploader } from './AdminMediaUploader';
 import { getOptimizedVideoUrl, getOptimizedVideoPoster } from '../../utils/cloudinaryMedia';
+import { getYouTubeVideoId } from '../../utils/youtube';
 
 import {
   Sparkles,
@@ -30,8 +31,49 @@ import {
   AlertCircle,
   Eye,
   Sliders,
-  Compass
+  Compass,
+  Pencil
 } from 'lucide-react';
+
+const getVideoThumbnail = (url: string): string => {
+  const youtubeVideoId = getYouTubeVideoId(url);
+  return youtubeVideoId
+    ? `https://img.youtube.com/vi/${youtubeVideoId}/hqdefault.jpg`
+    : getOptimizedVideoPoster(url, undefined, 200);
+};
+
+const extractYouTubeTitle = (embedHtml: string): string | null => {
+  const match = embedHtml.match(/<iframe\b[^>]*\btitle=(["'])(.*?)\1/i);
+  if (!match?.[2]) return null;
+
+  return match[2]
+    .replace(/&amp;/gi, '&')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;|&apos;/gi, "'")
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .trim();
+};
+
+const getVideoDisplayName = (
+  url: string,
+  index: number,
+  youtubeTitles: Record<string, string>
+): string => {
+  const youtubeVideoId = getYouTubeVideoId(url);
+  if (youtubeVideoId) return youtubeTitles[url] || 'جاري تحميل اسم الفيديو...';
+
+  try {
+    const filename = decodeURIComponent(new URL(url).pathname.split('/').filter(Boolean).pop() || '');
+    const name = filename
+      .replace(/\.(mp4|webm|mov|ogg|mkv|3gp|avi|m4v|m3u8)$/i, '')
+      .replace(/[_-]+/g, ' ')
+      .trim();
+    if (name) return name;
+  } catch {}
+
+  return `فيديو ${index + 1}`;
+};
 
 export interface VisitorMediaGalleryProps {
   id?: string;
@@ -49,6 +91,7 @@ export interface VisitorMediaGalleryProps {
   gallery?: string[];
   videoUrl?: string | null;
   videos?: string[];
+  initialTab?: 'photos' | 'videos';
   onGalleryChange?: (updatedGallery: string[]) => void;
   onCoverChange?: (newCoverUrl: string) => void;
   onVideoChange?: (
@@ -69,6 +112,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
   gallery = [],
   videoUrl,
   videos = [],
+  initialTab = 'photos',
   onGalleryChange,
   onCoverChange,
   onVideoChange,
@@ -112,8 +156,9 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
   const [localVideos, setLocalVideos] = useState<string[]>(() =>
     Array.isArray(videos) ? videos.filter(Boolean) : []
   );
+  const [youtubeTitles, setYoutubeTitles] = useState<Record<string, string>>({});
 
-  const [activeTab, setActiveTab] = useState<'photos' | 'videos'>('photos');
+  const [activeTab, setActiveTab] = useState<'photos' | 'videos'>(initialTab);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(
     videoUrl || (videos && videos[0]) || null
   );
@@ -132,6 +177,10 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
   const [adminTab, setAdminTab] = useState<'images' | 'video'>('images');
   const [isProcessing, setIsProcessing] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<{ type: 'image' | 'video'; url: string } | null>(null);
+  const [imageToReplace, setImageToReplace] = useState<string | null>(null);
+  const replaceImageInputRef = useRef<HTMLInputElement>(null);
+  const [videoToEdit, setVideoToEdit] = useState<string | null>(null);
+  const [videoUrlInput, setVideoUrlInput] = useState('');
 
   // Sync
   useEffect(() => {
@@ -145,23 +194,69 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
   }, [coverImage]);
 
   useEffect(() => {
-    setLocalVideoUrl(videoUrl);
-    if (videoUrl && !selectedVideo) setSelectedVideo(videoUrl);
-  }, [videoUrl, selectedVideo]);
+    const cleanVideos = Array.isArray(videos) ? videos.filter(Boolean) : [];
+    const availableVideos = new Set([
+      ...(videoUrl ? [videoUrl] : []),
+      ...cleanVideos,
+    ]);
 
-  useEffect(() => {
-    if (Array.isArray(videos)) {
-      const clean = videos.filter(Boolean);
-      setLocalVideos(clean);
-      if (clean.length > 0 && !selectedVideo) setSelectedVideo(clean[0]);
-    }
-  }, [videos, selectedVideo]);
+    setLocalVideoUrl(videoUrl);
+    setLocalVideos(cleanVideos);
+    setSelectedVideo((current) =>
+      current && availableVideos.has(current)
+        ? current
+        : videoUrl || cleanVideos[0] || null
+    );
+  }, [videoUrl, videos]);
 
   const allVideos = useMemo(() => {
     return Array.from(
       new Set([...(localVideoUrl ? [localVideoUrl] : []), ...(localVideos || [])])
     ).filter(Boolean);
   }, [localVideoUrl, localVideos]);
+
+  useEffect(() => {
+    let isMounted = true;
+    const urlsToResolve = allVideos.filter(
+      (url) => getYouTubeVideoId(url) && !youtubeTitles[url]
+    );
+    if (urlsToResolve.length === 0) return;
+
+    const resolveTitles = async () => {
+      const results = await Promise.all(urlsToResolve.map(async (url): Promise<[string, string]> => {
+        try {
+          const response = await fetch(
+            `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`
+          );
+          if (!response.ok) throw new Error(`YouTube title request failed (${response.status})`);
+          const data: { html?: unknown; title?: unknown } = await response.json();
+          const title = typeof data.title === 'string'
+            ? data.title.trim()
+            : typeof data.html === 'string'
+              ? extractYouTubeTitle(data.html)
+              : null;
+          if (!title) throw new Error('YouTube response did not include a video title');
+          return [url, title];
+        } catch (error) {
+          console.warn('Could not load YouTube video title:', url, error);
+          return [url, 'تعذر تحميل اسم الفيديو'];
+        }
+      }));
+
+      if (isMounted) {
+        setYoutubeTitles((current) => ({
+          ...current,
+          ...Object.fromEntries(results),
+        }));
+      }
+    };
+
+    void resolveTitles();
+    return () => {
+      isMounted = false;
+    };
+  }, [allVideos, youtubeTitles]);
+  const selectedYouTubeVideoId = selectedVideo ? getYouTubeVideoId(selectedVideo) : null;
 
   // Lock mobile background scrolling
   useEffect(() => {
@@ -314,6 +409,125 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
     }
   };
 
+  const handleReplaceImage = async (file?: File) => {
+    if (!file || !imageToReplace || !isAdmin || isProcessing) return;
+    setIsProcessing(true);
+
+    try {
+      const replacement = await api.replaceAdminMedia(userAuth, imageToReplace, file);
+      const replacementUrl = replacement.secureUrl || replacement.url;
+      if (!replacementUrl) throw new Error('لم يرجع الخادم رابط الصورة البديلة');
+
+      const updatedGallery = localGallery.map((url) =>
+        url === imageToReplace ? replacementUrl : url
+      );
+      const updatedCover = localCover === imageToReplace ? replacementUrl : localCover;
+
+      await adminMediaApi.manageEntityGallery(userAuth, {
+        entityType,
+        entityId: targetEntityKey,
+        entitySlug: entitySlug || targetEntityKey,
+        action: 'updateGallery',
+        galleryUrls: updatedGallery,
+        coverImage: updatedCover,
+      });
+
+      setLocalGallery(updatedGallery);
+      setLocalCover(updatedCover);
+      onGalleryChange?.(updatedGallery);
+      if (updatedCover) onCoverChange?.(updatedCover);
+      addToast('تم التعديل', 'تم استبدال الصورة بنجاح', 'success');
+    } catch (err: any) {
+      addToast('خطأ', err?.message || 'تعذر استبدال الصورة', 'error');
+    } finally {
+      setIsProcessing(false);
+      setImageToReplace(null);
+      if (replaceImageInputRef.current) replaceImageInputRef.current.value = '';
+    }
+  };
+
+  const handleEditVideo = async () => {
+    const updatedUrl = videoUrlInput.trim();
+    if (!videoToEdit || !isAdmin || isProcessing || !updatedUrl) return;
+
+    try {
+      const parsedUrl = new URL(updatedUrl);
+      if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
+        throw new Error('يرجى إدخال رابط يبدأ بـ http أو https');
+      }
+    } catch (err: any) {
+      addToast('رابط غير صالح', err?.message || 'يرجى إدخال رابط فيديو صالح', 'error');
+      return;
+    }
+
+    if (updatedUrl === videoToEdit) {
+      setVideoToEdit(null);
+      return;
+    }
+
+    setIsProcessing(true);
+    try {
+      await adminMediaApi.manageEntityGallery(userAuth, {
+        entityType,
+        entityId: targetEntityKey,
+        entitySlug: entitySlug || targetEntityKey,
+        action: 'setVideo',
+        videoUrl: updatedUrl,
+      });
+      await adminMediaApi.manageEntityGallery(userAuth, {
+        entityType,
+        entityId: targetEntityKey,
+        entitySlug: entitySlug || targetEntityKey,
+        action: 'removeVideo',
+        videoUrl: videoToEdit,
+      });
+
+      const updatedVideos = localVideos.map((url) => url === videoToEdit ? updatedUrl : url);
+      const updatedPrimaryVideo = updatedUrl;
+      setLocalVideos(updatedVideos);
+      setLocalVideoUrl(updatedPrimaryVideo);
+      setSelectedVideo((current) => current === videoToEdit ? updatedUrl : current);
+      onVideoChange?.(updatedPrimaryVideo || null, updatedVideos);
+      addToast('تم التعديل', 'تم تحديث رابط الفيديو', 'success');
+      setVideoToEdit(null);
+    } catch (err: any) {
+      addToast('خطأ', err?.message || 'تعذر تحديث الفيديو', 'error');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleDeleteVideo = async (videoUrlToDelete: string) => {
+    if (!isAdmin || isProcessing) return;
+    setIsProcessing(true);
+    try {
+      await adminMediaApi.manageEntityGallery(userAuth, {
+        entityType,
+        entityId: targetEntityKey,
+        entitySlug: entitySlug || targetEntityKey,
+        action: 'removeVideo',
+        videoUrl: videoUrlToDelete,
+      });
+
+      const updatedVideos = localVideos.filter((url) => url !== videoUrlToDelete);
+      const updatedPrimaryVideo: string | null = localVideoUrl === videoUrlToDelete
+        ? updatedVideos[0] || null
+        : localVideoUrl || null;
+      setLocalVideos(updatedVideos);
+      setLocalVideoUrl(updatedPrimaryVideo);
+      setSelectedVideo((current) =>
+        current === videoUrlToDelete ? updatedPrimaryVideo : current
+      );
+      onVideoChange?.(updatedPrimaryVideo, updatedVideos);
+      addToast('تم الحذف', 'تم حذف الفيديو من المعرض', 'success');
+      setItemToDelete(null);
+    } catch (err: any) {
+      addToast('خطأ', err?.message || 'تعذر حذف الفيديو', 'error');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   const handleDownload = (url: string) => {
     const a = document.createElement('a');
     a.href = url;
@@ -344,6 +558,13 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
       {/* Background accents matching #C99444 */}
       <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
       <div className="pointer-events-none absolute -left-20 -bottom-20 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
+      <input
+        ref={replaceImageInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/jpg"
+        className="hidden"
+        onChange={(event) => handleReplaceImage(event.target.files?.[0])}
+      />
 
       {/* Header Bar */}
       <header className="relative z-10 mb-7 flex flex-col gap-4 border-b border-primary/15 pb-5 sm:flex-row sm:items-center sm:justify-between">
@@ -503,10 +724,23 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
 
                         {isAdmin && (
                           <div className="mr-2 flex items-center gap-1 border-r border-primary/20 pr-2">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setImageToReplace(url);
+                                replaceImageInputRef.current?.click();
+                              }}
+                              disabled={isProcessing}
+                              title="استبدال الصورة"
+                              className="rounded-lg p-1 text-primary hover:bg-primary/15 transition cursor-pointer disabled:opacity-50"
+                            >
+                              <Pencil className="h-3.5 w-3.5" />
+                            </button>
                             {!isCover && (
                               <button
                                 type="button"
                                 onClick={() => handleSetCover(url)}
+                                disabled={isProcessing}
                                 title="تعيين كغلاف"
                                 className="rounded-lg p-1 text-primary hover:bg-primary/15 transition cursor-pointer"
                               >
@@ -517,6 +751,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                               <button
                                 type="button"
                                 onClick={() => handleReorder(idx, 'backward')}
+                                  disabled={isProcessing}
                                 title="تقديم"
                                 className="rounded-lg p-1 text-black/60 hover:text-black dark:text-white/60 cursor-pointer"
                               >
@@ -527,6 +762,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                               <button
                                 type="button"
                                 onClick={() => handleReorder(idx, 'forward')}
+                                  disabled={isProcessing}
                                 title="تأخير"
                                 className="rounded-lg p-1 text-black/60 hover:text-black dark:text-white/60 cursor-pointer"
                               >
@@ -536,6 +772,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                             <button
                               type="button"
                               onClick={() => setItemToDelete({ type: 'image', url })}
+                              disabled={isProcessing}
                               title="حذف"
                               className="rounded-lg p-1 text-red-500 hover:bg-red-500/10 cursor-pointer"
                             >
@@ -581,24 +818,37 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
               <div className="lg:col-span-8 overflow-hidden rounded-2xl border border-primary/25 bg-black shadow-md">
                 <div className="relative aspect-video w-full bg-black">
                   {selectedVideo && (
-                    <video
-                      key={selectedVideo}
-                      src={getOptimizedVideoUrl(selectedVideo, { maxDimension: 1080 })}
-                      controls
-                      playsInline
-                      preload="metadata"
-                      poster={getOptimizedVideoPoster(selectedVideo, localCover, 800)}
-                      onError={(e) => {
-                        const v = e.currentTarget;
-                        if (v.src !== selectedVideo) {
-                          v.src = selectedVideo;
-                          v.load();
-                        }
-                      }}
-                      className="h-full w-full object-contain"
-                    />
+                    selectedYouTubeVideoId ? (
+                      <iframe
+                        key={selectedVideo}
+                        src={`https://www.youtube-nocookie.com/embed/${selectedYouTubeVideoId}`}
+                        title="فيديو من يوتيوب عن هذا المكان"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        referrerPolicy="strict-origin-when-cross-origin"
+                        className="h-full w-full border-0"
+                      />
+                    ) : (
+                      <video
+                        key={selectedVideo}
+                        src={getOptimizedVideoUrl(selectedVideo, { maxDimension: 1080 })}
+                        controls
+                        playsInline
+                        preload="metadata"
+                        poster={getOptimizedVideoPoster(selectedVideo, localCover, 800)}
+                        onError={(e) => {
+                          const v = e.currentTarget;
+                          if (v.src !== selectedVideo) {
+                            v.src = selectedVideo;
+                            v.load();
+                          }
+                        }}
+                        className="h-full w-full object-contain"
+                      />
+                    )
                   )}
                 </div>
+
               </div>
 
               <div className="lg:col-span-4 space-y-2.5">
@@ -635,7 +885,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                         <div className="flex items-center gap-3 min-w-0">
                           <div className="relative flex h-11 w-16 shrink-0 items-center justify-center rounded-lg bg-black overflow-hidden border border-white/10">
                             <img
-                              src={getOptimizedVideoPoster(vidUrl, undefined, 200)}
+                              src={getVideoThumbnail(vidUrl)}
                               alt=""
                               className="h-full w-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
                               loading="lazy"
@@ -646,7 +896,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                           </div>
                           <div className="min-w-0">
                             <p className="truncate text-xs font-bold text-black/85 dark:text-white/85">
-                              تسجيل وثائقي #{idx + 1}
+                              {getVideoDisplayName(vidUrl, idx, youtubeTitles)}
                             </p>
                             <span className="text-[10px] text-black/50 dark:text-white/50">
                               انقر للتشغيل في المشغل
@@ -655,17 +905,31 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                         </div>
 
                         {isAdmin && (
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setItemToDelete({ type: 'video', url: vidUrl });
-                            }}
-                            className="rounded-lg p-1.5 text-red-500 hover:bg-red-500/10 transition cursor-pointer"
-                            title="حذف"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
+                          <div className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setVideoToEdit(vidUrl);
+                                setVideoUrlInput(vidUrl);
+                              }}
+                              className="rounded-lg p-1.5 text-primary hover:bg-primary/10 transition cursor-pointer"
+                              title="تعديل رابط الفيديو"
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setItemToDelete({ type: 'video', url: vidUrl });
+                              }}
+                              className="rounded-lg p-1.5 text-red-500 hover:bg-red-500/10 transition cursor-pointer"
+                              title="حذف"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </div>
                         )}
                       </div>
                     );
@@ -926,6 +1190,47 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
       )}
 
       {/* CONFIRM DELETE DIALOG */}
+      {videoToEdit && isAdmin && (
+        <div className="fixed inset-0 z-[10002] flex items-center justify-center bg-black/75 p-4">
+          <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl dark:bg-[#1c1a18]">
+            <div className="mb-4 flex items-center gap-2 text-primary">
+              <Pencil className="h-5 w-5" />
+              <h4 className="text-sm font-bold">تعديل رابط الفيديو</h4>
+            </div>
+            <label htmlFor="gallery-video-url" className="mb-1 block text-xs font-bold text-black/70 dark:text-white/70">
+              رابط الفيديو الجديد
+            </label>
+            <input
+              id="gallery-video-url"
+              type="url"
+              value={videoUrlInput}
+              onChange={(event) => setVideoUrlInput(event.target.value)}
+              dir="ltr"
+              disabled={isProcessing}
+              className="w-full rounded-xl border border-primary/20 bg-black/5 px-3 py-2.5 text-sm outline-none focus:border-primary dark:bg-white/5"
+            />
+            <div className="mt-5 flex gap-2">
+              <button
+                type="button"
+                onClick={() => setVideoToEdit(null)}
+                disabled={isProcessing}
+                className="flex-1 rounded-xl bg-black/5 py-2.5 text-xs font-bold text-black/70 hover:bg-black/10 dark:bg-white/5 dark:text-white/70"
+              >
+                إلغاء
+              </button>
+              <button
+                type="button"
+                onClick={handleEditVideo}
+                disabled={isProcessing || !videoUrlInput.trim()}
+                className="flex-1 rounded-xl bg-primary py-2.5 text-xs font-bold text-white hover:bg-primary/90 disabled:opacity-50"
+              >
+                {isProcessing ? 'جاري الحفظ...' : 'حفظ التعديل'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {itemToDelete && (
         <div className="fixed inset-0 z-[10001] flex items-center justify-center bg-black/75 p-4">
           <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl dark:bg-[#1c1a18]">
@@ -950,16 +1255,10 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                   if (itemToDelete.type === 'image') {
                     handleDeleteImage(itemToDelete.url);
                   } else {
-                    const remaining = localVideos.filter((v) => v !== itemToDelete.url);
-                    setLocalVideos(remaining);
-                    const nextVid: string | null = (localVideoUrl === itemToDelete.url ? remaining[0] : localVideoUrl) ?? null;
-                    setLocalVideoUrl(nextVid);
-                    setSelectedVideo(nextVid);
-                    onVideoChange?.(nextVid, remaining);
-                    setItemToDelete(null);
-                    addToast('تم الحذف', 'تم حذف الفيديو من القائمة', 'success');
+                    handleDeleteVideo(itemToDelete.url);
                   }
                 }}
+                disabled={isProcessing}
                 className="flex-1 rounded-xl bg-red-600 py-2.5 text-xs font-bold text-white hover:bg-red-700 transition cursor-pointer"
               >
                 تأكيد الحذف

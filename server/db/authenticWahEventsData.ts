@@ -54,15 +54,12 @@ export const AUTHENTIC_WAH_EVENTS: CulturalEventDoc[] = [
       'شراء الهدايا الشعبية من طرابيش وخواتم فضة ومسابح اليسر'
     ],
     coverImage: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200&auto=format&fit=crop&q=80',
-    videoUrl: 'https://www.youtube.com/watch?v=kYJvM9e2y74',
-    videos: [
-      'https://www.youtube.com/watch?v=kYJvM9e2y74'
-    ],
     gallery: [
       'https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&auto=format&fit=crop&q=80'
     ],
     coordinates: { lat: 26.1551, lng: 32.716 },
+    videos: ['https://www.youtube.com/watch?v=V4Bft0lbnFo'],
     isFeatured: true,
     status: 'approved',
     verificationStatus: 'verified',
@@ -118,6 +115,7 @@ export const AUTHENTIC_WAH_EVENTS: CulturalEventDoc[] = [
       'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&auto=format&fit=crop&q=80'
     ],
     coordinates: { lat: 26.0494, lng: 32.2414 },
+    videos: ['https://www.youtube.com/watch?v=CEnkXliiLOs'],
     isFeatured: true,
     status: 'approved',
     verificationStatus: 'verified',
@@ -174,14 +172,11 @@ export const AUTHENTIC_WAH_EVENTS: CulturalEventDoc[] = [
       'التجول في أسواق التذكارات والبخور والبهارات الأقصرية'
     ],
     coverImage: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=1200&auto=format&fit=crop&q=80',
-    videoUrl: 'https://www.youtube.com/watch?v=0k5Fk-6eYgU',
-    videos: [
-      'https://www.youtube.com/watch?v=0k5Fk-6eYgU'
-    ],
     gallery: [
       'https://images.unsplash.com/photo-1544885935-98dd03b09034?w=800&auto=format&fit=crop&q=80'
     ],
     coordinates: { lat: 25.7003, lng: 32.6396 },
+    videos: ['https://www.youtube.com/watch?v=3lSkRZF2cNM'],
     isFeatured: true,
     status: 'approved',
     verificationStatus: 'verified',
@@ -237,6 +232,7 @@ export const AUTHENTIC_WAH_EVENTS: CulturalEventDoc[] = [
       'https://images.unsplash.com/photo-1519817650390-64a93db51149?w=800&auto=format&fit=crop&q=80'
     ],
     coordinates: { lat: 25.5968, lng: 32.5358 },
+    videos: ['https://www.youtube.com/watch?v=UiR5N2h4FlI'],
     isFeatured: true,
     status: 'approved',
     verificationStatus: 'verified',
@@ -296,6 +292,7 @@ export const AUTHENTIC_WAH_EVENTS: CulturalEventDoc[] = [
       'https://images.unsplash.com/photo-1544885935-98dd03b09034?w=800&auto=format&fit=crop&q=80'
     ],
     coordinates: { lat: 22.3372, lng: 31.6258 },
+    videos: ['https://www.youtube.com/watch?v=POReAWkWV3s'],
     isFeatured: true,
     status: 'approved',
     verificationStatus: 'verified',
@@ -351,6 +348,7 @@ export const AUTHENTIC_WAH_EVENTS: CulturalEventDoc[] = [
       'https://images.unsplash.com/photo-1473081556163-2a17de81fc97?w=800&auto=format&fit=crop&q=80'
     ],
     coordinates: { lat: 24.4764, lng: 32.9463 },
+    videos: ['https://www.youtube.com/watch?v=iUn5msdAbtw'],
     isFeatured: true,
     status: 'approved',
     verificationStatus: 'verified',
@@ -406,6 +404,7 @@ export const AUTHENTIC_WAH_EVENTS: CulturalEventDoc[] = [
       'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=800&auto=format&fit=crop&q=80'
     ],
     coordinates: { lat: 24.4086, lng: 32.9317 },
+    videos: ['https://www.youtube.com/watch?v=0oSJ3AYGmaA'],
     isFeatured: false,
     status: 'approved',
     verificationStatus: 'verified',
@@ -465,6 +464,7 @@ export const AUTHENTIC_WAH_EVENTS: CulturalEventDoc[] = [
       'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop&q=80'
     ],
     coordinates: { lat: 27.0423, lng: 31.3197 },
+    videos: ['https://www.youtube.com/watch?v=y8tHbzIYN4M'],
     isFeatured: true,
     status: 'approved',
     verificationStatus: 'verified',
@@ -520,6 +520,7 @@ export const AUTHENTIC_WAH_EVENTS: CulturalEventDoc[] = [
       'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=800&auto=format&fit=crop&q=80'
     ],
     coordinates: { lat: 27.4269, lng: 30.7719 },
+    videos: ['https://www.youtube.com/watch?v=ARiaMHvfuik'],
     isFeatured: true,
     status: 'approved',
     verificationStatus: 'verified',
@@ -579,6 +580,7 @@ export const AUTHENTIC_WAH_EVENTS: CulturalEventDoc[] = [
       'https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=800&auto=format&fit=crop&q=80'
     ],
     coordinates: { lat: 26.5591, lng: 31.6957 },
+    videos: ['https://www.youtube.com/watch?v=RRzzr53yiYg'],
     isFeatured: false,
     status: 'approved',
     verificationStatus: 'verified',
@@ -634,6 +636,7 @@ export const AUTHENTIC_WAH_EVENTS: CulturalEventDoc[] = [
       'https://images.unsplash.com/photo-1544885935-98dd03b09034?w=800&auto=format&fit=crop&q=80'
     ],
     coordinates: { lat: 26.5639, lng: 31.7456 },
+    videos: ['https://www.youtube.com/watch?v=M4X3CdT0pUo'],
     isFeatured: false,
     status: 'approved',
     verificationStatus: 'verified',
@@ -693,6 +696,7 @@ export const AUTHENTIC_WAH_EVENTS: CulturalEventDoc[] = [
       'https://images.unsplash.com/photo-1519817650390-64a93db51149?w=800&auto=format&fit=crop&q=80'
     ],
     coordinates: { lat: 28.2982, lng: 30.7719 },
+    videos: ['https://www.youtube.com/watch?v=J5Ec5T7tuug'],
     isFeatured: true,
     status: 'approved',
     verificationStatus: 'verified',
@@ -748,6 +752,7 @@ export const AUTHENTIC_WAH_EVENTS: CulturalEventDoc[] = [
       'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&auto=format&fit=crop&q=80'
     ],
     coordinates: { lat: 27.7314, lng: 30.8419 },
+    videos: ['https://www.youtube.com/watch?v=81VemZoxUuo'],
     isFeatured: false,
     status: 'approved',
     verificationStatus: 'verified',
@@ -807,6 +812,7 @@ export const AUTHENTIC_WAH_EVENTS: CulturalEventDoc[] = [
       'https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=800&auto=format&fit=crop&q=80'
     ],
     coordinates: { lat: 29.0744, lng: 31.0978 },
+    videos: ['https://www.youtube.com/watch?v=Jex510p584I'],
     isFeatured: false,
     status: 'approved',
     verificationStatus: 'verified',
@@ -862,6 +868,7 @@ export const AUTHENTIC_WAH_EVENTS: CulturalEventDoc[] = [
       'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&auto=format&fit=crop&q=80'
     ],
     coordinates: { lat: 28.9167, lng: 30.9667 },
+    videos: ['https://www.youtube.com/watch?v=dmMzAEZjYts'],
     isFeatured: false,
     status: 'approved',
     verificationStatus: 'verified',
@@ -921,6 +928,7 @@ export const AUTHENTIC_WAH_EVENTS: CulturalEventDoc[] = [
       'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=800&auto=format&fit=crop&q=80'
     ],
     coordinates: { lat: 24.2389, lng: 34.6289 },
+    videos: ['https://www.youtube.com/watch?v=e6TpgC_zlZE'],
     isFeatured: true,
     status: 'approved',
     verificationStatus: 'verified',
@@ -980,6 +988,7 @@ export const AUTHENTIC_WAH_EVENTS: CulturalEventDoc[] = [
       'https://images.unsplash.com/photo-1473081556163-2a17de81fc97?w=800&auto=format&fit=crop&q=80'
     ],
     coordinates: { lat: 25.4388, lng: 30.5586 },
+    videos: ['https://www.youtube.com/watch?v=DhQ86gAUSBA'],
     isFeatured: false,
     status: 'approved',
     verificationStatus: 'verified',

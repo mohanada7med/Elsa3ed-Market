@@ -29,11 +29,15 @@ import { PLATFORM_CATEGORIES } from '../config/platformCategories.ts';
 import { INITIAL_PLATFORM_SETTINGS } from './wahSeedData.ts';
 import { AUTHENTIC_WAH_FOOD } from './authenticWahFoodData.ts';
 import { AUTHENTIC_WAH_EVENTS } from './authenticWahEventsData.ts';
+import { AUTHENTIC_WAH_GOVERNORATE_VIDEOS, GOVERNORATE_VIDEO_RESEARCH_VERSION } from './authenticWahGovernorateVideosData.ts';
+import { AUTHENTIC_WAH_PLACE_VIDEOS, PLACE_VIDEO_RESEARCH_VERSION } from './authenticWahPlaceVideosData.ts';
+import { AUTHENTIC_WAH_PERSON_VIDEOS, PERSON_VIDEO_RESEARCH_VERSION } from './authenticWahPersonVideosData.ts';
 import { runHeritagePlacesMigration } from '../utils/heritagePlacesMigration.ts';
 
 dotenv.config();
 
 const INGREDIENT_RESEARCH_VERSION = 1; // Increment when publishing a new researched ingredient set.
+const EVENT_VIDEO_RESEARCH_VERSION = 1; // Increment when publishing a refreshed event-video set.
 
 interface MongoGlobalCache {
   client: MongoClient | null;
@@ -322,7 +326,132 @@ async function seedMongoDatabase(database: Db) {
       Logger.info(`[MongoDB] Applied researched ingredients to ${ingredientResearchMigration.modifiedCount} food records`);
     }
 
-    // Do not forcibly overwrite or upsert any events or seasons - data is fetched strictly from MongoDB
+    const researchedGovernorateVideoUpdates = AUTHENTIC_WAH_GOVERNORATE_VIDEOS.map((governorate) => {
+      if (!/^https:\/\/www\.youtube\.com\/watch\?v=[\w-]{11}$/.test(governorate.videoUrl)) {
+        throw new Error(`Expected a valid YouTube video URL for governorate ${governorate.id}`);
+      }
+
+      return {
+        updateOne: {
+          filter: {
+            id: governorate.id,
+            $or: [
+              { videoResearchVersion: { $exists: false } },
+              { videoResearchVersion: { $lt: GOVERNORATE_VIDEO_RESEARCH_VERSION } }
+            ]
+          },
+          update: {
+            $addToSet: { videos: governorate.videoUrl },
+            $set: {
+              videoResearchVersion: GOVERNORATE_VIDEO_RESEARCH_VERSION,
+              updatedAt: new Date().toISOString()
+            }
+          }
+        }
+      };
+    });
+
+    const governorateVideoResearchMigration = await database.collection<GovernorateDoc>('wah_governorates')
+      .bulkWrite(researchedGovernorateVideoUpdates, { ordered: false });
+    if (governorateVideoResearchMigration.modifiedCount > 0) {
+      Logger.info(`[MongoDB] Added researched YouTube videos to ${governorateVideoResearchMigration.modifiedCount} governorates`);
+    }
+
+    const researchedEventVideoUpdates = AUTHENTIC_WAH_EVENTS.map((event) => {
+      if (!event.videos || event.videos.length !== 1 || !event.videos[0].startsWith('https://www.youtube.com/watch?v=')) {
+        throw new Error(`Expected exactly one YouTube video for event ${event.id}`);
+      }
+
+      return {
+        updateOne: {
+          filter: {
+            id: event.id,
+            $or: [
+              { videoResearchVersion: { $exists: false } },
+              { videoResearchVersion: { $lt: EVENT_VIDEO_RESEARCH_VERSION } }
+            ]
+          },
+          update: {
+            $set: {
+              videos: event.videos,
+              videoResearchVersion: EVENT_VIDEO_RESEARCH_VERSION,
+              updatedAt: new Date().toISOString()
+            },
+            $unset: { videoUrl: '' as const }
+          },
+        }
+      }
+    });
+
+    const eventVideoResearchMigration = await database.collection<CulturalEventDoc>('wah_events')
+      .bulkWrite(researchedEventVideoUpdates, { ordered: false });
+    if (eventVideoResearchMigration.modifiedCount > 0) {
+      Logger.info(`[MongoDB] Applied researched YouTube videos to ${eventVideoResearchMigration.modifiedCount} events`);
+    }
+
+    const researchedPlaceVideoUpdates = AUTHENTIC_WAH_PLACE_VIDEOS.map((place) => {
+      if (!/^https:\/\/www\.youtube\.com\/watch\?v=[\w-]{11}$/.test(place.videoUrl)) {
+        throw new Error(`Expected a valid YouTube video URL for place ${place.id}`);
+      }
+
+      return {
+        updateOne: {
+          filter: {
+            id: place.id,
+            $or: [
+              { videoResearchVersion: { $exists: false } },
+              { videoResearchVersion: { $lt: PLACE_VIDEO_RESEARCH_VERSION } }
+            ]
+          },
+          update: {
+            $addToSet: { videos: place.videoUrl },
+            $set: {
+              videoResearchVersion: PLACE_VIDEO_RESEARCH_VERSION,
+              updatedAt: new Date().toISOString()
+            }
+          }
+        }
+      };
+    });
+
+    const placeVideoResearchMigration = await database.collection<HeritagePlaceDoc>('wah_heritage_places')
+      .bulkWrite(researchedPlaceVideoUpdates, { ordered: false });
+    if (placeVideoResearchMigration.modifiedCount > 0) {
+      Logger.info(`[MongoDB] Added researched YouTube videos to ${placeVideoResearchMigration.modifiedCount} heritage places`);
+    }
+
+    const researchedPersonVideoUpdates = AUTHENTIC_WAH_PERSON_VIDEOS.map((person) => {
+      if (!/^https:\/\/www\.youtube\.com\/watch\?v=[\w-]{11}$/.test(person.videoUrl)) {
+        throw new Error(`Expected a valid YouTube video URL for person ${person.id}`);
+      }
+
+      return {
+        updateOne: {
+          filter: {
+            id: person.id,
+            $or: [
+              { videoResearchVersion: { $exists: false } },
+              { videoResearchVersion: { $lt: PERSON_VIDEO_RESEARCH_VERSION } }
+            ]
+          },
+          update: {
+            $addToSet: { videos: person.videoUrl },
+            $set: {
+              videoResearchVersion: PERSON_VIDEO_RESEARCH_VERSION,
+              updatedAt: new Date().toISOString()
+            }
+          }
+        }
+      };
+    });
+
+    const personVideoResearchMigration = await database.collection<LocalPersonDoc>('wah_local_people')
+      .bulkWrite(researchedPersonVideoUpdates, { ordered: false });
+    if (personVideoResearchMigration.modifiedCount > 0) {
+      Logger.info(`[MongoDB] Added researched YouTube videos to ${personVideoResearchMigration.modifiedCount} people`);
+    }
+
+    // Do not seed or otherwise overwrite event and season content outside the versioned video migration.
     const eventsCount = await database.collection('wah_events').countDocuments().catch(() => 0);
     if (eventsCount === 0) {
       Logger.info('[MongoDB] wah_events collection is ready');

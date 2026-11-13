@@ -783,6 +783,9 @@ export interface WahGovernorate {
   famousFor: string[];
   coverImage: string;
   gallery: string[];
+  videoUrl?: string;
+  videos?: string[];
+  videoResearchVersion?: number;
   capitalCity: string;
   nickname?: string;
   region?: string;
@@ -792,6 +795,11 @@ export interface WahGovernorate {
   traditionalFoodIds: string[];
   culturalTraditions: string[];
   status: VerificationStatus;
+  sourceName?: string;
+  sourceUrl?: string;
+  sourceType?: string;
+  researchDate?: string;
+  verificationStatus?: VerificationStatus;
   places?: HeritagePlace[];
   crafts?: CulturalCraft[];
   foods?: UpperEgyptFood[];
@@ -978,6 +986,8 @@ export interface LocalPerson {
   avatarUrl: string;
   photoUrl?: string;
   imageUrl?: string;
+  videoUrl?: string;
+  videos?: string[];
   quote?: string;
   yearsOfExperience?: number;
   originVillage?: string;
@@ -990,10 +1000,12 @@ export interface LocalPerson {
   historicalAnecdotes?: Array<{ title: string; story: string; eraOrContext?: string }>;
   relatedArtisanId?: string;
   relatedCraftId?: string;
+  coordinates?: { lat: number; lng: number };
   isFeatured?: boolean;
   sourceName?: string;
   sourceUrl?: string;
   sourceType?: string;
+  researchDate?: string;
   verificationStatus?: string;
   status: VerificationStatus;
   createdAt: string;
@@ -1056,6 +1068,7 @@ export interface CulturalEvent {
   gallery?: string[];
   videoUrl?: string;
   videos?: string[];
+  videoResearchVersion?: number;
   coordinates?: { lat: number; lng: number };
   isFeatured?: boolean;
   sourceName?: string;

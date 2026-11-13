@@ -365,17 +365,17 @@ export const EventDetailPage: React.FC = () => {
     );
     if (ytMatch && ytMatch[1]) {
       return (
-        <div
-          key={index}
-          className="aspect-video w-full rounded-2xl overflow-hidden bg-black shadow-lg border border-black/10 dark:border-white/10"
-        >
-          <iframe
-            src={`https://www.youtube.com/embed/${ytMatch[1]}`}
-            title={`تسجيل مرئي ${index + 1}`}
-            className="w-full h-full border-0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
+        <div key={index} className="space-y-2">
+          <div className="aspect-video w-full rounded-2xl overflow-hidden bg-black shadow-lg border border-black/10 dark:border-white/10">
+            <iframe
+              src={`https://www.youtube.com/embed/${ytMatch[1]}`}
+              title={`فيديو ${event.title}`}
+              className="w-full h-full border-0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+          
         </div>
       );
     }
@@ -1388,7 +1388,7 @@ export const EventDetailPage: React.FC = () => {
                         <Film size={18} />
                       </span>
                       <div>
-                        <h3 className="text-xl font-black sm:text-2xl">مرئيات وتسجيلات الليلة الحية</h3>
+                        <h2 className="text-xl font-black sm:text-2xl">مرئيات وتسجيلات الليلة الحية</h2>
                         <p className="text-xs text-black/60 dark:text-white/60">
                           تسجيلات حية للمرماح، حلقات الذكر، الإنشاد الصوفي، والبهجة الشعبية
                         </p>

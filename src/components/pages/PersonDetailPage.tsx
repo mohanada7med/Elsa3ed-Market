@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { wahApi } from '../../services/api';
 import { LocalPerson } from '../../types';
+import { getOptimizedVideoPoster, getOptimizedVideoUrl } from '../../utils/cloudinaryMedia';
+import { getYouTubeVideoId } from '../../utils/youtube';
+import { PersonEditorModal } from './PersonEditorModal';
 import {
   MapPin,
   ArrowLeft,
@@ -9,19 +12,187 @@ import {
   Sparkles,
   Scroll,
   Film,
+  Pencil,
 } from 'lucide-react';
+
+const PersonVideoArchive: React.FC<{ person: LocalPerson }> = ({ person }) => {
+  const videos = useMemo(
+    () => Array.from(new Set([
+      ...(person.videoUrl ? [person.videoUrl] : []),
+      ...(person.videos || [])
+    ].filter(Boolean))),
+    [person.videoUrl, person.videos]
+  );
+  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+  const [youtubeTitles, setYoutubeTitles] = useState<Record<string, string>>({});
+  const [failedYoutubeTitles, setFailedYoutubeTitles] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    if (!selectedVideo || !videos.includes(selectedVideo)) {
+      setSelectedVideo(videos[0] || null);
+    }
+  }, [selectedVideo, videos]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const youtubeVideos = videos.filter((videoUrl) => Boolean(getYouTubeVideoId(videoUrl)));
+
+    setYoutubeTitles({});
+    setFailedYoutubeTitles({});
+
+    const loadYoutubeTitles = async () => {
+      const results = await Promise.all(youtubeVideos.map(async (videoUrl) => {
+        try {
+          const query = new URLSearchParams({ url: videoUrl, format: 'json' });
+          const response = await fetch(`https://www.youtube.com/oembed?${query}`, {
+            signal: controller.signal
+          });
+          if (!response.ok) throw new Error(`YouTube title request failed (${response.status})`);
+
+          const metadata: unknown = await response.json();
+          if (
+            typeof metadata !== 'object' ||
+            metadata === null ||
+            !('title' in metadata) ||
+            typeof metadata.title !== 'string' ||
+            !metadata.title.trim()
+          ) {
+            throw new Error('YouTube returned no video title');
+          }
+
+          return { videoUrl, title: metadata.title.trim() };
+        } catch (error) {
+          if (controller.signal.aborted) return null;
+          console.warn('Could not load YouTube video title:', error);
+          return { videoUrl, title: null };
+        }
+      }));
+
+      if (controller.signal.aborted) return;
+
+      const titles: Record<string, string> = {};
+      const failures: Record<string, boolean> = {};
+      results.forEach((result) => {
+        if (!result) return;
+        if (result.title) titles[result.videoUrl] = result.title;
+        else failures[result.videoUrl] = true;
+      });
+      setYoutubeTitles(titles);
+      setFailedYoutubeTitles(failures);
+    };
+
+    void loadYoutubeTitles();
+    return () => controller.abort();
+  }, [videos]);
+
+  if (videos.length === 0) return null;
+
+  const selectedYouTubeVideoId = selectedVideo ? getYouTubeVideoId(selectedVideo) : null;
+
+  return (
+    <section className="relative border-t border-stone-200 py-24 transition-colors duration-500 dark:border-white/[0.06]">
+      <div className="mx-auto max-w-[1200px] px-6 sm:px-12">
+        <div className="mb-10">
+          <div className="mb-2 text-[10px] font-black uppercase tracking-[0.4em] text-amber-700 dark:text-amber-500">
+            VIDEO ARCHIVE
+          </div>
+          <h2 className="text-3xl font-black text-stone-900 dark:text-white sm:text-5xl">
+            فيديوهات عن {person.name}
+          </h2>
+        </div>
+
+        <div className="grid items-start gap-8 lg:grid-cols-12">
+          <div className="lg:col-span-8">
+            <div className="aspect-video overflow-hidden rounded-3xl border border-stone-300 bg-black shadow-xl dark:border-white/10">
+              {selectedVideo && selectedYouTubeVideoId ? (
+                <iframe
+                  key={selectedVideo}
+                  src={`https://www.youtube-nocookie.com/embed/${selectedYouTubeVideoId}`}
+                  title={`فيديو عن ${person.name}`}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  className="h-full w-full border-0"
+                />
+              ) : selectedVideo ? (
+                <video
+                  key={selectedVideo}
+                  src={getOptimizedVideoUrl(selectedVideo, { maxDimension: 1080 })}
+                  controls
+                  playsInline
+                  preload="metadata"
+                  poster={getOptimizedVideoPoster(selectedVideo, undefined, 800)}
+                  onError={(event) => {
+                    if (event.currentTarget.src !== selectedVideo) {
+                      event.currentTarget.src = selectedVideo;
+                      event.currentTarget.load();
+                    }
+                  }}
+                  className="h-full w-full object-contain"
+                />
+              ) : null}
+            </div>
+            
+          </div>
+
+          <div className="space-y-3 lg:col-span-4">
+            <h3 className="px-1 text-sm font-bold text-amber-800 dark:text-amber-400">
+              المقاطع المتاحة ({videos.length})
+            </h3>
+            {videos.map((videoUrl, index) => {
+              const isSelected = videoUrl === selectedVideo;
+              const isYouTube = Boolean(getYouTubeVideoId(videoUrl));
+              const videoTitle = isYouTube
+                ? youtubeTitles[videoUrl] || (failedYoutubeTitles[videoUrl] ? 'تعذر تحميل اسم الفيديو' : 'جارٍ تحميل اسم الفيديو...')
+                : `فيديو مرفوع #${index + 1}`;
+
+              return (
+                <button
+                  key={`${videoUrl}-${index}`}
+                  type="button"
+                  onClick={() => setSelectedVideo(videoUrl)}
+                  className={`flex w-full items-center gap-3 rounded-2xl border p-4 text-right transition ${
+                    isSelected
+                      ? 'border-amber-600 bg-amber-600/10 dark:border-amber-400/50 dark:bg-amber-400/10'
+                      : 'border-stone-200 bg-white/70 hover:border-amber-500/40 dark:border-white/10 dark:bg-white/[0.03]'
+                  }`}
+                >
+                  <Film size={18} className="shrink-0 text-amber-700 dark:text-amber-400" />
+                  <span className="min-w-0">
+                    <span className="block truncate text-sm font-bold text-stone-800 dark:text-white">
+                      {videoTitle}
+                    </span>
+                    <span className="text-[11px] text-stone-500 dark:text-white/50">
+                      انقر للتشغيل
+                    </span>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
 
 export const PersonDetailPage: React.FC = () => {
   const {
     selectedPersonSlug,
     navigateToGovernorate,
     navigateToCraft,
+    navigateToPerson,
     setActivePage,
-    addToast
+    addToast,
+    currentRole,
+    currentUser
   } = useApp();
 
   const [person, setPerson] = useState<LocalPerson | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isEditingPerson, setIsEditingPerson] = useState(false);
+  const [isSavingPerson, setIsSavingPerson] = useState(false);
+  const isAdmin = currentRole === 'admin' || currentUser?.role === 'admin';
 
   const slug =
     selectedPersonSlug ||
@@ -52,6 +223,34 @@ export const PersonDetailPage: React.FC = () => {
     if (navigator.clipboard) {
       navigator.clipboard.writeText(url);
       addToast('تم نسخ الرابط', 'تم نسخ رابط ملف شيخ الصنعة بنجاح', 'success');
+    }
+  };
+
+  const savePersonChanges = async (updates: Partial<LocalPerson>): Promise<boolean> => {
+    if (!person || !isAdmin) return false;
+
+    setIsSavingPerson(true);
+    try {
+      const savedPerson = await wahApi.updatePerson(person.id, updates, {
+        id: currentUser?.id,
+        role: 'admin'
+      });
+      setPerson(savedPerson);
+      setIsEditingPerson(false);
+      if (savedPerson.slug && savedPerson.slug !== slug) {
+        navigateToPerson(savedPerson.slug);
+      }
+      addToast('تم حفظ التعديلات', 'تم تحديث بيانات الشخصية بنجاح', 'success');
+      return true;
+    } catch (error) {
+      addToast(
+        'فشل تعديل بيانات الشخصية',
+        error instanceof Error ? error.message : 'تعذر حفظ التعديلات، حاول مرة أخرى',
+        'error'
+      );
+      return false;
+    } finally {
+      setIsSavingPerson(false);
     }
   };
 
@@ -148,14 +347,26 @@ export const PersonDetailPage: React.FC = () => {
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={handleShare}
-            className="group flex items-center gap-2.5 rounded-full border border-stone-200 dark:border-white/10 bg-white/70 dark:bg-white/[0.03] px-5 py-2.5 text-xs font-medium backdrop-blur-md hover:border-amber-500/40 hover:bg-amber-500/10 text-stone-700 dark:text-white/80 hover:text-amber-700 dark:hover:text-amber-300 transition-all cursor-pointer shadow-sm"
-          >
-            <span className="hidden sm:inline">نشر القصة</span>
-            <Share2 size={14} className="transition-transform group-hover:scale-110" />
-          </button>
+          <div className="flex items-center gap-2">
+            {isAdmin && (
+              <button
+                type="button"
+                onClick={() => setIsEditingPerson(true)}
+                className="group flex items-center gap-2 rounded-full border border-amber-600/30 bg-amber-500/10 px-4 py-2.5 text-xs font-bold text-amber-800 transition hover:bg-amber-600 hover:text-white dark:border-amber-400/30 dark:text-amber-300 dark:hover:bg-amber-400 dark:hover:text-black"
+              >
+                <Pencil size={14} />
+                <span>تعديل البيانات</span>
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={handleShare}
+              className="group flex items-center gap-2.5 rounded-full border border-stone-200 dark:border-white/10 bg-white/70 dark:bg-white/[0.03] px-5 py-2.5 text-xs font-medium backdrop-blur-md hover:border-amber-500/40 hover:bg-amber-500/10 text-stone-700 dark:text-white/80 hover:text-amber-700 dark:hover:text-amber-300 transition-all cursor-pointer shadow-sm"
+            >
+              <span className="hidden sm:inline">نشر القصة</span>
+              <Share2 size={14} className="transition-transform group-hover:scale-110" />
+            </button>
+          </div>
         </div>
       </header>
 
@@ -375,6 +586,8 @@ export const PersonDetailPage: React.FC = () => {
         </section>
       )}
 
+      <PersonVideoArchive person={person} />
+
       {/* =====================================================
           CHAPTER 04: ANECDOTE & IMPACT
       ===================================================== */}
@@ -452,6 +665,16 @@ export const PersonDetailPage: React.FC = () => {
           </button>
         </div>
       </footer>
+
+      {isAdmin && isEditingPerson && (
+        <PersonEditorModal
+          key={person.id}
+          person={person}
+          isSaving={isSavingPerson}
+          onClose={() => setIsEditingPerson(false)}
+          onSave={savePersonChanges}
+        />
+      )}
 
     </div>
   );

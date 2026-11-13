@@ -959,8 +959,8 @@ export const PlaceDetailPage: React.FC = () => {
                 entityTitle={place.title}
                 coverImage={place.coverImage}
                 gallery={gallery}
-                videoUrl={(place as any).videoUrl}
-                videos={(place as any).videos || []}
+                videoUrl={place.videoUrl}
+                videos={place.videos || []}
                 onGalleryChange={(updatedGallery) => {
                   setPlace((prev) =>
                     prev
@@ -990,11 +990,11 @@ export const PlaceDetailPage: React.FC = () => {
                 onVideoChange={(newVideo, updatedVideos) => {
                   setPlace((prev) =>
                     prev
-                      ? ({
+                      ? {
                         ...prev,
                         videoUrl: newVideo || undefined,
                         videos: updatedVideos,
-                      } as any)
+                      }
                       : null
                   );
                 }}

@@ -4642,6 +4642,27 @@ export const wahApi = {
     return json.data;
   },
 
+  async updateGovernorate(
+    id: string,
+    governorate: Omit<Partial<WahGovernorate>, 'videoUrl' | 'mapCoordinates'> & {
+      videoUrl?: string | null;
+      mapCoordinates?: WahGovernorate['mapCoordinates'] | null;
+    },
+    user?: { id?: string; role?: string }
+  ): Promise<WahGovernorate> {
+    const res = await fetch(`${API_BASE}/wah/governorates/${encodeURIComponent(id)}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(governorate)
+    });
+    const json = await res.json();
+    if (!res.ok || !json.success || !json.data) {
+      throw new Error(json.message || json.error || 'فشل تحديث بيانات المحافظة');
+    }
+    clientWahCache.clear();
+    return json.data;
+  },
+
   // 2. Heritage Places
   async getPlaces(params?: { governorate?: string; governorateId?: string; category?: string; status?: string }, forceRefresh = false): Promise<HeritagePlace[]> {
     const key = `places_${params?.governorate || 'all'}_${params?.category || 'all'}_${params?.status || 'all'}`;
@@ -4866,6 +4887,20 @@ export const wahApi = {
     });
     const json = await res.json();
     if (!json.success) throw new Error(json.message || 'فشل حفظ بيانات الشخصية');
+    return json.data;
+  },
+
+  async updatePerson(id: string, person: Partial<LocalPerson>, user?: { id?: string; role?: string }): Promise<LocalPerson> {
+    const res = await fetch(`${API_BASE}/wah/people/${encodeURIComponent(id)}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(person)
+    });
+    const json = await res.json();
+    if (!res.ok || !json.success || !json.data) {
+      throw new Error(json.message || json.error || 'فشل تحديث بيانات الشخصية');
+    }
+    clientWahCache.clear();
     return json.data;
   },
 
