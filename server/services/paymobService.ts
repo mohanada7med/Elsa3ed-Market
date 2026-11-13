@@ -202,7 +202,8 @@ export async function initiatePaymobPayment(
     throw new Error('يجب أن يستخدم رابط الموقع APP_URL اتصال HTTPS في بيئة الإنتاج');
   }
   const origin = appUrl.origin;
-  const amountCents = Math.round(order.total * 100);
+  const paymentAmount = order.total + (order.paymentFee ?? 0);
+  const amountCents = Math.round(paymentAmount * 100);
 
   // Split buyer name into first and last name
   const nameParts = (order.buyerName || 'مشتري صعيدي').trim().split(/\s+/);
@@ -234,14 +235,14 @@ export async function initiatePaymobPayment(
       throw new Error('إعدادات Paymob غير مكتملة. يلزم PAYMOB_SECRET_KEY وPAYMOB_PUBLIC_KEY لإنشاء الدفع الفعلي.');
     }
 
-    const simulatedPaymentUrl = `${origin}/api/payments/paymob/simulator?orderId=${encodeURIComponent(order.id)}&orderNumber=${encodeURIComponent(order.orderNumber)}&amount=${encodeURIComponent(order.total)}&method=${encodeURIComponent(methodType)}`;
+    const simulatedPaymentUrl = `${origin}/api/payments/paymob/simulator?orderId=${encodeURIComponent(order.id)}&orderNumber=${encodeURIComponent(order.orderNumber)}&amount=${encodeURIComponent(paymentAmount)}&method=${encodeURIComponent(methodType)}`;
     return {
       paymentUrl: simulatedPaymentUrl,
       provider: 'paymob_simulated',
       paymentMethod: methodType,
       orderId: order.id,
       orderNumber: order.orderNumber,
-      amount: order.total,
+      amount: paymentAmount,
       message: 'وضع المحاكاة متاح في بيئة التطوير فقط. أضف بيانات Paymob لتفعيل الدفع الفعلي.'
     };
   }
@@ -277,7 +278,7 @@ export async function initiatePaymobPayment(
     }
   }
 
-  Logger.info(`[Paymob] Creating payment intention for order #${order.orderNumber} (${order.total} EGP)`, {
+  Logger.info(`[Paymob] Creating payment intention for order #${order.orderNumber} (${paymentAmount} EGP)`, {
     environment: config.environment,
     payment_method: methodType,
     integration_id: paymentMethods[0]
@@ -366,7 +367,7 @@ export async function initiatePaymobPayment(
     paymentMethod: methodType,
     orderId: order.id,
     orderNumber: order.orderNumber,
-    amount: order.total
+    amount: paymentAmount
   };
 }
 
@@ -472,7 +473,8 @@ export async function markOrderPaidByPaymob(
   if (
     !transactionDetails.transactionId ||
     !Number.isFinite(transactionDetails.paidAmount) ||
-    Math.round((transactionDetails.paidAmount as number) * 100) !== Math.round(order.total * 100)
+    Math.round((transactionDetails.paidAmount as number) * 100) !==
+      Math.round((order.total + (order.paymentFee ?? 0)) * 100)
   ) {
     return { success: false, error: 'مبلغ الدفع أو رقم المعاملة غير صحيح' };
   }
@@ -499,6 +501,8 @@ export async function markOrderPaidByPaymob(
     return { success: true, order };
   }
 
+  const paymentFee = order.paymentFee ?? 0;
+  const paymentAmount = order.total + paymentFee;
   const txId = String(transactionDetails.transactionId);
   const methodLabel = transactionDetails.paymentMethod === 'wallet'
     ? 'محفظة إلكترونية (Paymob)'
@@ -521,7 +525,7 @@ export async function markOrderPaidByPaymob(
               status: 'confirmed',
               title: 'تم تأكيد الدفع والطلب بنجاح ✓',
               time: 'الآن',
-              description: `تم سداد قيمة الطلب (${order.total} ج.م) عبر بوابة Paymob (${methodLabel}). تم تأكيد الطلب رسمياً وإرساله للورش الحرفية للبدء في التجهيز. رقم المعاملة: ${txId}`,
+              description: `تم سداد قيمة الطلب (${paymentAmount} ج.م، تشمل رسوم Paymob ${paymentFee} ج.م) عبر بوابة Paymob (${methodLabel}). تم تأكيد الطلب رسمياً وإرساله للورش الحرفية للبدء في التجهيز. رقم المعاملة: ${txId}`,
               done: true
             } as any
           }
@@ -547,7 +551,7 @@ export async function markOrderPaidByPaymob(
   order.timeline.push({
     status: 'confirmed',
     title: 'تم تأكيد الدفع والطلب بنجاح ✓',
-    description: `تم سداد قيمة الطلب (${order.total} ج.م) عبر بوابة Paymob (${methodLabel}). تم تأكيد الطلب رسمياً وإرساله للورش الحرفية للبدء في التجهيز. رقم المعاملة: ${txId}`,
+    description: `تم سداد قيمة الطلب (${paymentAmount} ج.م، تشمل رسوم Paymob ${paymentFee} ج.م) عبر بوابة Paymob (${methodLabel}). تم تأكيد الطلب رسمياً وإرساله للورش الحرفية للبدء في التجهيز. رقم المعاملة: ${txId}`,
     time: 'الآن',
     done: true
   });
@@ -558,7 +562,7 @@ export async function markOrderPaidByPaymob(
       userId: order.buyerId,
       recipientId: order.buyerId,
       title: `تم تأكيد سداد وطلبك #${order.orderNumber} بنجاح!`,
-      message: `تم استلام دفعتك بقيمة ${order.total} ج.م بنجاح عبر Paymob. تم تأكيد طلبك رسمياً وجاري بدء تجهيز منتجاتك بالورشة.`,
+      message: `تم استلام دفعتك بقيمة ${paymentAmount} ج.م بنجاح عبر Paymob، تشمل ${paymentFee} ج.م رسوم الدفع الإلكتروني. تم تأكيد طلبك رسمياً وجاري بدء تجهيز منتجاتك بالورشة.`,
       type: 'order_status',
       link: 'orders',
       recipientRole: 'buyer',
@@ -569,16 +573,27 @@ export async function markOrderPaidByPaymob(
     for (const sId of order.sellerIds || []) {
       let sellerUserId = await resolveSellerUserId(sId);
       if (!sellerUserId) sellerUserId = sId;
+      const sellerItems = order.items
+        .filter((item) => item.sellerId === sId)
+        .map(({ productId, productTitle, productImage, quantity }) => ({
+          productId,
+          productTitle,
+          productImage,
+          quantity
+        }));
+      const productsSummary = sellerItems
+        .map((item) => `${item.productTitle} (كود: ${item.productId.slice(0, 8)})`)
+        .join('، ');
 
       await createNotification({
         userId: sellerUserId,
         recipientId: sId,
         title: `طلب شراء جديد مدفوع ومؤكد #${order.orderNumber}`,
-        message: `تم سداد وتأكيد طلب شراء جديد #${order.orderNumber} بقيمة ${order.total.toLocaleString('ar-EG')} ج.م لمنتجات ورشتك. يرجى البدء في التجهيز والتغليف.`,
+        message: `تم سداد وتأكيد طلب شراء جديد #${order.orderNumber} بقيمة ${order.total.toLocaleString('ar-EG')} ج.م لمنتجات ورشتك. المنتجات: ${productsSummary}`,
         type: 'new_order',
         link: 'seller-orders',
         recipientRole: 'seller',
-        metadata: { orderId: order.id, orderNumber: order.orderNumber, sellerId: sId }
+        metadata: { orderId: order.id, orderNumber: order.orderNumber, sellerId: sId, items: sellerItems }
       });
     }
   } catch (notifErr) {

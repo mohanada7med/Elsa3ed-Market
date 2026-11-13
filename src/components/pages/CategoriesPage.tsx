@@ -128,7 +128,7 @@ export const CategoriesPage: React.FC = () => {
                       }`}
                   >
                     <div className="flex items-center gap-4">
-                      <span className={`font-mono text-xs font-bold px-2.5 py-1 rounded-lg ${isSelected ? 'bg-primary/15 text-primary dark:text-primary-hover' : 'bg-black/5 dark:bg-cream/5 text-espresso/60 dark:text-cream/60'
+                      <span className={`font-black text-xs font-bold px-2.5 py-1 rounded-lg ${isSelected ? 'bg-primary/15 text-primary dark:text-primary-hover' : 'bg-black/5 dark:bg-cream/5 text-espresso/60 dark:text-cream/60'
                         }`}>
                         0{idx + 1}
                       </span>
@@ -258,7 +258,7 @@ export const CategoriesPage: React.FC = () => {
                   >
                     <div className="flex items-center gap-3">
                       <span
-                        className={`font-mono text-xs font-bold px-2.5 py-1 rounded-lg transition-colors ${isOpen
+                        className={`font-black text-xs font-bold px-2.5 py-1 rounded-lg transition-colors ${isOpen
                           ? 'bg-primary/15 text-primary dark:text-primary-hover'
                           : 'bg-black/5 dark:bg-cream/5 text-espresso/60 dark:text-cream/60'
                           }`}
@@ -391,7 +391,7 @@ export const CategoriesPage: React.FC = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20" />
 
               <div className="absolute top-5 inset-x-5 flex items-center justify-between z-10">
-                <span className="font-mono text-xs text-[#C99444] bg-black/50 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10 font-bold">
+                <span className="font-black text-xs text-[#C99444] bg-black/50 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10 font-bold">
                   0{idx + 1}
                 </span>
                 {cat.featuredGovernorate && (

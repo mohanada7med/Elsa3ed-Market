@@ -331,7 +331,7 @@ export const AdminMapEditorPage: React.FC = () => {
                   </div>
 
                   <div className="flex items-center justify-between gap-2 pt-1 border-t border-[#F5EFE6] dark:border-[#26201B]">
-                    <div className="font-mono text-xs text-black/60 dark:text-white/60 dark:text-[#D6C6B1] flex items-center gap-2">
+                    <div className="font-black text-xs text-black/60 dark:text-white/60 dark:text-[#D6C6B1] flex items-center gap-2">
                       <span className="bg-black/5 dark:bg-cream/5 px-2 py-1 rounded-lg border border-black/10 dark:border-white/10">
                         {item.lat.toFixed(4)}° N
                       </span>
@@ -410,10 +410,10 @@ export const AdminMapEditorPage: React.FC = () => {
                       <td className="p-3.5 font-semibold text-black/60 dark:text-white/60 dark:text-[#D6C6B1]">
                         {item.governorateName}
                       </td>
-                      <td className="p-3.5 font-mono text-[#3B1E0E] dark:text-[#FFF9EE]">
+                      <td className="p-3.5 font-black text-[#3B1E0E] dark:text-[#FFF9EE]">
                         {item.lat.toFixed(4)}° N
                       </td>
-                      <td className="p-3.5 font-mono text-[#3B1E0E] dark:text-[#FFF9EE]">
+                      <td className="p-3.5 font-black text-[#3B1E0E] dark:text-[#FFF9EE]">
                         {item.lng.toFixed(4)}° E
                       </td>
                       <td className="p-3.5">
@@ -507,7 +507,7 @@ export const AdminMapEditorPage: React.FC = () => {
                           prev ? { ...prev, lat: parseFloat(e.target.value) || 0 } : null
                         )
                       }
-                      className="w-full p-2.5 rounded-xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 font-mono text-xs focus:outline-none focus:border-primary"
+                      className="w-full p-2.5 rounded-xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 font-black text-xs focus:outline-none focus:border-primary"
                     />
                     <span className="text-[10px] text-black/60 dark:text-white/60 block mt-1">
                       النطاق للصعيد: 22.0° إلى 29.8°
@@ -528,7 +528,7 @@ export const AdminMapEditorPage: React.FC = () => {
                           prev ? { ...prev, lng: parseFloat(e.target.value) || 0 } : null
                         )
                       }
-                      className="w-full p-2.5 rounded-xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 font-mono text-xs focus:outline-none focus:border-primary"
+                      className="w-full p-2.5 rounded-xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 font-black text-xs focus:outline-none focus:border-primary"
                     />
                     <span className="text-[10px] text-black/60 dark:text-white/60 block mt-1">
                       النطاق للصعيد: 27.2° إلى 33.8°

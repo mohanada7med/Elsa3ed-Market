@@ -359,7 +359,7 @@ export const PlaceDetailPage: React.FC = () => {
                   <SlidersHorizontal className="w-3.5 h-3.5 shrink-0" />
                   <span className="hidden sm:inline">تعديل المعلم</span>
                   <span className="sm:hidden">تعديل</span>
-                  <span className="rounded-full bg-white/20 px-1.5 py-0.5 text-[9px] font-mono">
+                  <span className="rounded-full bg-white/20 px-1.5 py-0.5 text-[9px] font-black">
                     أدمن
                   </span>
                 </button>
@@ -519,7 +519,7 @@ export const PlaceDetailPage: React.FC = () => {
 
                   <span className="w-8 sm:w-12 h-px bg-[#E2A083]/50" />
 
-                  <span className="max-w-[180px] sm:max-w-none truncate text-[9px] sm:text-[10px] text-white/45 font-mono">
+                  <span className="max-w-[180px] sm:max-w-none truncate text-[9px] sm:text-[10px] text-white/45 font-black">
                     {place.slug}
                   </span>
                 </div>
@@ -923,7 +923,7 @@ export const PlaceDetailPage: React.FC = () => {
               >
                 <UploadCloud className="w-4 h-4 shrink-0" />
                 <span>إضافة وتعديل صور المعرض (سحب وإفلات ورفع سريع)</span>
-                <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-mono">
+                <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-black">
                   أدمن
                 </span>
               </button>
@@ -1281,7 +1281,7 @@ export const PlaceDetailPage: React.FC = () => {
                         <MapPin className="w-4 h-4" />
                         <span>الإحداثيات الجغرافية الموثقة</span>
                       </div>
-                      <span className="text-xs font-mono text-black/60 dark:text-white/60">
+                      <span className="text-xs font-black text-black/60 dark:text-white/60">
                         {place.coordinates.lat.toFixed(5)}, {place.coordinates.lng.toFixed(5)}
                       </span>
                     </div>

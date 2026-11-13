@@ -13,6 +13,7 @@ import { getCart, clearCart, syncCart } from './cartService.ts';
 import { incrementCouponUsage } from './discountService.ts';
 import { addAuditLog } from './auditService.ts';
 import { createNotification, resolveSellerUserId } from './notificationService.ts';
+import { calculatePaymobFee } from '../../src/constants/paymobFees.ts';
 
 export interface CreateOrderInput {
   shippingAddress: OrderAddressDocument;
@@ -295,6 +296,9 @@ export async function createOrder(
     ...(sellerTipAmount > 0
       ? { sellerTipAmount, sellerTipSellerId, sellerTipSellerName }
       : {}),
+    paymentFee: ['paymob', 'paymob_card', 'paymob_wallet'].includes(paymentMethod)
+      ? calculatePaymobFee(cartSummary.total + sellerTipAmount)
+      : 0,
     total: cartSummary.total + sellerTipAmount,
     createdAt: nowIso,
     updatedAt: nowIso,
@@ -367,18 +371,29 @@ export async function createOrder(
       for (const sId of distinctSellerIds) {
         let sellerUserId = await resolveSellerUserId(sId);
         if (!sellerUserId) sellerUserId = sId;
+        const sellerItems = orderDocument.items
+          .filter((item) => item.sellerId === sId)
+          .map(({ productId, productTitle, productImage, quantity }) => ({
+            productId,
+            productTitle,
+            productImage,
+            quantity
+          }));
+        const productsSummary = sellerItems
+          .map((item) => `${item.productTitle} (كود: ${item.productId.slice(0, 8)})`)
+          .join('، ');
 
         await createNotification({
           userId: sellerUserId,
           recipientId: sId,
           title: `طلب شراء جديد لمنتجات ورشتك #${orderNumber}`,
-          message: sellerTipSellerId === sId
-            ? `لديك طلب شراء جديد #${orderNumber}، ويتضمن دعمًا اختياريًا لورشتك بقيمة ${sellerTipAmount.toLocaleString('ar-EG')} ج.م. يرجى مراجعة وتجهيز المنتجات.`
-            : `لديك طلب شراء جديد يتضمن منتجات من ورشتك بالطلب رقم #${orderNumber}. يرجى مراجعة وتجهيز المنتجات.`,
+          message: `${sellerTipSellerId === sId
+            ? `لديك طلب شراء جديد #${orderNumber}، ويتضمن دعمًا اختياريًا لورشتك بقيمة ${sellerTipAmount.toLocaleString('ar-EG')} ج.م.`
+            : `لديك طلب شراء جديد يتضمن منتجات من ورشتك بالطلب رقم #${orderNumber}.`} المنتجات: ${productsSummary}`,
           type: 'new_order',
           link: 'seller-orders',
           recipientRole: 'seller',
-          metadata: { orderId: orderDocument.id, orderNumber, sellerId: sId }
+          metadata: { orderId: orderDocument.id, orderNumber, sellerId: sId, items: sellerItems }
         });
       }
     }
@@ -773,6 +788,7 @@ export async function updateSellerOrderStatus(
       confirmed: 'تم تأكيد طلبك',
       processing: 'جاري تجهيز طلبك في الورشة',
       shipped: 'تم شحن طلبك وهو في الطريق إليك',
+      out_for_delivery: 'خرج طلبك للتوصيل',
       delivered: 'تم توصيل طلبك بنجاح',
       cancelled: 'تم إلغاء الطلب'
     };
@@ -962,6 +978,7 @@ export async function updateAdminOrderStatus(
       confirmed: 'تم تأكيد طلبك',
       processing: 'جاري تجهيز طلبك في الورشة',
       shipped: 'تم شحن طلبك وهو في الطريق إليك',
+      out_for_delivery: 'خرج طلبك للتوصيل',
       delivered: 'تم توصيل طلبك بنجاح',
       cancelled: 'تم إلغاء الطلب'
     };

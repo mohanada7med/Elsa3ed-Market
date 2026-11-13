@@ -2787,7 +2787,7 @@ export const AdminDashboard: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="bg-surface backdrop-blur-xl p-5 rounded-2xl border border-border shadow-sm text-foreground">
                   <span className="text-xs text-foreground-secondary block mb-1">إجمالي مبيعات المنصة (GMV)</span>
-                  <span className="text-2xl font-black text-foreground font-mono">{totalMarketplaceSales.toLocaleString()} ج.م</span>
+                  <span className="text-2xl font-black text-foreground font-black">{totalMarketplaceSales.toLocaleString()} ج.م</span>
                   <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">
                     {activeOrders.length > 0 ? `إجمالي ${activeOrders.length} طلب نشط` : 'مؤشر المبيعات المباشرة'}
                   </span>
@@ -2795,7 +2795,7 @@ export const AdminDashboard: React.FC = () => {
 
                 <div className="bg-surface backdrop-blur-xl p-5 rounded-2xl border border-border shadow-sm text-foreground">
                   <span className="text-xs text-foreground-secondary block mb-1">إجمالي الحرفيين والورش</span>
-                  <span className="text-2xl font-black text-foreground font-mono">{sellers.length} ورشة</span>
+                  <span className="text-2xl font-black text-foreground font-black">{sellers.length} ورشة</span>
                   <span className="text-[10px] text-primary dark:text-primary-hover font-bold block mt-1">
                     {new Set(sellers.map((s) => s.governorate).filter(Boolean)).size > 0
                       ? `بتغطي ${new Set(sellers.map((s) => s.governorate).filter(Boolean)).size} محافظات في الصعيد`
@@ -2805,7 +2805,7 @@ export const AdminDashboard: React.FC = () => {
 
                 <div className="bg-surface backdrop-blur-xl p-5 rounded-2xl border border-border shadow-sm text-foreground">
                   <span className="text-xs text-foreground-secondary block mb-1">المنتجات الحرفية النشطة</span>
-                  <span className="text-2xl font-black text-foreground font-mono">
+                  <span className="text-2xl font-black text-foreground font-black">
                     {adminProducts.filter((p) => p.approvalStatus === 'approved').length} قطعة
                   </span>
                   <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">
@@ -2817,7 +2817,7 @@ export const AdminDashboard: React.FC = () => {
 
                 <div className="bg-surface backdrop-blur-xl p-5 rounded-2xl border border-border shadow-sm text-foreground">
                   <span className="text-xs text-foreground-secondary block mb-1">طلبات الشحن المتنفذة</span>
-                  <span className="text-2xl font-black text-foreground font-mono">{activeOrders.length} شحنة</span>
+                  <span className="text-2xl font-black text-foreground font-black">{activeOrders.length} شحنة</span>
                   <span className="text-[10px] text-foreground-secondary block mt-1">
                     {activeOrders.length > 0
                       ? `${orders.filter((o) => o.status === 'delivered').length} شحنة اتسلّمت خلاص`
@@ -3155,10 +3155,10 @@ export const AdminDashboard: React.FC = () => {
                           <span className="text-2xl">{cat.icon || '🏺'}</span>
                           <div>
                             <h4 className="font-bold text-sm text-foreground">{cat.name}</h4>
-                            {cat.nameEn && <span className="text-[10px] text-black/60 dark:text-white/60 block font-mono">{cat.nameEn}</span>}
+                            {cat.nameEn && <span className="text-[10px] text-black/60 dark:text-white/60 block font-black">{cat.nameEn}</span>}
                           </div>
                         </div>
-                        <span className="text-[11px] font-bold font-mono bg-amber-100 text-primary dark:text-primary-hover px-2 py-0.5 rounded-full">
+                        <span className="text-[11px] font-bold font-black bg-amber-100 text-primary dark:text-primary-hover px-2 py-0.5 rounded-full">
                           {cat.productCount || 0} منتج
                         </span>
                       </div>
@@ -3323,7 +3323,7 @@ export const AdminDashboard: React.FC = () => {
                     <span>إجمالي الفيديوهات</span>
                     <Film className="w-4 h-4 text-primary dark:text-primary-hover" />
                   </div>
-                  <span className="text-2xl font-black text-foreground font-mono">{adminReels.length} فيديو</span>
+                  <span className="text-2xl font-black text-foreground font-black">{adminReels.length} فيديو</span>
                   <span className="text-[10px] text-emerald-700 font-bold block mt-1">بتغطي بلاد الصعيد كلها</span>
                 </div>
 
@@ -3332,7 +3332,7 @@ export const AdminDashboard: React.FC = () => {
                     <span>إجمالي المشاهدات</span>
                     <Eye className="w-4 h-4 text-amber-600" />
                   </div>
-                  <span className="text-2xl font-black text-foreground font-mono">
+                  <span className="text-2xl font-black text-foreground font-black">
                     {adminReels.reduce((acc, r) => acc + (r.viewsCount || 0), 0).toLocaleString()}
                   </span>
                   <span className="text-[10px] text-emerald-700 font-bold block mt-1">مشاهدات حقيقية وتفاعل عالي</span>
@@ -3343,7 +3343,7 @@ export const AdminDashboard: React.FC = () => {
                     <span>إجمالي الإعجابات</span>
                     <Heart className="w-4 h-4 text-rose-500 fill-rose-500" />
                   </div>
-                  <span className="text-2xl font-black text-foreground font-mono">
+                  <span className="text-2xl font-black text-foreground font-black">
                     {adminReels.reduce((acc, r) => acc + (r.likesCount || 0), 0).toLocaleString()}
                   </span>
                   <span className="text-[10px] text-black/60 dark:text-white/60 block mt-1">تفاعل الناس في المنصة</span>
@@ -3354,7 +3354,7 @@ export const AdminDashboard: React.FC = () => {
                     <span>الحكايات والفيديوهات</span>
                     <Store className="w-4 h-4 text-indigo-600" />
                   </div>
-                  <span className="text-2xl font-black text-foreground font-mono">
+                  <span className="text-2xl font-black text-foreground font-black">
                     {adminReels.length} حكاية
                   </span>
                   <span className="text-[10px] text-indigo-700 font-bold block mt-1">محتوى توثيقي وصنايعية</span>
@@ -3647,7 +3647,7 @@ export const AdminDashboard: React.FC = () => {
                               />
                             ))}
                           </div>
-                          <span className="text-[10px] text-black/60 dark:text-white/60 font-mono">{rev.date}</span>
+                          <span className="text-[10px] text-black/60 dark:text-white/60 font-black">{rev.date}</span>
                         </div>
 
                         <p className="text-xs text-foreground leading-relaxed">"{rev.comment}"</p>
@@ -3884,9 +3884,9 @@ export const AdminDashboard: React.FC = () => {
                           {/* Details & Specs */}
                           <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-black/60 dark:text-white/60">
                             <span>صاحب الورشة: <strong className="text-foreground">{s.name}</strong></span>
-                            <span>كود الحساب: <strong className="text-foreground font-mono text-[11px]">{s.userId || s.id}</strong></span>
+                            <span>كود الحساب: <strong className="text-foreground font-black text-[11px]">{s.userId || s.id}</strong></span>
                             <span>الحرفة: <strong className="text-foreground">{s.specialty || 'مشغولات تراثية'}</strong></span>
-                            <span>الهاتف: <strong className="text-foreground font-mono">{s.phone}</strong></span>
+                            <span>الهاتف: <strong className="text-foreground font-black">{s.phone}</strong></span>
                             {s.email && <span>البريد: <strong className="text-foreground">{s.email}</strong></span>}
                             {s.createdAt && <span>تاريخ التقديم: <strong className="text-foreground">{s.createdAt.split('T')[0]}</strong></span>}
                           </div>
@@ -4094,7 +4094,7 @@ export const AdminDashboard: React.FC = () => {
                         const isPendingVerification = ord.paymentStatus === 'payment_pending_verification';
                         return (
                           <tr key={ord.id} className={`hover:bg-black/5 dark:bg-cream/5 ${isPendingVerification ? 'bg-amber-50/40' : ''}`}>
-                            <td className="py-3 px-4 font-mono font-bold text-primary dark:text-primary-hover">
+                            <td className="py-3 px-4 font-black font-bold text-primary dark:text-primary-hover">
                               #{ord.orderNumber || ord.id}
                             </td>
                             <td className="py-3 px-4 font-bold text-foreground">
@@ -4128,7 +4128,7 @@ export const AdminDashboard: React.FC = () => {
                             </td>
                             <td className="py-3 px-4">
                               {ord.paymentReference ? (
-                                <div className="bg-black/5 dark:bg-cream/5 p-1.5 rounded border border-border text-[11px] font-mono text-gray-800">
+                                <div className="bg-black/5 dark:bg-cream/5 p-1.5 rounded border border-border text-[11px] font-black text-gray-800">
                                   <span className="text-[10px] text-gray-500 block">رقم التحويل / الحساب:</span>
                                   {ord.paymentReference}
                                 </div>
@@ -4162,7 +4162,7 @@ export const AdminDashboard: React.FC = () => {
                             <td className="py-3 px-4">
                               {ord.trackingNumber ? (
                                 <div className="flex flex-col gap-1">
-                                  <span className="px-2 py-0.5 rounded-md font-mono text-[10px] font-bold bg-black/5 dark:bg-white/5 text-gray-800 dark:text-gray-200 border border-black/10 dark:border-white/10 inline-flex items-center gap-1 w-fit">
+                                  <span className="px-2 py-0.5 rounded-md font-black text-[10px] font-bold bg-black/5 dark:bg-white/5 text-gray-800 dark:text-gray-200 border border-black/10 dark:border-white/10 inline-flex items-center gap-1 w-fit">
                                     <Truck className="w-3 h-3 text-primary" />
                                     <span>{ord.shippingProvider ? `${ord.shippingProvider}: ` : ''}{ord.trackingNumber}</span>
                                   </span>
@@ -4383,7 +4383,7 @@ export const AdminDashboard: React.FC = () => {
                       value={adminPaymentSettings.vodafoneCashNumber || ''}
                       onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, vodafoneCashNumber: e.target.value })}
                       placeholder="01158969931"
-                      className="w-full px-3.5 py-2.5 bg-surface border border-border rounded-xl text-xs font-mono font-bold text-gray-900 dark:text-foreground outline-none"
+                      className="w-full px-3.5 py-2.5 bg-surface border border-border rounded-xl text-xs font-black font-bold text-gray-900 dark:text-foreground outline-none"
                     />
                   </div>
                 </div>
@@ -4425,7 +4425,7 @@ export const AdminDashboard: React.FC = () => {
                       value={adminPaymentSettings.instaPayAccount || ''}
                       onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, instaPayAccount: e.target.value })}
                       placeholder="username@instapay"
-                      className="w-full px-3.5 py-2.5 bg-surface border border-border rounded-xl text-xs font-mono font-bold text-gray-900 dark:text-foreground outline-none"
+                      className="w-full px-3.5 py-2.5 bg-surface border border-border rounded-xl text-xs font-black font-bold text-gray-900 dark:text-foreground outline-none"
                     />
                   </div>
                 </div>
@@ -4494,7 +4494,7 @@ export const AdminDashboard: React.FC = () => {
                         min="0"
                         value={adminShippingSettings.upperEgyptShippingFee ?? 45}
                         onChange={(e) => setAdminShippingSettings({ ...adminShippingSettings, upperEgyptShippingFee: Number(e.target.value) })}
-                        className="w-full px-4 py-2.5 bg-surface border border-border rounded-xl text-xs font-mono font-bold text-gray-800 dark:text-gray-100 outline-none"
+                        className="w-full px-4 py-2.5 bg-surface border border-border rounded-xl text-xs font-black font-bold text-gray-800 dark:text-gray-100 outline-none"
                       />
                       <span className="text-[10px] text-gray-500">قنا، الأقصر، أسوان، أسيوط، سوهاج...</span>
                     </div>
@@ -4508,7 +4508,7 @@ export const AdminDashboard: React.FC = () => {
                         min="0"
                         value={adminShippingSettings.otherGovernoratesShippingFee ?? 55}
                         onChange={(e) => setAdminShippingSettings({ ...adminShippingSettings, otherGovernoratesShippingFee: Number(e.target.value) })}
-                        className="w-full px-4 py-2.5 bg-surface border border-border rounded-xl text-xs font-mono font-bold text-gray-800 dark:text-gray-100 outline-none"
+                        className="w-full px-4 py-2.5 bg-surface border border-border rounded-xl text-xs font-black font-bold text-gray-800 dark:text-gray-100 outline-none"
                       />
                       <span className="text-[10px] text-gray-500">القاهرة، الجيزة، الإسكندرية، الدلتا...</span>
                     </div>
@@ -4522,7 +4522,7 @@ export const AdminDashboard: React.FC = () => {
                         min="0"
                         value={adminShippingSettings.freeShippingThreshold ?? 1000}
                         onChange={(e) => setAdminShippingSettings({ ...adminShippingSettings, freeShippingThreshold: Number(e.target.value) })}
-                        className="w-full px-4 py-2.5 bg-surface border border-border rounded-xl text-xs font-mono font-bold text-gray-800 dark:text-gray-100 outline-none"
+                        className="w-full px-4 py-2.5 bg-surface border border-border rounded-xl text-xs font-black font-bold text-gray-800 dark:text-gray-100 outline-none"
                       />
                       <span className="text-[10px] text-emerald-600 font-bold">توصيل مجاني للطلبات فوق هذا المبلغ</span>
                     </div>
@@ -4595,7 +4595,7 @@ export const AdminDashboard: React.FC = () => {
                         value={newCode}
                         onChange={(e) => setNewCode(e.target.value)}
                         placeholder="مثال: UPPEREGYPT25"
-                        className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-xs font-mono uppercase outline-none focus:border-primary"
+                        className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-xs font-black uppercase outline-none focus:border-primary"
                       />
                     </div>
 
@@ -4644,7 +4644,7 @@ export const AdminDashboard: React.FC = () => {
                       {coupons.map((c, i) => (
                         <div key={i} className="p-4 bg-black/5 dark:bg-cream/5 rounded-2xl border border-border flex items-center justify-between">
                           <div>
-                            <span className="font-mono font-black text-sm text-primary dark:text-primary-hover block">{c.code}</span>
+                            <span className="font-black font-black text-sm text-primary dark:text-primary-hover block">{c.code}</span>
                             <span className="text-xs text-black/60 dark:text-white/60">
                               خصم <strong>{c.discount}%</strong> • للطلبات فوق {c.minOrder} ج.م
                             </span>
@@ -4736,7 +4736,7 @@ export const AdminDashboard: React.FC = () => {
                   <tbody className="divide-y divide-black/10 dark:divide-white/10">
                     {auditLogs.map((log) => (
                       <tr key={log.id} className="hover:bg-black/5 dark:bg-cream/5">
-                        <td className="py-3 px-4 font-mono text-black/60 dark:text-white/60 whitespace-nowrap">{log.timestamp}</td>
+                        <td className="py-3 px-4 font-black text-black/60 dark:text-white/60 whitespace-nowrap">{log.timestamp}</td>
                         <td className="py-3 px-4 font-bold text-foreground">
                           {log.userName}
                           <span className="block text-[10px] text-black/60 dark:text-white/60 font-normal">{log.userRole}</span>
@@ -4791,35 +4791,35 @@ export const AdminDashboard: React.FC = () => {
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
                 <div className="bg-surface backdrop-blur-xl p-4 rounded-2xl border border-border shadow-sm text-foreground">
                   <span className="text-[11px] text-foreground-secondary block mb-1">إجمالي المستخدمين</span>
-                  <span className="text-2xl font-black text-foreground font-mono">{adminUsers.length}</span>
+                  <span className="text-2xl font-black text-foreground font-black">{adminUsers.length}</span>
                 </div>
                 <div className="bg-surface backdrop-blur-xl p-4 rounded-2xl border border-border shadow-sm text-foreground">
                   <span className="text-[11px] text-foreground-secondary block mb-1">المشترين (Buyers)</span>
-                  <span className="text-2xl font-black text-blue-700 dark:text-blue-300 font-mono">
+                  <span className="text-2xl font-black text-blue-700 dark:text-blue-300 font-black">
                     {adminUsers.filter((u) => u.role === 'buyer').length}
                   </span>
                 </div>
                 <div className="bg-surface backdrop-blur-xl p-4 rounded-2xl border border-border shadow-sm text-foreground">
                   <span className="text-[11px] text-foreground-secondary block mb-1">الورش والحرفيين (Sellers)</span>
-                  <span className="text-2xl font-black text-amber-700 dark:text-amber-300 font-mono">
+                  <span className="text-2xl font-black text-amber-700 dark:text-amber-300 font-black">
                     {adminUsers.filter((u) => u.role === 'seller').length}
                   </span>
                 </div>
                 <div className="bg-surface backdrop-blur-xl p-4 rounded-2xl border border-border shadow-sm text-foreground">
                   <span className="text-[11px] text-foreground-secondary block mb-1">المسؤولين (Admins)</span>
-                  <span className="text-2xl font-black text-purple-700 dark:text-purple-300 font-mono">
+                  <span className="text-2xl font-black text-purple-700 dark:text-purple-300 font-black">
                     {adminUsers.filter((u) => u.role === 'admin').length}
                   </span>
                 </div>
                 <div className="bg-surface backdrop-blur-xl p-4 rounded-2xl border border-border shadow-sm text-foreground">
                   <span className="text-[11px] text-foreground-secondary block mb-1">حسابات شغالة</span>
-                  <span className="text-2xl font-black text-emerald-700 dark:text-emerald-300 font-mono">
+                  <span className="text-2xl font-black text-emerald-700 dark:text-emerald-300 font-black">
                     {adminUsers.filter((u) => (u.status || 'active') === 'active').length}
                   </span>
                 </div>
                 <div className="bg-surface backdrop-blur-xl p-4 rounded-2xl border border-border shadow-sm text-foreground">
                   <span className="text-[11px] text-foreground-secondary block mb-1">حسابات متوقفة</span>
-                  <span className="text-2xl font-black text-rose-700 dark:text-rose-300 font-mono">
+                  <span className="text-2xl font-black text-rose-700 dark:text-rose-300 font-black">
                     {adminUsers.filter((u) => u.status === 'suspended' || u.status === 'blocked').length}
                   </span>
                 </div>
@@ -5013,7 +5013,7 @@ export const AdminDashboard: React.FC = () => {
                                 </span>
                               </td>
                               <td className="py-3 px-4 font-medium text-foreground">{u.governorate || 'مش محدد'}</td>
-                              <td className="py-3 px-4 font-mono text-foreground-secondary">{u.phone || '---'}</td>
+                              <td className="py-3 px-4 font-black text-foreground-secondary">{u.phone || '---'}</td>
                               <td className="py-3 px-4 text-foreground-secondary text-[11px]">
                                 {u.createdAt ? new Date(u.createdAt).toLocaleDateString('ar-EG') : '---'}
                               </td>
@@ -5180,7 +5180,7 @@ export const AdminDashboard: React.FC = () => {
                         <div className="grid grid-cols-2 gap-2 rounded-xl bg-background-secondary p-2.5 text-[11px]">
                           <div className="min-w-0">
                             <span className="mb-0.5 block text-foreground-muted">الموبايل</span>
-                            <span className="block truncate font-mono text-foreground" dir="ltr">{u.phone || '---'}</span>
+                            <span className="block truncate font-black text-foreground" dir="ltr">{u.phone || '---'}</span>
                           </div>
                           <div className="min-w-0">
                             <span className="mb-0.5 block text-foreground-muted">تاريخ الانضمام</span>
@@ -5341,12 +5341,12 @@ export const AdminDashboard: React.FC = () => {
                                   <span className="font-bold text-foreground block">
                                     {r.name || r.username}
                                   </span>
-                                  <span className="text-[11px] text-gray-500 font-mono">
+                                  <span className="text-[11px] text-gray-500 font-black">
                                     @{r.username}
                                   </span>
                                 </div>
                               </td>
-                              <td className="py-3 px-4 font-mono">
+                              <td className="py-3 px-4 font-black">
                                 {r.phone || 'مش متسجل'}
                               </td>
                               <td className="py-3 px-4 text-gray-600">
@@ -5587,7 +5587,7 @@ export const AdminDashboard: React.FC = () => {
                     value={categorySlug}
                     onChange={(e) => setCategorySlug(e.target.value)}
                     placeholder="cat-pottery"
-                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-xs font-mono outline-none focus:border-primary"
+                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-xs font-black outline-none focus:border-primary"
                   />
                 </div>
               </div>
@@ -5853,7 +5853,7 @@ export const AdminDashboard: React.FC = () => {
                   {selectedUserForDetails.name}
                 </h4>
 
-                <p className="text-xs font-mono text-foreground-secondary truncate">
+                <p className="text-xs font-black text-foreground-secondary truncate">
                   @{selectedUserForDetails.username || 'من غير اسم مستخدم'}
                 </p>
 
@@ -5927,7 +5927,7 @@ export const AdminDashboard: React.FC = () => {
                     dir={item.ltr ? 'ltr' : undefined}
                     className={`block font-bold break-words
                 text-foreground
-                ${item.mono ? 'font-mono' : ''}`}
+                ${item.mono ? 'font-black' : ''}`}
                   >
                     {item.value}
                   </span>
@@ -6090,7 +6090,7 @@ export const AdminDashboard: React.FC = () => {
                     required
                     value={editUsername}
                     onChange={(e) => setEditUsername(e.target.value)}
-                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-foreground placeholder:text-foreground-muted outline-none focus:border-primary font-mono text-left"
+                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-foreground placeholder:text-foreground-muted outline-none focus:border-primary font-black text-left"
                     dir="ltr"
                   />
                 </div>
@@ -6104,7 +6104,7 @@ export const AdminDashboard: React.FC = () => {
                     required
                     value={editPhone}
                     onChange={(e) => setEditPhone(e.target.value)}
-                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-foreground placeholder:text-foreground-muted outline-none focus:border-primary font-mono text-left"
+                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-foreground placeholder:text-foreground-muted outline-none focus:border-primary font-black text-left"
                     dir="ltr"
                   />
                 </div>
@@ -6250,7 +6250,7 @@ export const AdminDashboard: React.FC = () => {
             <div className="p-3 bg-black/5 dark:bg-cream/5 rounded-xl border border-border text-xs">
               <span className="text-foreground-secondary block mb-0.5">الحساب المطلوب:</span>
               <span className="font-bold text-foreground">{selectedUserForResetPassword.name}</span>
-              <span className="text-foreground-secondary font-mono text-[11px] block">@{selectedUserForResetPassword.username}</span>
+              <span className="text-foreground-secondary font-black text-[11px] block">@{selectedUserForResetPassword.username}</span>
             </div>
 
             <form onSubmit={handleConfirmResetPassword} className="space-y-3 text-xs">
@@ -6262,7 +6262,7 @@ export const AdminDashboard: React.FC = () => {
                   value={newPasswordInput}
                   onChange={(e) => setNewPasswordInput(e.target.value)}
                   placeholder="اكتب الباسورد الجديد هنا..."
-                  className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-foreground placeholder:text-foreground-muted outline-none focus:border-primary font-mono text-left"
+                  className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-foreground placeholder:text-foreground-muted outline-none focus:border-primary font-black text-left"
                   dir="ltr"
                 />
               </div>
@@ -6388,7 +6388,7 @@ export const AdminDashboard: React.FC = () => {
                     value={newUserUsername}
                     onChange={(e) => setNewUserUsername(e.target.value)}
                     placeholder="ahmed_abdallah"
-                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-foreground placeholder:text-foreground-muted outline-none focus:border-primary font-mono text-left"
+                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-foreground placeholder:text-foreground-muted outline-none focus:border-primary font-black text-left"
                     dir="ltr"
                   />
                 </div>
@@ -6403,7 +6403,7 @@ export const AdminDashboard: React.FC = () => {
                     value={newUserPhone}
                     onChange={(e) => setNewUserPhone(e.target.value)}
                     placeholder="01012345678"
-                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-foreground placeholder:text-foreground-muted outline-none focus:border-primary font-mono text-left"
+                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-foreground placeholder:text-foreground-muted outline-none focus:border-primary font-black text-left"
                     dir="ltr"
                   />
                 </div>
@@ -6609,7 +6609,7 @@ export const AdminDashboard: React.FC = () => {
             <div className="p-3 bg-black/5 dark:bg-cream/5 rounded-2xl border border-border text-xs space-y-1">
               <div className="flex items-center justify-between">
                 <span className="text-gray-500">اسم المستخدم:</span>
-                <span className="font-bold font-mono text-foreground">@{selectedResetForAction.username}</span>
+                <span className="font-bold font-black text-foreground">@{selectedResetForAction.username}</span>
               </div>
               {selectedResetForAction.name && (
                 <div className="flex items-center justify-between">
@@ -6620,7 +6620,7 @@ export const AdminDashboard: React.FC = () => {
               {selectedResetForAction.phone && (
                 <div className="flex items-center justify-between">
                   <span className="text-gray-500">رقم الموبايل:</span>
-                  <span className="font-bold font-mono text-foreground">{selectedResetForAction.phone}</span>
+                  <span className="font-bold font-black text-foreground">{selectedResetForAction.phone}</span>
                 </div>
               )}
             </div>
@@ -6653,7 +6653,7 @@ export const AdminDashboard: React.FC = () => {
                     value={tempPasswordInput}
                     onChange={(e) => setTempPasswordInput(e.target.value)}
                     placeholder="اكتب أو ولّد الباسورد المؤقت"
-                    className="w-full pl-3 pr-10 py-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl outline-none focus:border-primary font-mono text-left"
+                    className="w-full pl-3 pr-10 py-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl outline-none focus:border-primary font-black text-left"
                     dir="ltr"
                   />
                   <Lock className="w-4 h-4 text-gray-400 absolute right-3 top-3" />
@@ -6724,13 +6724,13 @@ export const AdminDashboard: React.FC = () => {
             <div className="p-4 bg-black/5 dark:bg-cream/5 rounded-2xl border border-border space-y-2.5 text-xs">
               <div className="flex items-center justify-between border-b border-gray-200 pb-2">
                 <span className="text-gray-500">اسم المستخدم:</span>
-                <span className="font-bold font-mono text-base text-foreground">@{completedTempPasswordInfo.username}</span>
+                <span className="font-bold font-black text-base text-foreground">@{completedTempPasswordInfo.username}</span>
               </div>
 
               {completedTempPasswordInfo.phone && (
                 <div className="flex items-center justify-between border-b border-gray-200 pb-2">
                   <span className="text-gray-500">رقم الموبايل للتواصل:</span>
-                  <span className="font-bold font-mono text-sm text-foreground">{completedTempPasswordInfo.phone}</span>
+                  <span className="font-bold font-black text-sm text-foreground">{completedTempPasswordInfo.phone}</span>
                 </div>
               )}
 
@@ -6738,7 +6738,7 @@ export const AdminDashboard: React.FC = () => {
                 <span className="text-gray-500 block mb-1">الباسورد المؤقت الجديد:</span>
                 <div className="flex items-center gap-2">
                   <div
-                    className="flex-1 p-3 bg-white border-2 border-dashed border-primary rounded-xl font-mono text-center text-base sm:text-lg font-black tracking-wider text-foreground select-all select-text"
+                    className="flex-1 p-3 bg-white border-2 border-dashed border-primary rounded-xl font-black text-center text-base sm:text-lg font-black tracking-wider text-foreground select-all select-text"
                     dir="ltr"
                   >
                     {completedTempPasswordInfo.temporaryPassword}
@@ -7042,7 +7042,7 @@ export const AdminDashboard: React.FC = () => {
                     type="text"
                     value={sellerEditPhone}
                     onChange={(e) => setSellerEditPhone(e.target.value)}
-                    className="w-full px-3 py-2.5 bg-surface border border-border rounded-xl text-xs sm:text-sm text-foreground outline-none font-mono text-left transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
+                    className="w-full px-3 py-2.5 bg-surface border border-border rounded-xl text-xs sm:text-sm text-foreground outline-none font-black text-left transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
                     dir="ltr"
                   />
                 </div>
@@ -7055,7 +7055,7 @@ export const AdminDashboard: React.FC = () => {
                     type="email"
                     value={sellerEditEmail}
                     onChange={(e) => setSellerEditEmail(e.target.value)}
-                    className="w-full px-3 py-2.5 bg-surface border border-border rounded-xl text-xs sm:text-sm text-foreground outline-none font-mono text-left transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
+                    className="w-full px-3 py-2.5 bg-surface border border-border rounded-xl text-xs sm:text-sm text-foreground outline-none font-black text-left transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
                     dir="ltr"
                   />
                 </div>
@@ -7084,7 +7084,7 @@ export const AdminDashboard: React.FC = () => {
                     type="url"
                     value={sellerEditAvatar}
                     onChange={(e) => setSellerEditAvatar(e.target.value)}
-                    className="w-full px-3 py-2.5 bg-surface border border-border rounded-xl text-xs sm:text-sm text-foreground outline-none font-mono text-left transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
+                    className="w-full px-3 py-2.5 bg-surface border border-border rounded-xl text-xs sm:text-sm text-foreground outline-none font-black text-left transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
                     dir="ltr"
                   />
                 </div>
@@ -7139,7 +7139,7 @@ export const AdminDashboard: React.FC = () => {
                       value={sellerEditPayoutAccount}
                       onChange={(e) => setSellerEditPayoutAccount(e.target.value)}
                       placeholder="اسم المستخدم أو رقم المحفظة أو الآيبان"
-                      className="w-full min-w-0 px-3 py-2.5 bg-surface border border-border rounded-lg text-xs sm:text-sm text-foreground placeholder:text-foreground-muted outline-none font-mono transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
+                      className="w-full min-w-0 px-3 py-2.5 bg-surface border border-border rounded-lg text-xs sm:text-sm text-foreground placeholder:text-foreground-muted outline-none font-black transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
                     />
                   </div>
                 </div>
@@ -7621,7 +7621,7 @@ export const AdminDashboard: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="font-bold text-base">تتبع مسار الشحنة</h3>
-                  <span className="text-xs text-black/60 dark:text-white/60 font-mono">
+                  <span className="text-xs text-black/60 dark:text-white/60 font-black">
                     الطلب #{trackingModalOrder.orderNumber}
                   </span>
                 </div>
@@ -7640,7 +7640,7 @@ export const AdminDashboard: React.FC = () => {
               <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/40 flex items-center justify-between">
                 <div>
                   <span className="text-[10px] text-amber-800 dark:text-amber-300 font-bold block">مرجع الشحنة (Reference):</span>
-                  <span className="font-mono text-base font-black text-amber-950 dark:text-amber-100">
+                  <span className="font-black text-base font-black text-amber-950 dark:text-amber-100">
                     {trackingModalOrder.trackingNumber || 'غير متوفر'}
                   </span>
                   <span className="text-[11px] font-bold text-gray-500 block mt-0.5">

@@ -309,7 +309,7 @@ export const WholesalePage: React.FC = () => {
                     href={`https://wa.me/201158969931`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-base font-black font-mono text-emerald-700 dark:text-emerald-400 hover:underline"
+                    className="text-base font-black font-black text-emerald-700 dark:text-emerald-400 hover:underline"
                   >
                     01158969931
                   </a>
@@ -382,7 +382,7 @@ export const WholesalePage: React.FC = () => {
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="01XXXXXXXXX"
-                      className="w-full text-xs bg-black/5 dark:bg-cream/5 text-espresso dark:text-cream px-4 py-3 rounded-[1rem] border border-black/10 dark:border-white/10 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 font-mono"
+                      className="w-full text-xs bg-black/5 dark:bg-cream/5 text-espresso dark:text-cream px-4 py-3 rounded-[1rem] border border-black/10 dark:border-white/10 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 font-black"
                     />
                   </div>
 

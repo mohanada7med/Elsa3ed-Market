@@ -353,7 +353,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
                 }`}
               >
                 <div className="flex flex-col items-center gap-1.5">
-                  <span className="font-mono text-xs font-bold text-[#d5a56d]">
+                  <span className="font-black text-xs font-bold text-[#d5a56d]">
                     0{idx + 1}
                   </span>
 
@@ -538,7 +538,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
               {/* Top Information */}
 
               <div className="absolute inset-x-4 top-4 z-10 flex items-center justify-between">
-                <span className="font-mono text-[10px] font-bold tracking-widest text-white/75 sm:text-xs">
+                <span className="font-black text-[10px] font-bold tracking-widest text-white/75 sm:text-xs">
                   0{idx + 1} / 07
                 </span>
 

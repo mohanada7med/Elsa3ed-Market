@@ -312,7 +312,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
             <div className="text-[11px] font-bold text-amber-900 dark:text-amber-300">
               بلاغات جديدة بانتظار الرد
             </div>
-            <div className="text-2xl font-black text-amber-700 dark:text-amber-400 mt-1 font-mono">
+            <div className="text-2xl font-black text-amber-700 dark:text-amber-400 mt-1 font-black">
               {stats.pending}
             </div>
           </div>
@@ -321,7 +321,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
             <div className="text-[11px] font-bold text-blue-900 dark:text-blue-300">
               قيد المتابعة والحل
             </div>
-            <div className="text-2xl font-black text-blue-700 dark:text-blue-400 mt-1 font-mono">
+            <div className="text-2xl font-black text-blue-700 dark:text-blue-400 mt-1 font-black">
               {stats.inProgress}
             </div>
           </div>
@@ -330,7 +330,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
             <div className="text-[11px] font-bold text-emerald-900 dark:text-emerald-300">
               تم حلها بالكامل
             </div>
-            <div className="text-2xl font-black text-emerald-700 dark:text-emerald-400 mt-1 font-mono">
+            <div className="text-2xl font-black text-emerald-700 dark:text-emerald-400 mt-1 font-black">
               {stats.resolved}
             </div>
           </div>
@@ -339,7 +339,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
             <div className="text-[11px] font-bold text-rose-900 dark:text-rose-300">
               بلاغات عاجلة / طارئة
             </div>
-            <div className="text-2xl font-black text-rose-700 dark:text-rose-400 mt-1 font-mono">
+            <div className="text-2xl font-black text-rose-700 dark:text-rose-400 mt-1 font-black">
               {stats.urgent}
             </div>
           </div>
@@ -443,7 +443,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
                 {/* Top Row: Meta Info & Status Badges */}
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-black/5 dark:border-white/5 pb-3">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-mono font-black text-xs bg-black/5 dark:bg-white/10 px-2.5 py-1 rounded-lg text-primary dark:text-primary-hover">
+                    <span className="font-black font-black text-xs bg-black/5 dark:bg-white/10 px-2.5 py-1 rounded-lg text-primary dark:text-primary-hover">
                       #{ticket.ticketNumber}
                     </span>
 
@@ -490,7 +490,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
                   <div className="flex flex-wrap items-center gap-3">
                     <a
                       href={`tel:${ticket.userPhone}`}
-                      className="text-primary dark:text-primary-hover font-mono font-bold flex items-center gap-1 hover:underline"
+                      className="text-primary dark:text-primary-hover font-black font-bold flex items-center gap-1 hover:underline"
                     >
                       <Phone className="w-3.5 h-3.5" />
                       <span>{ticket.userPhone}</span>

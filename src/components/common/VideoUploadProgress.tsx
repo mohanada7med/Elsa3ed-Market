@@ -597,7 +597,7 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
           )}
 
           {uploadedPublicId && (
-            <div className="text-[11px] text-gray-500 dark:text-[#D6C6B1] font-mono bg-white/80 dark:bg-black/20 p-2 rounded-lg border border-emerald-100 dark:border-emerald-900 truncate">
+            <div className="text-[11px] text-gray-500 dark:text-[#D6C6B1] font-black bg-white/80 dark:bg-black/20 p-2 rounded-lg border border-emerald-100 dark:border-emerald-900 truncate">
               <span className="text-gray-400 dark:text-gray-500 font-sans">المعرف السحابي: </span>
               {uploadedPublicId}
             </div>

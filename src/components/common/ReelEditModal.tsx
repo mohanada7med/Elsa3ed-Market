@@ -386,7 +386,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
                         setCloudinaryPublicId(undefined);
                       }}
                       placeholder="https://res.cloudinary.com/.../video.mp4 أو https://my-bucket.s3.../video.mp4"
-                      className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary text-left font-mono"
+                      className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary text-left font-black"
                       dir="ltr"
                       required
                     />
@@ -435,7 +435,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
                   value={posterUrl}
                   onChange={(e) => setPosterUrl(e.target.value)}
                   placeholder="https://.../poster.jpg"
-                  className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary text-left font-mono"
+                  className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary text-left font-black"
                   dir="ltr"
                 />
               </div>
@@ -719,7 +719,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
                       value={productImage}
                       onChange={(e) => setProductImage(e.target.value)}
                       placeholder="https://.../product.jpg"
-                      className="w-full p-2 bg-white dark:bg-[#26160D] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none text-left font-mono"
+                      className="w-full p-2 bg-white dark:bg-[#26160D] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none text-left font-black"
                       dir="ltr"
                     />
                   </div>

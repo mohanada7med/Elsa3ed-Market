@@ -527,7 +527,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
                 {payouts.map((payout) => (
                   <tr key={payout.id} className="hover:bg-gray-50/50 dark:hover:bg-[#26201B]/50 transition">
                     <td className="py-3.5 px-4">
-                      <span className="font-mono text-xs font-bold text-gray-800 dark:text-stone-300 block">
+                      <span className="font-black text-xs font-bold text-gray-800 dark:text-stone-300 block">
                         {payout.id}
                       </span>
                     </td>
@@ -550,7 +550,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
                         {getMethodIcon(payout.paymentMethod)}
                         <span>{getMethodLabel(payout.paymentMethod)}</span>
                       </div>
-                      <span className="font-mono text-xs text-gray-500 dark:text-[#D6C6B1] block">
+                      <span className="font-black text-xs text-gray-500 dark:text-[#D6C6B1] block">
                         {payout.paymentDetailsSnapshot?.accountNumber}
                       </span>
                     </td>
@@ -662,7 +662,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
                 <div className="p-4 bg-amber-50/70 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 rounded-xl space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-amber-900 dark:text-primary-hover">فحص الرصيد الفعلي للبائع:</span>
-                    <span className="text-xs bg-amber-200/80 dark:bg-amber-900/60 text-amber-900 dark:text-primary-hover px-2 py-0.5 rounded font-mono">
+                    <span className="text-xs bg-amber-200/80 dark:bg-amber-900/60 text-amber-900 dark:text-primary-hover px-2 py-0.5 rounded font-black">
                       محسوب مباشرة من قاعدة البيانات
                     </span>
                   </div>
@@ -711,7 +711,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
                     </div>
                     <div>
                       <span className="text-gray-400 dark:text-stone-400 block">رقم الهاتف:</span>
-                      <span className="font-mono text-gray-700 dark:text-stone-300">
+                      <span className="font-black text-gray-700 dark:text-stone-300">
                         {payoutDetails.seller?.phone || 'غير مسجل'}
                       </span>
                     </div>
@@ -731,7 +731,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
                     </div>
                     <div>
                       <span className="text-gray-400 dark:text-stone-400 block">رقم الحساب / المحفظة:</span>
-                      <span className="font-bold font-mono text-sm bg-white dark:bg-[#1B1009] px-2 py-0.5 rounded border border-gray-200 dark:border-[#6B3A1F] text-gray-900 dark:text-[#FFF9EE] inline-block mt-0.5">
+                      <span className="font-bold font-black text-sm bg-white dark:bg-[#1B1009] px-2 py-0.5 rounded border border-gray-200 dark:border-[#6B3A1F] text-gray-900 dark:text-[#FFF9EE] inline-block mt-0.5">
                         {payoutDetails.payout.paymentDetailsSnapshot?.accountNumber}
                       </span>
                     </div>
@@ -768,7 +768,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
                       </div>
                       <div>
                         <span className="text-emerald-700 dark:text-emerald-300 block">رقم المعاملة / الحوالة:</span>
-                        <span className="font-mono font-bold bg-white dark:bg-[#1B1009] px-2 py-0.5 rounded border border-emerald-300 dark:border-emerald-700 inline-block text-emerald-950 dark:text-emerald-100">
+                        <span className="font-black font-bold bg-white dark:bg-[#1B1009] px-2 py-0.5 rounded border border-emerald-300 dark:border-emerald-700 inline-block text-emerald-950 dark:text-emerald-100">
                           {payoutDetails.payout.transactionReference}
                         </span>
                       </div>
@@ -814,7 +814,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
                       {payoutDetails.sellerPreviousPayouts.map((prev) => (
                         <div key={prev.id} className="p-2.5 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-[#26201B]/50 transition">
                           <div>
-                            <span className="font-mono text-gray-700 dark:text-stone-300 block">{prev.id}</span>
+                            <span className="font-black text-gray-700 dark:text-stone-300 block">{prev.id}</span>
                             <span className="text-[10px] text-gray-400 dark:text-stone-400">
                               {new Date(prev.createdAt).toLocaleDateString('ar-EG')}
                             </span>
@@ -919,11 +919,11 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
             <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs space-y-1 text-emerald-950 dark:text-emerald-200">
               <div className="flex items-center justify-between">
                 <span className="font-bold">المستلم: {targetPayoutForPaid.sellerBrandName || targetPayoutForPaid.sellerName}</span>
-                <span className="font-mono font-bold">{targetPayoutForPaid.requestedAmount.toLocaleString('ar-EG')} ج.م</span>
+                <span className="font-black font-bold">{targetPayoutForPaid.requestedAmount.toLocaleString('ar-EG')} ج.م</span>
               </div>
               <div className="text-[11px] text-emerald-800 dark:text-emerald-300 flex items-center gap-2">
                 <span>الوسيلة: {getMethodLabel(targetPayoutForPaid.paymentMethod)}</span>
-                <span className="font-mono bg-white dark:bg-[#1B1009] px-1.5 py-0.5 rounded border border-emerald-300 dark:border-emerald-700 text-emerald-950 dark:text-emerald-200">
+                <span className="font-black bg-white dark:bg-[#1B1009] px-1.5 py-0.5 rounded border border-emerald-300 dark:border-emerald-700 text-emerald-950 dark:text-emerald-200">
                   {targetPayoutForPaid.paymentDetailsSnapshot?.accountNumber}
                 </span>
               </div>
@@ -943,7 +943,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
                   onChange={(e) =>
                     setPaidForm({ ...paidForm, transactionReference: e.target.value })
                   }
-                  className="w-full px-3 py-2 bg-gray-50 dark:bg-[#1B1009] border border-gray-200 dark:border-[#6B3A1F] rounded-xl text-gray-900 dark:text-[#FFF9EE] font-mono font-bold focus:ring-2 focus:ring-emerald-500 focus:bg-white dark:focus:bg-[#26160D] focus:outline-hidden transition"
+                  className="w-full px-3 py-2 bg-gray-50 dark:bg-[#1B1009] border border-gray-200 dark:border-[#6B3A1F] rounded-xl text-gray-900 dark:text-[#FFF9EE] font-black font-bold focus:ring-2 focus:ring-emerald-500 focus:bg-white dark:focus:bg-[#26160D] focus:outline-hidden transition"
                 />
                 <p className="text-[10px] text-gray-400 dark:text-stone-400 mt-1">
                   سيتم إرسال هذا الرقم للحرفي في الإشعار ليكون دليلاً على إتمام الحوالة.

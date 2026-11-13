@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Order, OrderStatus } from '../../types';
 import { api, initiatePaymobPayment, getPaymentStatus } from '../../services/api';
+import { ORDER_FULFILLMENT_STAGES } from '../../constants/orderFulfillmentStages';
 import {
   Truck,
   CheckCircle2,
@@ -19,15 +20,6 @@ import {
   Loader2
 } from 'lucide-react';
 
-
-const STATUS_STEPS: { status: OrderStatus; label: string; desc: string }[] = [
-  { status: 'pending', label: 'تم تسجيل الطلب', desc: 'تم استلام طلبك ومراجعته بالورشة' },
-  { status: 'confirmed', label: 'تأكيد الورش الحرفية', desc: 'تم تأكيد توافر القطع وجودة الصنعة اليدوية' },
-  { status: 'processing', label: 'التجهيز والتغليف الآمن', desc: 'يتم الآن فحص القطعة وتغليفها بمواد امتصاص الصدمات' },
-  { status: 'shipped', label: 'في الطريق للتوصيل', desc: 'تم شحن الطلب بالتنسيق المباشر مع الورشة وهو في طريقه إليك' },
-  { status: 'out_for_delivery', label: 'خرجت للتوصيل', desc: 'الشحنة في طريقها لتسليم الطلب على عنوانك بالتنسيق معك' },
-  { status: 'delivered', label: 'تم الاستلام بنجاح', desc: 'تم تسليم الطلب إلى باب المنزل' }
-];
 
 export const OrdersTrackingPage: React.FC = () => {
   const { orders, cancelOrder, refreshOrders, setActivePage, addToast, selectedOrderId, openChatWithArtisan, navigateToOrder, activePage, confirmModal, openReportModal, currentUser } = useApp();
@@ -214,7 +206,7 @@ export const OrdersTrackingPage: React.FC = () => {
                       } ${isCancelled ? 'opacity-75' : ''}`}
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <span className="font-mono font-bold text-xs text-primary dark:text-primary-hover">
+                      <span className="font-black font-bold text-xs text-primary dark:text-primary-hover">
                         {ord.orderNumber || ord.id}
                       </span>
                       <span
@@ -233,7 +225,7 @@ export const OrdersTrackingPage: React.FC = () => {
                       >
                         {ord.status === 'cancelled'
                           ? 'ملغي'
-                          : STATUS_STEPS.find((s) => s.status === ord.status)?.label || ord.status}
+                          : ORDER_FULFILLMENT_STAGES.find((s) => s.status === ord.status)?.label || ord.status}
                       </span>
                     </div>
 
@@ -257,7 +249,7 @@ export const OrdersTrackingPage: React.FC = () => {
                         })}
                       </div>
                       <span className="text-xs text-espresso/70 dark:text-cream/70 font-medium">
-                        {(ord.items || []).length} منتجات • {ord.total} ج.م
+                        {(ord.items || []).length} منتجات • {ord.total + (ord.paymentFee || 0)} ج.م
                       </span>
                     </div>
 
@@ -292,15 +284,27 @@ export const OrdersTrackingPage: React.FC = () => {
                       {currentSelected.orderNumber || currentSelected.id}
                     </h2>
                     {currentSelected.trackingNumber && (
-                      <span className="text-[11px] text-espresso/60 dark:text-cream/60 font-mono">
+                      <span className="text-[11px] text-espresso/60 dark:text-cream/60 font-black">
                         رقم التتبع: {currentSelected.trackingNumber}
                       </span>
                     )}
                   </div>
 
                   <div className="text-left sm:text-left">
-                    <span className="text-xs text-espresso/50 dark:text-cream/50 block">الإجمالي النهائي:</span>
+                    <span className="text-xs text-espresso/50 dark:text-cream/50 block">
+                      {currentSelected.paymentFee ? 'قيمة الطلب قبل رسوم الدفع:' : 'الإجمالي النهائي:'}
+                    </span>
                     <span className="text-xl font-black text-primary dark:text-primary-hover">{currentSelected.total} ج.م</span>
+                    {!!currentSelected.paymentFee && (
+                      <>
+                        <span className="mt-1 block text-[10px] text-espresso/60 dark:text-cream/60">
+                          رسوم الدفع الإلكتروني عبر Paymob: {currentSelected.paymentFee} ج.م
+                        </span>
+                        <span className="mt-1 block text-xs font-black text-primary dark:text-primary-hover">
+                          الإجمالي المطلوب سداده: {currentSelected.total + currentSelected.paymentFee} ج.م
+                        </span>
+                      </>
+                    )}
                     {!!currentSelected.sellerTipAmount && (
                       <span className="mt-1 block text-[10px] font-bold text-espresso/60 dark:text-cream/60">
                         يشمل دعمًا اختياريًا بقيمة {currentSelected.sellerTipAmount} ج.م لـ{currentSelected.sellerTipSellerName || 'الحرفي'}
@@ -482,7 +486,7 @@ export const OrdersTrackingPage: React.FC = () => {
                             شحن مباشر
                           </span>
                         </div>
-                        <p className="text-[11px] text-espresso/70 dark:text-cream/70 font-mono mt-0.5">
+                        <p className="text-[11px] text-espresso/70 dark:text-cream/70 font-black mt-0.5">
                           مرجع الشحنة: <strong className="text-espresso dark:text-cream font-bold">{currentSelected.trackingNumber}</strong>
                         </p>
                       </div>
@@ -508,7 +512,7 @@ export const OrdersTrackingPage: React.FC = () => {
                     <h4 className="text-xs font-bold text-espresso dark:text-cream">مراحل الشحن والتجهيز:</h4>
 
                     <div className="relative pr-6 space-y-6 before:absolute before:right-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-black/10 dark:before:bg-white/10">
-                      {STATUS_STEPS.map((step, idx) => {
+                      {ORDER_FULFILLMENT_STAGES.map((step, idx) => {
                         const currentIdx = getStepIndex(currentSelected.status);
                         const isPastOrCurrent = idx <= currentIdx;
                         const isCurrent = idx === currentIdx;
@@ -536,6 +540,11 @@ export const OrdersTrackingPage: React.FC = () => {
                                 {step.label}
                               </h5>
                               <p className="text-[11px] text-espresso/60 dark:text-cream/60 mt-0.5">{step.desc}</p>
+                              {step.eta && (
+                                <p className="mt-1 text-[10px] text-espresso/50 dark:text-cream/50">
+                                  الوقت المتوقع: {step.eta}
+                                </p>
+                              )}
                               {currentSelected.timeline?.find((event) => event.status === step.status)?.time && (
                                 <p className="mt-1 text-[10px] font-medium text-primary dark:text-primary-hover">
                                   {currentSelected.timeline.find((event) => event.status === step.status)?.time}
@@ -605,6 +614,11 @@ export const OrdersTrackingPage: React.FC = () => {
                             />
                             <div>
                               <span className="font-bold text-espresso dark:text-cream block">{title}</span>
+                              {prodId !== `item-${idx}` && (
+                                <span className="text-[10px] text-espresso/50 dark:text-cream/50 font-black block">
+                                  كود المنتج: #{String(prodId).slice(0, 8)}
+                                </span>
+                              )}
                               <span className="text-[10px] text-espresso/60 dark:text-cream/60">
                                 {sellerName} • محافظة {sellerGov}
                               </span>

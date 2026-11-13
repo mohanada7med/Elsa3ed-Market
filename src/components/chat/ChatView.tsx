@@ -124,7 +124,10 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
     }
     if (activeConversationId) {
       const target = conversations.find((c) => c.id === activeConversationId);
-      if (target) {
+      if (
+        target &&
+        (target.id !== selectedConv?.id || target.updatedAt !== selectedConv.updatedAt)
+      ) {
         setSelectedConv(target);
         return;
       }
@@ -132,7 +135,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
     if (typeof window !== 'undefined' && window.innerWidth >= 768 && !selectedConv) {
       setSelectedConv(conversations[0]);
     }
-  }, [conversations, activeConversationId, isLoadingConvs]);
+  }, [conversations, activeConversationId, isLoadingConvs, selectedConv?.id, selectedConv?.updatedAt]);
 
   const loadMessages = useCallback(async (convId: string, silent = false) => {
     if (!currentUser?.id || !convId) return;
@@ -143,26 +146,38 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
         role: currentRole,
         sellerId: currentUser.sellerId || currentUser.id
       });
-      setMessages(msgs);
-
-      await api.markConversationRead(convId, {
-        id: currentUser.id,
-        role: currentRole,
-        sellerId: currentUser.sellerId || currentUser.id
-      });
-      refreshChatUnreadCount();
-
-      setConversations((prev) =>
-        prev.map((c) => {
-          if (c.id === convId) {
-            if (isAdmin) {
-              return c.buyerId === 'admin' ? { ...c, buyerUnreadCount: 0 } : { ...c, sellerUnreadCount: 0 };
-            }
-            return isSeller ? { ...c, sellerUnreadCount: 0 } : { ...c, buyerUnreadCount: 0 };
-          }
-          return c;
-        })
+      const hasUnreadIncoming = msgs.some(
+        (message) => message.senderId !== currentUser.id && !message.isRead
       );
+      setMessages((prev) =>
+        prev.length === msgs.length &&
+        msgs.every((message, index) =>
+          prev[index]?.id === message.id && prev[index]?.isRead === message.isRead
+        )
+          ? prev
+          : msgs
+      );
+
+      if (!silent || hasUnreadIncoming) {
+        await api.markConversationRead(convId, {
+          id: currentUser.id,
+          role: currentRole,
+          sellerId: currentUser.sellerId || currentUser.id
+        });
+        refreshChatUnreadCount();
+
+        setConversations((prev) =>
+          prev.map((c) => {
+            if (c.id === convId) {
+              if (isAdmin) {
+                return c.buyerId === 'admin' ? { ...c, buyerUnreadCount: 0 } : { ...c, sellerUnreadCount: 0 };
+              }
+              return isSeller ? { ...c, sellerUnreadCount: 0 } : { ...c, buyerUnreadCount: 0 };
+            }
+            return c;
+          })
+        );
+      }
     } catch (err: any) {
       console.error('[ChatView] عطل في تحميل الرسائل:', err);
     } finally {
@@ -177,6 +192,29 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
       setMessages([]);
     }
   }, [selectedConv?.id, loadMessages]);
+
+  useEffect(() => {
+    if (!currentUser?.id || typeof window === 'undefined') return;
+
+    let isSyncing = false;
+    const syncChat = async () => {
+      if (isSyncing) return;
+      isSyncing = true;
+      try {
+        await Promise.all([
+          fetchConversations(true),
+          selectedConv?.id ? loadMessages(selectedConv.id, true) : Promise.resolve()
+        ]);
+      } finally {
+        isSyncing = false;
+      }
+    };
+
+    const interval = window.setInterval(() => {
+      void syncChat();
+    }, 5000);
+    return () => window.clearInterval(interval);
+  }, [currentUser?.id, fetchConversations, loadMessages, selectedConv?.id]);
 
   useEffect(() => {
     if (!currentUser?.id || typeof window === 'undefined') return;
@@ -822,7 +860,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                           )}
                         </div>
                         <div className="flex items-center gap-1 shrink-0">
-                          <span className="text-[10px] text-stone-400 dark:text-amber-200/40 font-mono">
+                          <span className="text-[10px] text-stone-400 dark:text-amber-200/40 font-black">
                             {conv.lastMessageAt
                               ? new Date(conv.lastMessageAt).toLocaleDateString('ar-EG', { month: 'numeric', day: 'numeric' })
                               : ''}
@@ -847,7 +885,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                           </span>
                         )}
                         {conv.orderNumber && (
-                          <span className="text-[10px] bg-stone-100 dark:bg-[#362920] text-stone-700 dark:text-amber-200 border border-stone-200 dark:border-amber-800/30 px-1.5 py-0.5 rounded font-mono font-medium">
+                          <span className="text-[10px] bg-stone-100 dark:bg-[#362920] text-stone-700 dark:text-amber-200 border border-stone-200 dark:border-amber-800/30 px-1.5 py-0.5 rounded font-black font-medium">
                             #{conv.orderNumber}
                           </span>
                         )}
@@ -1080,7 +1118,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                         </p>
                       )}
                       {selectedConv.orderNumber && (
-                        <p className="text-[10px] text-stone-500 dark:text-amber-200/60 font-mono">
+                        <p className="text-[10px] text-stone-500 dark:text-amber-200/60 font-black">
                           طلب رقم: #{selectedConv.orderNumber}
                         </p>
                       )}
@@ -1179,7 +1217,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                                 </div>
 
                                 {/* الوقت وحالة القراءة */}
-                                <div className="flex items-center gap-1.5 justify-end text-[10px] mt-1 text-amber-200/90 font-mono font-medium">
+                                <div className="flex items-center gap-1.5 justify-end text-[10px] mt-1 text-amber-200/90 font-black font-medium">
                                   <span>
                                     {new Date(msg.createdAt).toLocaleTimeString('ar-EG', {
                                       hour: '2-digit',
@@ -1279,7 +1317,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                                 </div>
 
                                 {/* الوقت */}
-                                <div className="flex items-center gap-1 justify-end text-[10px] mt-1 text-stone-400 dark:text-amber-200/50 font-mono">
+                                <div className="flex items-center gap-1 justify-end text-[10px] mt-1 text-stone-400 dark:text-amber-200/50 font-black">
                                   <span>
                                     {new Date(msg.createdAt).toLocaleTimeString('ar-EG', {
                                       hour: '2-digit',

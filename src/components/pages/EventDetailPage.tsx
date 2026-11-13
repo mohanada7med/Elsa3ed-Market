@@ -1467,7 +1467,7 @@ export const EventDetailPage: React.FC = () => {
                             </div>
                             <div className="flex items-center justify-between text-white text-xs font-bold">
                               <span>فتح الصورة بحجم كامل</span>
-                              <span className="text-[10px] text-white/70 font-mono">
+                              <span className="text-[10px] text-white/70 font-black">
                                 {gIdx + 1} / {allGalleryImages.length}
                               </span>
                             </div>

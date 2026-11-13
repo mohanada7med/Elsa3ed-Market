@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { afterEach, beforeEach, test } from 'node:test';
 import type { OrderDocument } from '../models/types.ts';
+import { calculatePaymobFee } from '../../src/constants/paymobFees.ts';
 import { getPaymobConfig, initiatePaymobPayment } from './paymobService.ts';
 
 const ENV_KEYS = [
@@ -121,6 +122,21 @@ test('sends only the wallet integration as an integer for wallet checkout', asyn
   assert.equal(payload.currency, 'EGP');
   assert.equal(request.init?.headers && (request.init.headers as Record<string, string>).Authorization, 'Token sk_test_mock_secret');
   assert.equal(result.provider, 'paymob');
+});
+
+test('includes the saved Paymob fee in the payment intention amount', async () => {
+  const mock = mockPaymobResponse(201);
+  const result = await initiatePaymobPayment({ ...order, total: 200, paymentFee: 8 }, 'card', process.env.APP_URL);
+  const payload = JSON.parse(String(mock.requests[0].init?.body));
+
+  assert.equal(payload.amount, 20800);
+  assert.equal(payload.items[0].amount, 20800);
+  assert.equal(result.amount, 208);
+});
+
+test('calculates the Paymob fee as 2.5% plus 3 EGP', () => {
+  assert.equal(calculatePaymobFee(200), 8);
+  assert.equal(calculatePaymobFee(195), 7.88);
 });
 
 test('rejects a missing wallet integration without falling back to card', async () => {

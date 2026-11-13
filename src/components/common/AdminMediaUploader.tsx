@@ -881,7 +881,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
                   <span>جاري الرفع إلى السحابة... ({completedStagedCount} من {totalStagedCount} اكتملت)</span>
                 </span>
-                <span className="font-mono text-xs">{averageProgress}%</span>
+                <span className="font-black text-xs">{averageProgress}%</span>
               </div>
               <div className="w-full bg-gray-200 dark:bg-gray-700 h-2.5 rounded-full overflow-hidden">
                 <div
@@ -916,7 +916,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                         className="w-full h-full object-cover"
                       />
                     )}
-                    <span className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/70 text-[9px] font-mono text-white flex items-center gap-1">
+                    <span className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/70 text-[9px] font-black text-white flex items-center gap-1">
                       {sf.isVideo ? <Video className="w-2.5 h-2.5 text-primary-hover" /> : <ImageIcon className="w-2.5 h-2.5" />}
                       {sf.format}
                     </span>
@@ -1257,7 +1257,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
               <p className="text-xs sm:text-sm font-bold text-espresso dark:text-cream truncate">
                 {currentItems[0].item?.title || currentItems[0].item?.alt || entityTitle || 'صورة الغلاف'}
               </p>
-              <p className="text-[10px] text-black/60 dark:text-white/60 truncate font-mono mt-0.5 text-left" dir="ltr">
+              <p className="text-[10px] text-black/60 dark:text-white/60 truncate font-black mt-0.5 text-left" dir="ltr">
                 {currentItems[0].item?.publicId || currentItems[0].url}
               </p>
             </div>
@@ -1354,7 +1354,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                     )}
 
                     {/* Order Number Badge */}
-                    <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-md bg-black/60 text-white text-[10px] font-mono">
+                    <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-md bg-black/60 text-white text-[10px] font-black">
                       #{idx + 1}
                     </span>
 
@@ -1553,7 +1553,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                 className="max-h-[78vh] w-auto max-w-full object-contain rounded-xl"
               />
             )}
-            <div className="w-full p-2 text-center text-xs text-white/70 truncate font-mono text-left mt-1" dir="ltr">
+            <div className="w-full p-2 text-center text-xs text-white/70 truncate font-black text-left mt-1" dir="ltr">
               {previewModalUrl}
             </div>
           </div>

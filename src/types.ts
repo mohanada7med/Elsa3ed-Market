@@ -244,6 +244,7 @@ export interface Order {
   sellerTipAmount?: number;
   sellerTipSellerId?: string;
   sellerTipSellerName?: string;
+  paymentFee?: number;
   total: number;
   createdAt: string;
   updatedAt: string;

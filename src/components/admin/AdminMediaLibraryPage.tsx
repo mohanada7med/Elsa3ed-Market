@@ -323,14 +323,14 @@ export const AdminMediaLibraryPage: React.FC = () => {
 
                     {/* Format Badge */}
                     {item.format && (
-                      <span className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-xs text-white text-[10px] font-mono font-bold uppercase">
+                      <span className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-xs text-white text-[10px] font-black font-bold uppercase">
                         {item.format}
                       </span>
                     )}
 
                     {/* Cloudinary Folder Badge */}
                     {item.folder && (
-                      <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded-md bg-primary/90 backdrop-blur-xs text-white text-[9px] font-mono font-bold truncate max-w-[150px]">
+                      <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded-md bg-primary/90 backdrop-blur-xs text-white text-[9px] font-black font-bold truncate max-w-[150px]">
                         {item.folder.replace('WAH/', '')}
                       </span>
                     )}
@@ -353,7 +353,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
                       </h4>
 
                       {/* Dimensions and Size */}
-                      <div className="flex items-center gap-3 text-[10px] sm:text-[11px] text-black/60 dark:text-white/60 mt-1 font-mono" dir="ltr">
+                      <div className="flex items-center gap-3 text-[10px] sm:text-[11px] text-black/60 dark:text-white/60 mt-1 font-black" dir="ltr">
                         {item.width && item.height && (
                           <span>{item.width} × {item.height}px</span>
                         )}
@@ -363,7 +363,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
                       {/* Public ID */}
                       {item.publicId && (
                         <div className="mt-2 flex items-center justify-between gap-1 p-1.5 rounded-lg bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10">
-                          <span className="text-[10px] font-mono text-black/60 dark:text-white/60 truncate ltr" dir="ltr">
+                          <span className="text-[10px] font-black text-black/60 dark:text-white/60 truncate ltr" dir="ltr">
                             {item.publicId}
                           </span>
                           <button
@@ -550,7 +550,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
 
             <div className="w-full mt-3 p-2 text-center text-xs text-white/90 space-y-1">
               <p className="font-bold">{lightboxItem.title || lightboxItem.alt}</p>
-              <p className="text-white/60 font-mono text-[11px] ltr" dir="ltr">
+              <p className="text-white/60 font-black text-[11px] ltr" dir="ltr">
                 {lightboxItem.publicId || lightboxItem.url}
               </p>
             </div>
@@ -586,7 +586,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
                 <p className="font-bold text-[#3B1E0E] dark:text-[#FFF9EE] truncate">
                   {itemPendingDelete.title || itemPendingDelete.alt || 'صورة من المعرض'}
                 </p>
-                <p className="font-mono text-[10px] truncate mt-0.5" dir="ltr">
+                <p className="font-black text-[10px] truncate mt-0.5" dir="ltr">
                   {itemPendingDelete.publicId || itemPendingDelete.url}
                 </p>
               </div>

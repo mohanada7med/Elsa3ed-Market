@@ -1190,7 +1190,7 @@ export const SellerDashboard: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-black/60 dark:text-white/60">رقم الهاتف:</span>
-                      <span className="font-bold font-mono">{statusDetails?.phone || currentUser.phone}</span>
+                      <span className="font-bold font-black">{statusDetails?.phone || currentUser.phone}</span>
                     </div>
                   </div>
                 </div>
@@ -1490,7 +1490,7 @@ export const SellerDashboard: React.FC = () => {
                     <span className="text-[10px] font-black uppercase tracking-[0.12em] text-[#A08D77] dark:text-white/40">
                       {sec.title}
                     </span>
-                    <span className="font-mono text-[10px] text-[#B5A999] dark:text-white/30">
+                    <span className="font-black text-[10px] text-[#B5A999] dark:text-white/30">
                       {sec.items.length}
                     </span>
                   </div>
@@ -1590,7 +1590,7 @@ export const SellerDashboard: React.FC = () => {
                     <div className="absolute right-full top-1/2 -translate-y-1/2 mr-3 px-3 py-2 bg-espresso dark:bg-cream text-white dark:text-black rounded-xl text-xs font-bold whitespace-nowrap shadow-xl opacity-0 translate-x-2 group-hover/rail:opacity-100 group-hover/rail:translate-x-0 transition-all pointer-events-none z-50 flex items-center gap-2">
                       <span>{item.label}</span>
                       {item.badge !== undefined && (
-                        <span className="bg-primary text-white text-[10px] px-1.5 py-0.5 rounded-full font-mono">
+                        <span className="bg-primary text-white text-[10px] px-1.5 py-0.5 rounded-full font-black">
                           {item.badge}
                         </span>
                       )}
@@ -1828,7 +1828,7 @@ export const SellerDashboard: React.FC = () => {
                   <span className={`max-w-[60%] truncate text-[9px] font-bold ${activeTab === 'payouts' ? 'text-white/85' : 'text-emerald-700 dark:text-emerald-300'}`}>أرباحك</span>
                 </div>
                 <div className="w-full">
-                  <h4 className="truncate font-mono text-base font-black sm:text-lg">{totalRevenue.toLocaleString('ar-EG')} <span className="text-[10px]">ج.م</span></h4>
+                  <h4 className="truncate font-black text-base font-black sm:text-lg">{totalRevenue.toLocaleString('ar-EG')} <span className="text-[10px]">ج.م</span></h4>
                   <p className={`mt-1 truncate text-[10px] sm:text-xs ${activeTab === 'payouts' ? 'text-white/75' : 'text-black/55 dark:text-white/60'}`}>مبيعاتك وطلبات السحب</p>
                 </div>
               </button>
@@ -1931,7 +1931,7 @@ export const SellerDashboard: React.FC = () => {
                         </span>
                       </div>
                       <div>
-                        <div className="font-mono text-3xl font-black">{totalRevenue.toLocaleString('ar-EG')} <span className="text-sm">ج.م</span></div>
+                        <div className="font-black text-3xl font-black">{totalRevenue.toLocaleString('ar-EG')} <span className="text-sm">ج.م</span></div>
                         <p className="mt-1 text-[11px] font-medium text-white/65">
                           {activeOrders.length > 0 ? `${orders.filter((o) => o.status === 'delivered').length} طلب اتسلّم` : 'لسه مفيش مبيعات مسجلة'}
                         </p>
@@ -1946,7 +1946,7 @@ export const SellerDashboard: React.FC = () => {
                         <Truck className="h-4 w-4" />
                       </span>
                     </div>
-                    <div className="mt-4 font-mono text-2xl font-black text-espresso dark:text-cream">{totalOrdersCount.toLocaleString('ar-EG')}</div>
+                    <div className="mt-4 font-black text-2xl font-black text-espresso dark:text-cream">{totalOrdersCount.toLocaleString('ar-EG')}</div>
                     <p className="mt-1 text-[11px] text-black/50 dark:text-white/50">من كل المحافظات</p>
                   </div>
 
@@ -1957,7 +1957,7 @@ export const SellerDashboard: React.FC = () => {
                         <Package className="h-4 w-4" />
                       </span>
                     </div>
-                    <div className="mt-4 font-mono text-2xl font-black text-espresso dark:text-cream">{sellerProducts.length.toLocaleString('ar-EG')}</div>
+                    <div className="mt-4 font-black text-2xl font-black text-espresso dark:text-cream">{sellerProducts.length.toLocaleString('ar-EG')}</div>
                     <p className="mt-1 text-[11px] text-black/50 dark:text-white/50">
                       {sellerProducts.filter((p) => p.approvalStatus === 'approved').length.toLocaleString('ar-EG')} منتج ظاهر في السوق
                     </p>
@@ -1973,7 +1973,7 @@ export const SellerDashboard: React.FC = () => {
                     {ratingStats.average ? (
                       <>
                         <div className="mt-4 flex items-baseline gap-1">
-                          <span className="font-mono text-2xl font-black text-espresso dark:text-cream">{ratingStats.average}</span>
+                          <span className="font-black text-2xl font-black text-espresso dark:text-cream">{ratingStats.average}</span>
                           <span className="text-xs font-bold text-black/40 dark:text-white/40">/ 5</span>
                         </div>
                         <p className="mt-1 text-[11px] text-black/50 dark:text-white/50">
@@ -2127,7 +2127,7 @@ export const SellerDashboard: React.FC = () => {
                               </span>
                             </div>
                             <p className="text-xs text-black/60 dark:text-white/60 font-medium">
-                              السعر: <strong className="text-primary font-mono">{prod.price} ج.م</strong> • المخزون: <span className={prod.stockCount === 0 ? 'text-rose-600 dark:text-rose-400 font-bold' : prod.stockCount <= 5 ? 'text-amber-600 dark:text-primary-hover font-bold' : 'text-emerald-700 dark:text-emerald-400 font-bold'}>{prod.stockCount} قطعة</span> • الصنعة: {prod.specifications?.craftsmanship || 'يدوية'}
+                              السعر: <strong className="text-primary font-black">{prod.price} ج.م</strong> • المخزون: <span className={prod.stockCount === 0 ? 'text-rose-600 dark:text-rose-400 font-bold' : prod.stockCount <= 5 ? 'text-amber-600 dark:text-primary-hover font-bold' : 'text-emerald-700 dark:text-emerald-400 font-bold'}>{prod.stockCount} قطعة</span> • الصنعة: {prod.specifications?.craftsmanship || 'يدوية'}
                             </p>
                           </div>
                         </div>
@@ -2193,7 +2193,7 @@ export const SellerDashboard: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="bg-white/75 dark:bg-espresso-900/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
                   <span className="text-xs text-black/60 dark:text-white/60 block mb-1 font-medium">كل القطع عندك</span>
-                  <span className="text-2xl font-black text-espresso dark:text-cream font-mono">
+                  <span className="text-2xl font-black text-espresso dark:text-cream font-black">
                     {sellerProducts.reduce((acc, p) => acc + p.stockCount, 0)} قطعة
                   </span>
                   <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">جاهزة للشحن المباشر</span>
@@ -2201,7 +2201,7 @@ export const SellerDashboard: React.FC = () => {
 
                 <div className="bg-white/75 dark:bg-espresso-900/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
                   <span className="text-xs text-black/60 dark:text-white/60 block mb-1 font-medium">قيمة المخزون</span>
-                  <span className="text-2xl font-black text-primary font-mono">
+                  <span className="text-2xl font-black text-primary font-black">
                     {totalValuation.toLocaleString()} ج.م
                   </span>
                   <span className="text-[10px] text-black/60 dark:text-white/60 block mt-1">بسعر البيع الفعلي</span>
@@ -2209,7 +2209,7 @@ export const SellerDashboard: React.FC = () => {
 
                 <div className="bg-white/75 dark:bg-espresso-900/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
                   <span className="text-xs text-black/60 dark:text-white/60 block mb-1 font-medium">قطع أوشكت على النفاذ</span>
-                  <span className={`text-2xl font-black font-mono ${lowStockCount > 0 ? 'text-amber-600 dark:text-primary-hover' : 'text-emerald-700 dark:text-emerald-400'}`}>
+                  <span className={`text-2xl font-black font-black ${lowStockCount > 0 ? 'text-amber-600 dark:text-primary-hover' : 'text-emerald-700 dark:text-emerald-400'}`}>
                     {lowStockCount} منتجات
                   </span>
                   <span className="text-[10px] text-amber-700 dark:text-primary-hover font-bold block mt-1">مخزون أقل من 5 قطع</span>
@@ -2217,7 +2217,7 @@ export const SellerDashboard: React.FC = () => {
 
                 <div className="bg-white/75 dark:bg-espresso-900/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
                   <span className="text-xs text-black/60 dark:text-white/60 block mb-1 font-medium">قطع نفذت بالكامل</span>
-                  <span className={`text-2xl font-black font-mono ${outOfStockCount > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-black/40 dark:text-white/40'}`}>
+                  <span className={`text-2xl font-black font-black ${outOfStockCount > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-black/40 dark:text-white/40'}`}>
                     {outOfStockCount} منتج
                   </span>
                   <span className="text-[10px] text-rose-700 dark:text-rose-400 font-bold block mt-1">محتاجة تعمل منها كمية جديدة</span>
@@ -2273,8 +2273,8 @@ export const SellerDashboard: React.FC = () => {
                             </div>
                           </td>
                           <td className="py-3.5 text-black/60 dark:text-white/60 font-medium">{prod.categoryName}</td>
-                          <td className="py-3.5 font-black font-mono text-primary">{prod.price} ج.م</td>
-                          <td className="py-3.5 font-mono font-bold text-sm text-espresso dark:text-cream">{prod.stockCount} قطعة</td>
+                          <td className="py-3.5 font-black font-black text-primary">{prod.price} ج.م</td>
+                          <td className="py-3.5 font-black font-bold text-sm text-espresso dark:text-cream">{prod.stockCount} قطعة</td>
                           <td className="py-3.5">
                             {prod.stockCount === 0 ? (
                               <span className="inline-flex items-center gap-1 bg-rose-500/15 text-rose-800 dark:text-rose-300 font-bold px-2 py-0.5 rounded-full text-[10px]">
@@ -3131,7 +3131,7 @@ export const SellerDashboard: React.FC = () => {
                     min={0}
                     value={newStockValue}
                     onChange={(e) => setNewStockValue(Number(e.target.value))}
-                    className="flex-1 p-2.5 bg-white/60 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-center font-bold font-mono outline-none focus:border-primary"
+                    className="flex-1 p-2.5 bg-white/60 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-center font-bold font-black outline-none focus:border-primary"
                   />
                   <button
                     type="button"

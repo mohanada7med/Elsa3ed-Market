@@ -233,7 +233,7 @@ export const EventsPage: React.FC = () => {
                   <>
                     <Calendar size={14} />
                     <span>إدارة الاحتفالات</span>
-                    <span className="hidden sm:inline-block px-1.5 py-0.5 rounded-full bg-black/20 text-[9px] font-mono font-black text-amber-200">
+                    <span className="hidden sm:inline-block px-1.5 py-0.5 rounded-full bg-black/20 text-[9px] font-black font-black text-amber-200">
                       Admin
                     </span>
                   </>
@@ -353,7 +353,7 @@ export const EventsPage: React.FC = () => {
 
                       <div className="grid grid-cols-2 gap-6">
                         <div className="border-l border-black/10 dark:border-white/10 pl-4">
-                          <div className="text-5xl font-black tracking-[-0.05em] font-mono text-espresso dark:text-cream">
+                          <div className="text-5xl font-black tracking-[-0.05em] font-black text-espresso dark:text-cream">
                             {events.length}
                           </div>
                           <div className="mt-2 text-xs text-black/60 dark:text-white/60 font-bold">
@@ -362,7 +362,7 @@ export const EventsPage: React.FC = () => {
                         </div>
 
                         <div>
-                          <div className="text-5xl font-black tracking-[-0.05em] font-mono text-espresso dark:text-cream">
+                          <div className="text-5xl font-black tracking-[-0.05em] font-black text-espresso dark:text-cream">
                             {governorates.length || 9}
                           </div>
                           <div className="mt-2 text-xs text-black/60 dark:text-white/60 font-bold">

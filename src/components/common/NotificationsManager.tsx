@@ -1024,6 +1024,35 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                           {notif.message}
                         </p>
 
+                        {Array.isArray(notif.metadata?.items) && notif.metadata.items.length > 0 && (
+                          <div className="flex flex-wrap gap-2 pt-2">
+                            {notif.metadata.items.map((item: any, index: number) => (
+                              <div
+                                key={`${item.productId || index}-${index}`}
+                                className="flex items-center gap-2 rounded-xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-white/[0.03] p-2"
+                              >
+                                <img
+                                  src={item.productImage || '/mascot/empty-search.png'}
+                                  alt={item.productTitle || 'منتج الطلب'}
+                                  className="h-10 w-10 rounded-lg object-cover shrink-0"
+                                  loading="lazy"
+                                />
+                                <div className="min-w-0">
+                                  <p className="max-w-[220px] truncate text-[11px] font-bold text-espresso dark:text-cream">
+                                    {item.productTitle || 'منتج تراثي'}
+                                  </p>
+                                  {item.productId && (
+                                    <p className="text-[10px] text-black/55 dark:text-white/55 font-black">
+                                      كود المنتج: #{String(item.productId).slice(0, 8)}
+                                      {item.quantity ? ` • الكمية: ${item.quantity}` : ''}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
                         <div className="flex items-center gap-3 pt-1 text-[11px] text-black/50 dark:text-white/50 font-medium">
                           <span className="flex items-center gap-1">
                             <Clock className="w-3.5 h-3.5" />
@@ -1262,7 +1291,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                           <span className="font-black text-xs text-espresso dark:text-cream block truncate">
                             {selectedTargetUser?.name || selectedTargetUser?.fullName || 'مستخدم المنصة'}
                           </span>
-                          <span className="text-[10px] text-black/50 dark:text-white/50 block font-mono truncate">
+                          <span className="text-[10px] text-black/50 dark:text-white/50 block font-black truncate">
                             {selectedTargetUserId} {selectedTargetUser?.email ? `• ${selectedTargetUser.email}` : ''}
                           </span>
                         </div>
@@ -1337,7 +1366,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                                   <span className="font-bold text-xs text-espresso dark:text-cream block truncate">
                                     {u.name || u.fullName || 'مستخدم'}
                                   </span>
-                                  <span className="text-[10px] text-black/50 dark:text-white/50 block font-mono truncate">
+                                  <span className="text-[10px] text-black/50 dark:text-white/50 block font-black truncate">
                                     {u.id || u._id} • {u.email || u.phone || 'بدون بريد'}
                                   </span>
                                 </div>
@@ -1363,7 +1392,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                             setSelectedTargetUser(null);
                           }}
                           placeholder="أو اكتب معرف المستخدم مباشرة (User ID)"
-                          className="flex-1 p-2 bg-white dark:bg-[#1a1916] border border-black/10 dark:border-white/10 rounded-xl outline-none font-mono text-[11px] text-espresso dark:text-cream"
+                          className="flex-1 p-2 bg-white dark:bg-[#1a1916] border border-black/10 dark:border-white/10 rounded-xl outline-none font-black text-[11px] text-espresso dark:text-cream"
                         />
                       </div>
                     </div>
@@ -1377,7 +1406,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                   <label className="font-black text-espresso dark:text-cream block">
                     عنوان الإشعار والتنبيه *
                   </label>
-                  <span className="text-[10px] text-black/40 dark:text-white/40 font-mono">
+                  <span className="text-[10px] text-black/40 dark:text-white/40 font-black">
                     {broadcastTitle.length}/150
                   </span>
                 </div>
@@ -1398,7 +1427,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                   <label className="font-black text-espresso dark:text-cream block">
                     نص الرسالة والتنبيه المفصل *
                   </label>
-                  <span className="text-[10px] text-black/40 dark:text-white/40 font-mono">
+                  <span className="text-[10px] text-black/40 dark:text-white/40 font-black">
                     {broadcastMessage.length}/2000
                   </span>
                 </div>

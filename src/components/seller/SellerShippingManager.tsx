@@ -25,6 +25,10 @@ import {
   ShipmentStatus,
   OrderStatus
 } from '../../types.ts';
+import {
+  ORDER_FULFILLMENT_STAGES,
+  OrderFulfillmentStageStatus
+} from '../../constants/orderFulfillmentStages.ts';
 import { api } from '../../services/api.ts';
 import { RefreshDataButton } from '../common/RefreshDataButton.tsx';
 
@@ -61,6 +65,7 @@ interface SellerShippingManagerProps {
 
 export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
   currentUser,
+  orders,
   refreshOrders,
   addToast,
   openReportModal,
@@ -69,6 +74,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
   // Navigation Sub-tab
   type ShippingTab =
     | 'all'
+    | 'progress'
     | 'ready'
     | 'booked'
     | 'awaiting_pickup'
@@ -83,6 +89,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
   const [readyOrders, setReadyOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
 
   // Statistics state
   const [stats, setStats] = useState({
@@ -301,6 +308,31 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
     }
   };
 
+  const handleUpdateOrderStage = async (order: Order, status: OrderFulfillmentStageStatus) => {
+    if (order.status === status || updatingOrderId) return;
+
+    setUpdatingOrderId(order.id);
+    try {
+      await api.updateSellerOrderStatus(
+        { id: currentUser.id, role: 'seller', sellerId: currentUser.sellerId || currentUser.id },
+        order.id,
+        status
+      );
+      await Promise.all([refreshOrders(), loadShippingData()]);
+      const stage = ORDER_FULFILLMENT_STAGES.find((item) => item.status === status);
+      addToast(
+        'تم تحديث مرحلة الطلب',
+        `الطلب #${order.orderNumber || order.id} أصبح في مرحلة «${stage?.label || status}» وتم إشعار المشتري.`,
+        'success'
+      );
+    } catch (err: any) {
+      console.error('[SellerShippingManager] Order stage update failed:', err);
+      addToast('تعذر تحديث المرحلة', err?.message || 'حدث خطأ أثناء تحديث مرحلة الطلب', 'error');
+    } finally {
+      setUpdatingOrderId(null);
+    }
+  };
+
   // Status Badge Colors & Labels
   const getShipmentStatusBadge = (status: ShipmentStatus) => {
     switch (status) {
@@ -374,6 +406,22 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
     }
   }, [shipments, shippingTab]);
 
+  const ordersInProgress = useMemo(
+    () =>
+      orders
+        .filter((order) => !['review', 'cancelled', 'delivered'].includes(order.status))
+        .filter((order) => {
+          if (!searchQuery.trim()) return true;
+          const query = searchQuery.trim().toLowerCase();
+          return (
+            order.orderNumber.toLowerCase().includes(query) ||
+            order.buyerName.toLowerCase().includes(query)
+          );
+        })
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()),
+    [orders, searchQuery]
+  );
+
   return (
     <div className="space-y-6" dir="rtl">
       {/* 1. Header Banner & Actions */}
@@ -418,7 +466,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
               <span>جاهز للتنسيق</span>
               <Clock className="w-3.5 h-3.5" />
             </div>
-            <div className="text-xl font-black font-mono text-espresso dark:text-cream">
+            <div className="text-xl font-black font-black text-espresso dark:text-cream">
               {stats.readyForBookingCount}
             </div>
             <span className="text-[10px] text-black/50 dark:text-white/50">طلبات جديدة ومؤكدة</span>
@@ -438,7 +486,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
               <span>تم التجهيز</span>
               <FileText className="w-3.5 h-3.5" />
             </div>
-            <div className="text-xl font-black font-mono text-espresso dark:text-cream">
+            <div className="text-xl font-black font-black text-espresso dark:text-cream">
               {stats.bookedCount}
             </div>
             <span className="text-[10px] text-black/50 dark:text-white/50">شحنات مسجلة</span>
@@ -458,7 +506,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
               <span>قيد التنسيق</span>
               <Package className="w-3.5 h-3.5" />
             </div>
-            <div className="text-xl font-black font-mono text-espresso dark:text-cream">
+            <div className="text-xl font-black font-black text-espresso dark:text-cream">
               {stats.awaitingPickupCount}
             </div>
             <span className="text-[10px] text-black/50 dark:text-white/50">بانتظار التسليم</span>
@@ -478,7 +526,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
               <span>قيد الشحن والتوصيل</span>
               <Truck className="w-3.5 h-3.5" />
             </div>
-            <div className="text-xl font-black font-mono text-espresso dark:text-cream">
+            <div className="text-xl font-black font-black text-espresso dark:text-cream">
               {stats.inTransitCount}
             </div>
             <span className="text-[10px] text-black/50 dark:text-white/50">في الطريق للعميل</span>
@@ -498,7 +546,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
               <span>تم التسليم</span>
               <CheckCircle2 className="w-3.5 h-3.5" />
             </div>
-            <div className="text-xl font-black font-mono text-espresso dark:text-cream">
+            <div className="text-xl font-black font-black text-espresso dark:text-cream">
               {stats.deliveredCount}
             </div>
             <span className="text-[10px] text-black/50 dark:text-white/50">تسليم موثق بنجاح</span>
@@ -518,7 +566,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
               <span>تعذر أو مرتجع</span>
               <AlertTriangle className="w-3.5 h-3.5" />
             </div>
-            <div className="text-xl font-black font-mono text-espresso dark:text-cream">
+            <div className="text-xl font-black font-black text-espresso dark:text-cream">
               {stats.failedOrReturnedCount}
             </div>
             <span className="text-[10px] text-black/50 dark:text-white/50">تتطلب متابعة الورشة</span>
@@ -528,6 +576,23 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
 
       {/* 3. Section Navigation Tabs */}
       <div className="flex flex-wrap items-center gap-2 border-b border-black/10 dark:border-white/10 pb-3">
+        <button
+          type="button"
+          onClick={() => setShippingTab('progress')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
+            shippingTab === 'progress'
+              ? 'bg-primary text-cream shadow-sm'
+              : 'bg-white/60 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/5'
+          }`}
+        >
+          <span>مراحل الطلبات</span>
+          {ordersInProgress.length > 0 && (
+            <span className="px-1.5 py-0.2 bg-amber-500 text-white rounded-full text-[10px] font-black">
+              {ordersInProgress.length}
+            </span>
+          )}
+        </button>
+
         <button
           type="button"
           onClick={() => setShippingTab('all')}
@@ -551,7 +616,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
         >
           <span>طلبات جاهزة للتنسيق والشحن</span>
           {readyOrders.length > 0 && (
-            <span className="px-1.5 py-0.2 bg-amber-500 text-white rounded-full text-[10px] font-mono">
+            <span className="px-1.5 py-0.2 bg-amber-500 text-white rounded-full text-[10px] font-black">
               {readyOrders.length}
             </span>
           )}
@@ -601,6 +666,105 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
         </div>
       </div>
 
+      {/* ORDER FULFILLMENT STAGE MANAGEMENT */}
+      {shippingTab === 'progress' && (
+        <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <h4 className="text-sm font-bold text-espresso dark:text-cream flex items-center gap-2">
+              <Package className="w-4 h-4 text-primary" />
+              <span>مراحل تجهيز وتوصيل الطلبات ({ordersInProgress.length})</span>
+            </h4>
+            <span className="text-xs text-black/50 dark:text-white/50">
+              تغيير المرحلة يُحدّث مسار المشتري ويرسل له إشعاراً
+            </span>
+          </div>
+
+          {ordersInProgress.length === 0 ? (
+            <div className="p-12 text-center bg-white/60 dark:bg-espresso-900/60 rounded-2xl border border-dashed border-black/10 dark:border-white/10 space-y-2">
+              <CheckCircle2 className="w-8 h-8 text-emerald-500 mx-auto" />
+              <p className="text-xs font-bold text-espresso dark:text-cream">لا توجد طلبات تحتاج إلى تحديث مرحلة حالياً.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-3">
+              {ordersInProgress.map((order) => {
+                const currentStage = ORDER_FULFILLMENT_STAGES.find((stage) => stage.status === order.status);
+                const isUpdating = updatingOrderId === order.id;
+
+                return (
+                  <article
+                    key={order.id}
+                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-white/70 dark:bg-cream/[0.03] rounded-2xl border border-black/10 dark:border-white/10"
+                  >
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="font-black font-bold text-sm text-primary">
+                          #{order.orderNumber || order.id}
+                        </span>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${getOrderStatusBadge(order.status).color}`}>
+                          {currentStage?.label || getOrderStatusBadge(order.status).label}
+                        </span>
+                        <span className="text-xs text-black/60 dark:text-white/60">
+                          المشتري: {order.shippingAddress?.fullName || order.buyerName}
+                        </span>
+                      </div>
+                      {currentStage && (
+                        <p className="mt-1 text-[11px] text-black/55 dark:text-white/55">
+                          {currentStage.desc}
+                          {currentStage.eta ? ` • ${currentStage.eta}` : ''}
+                        </p>
+                      )}
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {(order.items || []).map((item, index) => (
+                          <div
+                            key={`${item.product.id}-${index}`}
+                            className="flex items-center gap-2 rounded-xl border border-black/10 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.03] p-2"
+                          >
+                            <img
+                              src={item.product.images?.[0] || '/mascot/empty-search.png'}
+                              alt={item.product.title}
+                              className="h-10 w-10 rounded-lg object-cover"
+                              loading="lazy"
+                            />
+                            <div className="min-w-0">
+                              <p className="max-w-[200px] truncate text-[11px] font-bold text-espresso dark:text-cream">
+                                {item.product.title}
+                              </p>
+                              <p className="text-[10px] text-black/55 dark:text-white/55">
+                                كود المنتج: #{item.product.id.slice(0, 8)} • الكمية: {item.quantity}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <label className="flex items-center gap-2 text-xs font-bold text-espresso dark:text-cream shrink-0">
+                      <span>تحديث المرحلة</span>
+                      <select
+                        value={order.status}
+                        disabled={Boolean(updatingOrderId)}
+                        onChange={(event) => {
+                          const stage = ORDER_FULFILLMENT_STAGES.find((item) => item.status === event.currentTarget.value);
+                          if (stage) void handleUpdateOrderStage(order, stage.status);
+                        }}
+                        className="max-w-[220px] px-3 py-2 bg-white/90 dark:bg-espresso-800 border border-black/15 dark:border-white/15 rounded-xl text-xs font-bold text-primary outline-none focus:border-primary disabled:opacity-60"
+                      >
+                        {ORDER_FULFILLMENT_STAGES.map((stage) => (
+                          <option key={stage.status} value={stage.status}>
+                            {stage.label}
+                          </option>
+                        ))}
+                      </select>
+                      {isUpdating && <Loader2 className="w-4 h-4 animate-spin text-primary" />}
+                    </label>
+                  </article>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* 5. TAB VIEW: READY ORDERS FOR DIRECT SHIPPING */}
       {shippingTab === 'ready' && (
         <div className="space-y-4">
@@ -640,7 +804,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-black/10 dark:border-white/10 pb-3">
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="font-mono font-bold text-sm text-primary">
+                          <span className="font-black font-bold text-sm text-primary">
                             #{ord.orderNumber || ord.id}
                           </span>
                           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${getOrderStatusBadge(ord.status).color}`}>
@@ -697,6 +861,40 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                       </div>
                     </div>
 
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {(ord.items || []).filter(Boolean).map((item: any, index: number) => {
+                        const product = item?.product || {};
+                        const productId = product.id || item.productId || `item-${index}`;
+                        const productTitle = product.title || item.productTitle || item.title || 'منتج تراثي أصيل';
+                        const productImage =
+                          product.images?.[0] ||
+                          product.image ||
+                          item.productImage ||
+                          item.image ||
+                          '/mascot/empty-search.png';
+
+                        return (
+                          <div
+                            key={`${productId}-${index}`}
+                            className="flex items-center gap-3 rounded-xl border border-black/10 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.03] p-3"
+                          >
+                            <img
+                              src={productImage}
+                              alt={productTitle}
+                              className="h-12 w-12 rounded-lg object-cover shrink-0"
+                              loading="lazy"
+                            />
+                            <div className="min-w-0">
+                              <p className="truncate text-xs font-bold text-espresso dark:text-cream">{productTitle}</p>
+                              <p className="text-[10px] text-black/55 dark:text-white/55">
+                                كود المنتج: #{String(productId).slice(0, 8)} • الكمية: {item.quantity || 1}
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
                     {/* Order Details & Address */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
                       <div>
@@ -706,7 +904,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                         <p className="text-black/70 dark:text-white/70 font-medium">
                           {buyerDisplayName}
                         </p>
-                        <p className="font-mono text-black/60 dark:text-white/60">
+                        <p className="font-black text-black/60 dark:text-white/60">
                           {buyerPhone}
                         </p>
                       </div>
@@ -734,7 +932,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                           }`}>
                             {isCOD ? 'دفع عند الاستلام (COD)' : 'مدفوع إلكترونياً (Online)'}
                           </span>
-                          <span className="font-bold text-primary font-mono">
+                          <span className="font-bold text-primary font-black">
                             {Number(ord.total || 0).toLocaleString('ar-EG')} ج.م
                           </span>
                         </div>
@@ -754,7 +952,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
       )}
 
       {/* 6. TAB VIEW: SHIPMENTS LIST */}
-      {shippingTab !== 'ready' && (
+      {shippingTab !== 'ready' && shippingTab !== 'progress' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h4 className="text-sm font-bold text-espresso dark:text-cream flex items-center gap-2">
@@ -798,7 +996,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-black/10 dark:border-white/10 pb-3">
                       <div>
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className="font-mono font-bold text-sm text-primary">
+                          <span className="font-black font-bold text-sm text-primary">
                             مرجع الشحنة: {shipment.trackingNumber}
                           </span>
 
@@ -898,7 +1096,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                         <p className="font-medium text-black/80 dark:text-white/80">
                           {shipment.buyerName}
                         </p>
-                        <p className="font-mono text-black/60 dark:text-white/60 mb-1">
+                        <p className="font-black text-black/60 dark:text-white/60 mb-1">
                           {shipment.buyerPhone}
                         </p>
                         <p className="text-black/60 dark:text-white/60 flex items-start gap-1">
@@ -920,7 +1118,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                         </p>
                         <div className="flex items-center gap-2 text-black/60 dark:text-white/60">
                           <span>تكلفة الشحن المسجلة:</span>
-                          <span className="font-bold text-espresso dark:text-cream font-mono">
+                          <span className="font-bold text-espresso dark:text-cream font-black">
                             {Number(shipment.actualShippingCost || 0).toLocaleString('ar-EG')} ج.م
                           </span>
                         </div>
@@ -946,7 +1144,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                         {isCOD && (
                           <div className="flex items-center justify-between text-[11px] font-bold text-amber-700 dark:text-amber-300 border-t border-black/5 dark:border-white/5 pt-1">
                             <span>تحصيل عند التسليم:</span>
-                            <span className="font-mono text-sm">
+                            <span className="font-black text-sm">
                               {Number(shipment.codAmount || 0).toLocaleString('ar-EG')} ج.م
                             </span>
                           </div>
@@ -1104,7 +1302,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                   value={bookingFormData.trackingNumber}
                   onChange={(e) => setBookingFormData({ ...bookingFormData, trackingNumber: e.target.value })}
                   placeholder="اختياري — يُولّد كود تلقائي (WAH-...) لو تركته فارغاً"
-                  className="w-full px-3.5 py-2.5 bg-white/90 dark:bg-espresso-800 border border-black/15 dark:border-white/15 rounded-xl text-xs font-mono font-bold text-espresso dark:text-cream outline-none focus:border-primary"
+                  className="w-full px-3.5 py-2.5 bg-white/90 dark:bg-espresso-800 border border-black/15 dark:border-white/15 rounded-xl text-xs font-black font-bold text-espresso dark:text-cream outline-none focus:border-primary"
                 />
               </div>
 
@@ -1121,7 +1319,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                     value={bookingFormData.actualShippingCost}
                     onChange={(e) => setBookingFormData({ ...bookingFormData, actualShippingCost: Number(e.target.value) })}
                     required
-                    className="w-full px-3.5 py-2.5 bg-white/90 dark:bg-espresso-800 border border-black/15 dark:border-white/15 rounded-xl text-xs font-mono font-bold text-espresso dark:text-cream outline-none focus:border-primary"
+                    className="w-full px-3.5 py-2.5 bg-white/90 dark:bg-espresso-800 border border-black/15 dark:border-white/15 rounded-xl text-xs font-black font-bold text-espresso dark:text-cream outline-none focus:border-primary"
                   />
                 </div>
 
@@ -1407,7 +1605,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
 
                       <div className="flex items-center justify-between text-[10px] text-black/50 dark:text-white/50 pt-1 border-t border-black/5 dark:border-white/5 mt-2">
                         <span>بواسطة: {evt.actorName} ({evt.source || 'النظام'})</span>
-                        <span className="font-mono">{new Date(evt.timestamp).toLocaleString('ar-EG')}</span>
+                        <span className="font-black">{new Date(evt.timestamp).toLocaleString('ar-EG')}</span>
                       </div>
                     </div>
                   </div>

@@ -108,7 +108,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
             </div>
 
             {process.env.NODE_ENV !== 'production' && this.state.error && (
-              <div className="mt-6 text-left p-3 bg-red-500/10 text-red-700 dark:text-red-400 border border-red-500/20 rounded-xl text-xs font-mono overflow-auto max-h-32 dir-ltr">
+              <div className="mt-6 text-left p-3 bg-red-500/10 text-red-700 dark:text-red-400 border border-red-500/20 rounded-xl text-xs font-black overflow-auto max-h-32 dir-ltr">
                 {this.state.error.toString()}
               </div>
             )}

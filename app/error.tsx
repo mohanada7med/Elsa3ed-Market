@@ -52,7 +52,7 @@ export default function ErrorPage({
         </div>
 
         {process.env.NODE_ENV !== 'production' && error && (
-          <div className="mt-6 text-left p-3 bg-red-500/10 text-red-700 dark:text-red-400 border border-red-500/20 rounded-xl text-xs font-mono overflow-auto max-h-32 dir-ltr">
+          <div className="mt-6 text-left p-3 bg-red-500/10 text-red-700 dark:text-red-400 border border-red-500/20 rounded-xl text-xs font-black overflow-auto max-h-32 dir-ltr">
             {error.message || error.toString()}
           </div>
         )}

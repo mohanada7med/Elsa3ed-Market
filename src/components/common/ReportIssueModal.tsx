@@ -343,7 +343,7 @@ export const ReportIssueModal: React.FC = () => {
             <FileText className="w-4 h-4" />
             <span>متابعة بلاغاتي والردود</span>
             {myTickets.length > 0 && (
-              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-black/10 dark:bg-white/10 text-black/80 dark:text-white/80">
+              <span className="text-[10px] font-black px-1.5 py-0.2 rounded-full bg-black/10 dark:bg-white/10 text-black/80 dark:text-white/80">
                 {myTickets.length}
               </span>
             )}
@@ -362,7 +362,7 @@ export const ReportIssueModal: React.FC = () => {
                     <span>تم ربط البلاغ تلقائياً بـ:</span>
                   </div>
                   {relatedOrderNumber && (
-                    <span className="px-2 py-0.5 rounded-lg bg-white/70 dark:bg-black/40 font-mono font-bold">
+                    <span className="px-2 py-0.5 rounded-lg bg-white/70 dark:bg-black/40 font-black font-bold">
                       طلب #{relatedOrderNumber}
                     </span>
                   )}
@@ -613,7 +613,7 @@ export const ReportIssueModal: React.FC = () => {
                       >
                         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-black/5 dark:border-white/5 pb-2.5">
                           <div className="flex items-center gap-2">
-                            <span className="text-xs font-mono font-black text-primary dark:text-primary-hover bg-black/5 dark:bg-white/10 px-2 py-0.5 rounded-md">
+                            <span className="text-xs font-black font-black text-primary dark:text-primary-hover bg-black/5 dark:bg-white/10 px-2 py-0.5 rounded-md">
                               #{ticket.ticketNumber}
                             </span>
                             {getStatusBadge(ticket.status)}

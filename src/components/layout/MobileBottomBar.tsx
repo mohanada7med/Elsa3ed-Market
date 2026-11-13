@@ -234,6 +234,19 @@ export const MobileBottomBar: React.FC = () => {
           setIsCartDrawerOpen(true),
         badge: cartCount,
       },
+      ...(isAuthenticated &&
+      (currentRole === 'buyer' || currentUser?.role === 'buyer')
+        ? [
+            {
+              id: 'messages',
+              label: 'الرسائل',
+              icon: MessageSquare,
+              isActive: activePage === 'messages',
+              onClick: () => setActivePage('messages' as any),
+              badge: chatUnreadCount,
+            },
+          ]
+        : []),
       {
         id: 'account',
         label: !isAuthenticated

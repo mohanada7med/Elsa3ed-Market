@@ -612,7 +612,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                       value={lat}
                       onChange={(e) => setLat(e.target.value)}
                       placeholder="26.1416"
-                      className="w-full px-3 py-2 rounded-xl border border-black/15 dark:border-white/15 bg-white/70 dark:bg-black/30 text-xs font-mono focus:ring-2 focus:ring-primary focus:outline-none"
+                      className="w-full px-3 py-2 rounded-xl border border-black/15 dark:border-white/15 bg-white/70 dark:bg-black/30 text-xs font-black focus:ring-2 focus:ring-primary focus:outline-none"
                     />
                   </div>
                   <div>
@@ -625,7 +625,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                       value={lng}
                       onChange={(e) => setLng(e.target.value)}
                       placeholder="32.6703"
-                      className="w-full px-3 py-2 rounded-xl border border-black/15 dark:border-white/15 bg-white/70 dark:bg-black/30 text-xs font-mono focus:ring-2 focus:ring-primary focus:outline-none"
+                      className="w-full px-3 py-2 rounded-xl border border-black/15 dark:border-white/15 bg-white/70 dark:bg-black/30 text-xs font-black focus:ring-2 focus:ring-primary focus:outline-none"
                     />
                   </div>
                 </div>
@@ -880,7 +880,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                     value={coverImage}
                     onChange={(e) => setCoverImage(e.target.value)}
                     placeholder="أدخل رابط صورة الغلاف أو ارفعها من جهازك..."
-                    className="flex-1 px-4 py-2.5 rounded-xl border border-black/15 dark:border-white/15 bg-white/70 dark:bg-black/30 text-xs font-mono focus:ring-2 focus:ring-primary focus:outline-none"
+                    className="flex-1 px-4 py-2.5 rounded-xl border border-black/15 dark:border-white/15 bg-white/70 dark:bg-black/30 text-xs font-black focus:ring-2 focus:ring-primary focus:outline-none"
                   />
                   <button
                     type="button"
@@ -918,7 +918,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                         </button>
                       </div>
                       <div className="flex items-center justify-between gap-2 text-white/90 text-xs font-bold">
-                        <span className="min-w-0 truncate max-w-[80%] font-mono text-[10px] opacity-75">{coverImage}</span>
+                        <span className="min-w-0 truncate max-w-[80%] font-black text-[10px] opacity-75">{coverImage}</span>
                         <button
                           type="button"
                           onClick={() => coverFileInputRef.current?.click()}
@@ -1048,7 +1048,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                           style={{ width: `${Math.max(uploadProgress, 20)}%` }}
                         />
                       </div>
-                      <span className="text-[10px] font-mono font-bold text-primary">
+                      <span className="text-[10px] font-black font-bold text-primary">
                         {uploadProgress > 0 ? `${uploadProgress}%` : 'جاري التحميل...'}
                       </span>
                     </div>
@@ -1066,7 +1066,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                       value={bulkUrlsInput}
                       onChange={(e) => setBulkUrlsInput(e.target.value)}
                       placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg&#10;https://example.com/image3.jpg"
-                      className="w-full px-4 py-2.5 rounded-xl border border-black/15 dark:border-white/15 bg-white dark:bg-black/40 text-xs font-mono focus:ring-2 focus:ring-primary focus:outline-none"
+                      className="w-full px-4 py-2.5 rounded-xl border border-black/15 dark:border-white/15 bg-white dark:bg-black/40 text-xs font-black focus:ring-2 focus:ring-primary focus:outline-none"
                     />
                     <div className="flex items-center justify-end gap-2">
                       <button
@@ -1100,7 +1100,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                       }
                     }}
                     placeholder="أو اكتب أو الصق رابط صورة سريع هنا واضغط إضافة..."
-                    className="w-full min-w-0 flex-1 px-4 py-2.5 rounded-xl border border-black/15 dark:border-white/15 bg-white/70 dark:bg-black/30 text-xs font-mono focus:ring-2 focus:ring-primary focus:outline-none"
+                    className="w-full min-w-0 flex-1 px-4 py-2.5 rounded-xl border border-black/15 dark:border-white/15 bg-white/70 dark:bg-black/30 text-xs font-black focus:ring-2 focus:ring-primary focus:outline-none"
                   />
                   <button
                     type="button"
@@ -1117,7 +1117,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                   <div className="space-y-3 pt-2">
                     <div className="flex flex-col gap-1 text-xs font-bold text-black/60 dark:text-white/60 sm:flex-row sm:items-center sm:justify-between">
                       <span className="break-words">الصور الحالية بالمعرض (يمكنك تعيين أي صورة كغلاف بنقرة واحدة أو إعادة ترتيبها)</span>
-                      <span className="font-mono text-primary">{gallery.length} صور</span>
+                      <span className="font-black text-primary">{gallery.length} صور</span>
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -1268,7 +1268,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                     value={videoUrl}
                     onChange={(e) => setVideoUrl(e.target.value)}
                     placeholder="https://www.youtube.com/watch?v=... أو رابط مباشر"
-                    className="w-full px-4 py-2.5 rounded-xl border border-black/15 dark:border-white/15 bg-white/70 dark:bg-black/30 text-xs font-mono focus:ring-2 focus:ring-primary focus:outline-none"
+                    className="w-full px-4 py-2.5 rounded-xl border border-black/15 dark:border-white/15 bg-white/70 dark:bg-black/30 text-xs font-black focus:ring-2 focus:ring-primary focus:outline-none"
                   />
                 </div>
 
@@ -1282,7 +1282,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                       value={newVideoInput}
                       onChange={(e) => setNewVideoInput(e.target.value)}
                       placeholder="رابط يوتيوب أو فيديو توثيقي آخر..."
-                      className="w-full min-w-0 flex-1 px-4 py-2.5 rounded-xl border border-black/15 dark:border-white/15 bg-white/70 dark:bg-black/30 text-xs font-mono focus:ring-2 focus:ring-primary focus:outline-none"
+                      className="w-full min-w-0 flex-1 px-4 py-2.5 rounded-xl border border-black/15 dark:border-white/15 bg-white/70 dark:bg-black/30 text-xs font-black focus:ring-2 focus:ring-primary focus:outline-none"
                     />
                     <button
                       type="button"
@@ -1300,7 +1300,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                     {additionalVideos.map((vid, idx) => (
                       <div
                         key={idx}
-                        className="flex min-w-0 items-center justify-between gap-2 p-2.5 rounded-xl bg-black/[0.03] dark:bg-white/[0.03] text-xs font-mono border border-black/5 dark:border-white/5"
+                        className="flex min-w-0 items-center justify-between gap-2 p-2.5 rounded-xl bg-black/[0.03] dark:bg-white/[0.03] text-xs font-black border border-black/5 dark:border-white/5"
                       >
                         <span className="min-w-0 truncate max-w-[80%]">{vid}</span>
                         <button
@@ -1333,7 +1333,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                       className="block h-auto max-h-[70vh] max-w-full object-contain mx-auto"
                     />
                     <div className="flex flex-col gap-3 border-t border-white/10 bg-[#181614] p-3 text-white sm:flex-row sm:items-center sm:justify-between sm:p-4">
-                      <span className="w-full break-all font-mono text-xs text-white/70 sm:max-w-[70%]">
+                      <span className="w-full break-all font-black text-xs text-white/70 sm:max-w-[70%]">
                         {previewModalUrl}
                       </span>
                       <div className="flex flex-wrap items-center justify-end gap-2">

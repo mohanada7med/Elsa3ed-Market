@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Governorate, Order } from '../../types';
 import { api, initiatePaymobPayment } from '../../services/api';
+import { calculatePaymobFee, PAYMOB_FEE_RATE, PAYMOB_FIXED_FEE } from '../../constants/paymobFees';
 import {
   ShieldCheck,
   Truck,
@@ -94,6 +95,10 @@ export const CheckoutPage: React.FC = () => {
   const tipAmount = Number(sellerTipAmount) || 0;
   const effectiveTipSellerId = sellerTipSellerId || cartSellers[0]?.id || '';
   const checkoutTotal = cartTotal + tipAmount;
+  const isPaymobPayment = paymentMethod === 'paymob_card' || paymentMethod === 'paymob_wallet';
+  const paymentFee = isPaymobPayment ? calculatePaymobFee(checkoutTotal) : 0;
+  const paymentTotal = checkoutTotal + paymentFee;
+  const paymentFeeLabel = `رسوم الدفع الإلكتروني `;
 
   const requestPaymobSession = async (orderId: string, methodType: 'card' | 'wallet' | 'all') => {
     if (typeof api?.initiatePaymobPayment === 'function') {
@@ -249,19 +254,54 @@ export const CheckoutPage: React.FC = () => {
                 </p>
               </div>
 
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-black/[0.03] dark:bg-white/[0.05] rounded-2xl border border-black/5 font-mono text-sm">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-black/[0.03] dark:bg-white/[0.05] rounded-2xl border border-black/5 font-black text-sm">
                 <span className="text-espresso/60 dark:text-cream/60">رقم الطلب:</span>
                 <span className="font-bold text-primary">#{completedOrder.orderNumber || completedOrder.id}</span>
               </div>
             </div>
 
             <div className="px-8 pb-8 space-y-6">
+              <div className="p-5 bg-black/[0.02] dark:bg-white/[0.02] rounded-2xl border border-black/5 space-y-3">
+                <h2 className="text-xs font-black text-espresso dark:text-cream">المنتجات في طلبك</h2>
+                <div className="divide-y divide-black/5 dark:divide-white/5">
+                  {completedOrder.items.map(({ product, quantity }) => (
+                    <div key={product.id} className="py-2.5 flex items-center gap-3">
+                      <img
+                        src={product.images?.[0] || '/mascot/empty-search.png'}
+                        alt={product.title}
+                        className="w-12 h-12 rounded-xl object-cover border border-black/10 dark:border-white/10"
+                      />
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold text-espresso dark:text-cream">{product.title}</p>
+                        <p className="text-[10px] text-espresso/55 dark:text-cream/55">
+                          كود المنتج: #{String(product.id).slice(0, 8)} • الكمية: {quantity}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               {/* Order Summary & Address */}
               <div className="p-5 bg-black/[0.02] dark:bg-white/[0.02] rounded-2xl border border-black/5 space-y-2.5 text-xs">
                 <div className="flex justify-between items-center text-espresso/70 dark:text-cream/70">
-                  <span>المبلغ الإجمالي:</span>
-                  <span className="font-mono text-base font-black text-primary">{completedOrder.total} ج.م</span>
+                  <span>{completedOrder.paymentFee ? 'قيمة الطلب قبل رسوم الدفع:' : 'المبلغ الإجمالي:'}</span>
+                  <span className="font-black text-base font-black text-primary">{completedOrder.total} ج.م</span>
                 </div>
+                {!!completedOrder.paymentFee && (
+                  <>
+                    <div className="flex justify-between items-center text-espresso/70 dark:text-cream/70">
+                      <span>{paymentFeeLabel}:</span>
+                      <span className="font-black font-bold">+ {completedOrder.paymentFee} ج.م</span>
+                    </div>
+                    <div className="flex justify-between items-center border-t border-black/5 pt-2 font-bold text-espresso dark:text-cream">
+                      <span>الإجمالي المطلوب سداده:</span>
+                      <span className="font-black text-base text-primary">
+                        {completedOrder.total + completedOrder.paymentFee} ج.م
+                      </span>
+                    </div>
+                  </>
+                )}
                 
                 <div className="flex justify-between items-center text-espresso/70 dark:text-cream/70">
                   <span>طريقة السداد:</span>
@@ -479,7 +519,7 @@ export const CheckoutPage: React.FC = () => {
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="010XXXXXXXX"
-                      className="w-full px-4 py-3 bg-black/[0.02] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 font-mono text-left"
+                      className="w-full px-4 py-3 bg-black/[0.02] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 font-black text-left"
                     />
                   </div>
                 </div>
@@ -570,7 +610,7 @@ export const CheckoutPage: React.FC = () => {
                   <div>
                     <h3 className="text-sm font-black text-espresso dark:text-cream">ادعم حرفي من طلبك (اختياري)</h3>
                     <p className="mt-1 text-[11px] leading-5 text-espresso/60 dark:text-cream/60">
-                      المبلغ يضاف لإجمالي الدفع عند الاستلام ويُسجل لصالح الحرفي الذي تختاره.
+                      المبلغ يضاف لإجمالي طلبك ويُسجل لصالح الحرفي الذي تختاره.
                     </p>
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -600,7 +640,7 @@ export const CheckoutPage: React.FC = () => {
                         onChange={(event) => setSellerTipAmount(event.target.value || '0')}
                         placeholder="ج.م"
                         aria-label="مبلغ دعم مخصص"
-                        className="w-20 bg-transparent text-center font-mono outline-none"
+                        className="w-20 bg-transparent text-center font-black outline-none"
                       />
                     </label>
                   </div>
@@ -796,12 +836,12 @@ export const CheckoutPage: React.FC = () => {
                     ) : paymentMethod === 'paymob_card' ? (
                       <>
                         <CreditCard className="w-5 h-5 text-primary" />
-                        <span>متابعة السداد بالبطاقة البنكية ({checkoutTotal} ج.م)</span>
+                        <span>متابعة السداد بالبطاقة البنكية ({paymentTotal} ج.م)</span>
                       </>
                     ) : paymentMethod === 'paymob_wallet' ? (
                       <>
                         <Smartphone className="w-5 h-5 text-primary" />
-                        <span>متابعة السداد بالمحفظة الذكية ({checkoutTotal} ج.م)</span>
+                        <span>متابعة السداد بالمحفظة الذكية ({paymentTotal} ج.م)</span>
                       </>
                     ) : (
                       <>
@@ -890,7 +930,7 @@ export const CheckoutPage: React.FC = () => {
                           </div>
 
                           <div className="text-left shrink-0">
-                            <span className="text-xs font-black font-mono text-[#3B1E0E] dark:text-[#FFF9EE]">
+                            <span className="text-xs font-black text-[#3B1E0E] dark:text-[#FFF9EE]">
                               {price * qty}
                             </span>
                             <span className="block text-[9px] text-[#9c9188] dark:text-white/30">ج.م</span>
@@ -905,7 +945,7 @@ export const CheckoutPage: React.FC = () => {
                 <div className="mt-4 space-y-2.5">
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-[#81766d] dark:text-white/50">المجموع الفرعي</span>
-                    <span className="font-mono font-bold text-[#342b26] dark:text-[#eee2d7]">{cartSubtotal} ج.م</span>
+                    <span className="font-bold text-[#342b26] dark:text-[#eee2d7]">{cartSubtotal} ج.م</span>
                   </div>
 
                   <div className="flex items-center justify-between text-xs">
@@ -913,7 +953,7 @@ export const CheckoutPage: React.FC = () => {
                       <Truck className="w-3.5 h-3.5 text-[#998d83] dark:text-white/40" />
                       <span className="text-[#81766d] dark:text-white/50">الشحن</span>
                     </div>
-                    <span className={`font-mono font-bold ${shippingFee === 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-[#342b26] dark:text-[#eee2d7]'}`}>
+                    <span className={`font-bold ${shippingFee === 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-[#342b26] dark:text-[#eee2d7]'}`}>
                       {shippingFee === 0 ? 'مجاناً' : `${shippingFee} ج.م`}
                     </span>
                   </div>
@@ -921,13 +961,19 @@ export const CheckoutPage: React.FC = () => {
                   {cartDiscountAmount > 0 && (
                     <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-emerald-500/[0.07] border border-emerald-500/10">
                       <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400">الخصم</span>
-                      <span className="text-xs font-black font-mono text-emerald-600 dark:text-emerald-400">- {cartDiscountAmount} ج.م</span>
+                      <span className="text-xs font-black text-emerald-600 dark:text-emerald-400"> {cartDiscountAmount} ج.م</span>
                     </div>
                   )}
                   {tipAmount > 0 && (
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-[#81766d] dark:text-white/50">دعم اختياري للحرفي</span>
-                      <span className="font-mono font-bold text-primary">+ {tipAmount} ج.م</span>
+                      <span className="font-bold text-primary"> {tipAmount} ج.م</span>
+                    </div>
+                  )}
+                  {paymentFee > 0 && (
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-[#81766d] dark:text-white/50">{paymentFeeLabel}</span>
+                      <span className="font-bold text-primary"> {paymentFee} ج.م</span>
                     </div>
                   )}
                 </div>
@@ -941,11 +987,15 @@ export const CheckoutPage: React.FC = () => {
                 <div className="rounded-2xl bg-[#3B1E0E] p-4 text-white relative overflow-hidden">
                   <div className="relative flex items-center justify-between">
                     <div>
-                      <p className="text-[10px] text-white/45 mb-1">الإجمالي النهائي</p>
-                      <p className="text-sm font-bold text-white/80">شامل التوصيل والخصم</p>
+                      <p className="text-[10px] text-white/45 mb-1">
+                        {paymentFee > 0 ? 'الإجمالي المطلوب سداده' : 'الإجمالي النهائي'}
+                      </p>
+                      <p className="text-sm font-bold text-white/80">
+                        {paymentFee > 0 ? 'شامل كل حاجه' : 'شامل التوصيل والخصم'}
+                      </p>
                     </div>
                     <div className="text-left">
-                      <span className="text-2xl sm:text-3xl font-black font-mono text-white">{checkoutTotal}</span>
+                      <span className="text-2xl sm:text-3xl font-black text-white">{paymentTotal}</span>
                       <span className="text-[10px] font-bold text-white/50 mr-1">ج.م</span>
                     </div>
                   </div>

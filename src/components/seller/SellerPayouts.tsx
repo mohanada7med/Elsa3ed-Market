@@ -403,7 +403,7 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
               <div className="text-xs text-gray-400 dark:text-[#A89C90] font-medium">وسيلة التحويل المعتمدة في حسابك</div>
               <div className="text-base font-bold text-gray-900 dark:text-[#FAF6F2] flex items-center gap-2 mt-0.5">
                 <span>{getMethodLabel(summary.payoutInfo.method)}</span>
-                <span className="font-mono text-sm bg-gray-100 dark:bg-[#110E0C] border border-gray-200 dark:border-[#352B24] px-2 py-0.5 rounded text-gray-700 dark:text-[#FAF6F2]">
+                <span className="font-black text-sm bg-gray-100 dark:bg-[#110E0C] border border-gray-200 dark:border-[#352B24] px-2 py-0.5 rounded text-gray-700 dark:text-[#FAF6F2]">
                   {summary.payoutInfo.account}
                 </span>
               </div>
@@ -472,7 +472,7 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
               <tbody className="divide-y divide-gray-100 dark:divide-[#2C2420] text-sm">
                 {payouts.map((payout) => (
                   <tr key={payout.id} className="hover:bg-gray-50/50 dark:hover:bg-[#26201B]/50 transition">
-                    <td className="py-3.5 px-4 font-mono text-xs font-bold text-gray-700 dark:text-stone-300">
+                    <td className="py-3.5 px-4 font-black text-xs font-bold text-gray-700 dark:text-stone-300">
                       {payout.id}
                     </td>
                     <td className="py-3.5 px-4 font-bold text-gray-900 dark:text-[#FAF6F2]">
@@ -486,7 +486,7 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
                         {getMethodIcon(payout.paymentMethod)}
                         <span>{getMethodLabel(payout.paymentMethod)}</span>
                       </div>
-                      <span className="font-mono text-xs text-gray-400 dark:text-stone-400">
+                      <span className="font-black text-xs text-gray-400 dark:text-stone-400">
                         {payout.paymentDetailsSnapshot?.accountNumber}
                       </span>
                     </td>
@@ -642,7 +642,7 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
                   <div className="flex items-center gap-2 text-xs text-gray-900 dark:text-[#FAF6F2] font-bold">
                     {getMethodIcon(summary.payoutInfo?.method)}
                     <span>{getMethodLabel(summary.payoutInfo?.method)}</span>
-                    <span className="font-mono bg-white dark:bg-[#110E0C] px-2 py-0.5 rounded border border-gray-200 dark:border-[#352B24] text-gray-800 dark:text-[#FAF6F2]">
+                    <span className="font-black bg-white dark:bg-[#110E0C] px-2 py-0.5 rounded border border-gray-200 dark:border-[#352B24] text-gray-800 dark:text-[#FAF6F2]">
                       {summary.payoutInfo?.account}
                     </span>
                   </div>
@@ -745,7 +745,7 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
               </div>
               <div className="p-3 bg-gray-50 dark:bg-[#161210] border border-gray-100 dark:border-[#352B24] rounded-xl">
                 <span className="text-gray-400 dark:text-stone-400 block mb-1">رقم الحساب / المحفظة:</span>
-                <span className="font-bold font-mono text-gray-800 dark:text-[#FAF6F2]">
+                <span className="font-bold font-black text-gray-800 dark:text-[#FAF6F2]">
                   {selectedPayout.paymentDetailsSnapshot?.accountNumber || '—'}
                 </span>
               </div>
@@ -779,7 +779,7 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
                   </div>
                   <div>
                     <span className="text-emerald-700 dark:text-emerald-300 block">رقم المعاملة / الحوالة:</span>
-                    <span className="font-mono font-bold text-emerald-950 dark:text-emerald-100 bg-white dark:bg-[#110E0C] px-2 py-0.5 rounded border border-emerald-300 dark:border-emerald-700 inline-block">
+                    <span className="font-black font-bold text-emerald-950 dark:text-emerald-100 bg-white dark:bg-[#110E0C] px-2 py-0.5 rounded border border-emerald-300 dark:border-emerald-700 inline-block">
                       {selectedPayout.transactionReference || '—'}
                     </span>
                   </div>

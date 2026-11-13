@@ -1468,7 +1468,7 @@ export const EventEditorModal: React.FC<EventEditorModalProps> = ({
                               href={videoUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-xs text-amber-300 underline font-mono break-all line-clamp-1"
+                              className="text-xs text-amber-300 underline font-black break-all line-clamp-1"
                             >
                               {videoUrl}
                             </a>
@@ -1519,7 +1519,7 @@ export const EventEditorModal: React.FC<EventEditorModalProps> = ({
                         >
                           <div className="flex items-center gap-2 overflow-hidden">
                             <Film className="w-3.5 h-3.5 text-rose-500 shrink-0" />
-                            <span className="font-mono text-[11px] truncate text-left" dir="ltr">
+                            <span className="font-black text-[11px] truncate text-left" dir="ltr">
                               {vid}
                             </span>
                           </div>

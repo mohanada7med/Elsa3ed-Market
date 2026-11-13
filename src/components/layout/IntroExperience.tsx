@@ -324,7 +324,7 @@ export const IntroExperience: React.FC = () => {
                   <RotateCcw className="w-4 h-4" />
                 </button>
 
-                <span dir="ltr" className="text-[11px] sm:text-xs font-mono text-primary-hover font-semibold ms-1 sm:ms-2">
+                <span dir="ltr" className="text-[11px] sm:text-xs font-black text-primary-hover font-semibold ms-1 sm:ms-2">
                   {formatTime(currentTime)} / {formatTime(duration)}
                 </span>
               </div>

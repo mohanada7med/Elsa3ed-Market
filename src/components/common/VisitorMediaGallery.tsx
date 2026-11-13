@@ -486,7 +486,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
 
                     {/* Bottom Document Bar */}
                     <div className="flex items-center justify-between border-t border-primary/15 bg-primary/5 px-3.5 py-2.5">
-                      <div className="flex items-center gap-2 text-xs font-mono font-bold text-primary">
+                      <div className="flex items-center gap-2 text-xs font-black font-bold text-primary">
                         <Compass className="h-3.5 w-3.5" />
                         <span>توثيق #{idx + 1}</span>
                       </div>
@@ -705,7 +705,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                 } flex items-center justify-between bg-gradient-to-b from-black/80 via-black/30 to-transparent p-4`}
             >
               <div className="flex items-center gap-2">
-                <span className="rounded-full border border-primary/30 bg-primary/40 px-3 py-1 font-mono text-xs font-bold text-white shadow-sm backdrop-blur-md">
+                <span className="rounded-full border border-primary/30 bg-primary/40 px-3 py-1 font-black text-xs font-bold text-white shadow-sm backdrop-blur-md">
                   {lightboxIndex + 1} / {localGallery.length}
                 </span>
                 <span className="hidden sm:inline-block text-xs font-bold text-white/90 truncate max-w-xs font-main">

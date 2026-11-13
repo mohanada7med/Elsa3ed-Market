@@ -122,7 +122,7 @@ export const ForceChangePasswordModal: React.FC = () => {
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 placeholder="أدخل الكلمة المؤقتة المُزودة من الإدارة"
-                className="w-full pl-10 pr-10 py-3.5 bg-black/[0.02] dark:bg-cream/[0.03] border border-black/10 dark:border-white/10 rounded-2xl outline-none focus:border-primary dark:focus:border-primary text-xs font-mono text-left text-espresso dark:text-cream placeholder:text-black/35 dark:placeholder:text-white/35 transition-all focus:ring-2 focus:ring-primary/10"
+                className="w-full pl-10 pr-10 py-3.5 bg-black/[0.02] dark:bg-cream/[0.03] border border-black/10 dark:border-white/10 rounded-2xl outline-none focus:border-primary dark:focus:border-primary text-xs font-black text-left text-espresso dark:text-cream placeholder:text-black/35 dark:placeholder:text-white/35 transition-all focus:ring-2 focus:ring-primary/10"
                 dir="ltr"
               />
               <Lock className="w-4 h-4 text-black/40 dark:text-white/40 absolute right-3.5 top-4" />
@@ -148,7 +148,7 @@ export const ForceChangePasswordModal: React.FC = () => {
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="6 خانات على الأقل"
-                className="w-full pl-10 pr-10 py-3.5 bg-black/[0.02] dark:bg-cream/[0.03] border border-black/10 dark:border-white/10 rounded-2xl outline-none focus:border-primary dark:focus:border-primary text-xs font-mono text-left text-espresso dark:text-cream placeholder:text-black/35 dark:placeholder:text-white/35 transition-all focus:ring-2 focus:ring-primary/10"
+                className="w-full pl-10 pr-10 py-3.5 bg-black/[0.02] dark:bg-cream/[0.03] border border-black/10 dark:border-white/10 rounded-2xl outline-none focus:border-primary dark:focus:border-primary text-xs font-black text-left text-espresso dark:text-cream placeholder:text-black/35 dark:placeholder:text-white/35 transition-all focus:ring-2 focus:ring-primary/10"
                 dir="ltr"
               />
               <KeyRound className="w-4 h-4 text-black/40 dark:text-white/40 absolute right-3.5 top-4" />
@@ -187,7 +187,7 @@ export const ForceChangePasswordModal: React.FC = () => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="أعد إدخال كلمة المرور للتأكيد"
-                className="w-full pl-10 pr-10 py-3.5 bg-black/[0.02] dark:bg-cream/[0.03] border border-black/10 dark:border-white/10 rounded-2xl outline-none focus:border-primary dark:focus:border-primary text-xs font-mono text-left text-espresso dark:text-cream placeholder:text-black/35 dark:placeholder:text-white/35 transition-all focus:ring-2 focus:ring-primary/10"
+                className="w-full pl-10 pr-10 py-3.5 bg-black/[0.02] dark:bg-cream/[0.03] border border-black/10 dark:border-white/10 rounded-2xl outline-none focus:border-primary dark:focus:border-primary text-xs font-black text-left text-espresso dark:text-cream placeholder:text-black/35 dark:placeholder:text-white/35 transition-all focus:ring-2 focus:ring-primary/10"
                 dir="ltr"
               />
               <CheckCircle2 className="w-4 h-4 text-black/40 dark:text-white/40 absolute right-3.5 top-4" />

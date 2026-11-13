@@ -556,7 +556,7 @@ absolute bottom-full right-0 mb-3
                 </span>
                 <a
                   href={`tel:${SUPPORT_PHONE_NUMBER}`}
-                  className="font-mono text-amber-700 dark:text-amber-400/90 hover:underline font-bold"
+                  className="font-black text-amber-700 dark:text-amber-400/90 hover:underline font-bold"
                 >
                   {SUPPORT_PHONE_NUMBER}
                 </a>
