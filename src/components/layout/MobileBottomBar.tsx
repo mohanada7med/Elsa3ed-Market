@@ -103,7 +103,7 @@ export const MobileBottomBar: React.FC = () => {
 
     centerItem = {
       id: 'seller-dashboard',
-      label: 'التحكم',
+      label: 'لوحة التحكم',
       icon: Settings,
       isActive: activePage === 'seller-dashboard',
       onClick: () =>
@@ -163,7 +163,7 @@ export const MobileBottomBar: React.FC = () => {
 
     centerItem = {
       id: 'admin-dashboard',
-      label: 'التحكم',
+      label: 'لوحة التحكم',
       icon: Settings,
       isActive: activePage === 'admin-dashboard',
       onClick: () =>
@@ -263,7 +263,7 @@ export const MobileBottomBar: React.FC = () => {
 
   /*
    * ============================================================
-   * CARTOON TAB ITEM
+   * GLASS TAB
    * ============================================================
    */
 
@@ -277,7 +277,6 @@ export const MobileBottomBar: React.FC = () => {
         onClick={item.onClick}
         whileTap={{
           scale: 0.82,
-          rotate: -4,
         }}
         className="
           relative
@@ -287,7 +286,7 @@ export const MobileBottomBar: React.FC = () => {
           flex-col
           items-center
           justify-center
-          gap-[2px]
+          gap-[3px]
           select-none
           outline-none
           touch-manipulation
@@ -295,105 +294,181 @@ export const MobileBottomBar: React.FC = () => {
         "
         aria-label={item.label}
       >
-        {/* CARTOON ACTIVE BACKGROUND PILL */}
+        {/* ACTIVE GLASS */}
+        <motion.div
+          initial={false}
+          animate={{
+            opacity: item.isActive ? 1 : 0,
+            scale: item.isActive ? 1 : 0.7,
+          }}
+          transition={{
+            type: 'spring',
+            stiffness: 500,
+            damping: 30,
+          }}
+          className="
+            absolute
+            inset-[5px]
+            rounded-[18px]
+
+            bg-white/55
+            dark:bg-white/[0.075]
+
+            border
+            border-white/80
+            dark:border-white/[0.10]
+
+            backdrop-blur-xl
+
+            shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]
+            dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]
+
+            pointer-events-none
+          "
+        />
+
+        {/* ACTIVE LIGHT */}
         {item.isActive && (
           <motion.div
-            layoutId="cartoonActivePill"
+            layoutId="wahActiveLight"
             transition={{
               type: 'spring',
               stiffness: 500,
-              damping: 25,
+              damping: 32,
             }}
             className="
               absolute
-              inset-x-1
-              top-1
-              bottom-2
-              rounded-2xl
-              bg-[#FFE8C5]
-              dark:bg-[#3D2619]
-              border-2
-              border-[#3B2213]
-              dark:border-[#E8B96F]
-              shadow-[0_3px_0px_#3B2213]
-              dark:shadow-[0_3px_0px_#E8B96F]
-              pointer-events-none
+              bottom-[5px]
+              left-1/2
+              -translate-x-1/2
+
+              w-5
+              h-[3px]
+
+              rounded-full
+
+              bg-[#C99444]
+
+              shadow-[0_0_12px_rgba(201,148,68,0.9)]
             "
           />
         )}
 
-        {/* ICON CONTAINER */}
-        <div className="relative z-10 flex items-center justify-center">
+        {/* ICON */}
+        <motion.div
+          className="relative z-10"
+          animate={{
+            y: item.isActive ? -2 : 0,
+            scale: item.isActive ? 1.12 : 1,
+          }}
+          transition={{
+            type: 'spring',
+            stiffness: 450,
+            damping: 24,
+          }}
+        >
           <Icon
             className={`
-              w-[20px]
-              h-[20px]
-              transition-transform
-              duration-150
+              w-[19px]
+              h-[19px]
+
+              transition-colors
+              duration-200
+
               ${item.isActive
-                ? 'text-[#8A3A13] dark:text-[#FFD188] scale-110'
-                : 'text-[#6B5344] dark:text-[#A89080] group-hover:scale-105'
+                ? 'text-[#8A4A23] dark:text-[#E8B96F]'
+                : 'text-stone-500 dark:text-white/50 group-hover:text-stone-800 dark:group-hover:text-white/80'
               }
             `}
-            strokeWidth={item.isActive ? 2.8 : 2.2}
+            strokeWidth={
+              item.isActive ? 2.35 : 1.8
+            }
           />
 
           {/* BADGE */}
           {item.badge !== undefined &&
             item.badge > 0 && (
               <motion.span
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
+                initial={{
+                  scale: 0,
+                }}
+                animate={{
+                  scale: 1,
+                }}
                 transition={{
                   type: 'spring',
                   stiffness: 600,
-                  damping: 15,
+                  damping: 20,
                 }}
                 className="
                   absolute
                   -top-2
                   -right-3
-                  min-w-[18px]
-                  h-[18px]
+
+                  min-w-[16px]
+                  h-[16px]
+
                   px-1
+
                   rounded-full
+
                   flex
                   items-center
                   justify-center
-                  bg-[#E74C3C]
+
+                  bg-[#B43B2F]
                   text-white
-                  text-[9px]
+
+                  text-[8px]
                   font-black
+
                   border-2
-                  border-[#3B2213]
-                  shadow-[0_2px_0px_#3B2213]
+                  border-white/90
+                  dark:border-[#17100C]
+
+                  shadow-[0_3px_10px_rgba(0,0,0,0.2)]
                 "
               >
-                {item.badge > 99 ? '99+' : item.badge}
+                {item.badge > 99
+                  ? '99+'
+                  : item.badge}
               </motion.span>
             )}
-        </div>
+        </motion.div>
 
         {/* LABEL */}
-        <span
+        <motion.span
+          animate={{
+            y: item.isActive ? -1 : 0,
+            opacity: item.isActive ? 1 : 0.7,
+          }}
           className={`
             relative
             z-10
+
             text-[10px]
             leading-none
-            font-black
-            tracking-tight
+            font-bold
+
+            transition-colors
+
             ${item.isActive
-              ? 'text-[#6A2B0A] dark:text-[#FFD188]'
-              : 'text-[#6B5344] dark:text-[#A89080]'
+              ? 'text-[#8A4A23] dark:text-[#E8B96F] font-black'
+              : 'text-stone-500 dark:text-white/50'
             }
           `}
         >
           {item.label}
-        </span>
+        </motion.span>
       </motion.button>
     );
   };
+
+  /*
+   * ============================================================
+   * CENTER GLASS BUTTON
+   * ============================================================
+   */
 
   const CenterIcon = centerItem.icon;
 
@@ -407,171 +482,369 @@ export const MobileBottomBar: React.FC = () => {
         bottom-0
         inset-x-0
         z-50
+
         flex
         justify-center
+
         pointer-events-none
-        px-3
-        pb-[calc(10px+env(safe-area-inset-bottom))]
+
+        px-2.5
+        pb-[calc(8px+env(safe-area-inset-bottom))]
       "
       role="navigation"
       aria-label="التنقل الرئيسي"
     >
+      {/* AMBIENT LIGHT */}
+      <motion.div
+        animate={{
+          opacity: [0.15, 0.28, 0.15],
+          scale: [0.9, 1.08, 0.9],
+        }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+        className="
+          absolute
+          bottom-3
+          left-1/2
+          -translate-x-1/2
+
+          w-56
+          h-16
+
+          bg-[#C99444]/20
+          dark:bg-[#C99444]/10
+
+          blur-3xl
+
+          pointer-events-none
+        "
+      />
+
       <div
         className="
           relative
+
           flex
           items-end
           justify-center
+
           gap-2
+
           w-full
           max-w-[440px]
         "
       >
         {/* ====================================================
-            RIGHT CARTOON ISLAND
+            RIGHT GLASS ISLAND
         ==================================================== */}
+
         <motion.nav
-          initial={{ x: 30, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 350, damping: 22 }}
+          initial={{
+            x: 25,
+            opacity: 0,
+          }}
+          animate={{
+            x: 0,
+            opacity: 1,
+          }}
+          transition={{
+            type: 'spring',
+            stiffness: 300,
+            damping: 25,
+          }}
           className="
             pointer-events-auto
+
             relative
             flex-1
-            h-[64px]
-            px-1.5
-            rounded-[28px]
+
+            h-[66px]
+
+            px-1
+
+            rounded-[25px]
+
             flex
             items-center
             justify-around
-            bg-[#FFF8EE]
-            dark:bg-[#1E120B]
-            border-[3px]
-            border-[#3B2213]
-            dark:border-[#E8B96F]/50
-            shadow-[0_6px_0px_#3B2213]
-            dark:shadow-[0_6px_0px_#000000]
+
+            overflow-hidden
+
+            bg-white/[0.58]
+            dark:bg-[#17100C]/[0.58]
+
+            backdrop-blur-[28px]
+            backdrop-saturate-[170%]
+
+            border
+            border-white/75
+            dark:border-white/[0.11]
+
+            shadow-[0_14px_45px_rgba(50,28,14,0.14)]
+            dark:shadow-[0_14px_45px_rgba(0,0,0,0.60)]
           "
         >
+          {/* GLASS REFLECTION */}
+          <div
+            className="
+              absolute
+              top-0
+              left-[15%]
+              right-[15%]
+
+              h-px
+
+              bg-gradient-to-r
+              from-transparent
+              via-white
+              to-transparent
+
+              dark:via-white/20
+            "
+          />
+
           {leftItems.map(renderTab)}
         </motion.nav>
 
         {/* ====================================================
-            CENTER COMIC/CARTOON BUTTON
+            CENTER
         ==================================================== */}
+
         <div
           className="
             pointer-events-auto
+
             relative
-            w-[74px]
-            h-[76px]
+
+            w-[64px]
+            h-[74px]
+
             flex
             items-start
             justify-center
           "
         >
-          {/* FLOATING SHADOW BASE */}
-          <div
+          {/* OUTER GLOW */}
+          <motion.div
+            animate={{
+              scale: [1, 1.12, 1],
+              opacity: [0.22, 0.38, 0.22],
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
             className="
               absolute
-              bottom-1
-              w-14
-              h-4
+              top-[1px]
+
+              w-[64px]
+              h-[64px]
+
               rounded-full
-              bg-[#3B2213]/25
-              dark:bg-black/50
-              blur-[2px]
+
+              bg-[#C99444]
+
+              blur-2xl
+
               pointer-events-none
             "
           />
 
+          {/* ROTATING GLASS RING */}
+          <motion.div
+            animate={{
+              rotate: 360,
+            }}
+            transition={{
+              duration: 14,
+              repeat: Infinity,
+              ease: 'linear',
+            }}
+            className="
+              absolute
+              top-[-3px]
+
+              w-[68px]
+              h-[68px]
+
+              rounded-full
+
+              border
+              border-dashed
+              border-[#C99444]/30
+
+              pointer-events-none
+            "
+          />
+
+          {/* CENTER BUTTON */}
           <motion.button
             type="button"
             onClick={centerItem.onClick}
-            whileHover={{ scale: 1.08, y: -2 }}
-            whileTap={{ scale: 0.85, y: 4 }}
+            whileHover={{
+              scale: 1.07,
+            }}
+            whileTap={{
+              scale: 0.88,
+            }}
             className="
               relative
               z-20
-              w-[64px]
+
+              mt-[2px]
+
+              w-[56px]
               h-[56px]
-              rounded-[22px]
+
+              rounded-[21px]
+
+              rotate-45
+
               flex
               items-center
               justify-center
+
+              overflow-hidden
+
               bg-gradient-to-br
-              from-[#F49F42]
-              via-[#E87A2B]
-              to-[#C55A11]
-              dark:from-[#E8A54C]
-              dark:via-[#C6782B]
-              dark:to-[#8B4810]
-              border-[3px]
-              border-[#3B2213]
-              dark:border-[#FFD188]
-              shadow-[0_5px_0px_#3B2213]
-              dark:shadow-[0_5px_0px_#000000]
+              from-[#6E391D]
+              via-[#8B4B25]
+              to-[#5D2B17]
+
+              dark:from-[#8B4C25]
+              dark:via-[#6A3419]
+              dark:to-[#35170B]
+
+              border
+              border-white/60
+              dark:border-[#E4B86D]/25
+
+              shadow-[0_12px_35px_rgba(82,42,20,0.35)]
+              dark:shadow-[0_12px_35px_rgba(0,0,0,0.65)]
+
               outline-none
             "
             aria-label={centerItem.label}
           >
-            {/* CARTOON SHINE EFFECT */}
-            <div
+            {/* GLASS SHINE */}
+            <motion.div
+              animate={{
+                x: ['-120%', '120%'],
+              }}
+              transition={{
+                duration: 3.5,
+                repeat: Infinity,
+                repeatDelay: 2,
+                ease: 'easeInOut',
+              }}
               className="
                 absolute
-                top-1
-                left-2
-                w-4
-                h-2
-                rounded-full
-                bg-white/50
+
+                top-[-30%]
+                left-[-20%]
+
+                w-[30%]
+                h-[170%]
+
+                rotate-[25deg]
+
+                bg-white/20
+
+                blur-md
+
                 pointer-events-none
               "
             />
 
+            {/* INNER BORDER */}
+            <div
+              className="
+                absolute
+                inset-[5px]
+
+                rounded-[17px]
+
+                border
+                border-white/15
+
+                pointer-events-none
+              "
+            />
+
+            {/* ICON */}
             <motion.div
               animate={{
-                rotate: centerItem.isActive ? [0, 8, -8, 0] : 0,
+                rotate: centerItem.isActive
+                  ? [0, 5, -5, 0]
+                  : 0,
+                scale: centerItem.isActive
+                  ? [1, 1.08, 1]
+                  : 1,
               }}
               transition={{
-                duration: 2,
-                repeat: centerItem.isActive ? Infinity : 0,
+                duration: 2.2,
+                repeat: centerItem.isActive
+                  ? Infinity
+                  : 0,
               }}
-              className="relative z-10"
+              className="-rotate-45 relative z-10"
             >
               <CenterIcon
-                className="w-[26px] h-[26px] text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.3)]"
-                strokeWidth={2.6}
+                className="
+                  w-[23px]
+                  h-[23px]
+
+                  text-[#F4D39C]
+                "
+                strokeWidth={2.2}
               />
             </motion.div>
           </motion.button>
 
-          {/* CENTER LABEL BADGE - معدلة لتكون واضحة وبارزة تماماً */}
+          {/* CENTER LABEL */}
           <motion.span
             animate={{
-              y: centerItem.isActive ? [0, -2, 0] : 0,
+              y: centerItem.isActive
+                ? [0, -1, 0]
+                : 0,
             }}
-            transition={{ duration: 1.5, repeat: Infinity }}
+            transition={{
+              duration: 2,
+              repeat: centerItem.isActive
+                ? Infinity
+                : 0,
+            }}
             className="
               absolute
-              bottom-1
-              px-3
-              py-[2px]
+
+              -bottom-[2px]
+
+              px-2.5
+              py-[4px]
+
               rounded-full
+
               whitespace-nowrap
-              text-[10px]
+
+              text-[8.5px]
               font-black
-              tracking-tight
-              text-[#3B2213]
-              dark:text-[#FFD188]
-              bg-[#FFF8EE]
-              dark:bg-[#1E120B]
-              border-2
-              border-[#3B2213]
-              dark:border-[#E8B96F]/80
-              shadow-[0_3px_0px_#3B2213]
-              dark:shadow-[0_3px_0px_#000]
-              z-30
+
+              text-[#8A4A23]
+              dark:text-[#E8B96F]
+
+              bg-white/60
+              dark:bg-white/[0.06]
+
+              border
+              border-white/70
+              dark:border-white/10
+
+              backdrop-blur-xl
             "
           >
             {centerItem.label}
@@ -579,31 +852,74 @@ export const MobileBottomBar: React.FC = () => {
         </div>
 
         {/* ====================================================
-            LEFT CARTOON ISLAND
+            LEFT GLASS ISLAND
         ==================================================== */}
+
         <motion.nav
-          initial={{ x: -30, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 350, damping: 22 }}
+          initial={{
+            x: -25,
+            opacity: 0,
+          }}
+          animate={{
+            x: 0,
+            opacity: 1,
+          }}
+          transition={{
+            type: 'spring',
+            stiffness: 300,
+            damping: 25,
+          }}
           className="
             pointer-events-auto
+
             relative
             flex-1
-            h-[64px]
-            px-1.5
-            rounded-[28px]
+
+            h-[62px]
+
+            px-1
+
+            rounded-[25px]
+
             flex
             items-center
             justify-around
-            bg-[#FFF8EE]
-            dark:bg-[#1E120B]
-            border-[3px]
-            border-[#3B2213]
-            dark:border-[#E8B96F]/50
-            shadow-[0_6px_0px_#3B2213]
-            dark:shadow-[0_6px_0px_#000000]
+
+            overflow-hidden
+
+            bg-white/[0.58]
+            dark:bg-[#17100C]/[0.58]
+
+            backdrop-blur-[28px]
+            backdrop-saturate-[170%]
+
+            border
+            border-white/75
+            dark:border-white/[0.11]
+
+            shadow-[0_14px_45px_rgba(50,28,14,0.14)]
+            dark:shadow-[0_14px_45px_rgba(0,0,0,0.60)]
           "
         >
+          {/* GLASS REFLECTION */}
+          <div
+            className="
+              absolute
+              top-0
+              left-[15%]
+              right-[15%]
+
+              h-px
+
+              bg-gradient-to-r
+              from-transparent
+              via-white
+              to-transparent
+
+              dark:via-white/20
+            "
+          />
+
           {rightItems.map(renderTab)}
         </motion.nav>
       </div>
