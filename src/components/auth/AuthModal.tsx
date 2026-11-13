@@ -1541,69 +1541,136 @@ export const AuthModal: React.FC = () => {
                       onClick={() => handleGoogleAuth('login')}
                       disabled={isBusy}
                       className="
-                        flex
-                        min-h-[52px]
-                        sm:min-h-[56px]
-                        w-full
-                        items-center
-                        justify-center
-                        gap-3
-                        rounded-2xl
-                        border
-                        border-black/15
-                        bg-white/95
-                        px-4
-                        text-[14px]
-                        sm:text-[15px]
-                        font-black
-                        text-espresso
-                        shadow-sm
-                        transition-all
-                        hover:border-primary/50
-                        hover:bg-white
-                        hover:shadow-md
-                        active:scale-[0.99]
-                        disabled:cursor-not-allowed
-                        disabled:opacity-60
-                        dark:border-white/15
-                        dark:bg-cream/10
-                        dark:text-cream
-                        dark:hover:border-primary/60
-                        dark:hover:bg-cream/15
-                        cursor-pointer
-                      "
+    group
+    relative
+    flex
+    min-h-[56px]
+    sm:min-h-[60px]
+    w-full
+    items-center
+    justify-between
+    gap-3
+    overflow-hidden
+    rounded-2xl
+    border-[3px]
+    border-espresso
+    bg-cream
+    px-4
+    text-[15px]
+    sm:text-[16px]
+    font-black
+    text-espresso
+    shadow-[5px_5px_0_0_#1f1f1f]
+    transition-all
+    duration-150
+    hover:-translate-x-0.5
+    hover:-translate-y-0.5
+    hover:bg-white
+    hover:shadow-[8px_8px_0_0_#1f1f1f]
+    active:translate-x-[5px]
+    active:translate-y-[5px]
+    active:shadow-[0_0_0_0_#1f1f1f]
+    focus-visible:outline-none
+    focus-visible:ring-4
+    focus-visible:ring-primary/40
+    disabled:cursor-not-allowed
+    disabled:opacity-60
+    disabled:hover:translate-x-0
+    disabled:hover:translate-y-0
+    disabled:hover:shadow-[5px_5px_0_0_#1f1f1f]
+    dark:border-cream
+    dark:bg-espresso
+    dark:text-cream
+    dark:shadow-[5px_5px_0_0_#f5efe6]
+    dark:hover:bg-espresso
+    dark:hover:shadow-[8px_8px_0_0_#f5efe6]
+    dark:active:shadow-[0_0_0_0_#f5efe6]
+    cursor-pointer
+  "
                     >
                       {googleLoading ? (
                         <>
-                          <Loader2 size={20} className="animate-spin text-primary" />
-                          <span>جاري الاتصال بحساب Google...</span>
+                          <span className="flex h-10 w-10 items-center justify-center rounded-xl border-[3px] border-espresso bg-white dark:border-cream">
+                            <Loader2 size={20} className="animate-spin text-primary" />
+                          </span>
+                          <span className="flex-1 text-center">جاري الاتصال بحساب Google...</span>
+                          <span className="w-10" />
                         </>
                       ) : (
                         <>
+                          {/* ستيكر الأيقونة */}
                           <span
                             aria-hidden="true"
                             className="
-                              flex
-                              h-7
-                              w-7
-                              shrink-0
-                              items-center
-                              justify-center
-                              rounded-full
-                              border
-                              border-black/10
-                              bg-white
-                              text-[15px]
-                              font-black
-                              text-[#4285F4]
-                              shadow-xs
-                            "
+          flex
+          h-10
+          w-10
+          shrink-0
+          -rotate-6
+          items-center
+          justify-center
+          rounded-xl
+          border-[3px]
+          border-espresso
+          bg-white
+          shadow-[2px_2px_0_0_#1f1f1f]
+          transition-transform
+          duration-300
+          group-hover:rotate-12
+          group-hover:scale-110
+          dark:border-cream
+        "
                           >
-                            G
+                            <svg viewBox="0 0 48 48" className="h-5 w-5">
+                              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+                              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
+                              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
+                              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
+                            </svg>
                           </span>
-                          <span>المتابعة باستخدام Google</span>
+
+                          <span className="flex-1 text-center">المتابعة باستخدام Google</span>
+
+                          {/* سهم بيتحرك عند الـ hover */}
+                          <span
+                            aria-hidden="true"
+                            className="
+          flex
+          h-10
+          w-10
+          shrink-0
+          items-center
+          justify-center
+          rounded-full
+          bg-primary
+          text-white
+          transition-transform
+          duration-300
+          group-hover:-translate-x-1
+        "
+                          >
+                            <svg
+                              viewBox="0 0 24 24"
+                              className="h-5 w-5"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="3"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M19 12H5M11 6l-6 6 6 6" />
+                            </svg>
+                          </span>
                         </>
                       )}
+
+                      {/* شريط ألوان Google تحت الزرار */}
+                      <span aria-hidden="true" className="absolute inset-x-0 bottom-0 flex h-1.5">
+                        <span className="flex-1 bg-[#4285F4]" />
+                        <span className="flex-1 bg-[#EA4335]" />
+                        <span className="flex-1 bg-[#FBBC05]" />
+                        <span className="flex-1 bg-[#34A853]" />
+                      </span>
                     </button>
 
                     <div className="relative flex items-center gap-3 py-0.5">
@@ -2118,75 +2185,148 @@ export const AuthModal: React.FC = () => {
                       onClick={() => handleGoogleAuth('register')}
                       disabled={isBusy}
                       className="
-                        flex
-                        min-h-[52px]
-                        sm:min-h-[56px]
-                        w-full
-                        items-center
-                        justify-center
-                        gap-3
-                        rounded-2xl
-                        border
-                        border-black/15
-                        bg-white/95
-                        px-4
-                        text-[14px]
-                        sm:text-[15px]
-                        font-black
-                        text-espresso
-                        shadow-sm
-                        transition-all
-                        hover:border-primary/50
-                        hover:bg-white
-                        hover:shadow-md
-                        active:scale-[0.99]
-                        disabled:cursor-not-allowed
-                        disabled:opacity-60
-                        dark:border-white/15
-                        dark:bg-cream/10
-                        dark:text-cream
-                        dark:hover:border-primary/60
-                        dark:hover:bg-cream/15
-                        cursor-pointer
-                      "
+    group
+    relative
+    flex
+    min-h-[56px]
+    sm:min-h-[60px]
+    w-full
+    items-center
+    justify-between
+    gap-3
+    overflow-hidden
+    rounded-2xl
+    border-[3px]
+    border-espresso
+    bg-cream
+    px-4
+    text-[15px]
+    sm:text-[16px]
+    font-black
+    text-espresso
+    shadow-[5px_5px_0_0_#1f1f1f]
+    transition-all
+    duration-150
+    motion-reduce:transition-none
+    hover:-translate-x-0.5
+    hover:-translate-y-0.5
+    hover:bg-white
+    hover:shadow-[8px_8px_0_0_#1f1f1f]
+    active:translate-x-[5px]
+    active:translate-y-[5px]
+    active:shadow-[0_0_0_0_#1f1f1f]
+    focus-visible:outline-none
+    focus-visible:ring-4
+    focus-visible:ring-primary/40
+    disabled:cursor-not-allowed
+    disabled:opacity-60
+    disabled:hover:translate-x-0
+    disabled:hover:translate-y-0
+    disabled:hover:shadow-[5px_5px_0_0_#1f1f1f]
+    dark:border-cream
+    dark:bg-espresso
+    dark:text-cream
+    dark:shadow-[5px_5px_0_0_#f5efe6]
+    dark:hover:bg-espresso
+    dark:hover:shadow-[8px_8px_0_0_#f5efe6]
+    dark:active:shadow-[0_0_0_0_#f5efe6]
+    dark:disabled:hover:shadow-[5px_5px_0_0_#f5efe6]
+    cursor-pointer
+  "
                     >
                       {googleLoading ? (
                         <>
-                          <Loader2 size={20} className="animate-spin text-primary" />
-                          <span>جاري التسجيل عبر Google...</span>
+                          <span className="flex h-10 w-10 items-center justify-center rounded-xl border-[3px] border-espresso bg-white dark:border-cream">
+                            <Loader2 size={20} className="animate-spin text-primary" />
+                          </span>
+                          <span className="flex-1 text-center">جاري التسجيل عبر Google...</span>
+                          <span className="w-10" />
                         </>
                       ) : (
                         <>
+                          {/* ستيكر الأيقونة */}
                           <span
                             aria-hidden="true"
                             className="
-                              flex
-                              h-7
-                              w-7
-                              shrink-0
-                              items-center
-                              justify-center
-                              rounded-full
-                              border
-                              border-black/10
-                              bg-white
-                              text-[15px]
-                              font-black
-                              text-[#4285F4]
-                              shadow-xs
-                            "
+          flex
+          h-10
+          w-10
+          shrink-0
+          -rotate-6
+          items-center
+          justify-center
+          rounded-xl
+          border-[3px]
+          border-espresso
+          bg-white
+          shadow-[2px_2px_0_0_#1f1f1f]
+          transition-transform
+          duration-300
+          motion-reduce:transition-none
+          group-hover:rotate-12
+          group-hover:scale-110
+          motion-reduce:group-hover:rotate-[-6deg]
+          motion-reduce:group-hover:scale-100
+          dark:border-cream
+        "
                           >
-                            G
+                            <svg viewBox="0 0 48 48" className="h-5 w-5">
+                              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+                              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
+                              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
+                              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
+                            </svg>
                           </span>
-                          <span>
+
+                          <span className="flex-1 text-center">
                             {roleType === 'seller'
                               ? 'إنشاء حساب بائع عبر Google'
                               : 'التسجيل السريع باستخدام Google'}
                           </span>
+
+                          {/* سهم بيتحرك عند الـ hover */}
+                          <span
+                            aria-hidden="true"
+                            className="
+          flex
+          h-10
+          w-10
+          shrink-0
+          items-center
+          justify-center
+          rounded-full
+          bg-primary
+          text-white
+          transition-transform
+          duration-300
+          motion-reduce:transition-none
+          group-hover:-translate-x-1
+          motion-reduce:group-hover:translate-x-0
+        "
+                          >
+                            <svg
+                              viewBox="0 0 24 24"
+                              className="h-5 w-5"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="3"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M19 12H5M11 6l-6 6 6 6" />
+                            </svg>
+                          </span>
                         </>
                       )}
-                    </button>
 
+                      {/* شريط ألوان Google تحت الزرار */}
+                      <span aria-hidden="true" className="absolute inset-x-0 bottom-0 flex h-1.5">
+                        <span className="flex-1 bg-[#4285F4]" />
+                        <span className="flex-1 bg-[#EA4335]" />
+                        <span className="flex-1 bg-[#FBBC05]" />
+                        <span className="flex-1 bg-[#34A853]" />
+                      </span>
+                    </button>
                     <div className="relative flex items-center gap-3 py-0.5">
                       <span className="h-px flex-1 bg-black/10 dark:bg-white/10" />
                       <span className="text-[11px] font-bold text-black/45 dark:text-white/45">
