@@ -519,7 +519,6 @@ router.post('/products', async (req: AuthenticatedRequest, res: Response) => {
     const {
       id,
       title,
-      titleEn,
       categoryId,
       categoryName,
       price,
@@ -585,7 +584,6 @@ router.post('/products', async (req: AuthenticatedRequest, res: Response) => {
       {
         id,
         title: title.trim(),
-        titleEn: titleEn?.trim() || '',
         categoryId,
         categoryName,
         price: Number(price),

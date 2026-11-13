@@ -86,7 +86,7 @@ export async function createCategory(
     throw new Error('اسم القسم بالعربية مطلوب');
   }
 
-  const safeSlug = (data.slug || data.nameEn || data.name)
+  const safeSlug = (data.slug || data.name)
     .toLowerCase()
     .trim()
     .replace(/[^a-z0-9\u0621-\u064A]+/g, '-')
@@ -101,7 +101,6 @@ export async function createCategory(
   const newCategory: CategoryDocument = {
     id: `cat-${Date.now()}`,
     name: data.name.trim(),
-    nameEn: data.nameEn?.trim() || '',
     slug: safeSlug,
     description: data.description?.trim() || '',
     image: data.image?.trim() || 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=800&q=80',

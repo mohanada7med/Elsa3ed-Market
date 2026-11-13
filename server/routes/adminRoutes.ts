@@ -935,7 +935,6 @@ router.post('/products', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const {
       title,
-      titleEn,
       price,
       originalPrice,
       discountPercent,
@@ -966,7 +965,6 @@ router.post('/products', async (req: AuthenticatedRequest, res: Response) => {
       req.user!,
       {
         title,
-        titleEn,
         price: Number(price),
         originalPrice: originalPrice ? Number(originalPrice) : undefined,
         discountPercent: discountPercent ? Number(discountPercent) : undefined,

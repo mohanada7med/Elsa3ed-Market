@@ -568,13 +568,10 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
     try {
       setIsUploading(true);
 
-      if (itemToRemove?.id || itemToRemove?.publicId) {
-        try {
-          await api.deleteAdminMedia(authUser, itemToRemove.id || itemToRemove.publicId!);
-        } catch (delErr: any) {
-          console.warn('Cloudinary delete warning:', delErr?.message || delErr);
-        }
-      }
+      const deleteIdentifier =
+        itemToRemove?.id || itemToRemove?.publicId || urlToRemove;
+      const deleted = await api.deleteAdminMedia(authUser, deleteIdentifier);
+      if (!deleted) throw new Error('لم يؤكد الخادم حذف الوسيط');
 
       if (multiple) {
         const updated = currentItems

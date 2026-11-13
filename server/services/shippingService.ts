@@ -177,7 +177,6 @@ export async function createShippingCompany(
   admin: AuthenticatedUser,
   input: {
     name: string;
-    nameEn?: string;
     code: string;
     bookingMethod?: 'external_booking' | 'carrier_api' | 'manual_dispatch';
     trackingUrlTemplate?: string;
@@ -206,7 +205,6 @@ export async function createShippingCompany(
   const newCompany: ShippingCompanyDocument = {
     id: `ship-comp-${Date.now()}`,
     name,
-    nameEn: input.nameEn?.trim(),
     code,
     bookingMethod: input.bookingMethod || 'external_booking',
     trackingUrlTemplate: input.trackingUrlTemplate?.trim(),
@@ -280,7 +278,6 @@ export async function updateShippingCompany(
   const updatedCompany: ShippingCompanyDocument = {
     ...company,
     ...(input.name !== undefined && { name: input.name.trim() }),
-    ...(input.nameEn !== undefined && { nameEn: input.nameEn.trim() }),
     ...(input.bookingMethod !== undefined && { bookingMethod: input.bookingMethod }),
     ...(input.trackingUrlTemplate !== undefined && { trackingUrlTemplate: input.trackingUrlTemplate.trim() }),
     ...(input.websiteUrl !== undefined && { websiteUrl: input.websiteUrl.trim() }),

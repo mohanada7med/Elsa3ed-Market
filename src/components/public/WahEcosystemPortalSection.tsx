@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
-import { useApp } from '../../context/AppContext';
+import { PAGE_ROUTES, useApp } from '../../context/AppContext';
+import type { ActivePage } from '../../types';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 
 interface PortalMascot {
@@ -26,7 +27,6 @@ interface Portal {
     | 'food'
     | 'events';
   image: string;
-  nameEn: string;
   accentColor: string;
   mascot: PortalMascot;
 }
@@ -34,6 +34,25 @@ interface Portal {
 export const WahEcosystemPortalSection: React.FC = () => {
   const { setActivePage, wahStats } = useApp();
   const reduceMotion = useReducedMotion();
+
+  const handlePortalLinkClick = (
+    event: React.MouseEvent<HTMLAnchorElement>,
+    page: Portal['page']
+  ) => {
+    if (
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    setActivePage(page);
+  };
 
   const portals: Portal[] = [
     {
@@ -45,7 +64,6 @@ export const WahEcosystemPortalSection: React.FC = () => {
       page: 'products',
       image:
         'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790754/6d17f117-649a-4a79-b565-3f3eef139000.png',
-      nameEn: 'WAH Marketplace',
       accentColor: 'from-amber-800/80',
       mascot: {
         src: '/mascot/pro.png',
@@ -65,7 +83,6 @@ export const WahEcosystemPortalSection: React.FC = () => {
       page: 'reels',
       image:
         'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788789051/%D9%81%D8%AE%D8%A7%D8%B1%D8%B1%D8%B1%D8%B1.jpg',
-      nameEn: 'Live Reels',
       accentColor: 'from-orange-950/70',
       mascot: {
         src: '/mascot/reels.png',
@@ -85,7 +102,6 @@ export const WahEcosystemPortalSection: React.FC = () => {
       page: 'map',
       image:
         'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790207/d13c685b-4403-4983-96fe-49f3b7a925c3.png',
-      nameEn: 'Interactive Atlas',
       accentColor: 'from-amber-900/60',
       mascot: {
         src: '/mascot/saaed.png',
@@ -107,7 +123,6 @@ export const WahEcosystemPortalSection: React.FC = () => {
       page: 'places',
       image:
         'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788715371/WAH/heritage-places/karnak-temples/img_2332_1788715371753_8g8m.jpg',
-      nameEn: 'Architectural Heritage',
       accentColor: 'from-[#9a6a35]/70',
       mascot: {
         src: '/mascot/athar.png',
@@ -127,7 +142,6 @@ export const WahEcosystemPortalSection: React.FC = () => {
       page: 'people',
       image:
         'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790532/8460cc50-45f5-4452-8f78-993668390750.png',
-      nameEn: 'Figures of Upper Egypt',
       accentColor: 'from-[#744e26]/70',
       mascot: {
         src: '/mascot/fan.png',
@@ -147,7 +161,6 @@ export const WahEcosystemPortalSection: React.FC = () => {
       page: 'food',
       image:
         'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790638/05ef9181-0c18-4290-8a57-b2d054054e7f.png',
-      nameEn: 'Authentic Kitchen',
       accentColor: 'from-amber-950/70',
       mascot: {
         src: '/mascot/foods.png',
@@ -167,7 +180,6 @@ export const WahEcosystemPortalSection: React.FC = () => {
       page: 'events',
       image:
         'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790617/145b481b-d989-4d5b-82cf-26bbb0b5d6eb.png',
-      nameEn: 'Seasons & Events',
       accentColor: 'from-[#5a3e1b]/70',
       mascot: {
         src: '/mascot/events.png',
@@ -302,19 +314,12 @@ export const WahEcosystemPortalSection: React.FC = () => {
           const isActive = activeId === portal.id;
 
           return (
-            <motion.div
+            <motion.a
               key={portal.id}
-              role="button"
-              tabIndex={0}
+              href={PAGE_ROUTES[portal.page as ActivePage]}
               onMouseEnter={() => setActiveId(portal.id)}
               onFocus={() => setActiveId(portal.id)}
-              onClick={() => setActivePage(portal.page)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  setActivePage(portal.page);
-                }
-              }}
+              onClick={(event) => handlePortalLinkClick(event, portal.page)}
               animate={{ flex: isActive ? 6.5 : 1 }}
               transition={{
                 duration: 0.55,
@@ -395,10 +400,6 @@ export const WahEcosystemPortalSection: React.FC = () => {
                   >
                     <div className="grid grid-cols-[1fr_auto] items-center gap-4 lg:gap-6">
                       <div className="max-w-xl space-y-3 text-right">
-                        <span className="block text-xs font-black uppercase tracking-widest text-primary-hover">
-                          {portal.nameEn}
-                        </span>
-
                         <h3 className="font-cairo text-2xl font-black leading-tight text-white sm:text-3xl lg:text-4xl">
                           {portal.title}
                         </h3>
@@ -465,7 +466,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
               </AnimatePresence>
 
               <div className="pointer-events-none absolute inset-2 rounded-[1.3rem] border border-white/15" />
-            </motion.div>
+            </motion.a>
           );
         })}
       </div>
@@ -479,10 +480,10 @@ export const WahEcosystemPortalSection: React.FC = () => {
           const featured = idx === 0;
 
           return (
-            <motion.button
+            <motion.a
               key={portal.id}
-              type="button"
-              onClick={() => setActivePage(portal.page)}
+              href={PAGE_ROUTES[portal.page as ActivePage]}
+              onClick={(event) => handlePortalLinkClick(event, portal.page)}
               initial={reduceMotion ? false : { opacity: 0, y: 18 }}
               whileInView={{
                 opacity: 1,
@@ -579,10 +580,6 @@ export const WahEcosystemPortalSection: React.FC = () => {
                     : 'w-[72%] p-3 sm:w-[75%] sm:p-5'
                 }`}
               >
-                <span className="mb-1 text-[8px] font-bold uppercase tracking-widest text-[#e9b978] sm:text-[10px]">
-                  {portal.nameEn}
-                </span>
-
                 <h3
                   className={`font-black leading-[1.5] text-white ${
                     featured
@@ -631,7 +628,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
               {/* Hover Light */}
 
               <div className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-tr from-primary/0 via-transparent to-white/10 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-            </motion.button>
+            </motion.a>
           );
         })}
       </div>

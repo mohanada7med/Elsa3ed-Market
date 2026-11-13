@@ -1104,6 +1104,32 @@ export async function replaceAdminMedia(options: ReplaceAdminMediaOptions): Prom
   return { ...existingMedia, ...updatedDoc } as MediaAssetDoc;
 }
 
+function purgeEntityMediaReferences(
+  entity: {
+    gallery?: string[];
+    galleryImages?: string[];
+    images?: string[];
+    videos?: string[];
+    coverImage?: string | null;
+    imageUrl?: string | null;
+    videoUrl?: string | null;
+  },
+  urlsToPurge: string[]
+): void {
+  entity.gallery = (entity.gallery || []).filter((url) => !urlsToPurge.includes(url));
+  entity.galleryImages = (entity.galleryImages || []).filter((url) => !urlsToPurge.includes(url));
+  entity.images = (entity.images || []).filter((url) => !urlsToPurge.includes(url));
+  entity.videos = (entity.videos || []).filter((url) => !urlsToPurge.includes(url));
+
+  if (urlsToPurge.includes(entity.coverImage || '') || urlsToPurge.includes(entity.imageUrl || '')) {
+    entity.coverImage = entity.gallery[0] || '';
+    entity.imageUrl = entity.coverImage;
+  }
+  if (urlsToPurge.includes(entity.videoUrl || '')) {
+    entity.videoUrl = entity.videos[0] || '';
+  }
+}
+
 export async function deleteAdminMedia(
   mediaIdOrPublicId: string,
   user: { id: string; role: UserRole }
@@ -1129,8 +1155,13 @@ export async function deleteAdminMedia(
       ) || null;
   }
 
+  const isUrlIdentifier = /^https?:\/\//i.test(mediaIdOrPublicId);
   const targetPublicId =
-    mediaDoc?.publicId || extractCloudinaryPublicId(mediaIdOrPublicId) || mediaIdOrPublicId;
+    mediaDoc?.publicId ||
+    (mediaDoc
+      ? extractCloudinaryPublicId(mediaDoc.secureUrl || mediaDoc.url)
+      : extractCloudinaryPublicId(mediaIdOrPublicId) ||
+        (!isUrlIdentifier ? mediaIdOrPublicId : undefined));
   const targetUrl = mediaDoc?.secureUrl || mediaDoc?.url || (mediaIdOrPublicId.startsWith('http') ? mediaIdOrPublicId : undefined);
   const cleanUrl = targetUrl?.split('?')[0];
 
@@ -1141,23 +1172,26 @@ export async function deleteAdminMedia(
     Boolean(targetUrl && targetUrl.match(/\.(mp4|webm|mov|ogg|mkv|3gp|m4v)(\?.*)?$/i)) ||
     (targetPublicId && targetPublicId.includes('/videos/'));
 
-  if (targetPublicId && isCloudinaryAvailable()) {
+  if (targetPublicId && !isCloudinaryAvailable()) {
+    throw new Error('إعدادات التخزين السحابي غير متاحة؛ لم يتم حذف الوسيط');
+  }
+
+  if (targetPublicId) {
     ensureCloudinaryConfig();
-    try {
-      const primaryResType = isVideo ? 'video' : 'image';
-      const destroyRes = await cloudinary.uploader.destroy(targetPublicId, {
-        resource_type: primaryResType
+    const primaryResType = isVideo ? 'video' : 'image';
+    const destroyRes = await cloudinary.uploader.destroy(targetPublicId, {
+      resource_type: primaryResType
+    });
+
+    if (destroyRes?.result !== 'ok' && !destroyRes?.result?.includes('not found')) {
+      const alternateRes = await cloudinary.uploader.destroy(targetPublicId, {
+        resource_type: isVideo ? 'image' : 'video'
       });
-      // If result wasn't ok, attempt with alternate resource type in case of type mismatch
-      if (destroyRes?.result !== 'ok' && !destroyRes?.result?.includes('not found')) {
-        await cloudinary.uploader.destroy(targetPublicId, {
-          resource_type: isVideo ? 'image' : 'video'
-        });
+      if (alternateRes?.result !== 'ok' && !alternateRes?.result?.includes('not found')) {
+        throw new Error(`تعذر حذف الوسيط من التخزين السحابي (${alternateRes?.result || 'unknown result'})`);
       }
-      Logger.info(`[deleteAdminMedia] Cloudinary asset deleted: ${targetPublicId}`);
-    } catch (cloudErr) {
-      Logger.warn(`[deleteAdminMedia] Cloudinary deletion notice:`, cloudErr);
     }
+    Logger.info(`[deleteAdminMedia] Cloudinary asset deleted: ${targetPublicId}`);
   }
 
   // URLs to purge from places and reels
@@ -1216,6 +1250,48 @@ export async function deleteAdminMedia(
         }
         await db.collection('wah_heritage_places').updateOne({ _id: p._id }, updateDoc);
       }
+
+      for (const collectionName of ['wah_events', 'wah_seasons']) {
+        const entitiesWithMedia = await db.collection(collectionName).find({
+          $or: [
+            { videoUrl: { $in: urlsToPurge } },
+            { videos: { $in: urlsToPurge } },
+            { gallery: { $in: urlsToPurge } },
+            { galleryImages: { $in: urlsToPurge } },
+            { coverImage: { $in: urlsToPurge } },
+            { imageUrl: { $in: urlsToPurge } }
+          ]
+        }).toArray();
+
+        for (const entity of entitiesWithMedia) {
+          const remainingGallery = (entity.gallery || []).filter(
+            (url: string) => !urlsToPurge.includes(url)
+          );
+          const remainingVideos = (entity.videos || []).filter(
+            (url: string) => !urlsToPurge.includes(url)
+          );
+          const updateDoc: Record<string, any> = {
+            $pull: {
+              gallery: { $in: urlsToPurge },
+              galleryImages: { $in: urlsToPurge },
+              images: { $in: urlsToPurge },
+              videos: { $in: urlsToPurge }
+            },
+            $set: { updatedAt: new Date().toISOString() }
+          };
+
+          if (urlsToPurge.includes(entity.coverImage) || urlsToPurge.includes(entity.imageUrl)) {
+            const nextCover = remainingGallery[0] || null;
+            updateDoc.$set.coverImage = nextCover;
+            updateDoc.$set.imageUrl = nextCover;
+          }
+          if (urlsToPurge.includes(entity.videoUrl)) {
+            updateDoc.$set.videoUrl = remainingVideos[0] || null;
+          }
+
+          await db.collection(collectionName).updateOne({ _id: entity._id }, updateDoc);
+        }
+      }
     }
   }
 
@@ -1242,6 +1318,7 @@ export async function deleteAdminMedia(
     } else if (place.videos) {
       place.videos = place.videos.filter((v) => !urlsToPurge.includes(v));
     }
+
     if (place.gallery) {
       place.gallery = place.gallery.filter((g) => !urlsToPurge.includes(g));
     }
@@ -1253,6 +1330,9 @@ export async function deleteAdminMedia(
       (place as any).imageUrl = place.coverImage;
     }
   }
+
+  memoryDb.culturalEvents.forEach((event) => purgeEntityMediaReferences(event, urlsToPurge));
+  memoryDb.seasons.forEach((season) => purgeEntityMediaReferences(season, urlsToPurge));
 
   return true;
 }

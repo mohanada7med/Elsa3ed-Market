@@ -142,9 +142,6 @@ export const CategoriesPage: React.FC = () => {
                         >
                           {cat.name}
                         </h3>
-                        <span className="text-[11px] text-espresso/50 dark:text-cream/50 uppercase tracking-wider block font-medium">
-                          {cat.nameEn || 'Handcrafted Heritage'}
-                        </span>
                       </div>
                     </div>
 
@@ -269,9 +266,6 @@ export const CategoriesPage: React.FC = () => {
                         <h3 className="text-base font-cairo font-bold text-espresso dark:text-cream">
                           {cat.name}
                         </h3>
-                        <span className="text-[10px] text-espresso/50 dark:text-cream/50 uppercase tracking-wider block">
-                          {cat.nameEn}
-                        </span>
                       </div>
                     </div>
 
@@ -402,9 +396,6 @@ export const CategoriesPage: React.FC = () => {
               </div>
 
               <div className="relative z-10 space-y-2 text-right">
-                <span className="text-[10px] uppercase tracking-widest text-[#C99444] font-bold block">
-                  {cat.nameEn}
-                </span>
                 <h3 className="text-2xl font-cairo font-bold text-white">{cat.name}</h3>
                 <p className="text-xs text-white/80 line-clamp-2 leading-relaxed">
                   {cat.description}

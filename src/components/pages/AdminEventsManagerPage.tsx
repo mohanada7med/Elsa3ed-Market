@@ -816,7 +816,7 @@ export const EventEditorModal: React.FC<EventEditorModalProps> = ({
 
   // Media
   const [coverImage, setCoverImage] = useState(
-    event?.coverImage || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200'
+    event?.coverImage || (event?.id ? '' : 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200')
   );
   const [videoUrl, setVideoUrl] = useState(event?.videoUrl || '');
   const [additionalVideos, setAdditionalVideos] = useState<string[]>(
@@ -853,7 +853,7 @@ export const EventEditorModal: React.FC<EventEditorModalProps> = ({
       setFamousFoodsText(event?.famousFoods && event.famousFoods.length > 0 ? event.famousFoods.join('\n') : '');
       setActivitiesText(event?.activities && event.activities.length > 0 ? event.activities.join('\n') : '');
       setSourceName(event?.sourceName || 'أطلس المأثورات الشعبية ومجتمع صعيد مصر');
-      setCoverImage(event?.coverImage || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200');
+      setCoverImage(event?.coverImage || (event?.id ? '' : 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200'));
       setVideoUrl(event?.videoUrl || '');
       setAdditionalVideos(event?.videos && event.videos.length > 0 ? event.videos : []);
       setGallery(event?.gallery && event.gallery.length > 0 ? event.gallery : []);
@@ -962,10 +962,10 @@ export const EventEditorModal: React.FC<EventEditorModalProps> = ({
         rituals: parsedRituals.length > 0 ? parsedRituals : undefined,
         famousFoods: parsedFoods.length > 0 ? parsedFoods : undefined,
         activities: parsedActivities.length > 0 ? parsedActivities : undefined,
-        coverImage: coverImage.trim() || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200',
+        coverImage: coverImage.trim(),
         videoUrl: videoUrl.trim() || undefined,
         videos: allVideos.length > 0 ? allVideos : undefined,
-        gallery: gallery.length > 0 ? gallery : undefined,
+        gallery: [...gallery],
         coordinates,
         sourceName: sourceName.trim() || undefined,
         status: (event?.status || 'approved') as VerificationStatus,

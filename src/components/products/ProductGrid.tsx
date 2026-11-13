@@ -164,6 +164,29 @@ const ProductCard: React.FC<{
     setIsCartDrawerOpen(true);
   };
 
+  const productHref = productId
+    ? `/products/${encodeURIComponent(productId)}`
+    : '/products';
+
+  const handleProductLinkClick = (
+    event: React.MouseEvent<HTMLAnchorElement>
+  ) => {
+    if (
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    onNavigate(product);
+  };
+
   const image = (
     <img
       src={images[Math.min(imageIndex, images.length - 1)]}
@@ -189,7 +212,14 @@ const ProductCard: React.FC<{
           ${hideOnMobile ? 'hidden sm:block' : ''}`}
       >
         <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-[#F5EFE5] dark:bg-[#27211C]">
-          {image}
+          <a
+            href={productHref}
+            onClick={handleProductLinkClick}
+            aria-label={`عرض ${title}`}
+            className="block h-full"
+          >
+            {image}
+          </a>
           {discount !== null && (
             <span className="absolute right-2 top-2 rounded-lg bg-[#a74a32] px-2 py-1 text-[10px] font-black text-white">
               -{discount}%
@@ -205,7 +235,11 @@ const ProductCard: React.FC<{
             <Heart size={15} className={isFav ? 'fill-rose-500 text-rose-500' : ''} fill={isFav ? 'currentColor' : 'none'} />
           </button>
         </div>
-        <h3 className="mt-2 line-clamp-2 text-xs font-black leading-snug sm:text-sm">{title}</h3>
+        <h3 className="mt-2 line-clamp-2 text-xs font-black leading-snug sm:text-sm">
+          <a href={productHref} onClick={handleProductLinkClick} className="hover:underline">
+            {title}
+          </a>
+        </h3>
         <div className="mt-1.5 flex items-center justify-between gap-2">
           <span className="text-base font-black text-primary dark:text-primary-hover">
             {formatPrice(price)} <span className="text-[10px] font-bold">جنيه</span>
@@ -253,7 +287,14 @@ const ProductCard: React.FC<{
         {/* image + seal */}
         <div className="relative">
           <div className="relative aspect-[4/5] overflow-hidden rounded-md bg-[#F5EFE5] dark:bg-[#27211C]">
-            {image}
+            <a
+              href={productHref}
+              onClick={handleProductLinkClick}
+              aria-label={`عرض ${title}`}
+              className="block h-full"
+            >
+              {image}
+            </a>
 
             <div className="absolute left-2.5 top-2.5 flex flex-col gap-2">
               <button
@@ -333,7 +374,9 @@ const ProductCard: React.FC<{
           )}
 
           <h3 className="mt-1 line-clamp-2 min-h-[2.75rem] text-base font-black leading-snug text-espresso dark:text-cream sm:text-lg">
-            {title}
+            <a href={productHref} onClick={handleProductLinkClick} className="hover:underline">
+              {title}
+            </a>
           </h3>
 
           {seller && (
@@ -602,7 +645,6 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
       if (query) {
         const searchable = [
           text(item, ['title', 'name', 'productName']),
-          text(item, ['titleEn', 'nameEn', 'englishTitle']),
           text(item, ['description', 'shortDescription', 'details']),
           text(item, ['material', 'materials', 'mainMaterial']),
           getCategory(item),

@@ -37,7 +37,6 @@ export type PaymentStatus =
 export interface ProductDocument {
   id: string;
   title: string;
-  titleEn?: string;
   categoryId: string;
   categoryName: string;
   sellerId: string;
@@ -252,7 +251,6 @@ export type SellerSettlementStatus =
 export interface ShippingCompanyDocument {
   id: string;
   name: string;
-  nameEn?: string;
   code: string;
   bookingMethod: 'external_booking' | 'carrier_api' | 'manual_dispatch';
   trackingUrlTemplate?: string;
@@ -350,7 +348,6 @@ export interface ShippingConfigDocument {
 export interface CategoryDocument {
   id: string;
   name: string;
-  nameEn?: string;
   slug: string;
   description: string;
   image: string;

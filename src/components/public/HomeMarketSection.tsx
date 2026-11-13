@@ -9,7 +9,7 @@ export const HomeMarketSection: React.FC = () => {
   return (
     <section
       style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 650px' }}
-      className="relative mx-auto max-w-[1600px] select-none overflow-hidden px-4 py-5 text-foreground sm:px-8 sm:py-8 lg:px-12"
+      className="relative mx-auto max-w-[1600px] overflow-hidden px-4 py-5 text-foreground sm:px-8 sm:py-8 lg:px-12"
     >
       <div
         className="pointer-events-none absolute inset-0 z-0 opacity-[0.04] mix-blend-screen"
@@ -75,14 +75,27 @@ export const HomeMarketSection: React.FC = () => {
           </div>
 
           <div className="lg:pb-3">
-            <button
-              type="button"
-              onClick={() => setActivePage('products')}
+            <a
+              href="/products"
+              onClick={(event) => {
+                if (
+                  event.button !== 0 ||
+                  event.metaKey ||
+                  event.ctrlKey ||
+                  event.shiftKey ||
+                  event.altKey
+                ) {
+                  return;
+                }
+
+                event.preventDefault();
+                setActivePage('products');
+              }}
               className="inline-flex cursor-pointer items-center gap-2.5 rounded-full bg-btn-dark px-6 py-3.5 text-xs font-bold text-white shadow-md transition-all duration-200 hover:bg-primary active:scale-95"
             >
               <span>شوف كل المنتجات</span>
               <ArrowLeft className="h-4 w-4" />
-            </button>
+            </a>
           </div>
         </div>
       </div>

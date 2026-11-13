@@ -23,7 +23,6 @@ export type ProductStatus = 'draft' | 'pending' | 'approved' | 'rejected';
 export interface Product {
   id: string;
   title: string;
-  titleEn?: string;
   categoryId: string;
   categoryName: string;
   sellerId: string;
@@ -66,7 +65,6 @@ export interface Product {
 export interface Category {
   id: string;
   name: string;
-  nameEn?: string;
   slug?: string;
   description?: string;
   image?: string;
@@ -288,7 +286,6 @@ export type SellerSettlementStatus =
 export interface ShippingCompany {
   id: string;
   name: string;
-  nameEn?: string;
   code: string;
   bookingMethod: 'external_booking' | 'carrier_api' | 'manual_dispatch';
   trackingUrlTemplate?: string;

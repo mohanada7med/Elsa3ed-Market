@@ -70,6 +70,12 @@ router.get('/sitemap.xml', async (req: Request, res: Response) => {
     let products: any[] = [];
     let categories: any[] = [];
     let sellers: any[] = [];
+    let governorates: any[] = [];
+    let places: any[] = [];
+    let foods: any[] = [];
+    let events: any[] = [];
+    let people: any[] = [];
+    let seasons: any[] = [];
 
     /**
      * MongoDB
@@ -123,6 +129,28 @@ router.get('/sitemap.xml', async (req: Request, res: Response) => {
             }
           )
           .toArray();
+
+        const publishedStatus = { status: { $nin: ['draft', 'pending_review', 'rejected', 'archived'] } };
+        [governorates, places, foods, events, people, seasons] = await Promise.all([
+          db.collection('wah_governorates').find(publishedStatus, {
+            projection: { id: 1, slug: 1, updatedAt: 1, createdAt: 1 }
+          }).toArray(),
+          db.collection('wah_heritage_places').find(publishedStatus, {
+            projection: { id: 1, slug: 1, updatedAt: 1, createdAt: 1 }
+          }).toArray(),
+          db.collection('wah_food').find(publishedStatus, {
+            projection: { id: 1, slug: 1, updatedAt: 1, createdAt: 1 }
+          }).toArray(),
+          db.collection('wah_events').find(publishedStatus, {
+            projection: { id: 1, slug: 1, updatedAt: 1, createdAt: 1 }
+          }).toArray(),
+          db.collection('wah_local_people').find(publishedStatus, {
+            projection: { id: 1, slug: 1, updatedAt: 1, createdAt: 1 }
+          }).toArray(),
+          db.collection('wah_seasons').find(publishedStatus, {
+            projection: { id: 1, slug: 1, updatedAt: 1, createdAt: 1 }
+          }).toArray()
+        ]);
       } catch (error) {
         console.error(
           'Error querying WAH sitemap data from MongoDB:',
@@ -152,6 +180,13 @@ router.get('/sitemap.xml', async (req: Request, res: Response) => {
           seller.status === 'approved' || !seller.status
       );
     }
+
+    if (governorates.length === 0) governorates = memoryDb.governorates.filter((item) => !['draft', 'pending_review', 'rejected', 'archived'].includes(item.status));
+    if (places.length === 0) places = memoryDb.heritagePlaces.filter((item) => !['draft', 'pending_review', 'rejected', 'archived'].includes(item.status));
+    if (foods.length === 0) foods = memoryDb.upperEgyptFood.filter((item) => !['draft', 'pending_review', 'rejected', 'archived'].includes(item.status));
+    if (events.length === 0) events = memoryDb.culturalEvents.filter((item) => !['draft', 'pending_review', 'rejected', 'archived'].includes(item.status));
+    if (people.length === 0) people = memoryDb.localPeople.filter((item) => !['draft', 'pending_review', 'rejected', 'archived'].includes(item.status));
+    if (seasons.length === 0) seasons = memoryDb.seasons.filter((item) => !['draft', 'pending_review', 'rejected', 'archived'].includes(item.status));
 
     /**
      * XML
@@ -204,6 +239,21 @@ router.get('/sitemap.xml', async (req: Request, res: Response) => {
     });
 
     addUrl('/sellers', {
+      changefreq: 'weekly',
+      priority: '0.7',
+    });
+
+    addUrl('/map', {
+      changefreq: 'weekly',
+      priority: '0.8',
+    });
+
+    addUrl('/people', {
+      changefreq: 'weekly',
+      priority: '0.7',
+    });
+
+    addUrl('/events', {
       changefreq: 'weekly',
       priority: '0.7',
     });
@@ -324,6 +374,25 @@ router.get('/sitemap.xml', async (req: Request, res: Response) => {
         }
       );
     }
+
+    const addEntityUrls = (items: any[], route: string, priority: string) => {
+      for (const item of items) {
+        const identifier = item.slug || item.id;
+        if (!identifier) continue;
+        addUrl(`/${route}/${encodeURIComponent(String(identifier))}`, {
+          lastmod: getDate(item.updatedAt || item.createdAt, today),
+          changefreq: 'monthly',
+          priority
+        });
+      }
+    };
+
+    addEntityUrls(governorates, 'governorates', '0.8');
+    addEntityUrls(places, 'places', '0.8');
+    addEntityUrls(foods, 'food', '0.8');
+    addEntityUrls(events, 'events', '0.7');
+    addEntityUrls(seasons, 'events', '0.7');
+    addEntityUrls(people, 'people', '0.7');
 
     /**
      * Build sitemap XML.

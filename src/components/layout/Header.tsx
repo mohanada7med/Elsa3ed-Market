@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react';
-import { useApp } from '../../context/AppContext';
+import { PAGE_ROUTES, useApp } from '../../context/AppContext';
 import type { ActivePage } from '../../types';
 import { resolveNotificationNavigation } from '../../utils/notificationRouter';
 import {
@@ -695,6 +695,25 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
     [setActivePage]
   );
 
+  const navigateFromLink = useCallback(
+    (event: React.MouseEvent<HTMLAnchorElement>, page: string) => {
+      if (
+        event.defaultPrevented ||
+        event.button !== 0 ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+      navigate(page);
+    },
+    [navigate]
+  );
+
   const handleFavoritesClick = useCallback(() => {
     navigate('favorites');
   }, [navigate]);
@@ -857,15 +876,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
     ];
   }, [isAdmin, isSeller, unreadNotificationsCount, chatUnreadCount, favorites.length]);
 
-  const handleProfileItemClick = useCallback(
-    (pageId: string) => {
-      setIsProfileMenuOpen(false);
-      setUserDropdownOpen(false);
-      navigate(pageId);
-    },
-    [navigate]
-  );
-
   const displayName = currentUser?.name || currentUser?.username || 'حسابي';
   const profileImage =
     currentUser?.profileImage?.secureUrl ||
@@ -894,10 +904,10 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
         onMouseEnter={() => setHoveredPortalId(link.id)}
         onMouseLeave={() => setHoveredPortalId(null)}
       >
-        <motion.button
-          type="button"
-          onClick={() => {
-            navigate(link.id);
+        <motion.a
+          href={PAGE_ROUTES[link.id as ActivePage] || `/${link.id}`}
+          onClick={(event) => {
+            navigateFromLink(event, link.id);
             setHoveredPortalId(null);
           }}
           whileHover={{ y: -1 }}
@@ -962,7 +972,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               className="relative z-10 h-1.5 w-1.5 rounded-full bg-[#C99444]"
             />
           )}
-        </motion.button>
+        </motion.a>
 
         {/* بطاقة الكراكتر التفاعلية للكمبيوتر */}
         <AnimatePresence>
@@ -1049,10 +1059,10 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
     const isActive = activePage === link.id;
 
     return (
-      <button
+      <a
         key={`mob-${link.id}`}
-        type="button"
-        onClick={() => navigate(link.id)}
+        href={PAGE_ROUTES[link.id as ActivePage] || `/${link.id}`}
+        onClick={(event) => navigateFromLink(event, link.id)}
         aria-label={link.label}
         title={link.label}
         className="relative flex h-8.5 w-8.5 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 cursor-pointer shrink-0"
@@ -1090,7 +1100,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             style={{ backgroundColor: '#E66A2E' }}
           />
         )}
-      </button>
+      </a>
     );
   };
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
@@ -1139,31 +1149,31 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
         <div className="hidden lg:flex relative mx-auto max-w-[1600px] h-[78px] items-center justify-between px-8 xl:px-12">
           {/* Start Actions / Nav Links */}
           <div className="flex items-center gap-6">
-            <button
-              type="button"
-              onClick={() => navigate('home')}
+            <a
+              href={PAGE_ROUTES.home}
+              onClick={(event) => navigateFromLink(event, 'home')}
               className="whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
               style={{
                 color: activePage === 'home' ? (isDark ? '#C99444' : '#6B3A1F') : mainText,
               }}
             >
               الرئيسية
-            </button>
+            </a>
 
-            <button
-              type="button"
-              onClick={() => navigate('products')}
+            <a
+              href={PAGE_ROUTES.products}
+              onClick={(event) => navigateFromLink(event, 'products')}
               className="whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
               style={{
                 color: activePage === 'products' ? (isDark ? '#C99444' : '#6B3A1F') : mainText,
               }}
             >
               المنتجات
-            </button>
+            </a>
 
-            <button
-              type="button"
-              onClick={() => navigate('map')}
+            <a
+              href={PAGE_ROUTES.map}
+              onClick={(event) => navigateFromLink(event, 'map')}
               className="flex items-center gap-1.5 whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
               style={{
                 color: activePage === 'map' ? (isDark ? '#C99444' : '#6B3A1F') : mainText,
@@ -1171,7 +1181,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             >
               محافظات الصعيد
 
-            </button>
+            </a>
           </div>
 
           {/* End Actions */}
@@ -1320,10 +1330,10 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                           const Icon = item.icon;
                           const isActive = activePage === item.id;
                           return (
-                            <button
+                            <a
                               key={item.id}
-                              type="button"
-                              onClick={() => handleProfileItemClick(item.id)}
+                              href={PAGE_ROUTES[item.id as ActivePage] || `/${item.id}`}
+                              onClick={(event) => navigateFromLink(event, item.id)}
                               className="flex w-full items-center justify-between px-3.5 py-2 text-sm font-bold rounded-xl cursor-pointer transition-colors"
                               style={{
                                 backgroundColor: isActive
@@ -1347,7 +1357,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                   {item.badge}
                                 </span>
                               )}
-                            </button>
+                            </a>
                           );
                         })}
 
@@ -1549,10 +1559,10 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                           const Icon = item.icon;
                           const isActive = activePage === item.id;
                           return (
-                            <button
+                            <a
                               key={item.id}
-                              type="button"
-                              onClick={() => handleProfileItemClick(item.id)}
+                              href={PAGE_ROUTES[item.id as ActivePage] || `/${item.id}`}
+                              onClick={(event) => navigateFromLink(event, item.id)}
                               className="flex w-full items-center justify-between px-4 py-2.5 text-sm font-semibold transition-colors cursor-pointer"
                               style={{
                                 backgroundColor: isActive
@@ -1576,7 +1586,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                   {item.badge}
                                 </span>
                               )}
-                            </button>
+                            </a>
                           );
                         })}
 
@@ -2064,16 +2074,16 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                   const isActive = activePage === link.id;
 
                                   return (
-                                    <motion.button
+                                    <motion.a
                                       key={link.id}
-                                      type="button"
+                                      href={PAGE_ROUTES[link.id as ActivePage] || `/${link.id}`}
                                       initial={{ opacity: 0, x: 8 }}
                                       animate={{ opacity: 1, x: 0 }}
                                       transition={{
                                         duration: 0.18,
                                         delay: linkIndex * 0.03,
                                       }}
-                                      onClick={() => navigate(link.id)}
+                                      onClick={(event) => navigateFromLink(event, link.id)}
                                       className="flex w-full items-center gap-3 rounded-xl p-2.5 text-right transition-all active:scale-[0.98]"
                                       style={{
                                         backgroundColor: isActive
@@ -2118,7 +2128,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                       {isActive && (
                                         <span className="h-2 w-2 rounded-full bg-[#C99444]" />
                                       )}
-                                    </motion.button>
+                                    </motion.a>
                                   );
                                 })}
                               </div>

@@ -1006,20 +1006,6 @@ export const ProductDetailsView: React.FC = () => {
                 {product.title}
               </h1>
 
-              {product.titleEn && (
-                <p
-                  className="
-                    mt-3
-                    text-[10px]
-                    font-bold
-                    tracking-[0.12em]
-                    text-black/35
-                    dark:text-white/30
-                  "
-                >
-                  {product.titleEn}
-                </p>
-              )}
             </div>
             {product && (
               <div className="mt-4">

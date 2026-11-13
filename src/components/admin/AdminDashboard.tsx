@@ -410,7 +410,6 @@ export const AdminDashboard: React.FC = () => {
   const [editingAdminProduct, setEditingAdminProduct] = useState<Product | null>(null);
   const [isAdminSubmittingProduct, setIsAdminSubmittingProduct] = useState(false);
   const [prodTitle, setProdTitle] = useState('');
-  const [prodTitleEn, setProdTitleEn] = useState('');
   const [prodCategoryId, setProdCategoryId] = useState('cat-pottery');
   const [prodCategoryName, setProdCategoryName] = useState('');
   const [prodSellerId, setProdSellerId] = useState('');
@@ -439,7 +438,6 @@ export const AdminDashboard: React.FC = () => {
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [categoryName, setCategoryName] = useState('');
-  const [categoryNameEn, setCategoryNameEn] = useState('');
   const [categorySlug, setCategorySlug] = useState('');
   const [categoryIcon, setCategoryIcon] = useState('🏺');
   const [categoryDesc, setCategoryDesc] = useState('');
@@ -941,7 +939,6 @@ export const AdminDashboard: React.FC = () => {
   const openAdminAddProductModal = () => {
     setEditingAdminProduct(null);
     setProdTitle('');
-    setProdTitleEn('');
     setProdCategoryId(categories[0]?.id || 'cat-pottery');
     setProdCategoryName(categories[0]?.name || 'فخار وخزف قناوي');
     setProdSellerId(sellers[0]?.id || currentUser.id);
@@ -967,7 +964,6 @@ export const AdminDashboard: React.FC = () => {
   const openAdminEditProductModal = (product: Product) => {
     setEditingAdminProduct(product);
     setProdTitle(product.title || '');
-    setProdTitleEn(product.titleEn || '');
     setProdCategoryId(product.categoryId || 'cat-pottery');
     setProdCategoryName(product.categoryName || '');
     setProdSellerId(product.sellerId || '');
@@ -1007,7 +1003,6 @@ export const AdminDashboard: React.FC = () => {
 
       const productPayload: Partial<Product> = {
         title: prodTitle.trim(),
-        titleEn: prodTitleEn.trim(),
         categoryId: prodCategoryId,
         categoryName: selectedCat?.name || prodCategoryName,
         sellerId: prodSellerId || currentUser.id,
@@ -1248,7 +1243,6 @@ export const AdminDashboard: React.FC = () => {
   const openAddCategoryModal = () => {
     setEditingCategory(null);
     setCategoryName('');
-    setCategoryNameEn('');
     setCategorySlug('');
     setCategoryIcon('🏺');
     setCategoryDesc('');
@@ -1259,7 +1253,6 @@ export const AdminDashboard: React.FC = () => {
   const openEditCategoryModal = (cat: Category) => {
     setEditingCategory(cat);
     setCategoryName(cat.name);
-    setCategoryNameEn(cat.nameEn || '');
     setCategorySlug(cat.slug || '');
     setCategoryIcon(cat.icon || '🏺');
     setCategoryDesc(cat.description || '');
@@ -1278,7 +1271,6 @@ export const AdminDashboard: React.FC = () => {
       if (editingCategory) {
         await updateCategory(editingCategory.id, {
           name: categoryName,
-          nameEn: categoryNameEn,
           slug: categorySlug || categoryName.toLowerCase().replace(/\s+/g, '-'),
           icon: categoryIcon,
           description: categoryDesc,
@@ -1287,7 +1279,6 @@ export const AdminDashboard: React.FC = () => {
       } else {
         await addCategory({
           name: categoryName,
-          nameEn: categoryNameEn,
           slug: categorySlug || `cat-${Date.now()}`,
           icon: categoryIcon,
           description: categoryDesc,
@@ -3155,7 +3146,6 @@ export const AdminDashboard: React.FC = () => {
                           <span className="text-2xl">{cat.icon || '🏺'}</span>
                           <div>
                             <h4 className="font-bold text-sm text-foreground">{cat.name}</h4>
-                            {cat.nameEn && <span className="text-[10px] text-black/60 dark:text-white/60 block font-black">{cat.nameEn}</span>}
                           </div>
                         </div>
                         <span className="text-[11px] font-bold font-black bg-amber-100 text-primary dark:text-primary-hover px-2 py-0.5 rounded-full">
@@ -5544,7 +5534,7 @@ export const AdminDashboard: React.FC = () => {
             </div>
 
             <form onSubmit={handleSaveCategory} className="space-y-3">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-foreground mb-1">اسم القسم (عربي) *</label>
                   <input
@@ -5557,16 +5547,6 @@ export const AdminDashboard: React.FC = () => {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-foreground mb-1">الاسم بالإنجليزية</label>
-                  <input
-                    type="text"
-                    value={categoryNameEn}
-                    onChange={(e) => setCategoryNameEn(e.target.value)}
-                    placeholder="e.g. Pottery & Ceramics"
-                    className="w-full p-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-xs outline-none focus:border-primary"
-                  />
-                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
@@ -7234,18 +7214,6 @@ export const AdminDashboard: React.FC = () => {
                     onChange={(e) => setProdTitle(e.target.value)}
                     placeholder="مثال: قلة قناوية فخار مسامي أصيل"
                     className="w-full px-3 py-2 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-xs outline-none focus:border-primary"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-foreground">الاسم بالإنجليزي (اختياري):</label>
-                  <input
-                    type="text"
-                    value={prodTitleEn}
-                    onChange={(e) => setProdTitleEn(e.target.value)}
-                    placeholder="Authentic Qena Clay Pot"
-                    className="w-full px-3 py-2 bg-black/5 dark:bg-cream/5 border border-border rounded-xl text-xs outline-none focus:border-primary text-left"
-                    dir="ltr"
                   />
                 </div>
 

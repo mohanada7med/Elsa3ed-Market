@@ -294,7 +294,6 @@ export async function createProduct(
   const newProduct: ProductDocument = {
     id: productId,
     title: data.title?.trim() || 'منتج يدوي جديد',
-    titleEn: data.titleEn?.trim() || '',
     categoryId: data.categoryId || 'cat-pottery',
     categoryName: data.categoryName || 'الفخار والخزف',
     sellerId: sellerId,

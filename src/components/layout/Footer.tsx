@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useApp } from '../../context/AppContext';
+import { PAGE_ROUTES, useApp } from '../../context/AppContext';
+import type { ActivePage } from '../../types';
 import {
   Sparkles,
   ShieldCheck,
@@ -92,6 +93,25 @@ export const Footer: React.FC = () => {
     });
   };
 
+  const handlePageLinkClick = (
+    event: React.MouseEvent<HTMLAnchorElement>,
+    page: string
+  ) => {
+    if (
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    setActivePage(page as ActivePage);
+  };
+
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
     if (newsletterEmail.trim()) {
@@ -134,7 +154,7 @@ export const Footer: React.FC = () => {
         text-[#FFF9EE]
         transition-colors duration-500
         border-t border-[#C99444]/30
-        select-none pb-[calc(5rem+env(safe-area-inset-bottom,0px))] lg:pb-0
+        pb-[calc(5rem+env(safe-area-inset-bottom,0px))] lg:pb-0
       "
     >
 
@@ -253,15 +273,15 @@ export const Footer: React.FC = () => {
             </h4>
             <div className="grid grid-cols-2 sm:grid-cols-2 gap-2.5">
               {appPortals.map((portal) => (
-                <button
+                <a
                   key={portal.page}
-                  type="button"
-                  onClick={() => setActivePage(portal.page as any)}
+                  href={PAGE_ROUTES[portal.page as ActivePage] || `/${portal.page}`}
+                  onClick={(event) => handlePageLinkClick(event, portal.page)}
                   className="group flex items-center gap-2 text-xs text-white/75 hover:text-primary transition-colors duration-200 cursor-pointer text-right py-1"
                 >
                   <ChevronLeft className="w-3.5 h-3.5 text-white shrink-0 transition-transform duration-200 group-hover:-translate-x-1" />
                   <span className="truncate">{portal.label}</span>
-                </button>
+                </a>
               ))}
             </div>
           </div>
@@ -276,14 +296,14 @@ export const Footer: React.FC = () => {
               </h4>
               <div className="flex flex-wrap gap-2">
                 {clientServices.map((service) => (
-                  <button
+                  <a
                     key={service.page}
-                    type="button"
-                    onClick={() => setActivePage(service.page as any)}
+                    href={PAGE_ROUTES[service.page as ActivePage] || `/${service.page}`}
+                    onClick={(event) => handlePageLinkClick(event, service.page)}
                     className="px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/10 hover:border-primary text-xs text-white/80 hover:bg-primary hover:text-white font-bold transition-all duration-200 cursor-pointer active:scale-95"
                   >
                     {service.label}
-                  </button>
+                  </a>
                 ))}
                 <button
                   type="button"
@@ -385,15 +405,15 @@ export const Footer: React.FC = () => {
             </summary>
             <div className="grid grid-cols-2 gap-x-2 gap-y-1 border-t border-white/10 px-3 py-2.5">
               {appPortals.map((portal) => (
-                <button
+                <a
                   key={portal.page}
-                  type="button"
-                  onClick={() => setActivePage(portal.page as any)}
+                  href={PAGE_ROUTES[portal.page as ActivePage] || `/${portal.page}`}
+                  onClick={(event) => handlePageLinkClick(event, portal.page)}
                   className="flex min-h-9 items-center gap-1.5 text-right text-[10px] leading-4 text-white/75 transition-colors hover:text-primary-hover"
                 >
                   <ChevronLeft className="h-3 w-3 shrink-0 text-white/40" />
                   <span>{portal.label}</span>
-                </button>
+                </a>
               ))}
             </div>
           </details>
@@ -409,14 +429,14 @@ export const Footer: React.FC = () => {
             </summary>
             <div className="flex flex-wrap gap-1.5 border-t border-white/10 px-3 py-2.5">
               {clientServices.map((service) => (
-                <button
+                <a
                   key={service.page}
-                  type="button"
-                  onClick={() => setActivePage(service.page as any)}
+                  href={PAGE_ROUTES[service.page as ActivePage] || `/${service.page}`}
+                  onClick={(event) => handlePageLinkClick(event, service.page)}
                   className="rounded-lg border border-white/10 bg-white/[0.03] px-2.5 py-1.5 text-[10px] font-semibold text-white/75 transition-colors hover:border-primary/50 hover:text-white"
                 >
                   {service.label}
-                </button>
+                </a>
               ))}
               <button
                 type="button"

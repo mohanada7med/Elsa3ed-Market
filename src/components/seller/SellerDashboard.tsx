@@ -310,7 +310,6 @@ export const SellerDashboard: React.FC = () => {
 
   // Form Fields for Product
   const [title, setTitle] = useState('');
-  const [titleEn, setTitleEn] = useState('');
   const [categoryId, setCategoryId] = useState('cat-pottery');
   const [price, setPrice] = useState<number | ''>('');
   const [originalPrice, setOriginalPrice] = useState<number | ''>('');
@@ -467,7 +466,6 @@ export const SellerDashboard: React.FC = () => {
   const openAddProductModal = () => {
     setEditingProduct(null);
     setTitle('');
-    setTitleEn('');
     setCategoryId(categories[0]?.id || 'cat-pottery');
     setPrice('');
     setOriginalPrice('');
@@ -491,7 +489,6 @@ export const SellerDashboard: React.FC = () => {
   const openEditProductModal = (prod: Product) => {
     setEditingProduct(prod);
     setTitle(prod.title);
-    setTitleEn(prod.titleEn || '');
     setCategoryId(prod.categoryId);
     setPrice(prod.price);
     setOriginalPrice(
@@ -662,7 +659,6 @@ export const SellerDashboard: React.FC = () => {
       if (editingProduct) {
         await updateProduct(editingProduct.id, {
           title,
-          titleEn: titleEn.trim(),
           categoryId,
           categoryName: cat?.name || 'فخار وخزف',
           price: Number(price),
@@ -688,7 +684,6 @@ export const SellerDashboard: React.FC = () => {
         await addProduct(
           {
             title,
-            titleEn: titleEn.trim() || undefined,
             categoryId,
             categoryName: cat?.name || 'فخار وخزف',
             price: Number(price),
@@ -3195,17 +3190,6 @@ export const SellerDashboard: React.FC = () => {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   className="min-h-11 w-full rounded-xl border border-black/15 bg-white/80 px-3 py-2.5 text-right text-sm text-espresso outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/25 dark:border-white/20 dark:bg-[#2B2119] dark:text-[#FFF9EE]"
-                />
-              </div>
-
-              <div>
-                <label className="mb-1.5 block text-sm font-bold text-espresso dark:text-cream">الاسم بالإنجليزي <span className="font-normal text-black/50 dark:text-white/60">(اختياري)</span></label>
-                <input
-                  type="text"
-                  value={titleEn}
-                  onChange={(e) => setTitleEn(e.target.value)}
-                  dir="ltr"
-                  className="min-h-11 w-full rounded-xl border border-black/15 bg-white/80 px-3 py-2.5 text-left text-sm text-espresso outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/25 dark:border-white/20 dark:bg-[#2B2119] dark:text-[#FFF9EE]"
                 />
               </div>
 

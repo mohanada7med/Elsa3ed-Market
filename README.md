@@ -1,20 +1,18 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Elsa3ed Market (WAH)
 
-# Run and deploy your AI Studio app
+An artisan marketplace and cultural guide for Upper Egypt, built with Next.js, React, TypeScript, and Express.
 
-This contains everything you need to run your app locally.
+## Getting started
 
-View your app in AI Studio: https://ai.studio/apps/d28b90d2-5119-426c-bee1-c1cd3a897c31
+Install dependencies and start the development server:
 
-## Run Locally
+```bash
+npm install
+npm run dev
+```
 
-**Prerequisites:**  Node.js
+Use the scripts in `package.json` for type-checking, tests, and production builds. Configure the environment variables required by the server before connecting to external services.
 
+## Public pages
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+Public pages include search metadata, social sharing information, and cultural content in the sitemap.
