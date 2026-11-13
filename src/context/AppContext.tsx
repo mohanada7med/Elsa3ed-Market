@@ -132,6 +132,15 @@ interface AppContextType {
   setCurrentUser: React.Dispatch<React.SetStateAction<UserProfile>>;
   switchRole: (role: UserRole) => void;
   login: (identifier: string, password: string) => Promise<void>;
+  loginWithGoogle: (params: {
+    idToken: string;
+    mode?: 'login' | 'register';
+    role?: 'buyer' | 'seller';
+    phone?: string;
+    governorate?: string;
+    workshopName?: string;
+    specialty?: string;
+  }) => Promise<{ isNewUser?: boolean }>;
   register: (params: {
     username: string;
     name: string;
@@ -328,6 +337,7 @@ interface AppContextType {
   activeConversationId: string | null;
   setActiveConversationId: (id: string | null) => void;
   openChatWithArtisan: (params: { sellerId?: string; productId?: string; orderId?: string; initialMessage?: string }) => Promise<void>;
+  openChatWithBuyer: (params: { buyerId: string; orderId?: string; productId?: string; initialMessage?: string }) => Promise<void>;
   openChatWithAdmin: (params?: { productId?: string; orderId?: string; initialMessage?: string }) => Promise<void>;
 
   // Global Confirm Dialog
@@ -1773,7 +1783,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
   }, [isAuthenticated, currentUser?.id, refreshChatUnreadCount, addToast]);
 
-  // Open Support Chat with Admin Action (Direct Buyer <-> Seller messaging is strictly blocked)
+  // Open Support Chat with Admin Action
   const openChatWithAdmin = useCallback(async (params?: {
     productId?: string;
     orderId?: string;
@@ -1813,15 +1823,100 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, [isAuthenticated, currentUser, currentRole, setActivePage, refreshChatUnreadCount, addToast]);
 
+  // Open Direct Chat with Seller / Artisan (or fallback to Admin if no sellerId provided)
   const openChatWithArtisan = useCallback(async (params: {
     sellerId?: string;
     productId?: string;
     orderId?: string;
     initialMessage?: string;
   }) => {
-    // Redirect all requests strictly to platform admin support
-    return openChatWithAdmin(params);
-  }, [openChatWithAdmin]);
+    if (!params?.sellerId || params.sellerId === 'admin') {
+      return openChatWithAdmin(params);
+    }
+
+    if (!isAuthenticated || !currentUser?.id) {
+      setPostLoginRedirect('messages');
+      setAuthModalTab('login');
+      setIsAuthModalOpen(true);
+      addToast('تسجيل الدخول مطلوب', 'يرجى تسجيل الدخول للتواصل المباشر مع الورشة أو الحرفي', 'info');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const conv = await api.getOrCreateConversation({
+        sellerId: params.sellerId,
+        productId: params.productId,
+        orderId: params.orderId,
+        initialMessage: params.initialMessage
+      }, {
+        id: currentUser.id,
+        role: currentRole,
+        sellerId: currentUser.sellerId || currentUser.id
+      });
+
+      setActiveConversationId(conv.id);
+      if (currentRole === 'seller') {
+        setActivePage('seller-messages');
+      } else {
+        setActivePage('messages');
+      }
+      refreshChatUnreadCount();
+    } catch (err: any) {
+      console.error('[AppContext] Failed to open direct chat with seller:', err);
+      addToast('خطأ في المحادثة', err?.message || 'تعذر فتح المحادثة مع الورشة، يرجى المحاولة لاحقاً', 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [isAuthenticated, currentUser, currentRole, setActivePage, refreshChatUnreadCount, addToast, openChatWithAdmin]);
+
+  // Open Direct Chat with Buyer (Used by Seller Dashboard & Shipping Manager to coordinate delivery)
+  const openChatWithBuyer = useCallback(async (params: {
+    buyerId: string;
+    orderId?: string;
+    productId?: string;
+    initialMessage?: string;
+  }) => {
+    if (!isAuthenticated || !currentUser?.id) {
+      setPostLoginRedirect('seller-messages');
+      setAuthModalTab('login');
+      setIsAuthModalOpen(true);
+      addToast('تسجيل الدخول مطلوب', 'يرجى تسجيل الدخول للتواصل مع المشتري', 'info');
+      return;
+    }
+
+    if (!params?.buyerId) {
+      addToast('بيانات غير مكتملة', 'تعذر تحديد حساب المشتري لبدء المحادثة', 'warning');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const conv = await api.getOrCreateConversation({
+        buyerId: params.buyerId,
+        orderId: params.orderId,
+        productId: params.productId,
+        initialMessage: params.initialMessage
+      }, {
+        id: currentUser.id,
+        role: currentRole,
+        sellerId: currentUser.sellerId || currentUser.id
+      });
+
+      setActiveConversationId(conv.id);
+      if (currentRole === 'seller') {
+        setActivePage('seller-messages');
+      } else {
+        setActivePage('messages');
+      }
+      refreshChatUnreadCount();
+    } catch (err: any) {
+      console.error('[AppContext] Failed to open direct chat with buyer:', err);
+      addToast('خطأ في المحادثة', err?.message || 'تعذر فتح المحادثة مع المشتري، يرجى المحاولة لاحقاً', 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [isAuthenticated, currentUser, currentRole, setActivePage, refreshChatUnreadCount, addToast]);
 
 
 
@@ -1884,6 +1979,86 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+  };
+
+  const loginWithGoogle = async (params: {
+    idToken: string;
+    mode?: 'login' | 'register';
+    role?: 'buyer' | 'seller';
+    phone?: string;
+    governorate?: string;
+    workshopName?: string;
+    specialty?: string;
+  }) => {
+    const data = await api.googleAuth(params);
+    if (data && data.user) {
+      setCurrentUser(data.user);
+      const role = data.user.role || 'buyer';
+      setCurrentRole(role);
+      setAuthState('AUTHENTICATED');
+      setIsAuthModalOpen(false);
+
+      const isPendingSeller = data.user.sellerStatus === 'pending' || (data.isNewUser && params.role === 'seller');
+      if (data.isNewUser) {
+        addToast(
+          'إنشاء الحساب عبر Google',
+          isPendingSeller
+            ? 'تم تسجيل طلب انضمام ورشتكم عبر Google بنجاح! طلبكم قيد المراجعة والاعتماد من قبل إدارة المنصة.'
+            : `تم إنشاء حسابك عبر Google بنجاح! مرحباً بك يا ${data.user.username || data.user.name}.`,
+          'success'
+        );
+      } else {
+        addToast(
+          'تسجيل الدخول عبر Google',
+          `مرحباً بك يا ${data.user.username || data.user.name} في وه!`,
+          'success'
+        );
+      }
+
+      if (role === 'buyer' && cart.length > 0) {
+        const payload = cart.map((it) => ({
+          productId: it.product.id,
+          quantity: it.quantity,
+          selectedColor: it.selectedColor,
+          customNote: it.customNote
+        }));
+        api.syncCart({ id: data.user.id, role: 'buyer' }, payload).catch((err) => {
+          console.warn('[AppContext] Failed to sync local cart upon Google auth:', err);
+        });
+      }
+
+      if (isPendingSeller) {
+        refreshSellers();
+      }
+
+      if (data.user.role === 'seller' && data.user.sellerStatus === 'approved') {
+        if (postLoginRedirect) {
+          const targetPage = postLoginRedirect;
+          setPostLoginRedirect(null);
+          setActivePage(targetPage);
+        } else if (activePage === 'seller-dashboard' || activePage === 'seller-products') {
+          setActivePage('seller-dashboard');
+        } else if (activePage && activePage !== 'home') {
+          setActivePage(activePage);
+        } else {
+          setActivePage('home');
+        }
+      } else if (isPendingSeller) {
+        setActivePage('buyer-account');
+      } else if (postLoginRedirect) {
+        const targetPage = postLoginRedirect;
+        setPostLoginRedirect(null);
+        setActivePage(targetPage);
+      } else if (activePage && activePage !== 'home') {
+        setActivePage(activePage);
+      } else {
+        setActivePage('home');
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return { isNewUser: data.isNewUser };
+    }
+    return { isNewUser: false };
   };
 
   const register = async (params: {
@@ -3298,6 +3473,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setCurrentUser,
         switchRole,
         login,
+        loginWithGoogle,
         register,
         logout,
         deleteMyAccount,
@@ -3439,6 +3615,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         activeConversationId,
         setActiveConversationId,
         openChatWithArtisan,
+        openChatWithBuyer,
         openChatWithAdmin,
 
         confirmModalState,

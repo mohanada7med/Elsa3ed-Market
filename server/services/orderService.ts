@@ -210,7 +210,7 @@ export async function createOrder(
         {
           status: 'shipped' as OrderStatus,
           title: 'الشحن من محافظات الصعيد',
-          description: 'تسليم الطرد لشركة شحن صعيد إكسبريس',
+          description: 'شحن وتوصيل مباشر بالتنسيق بين الورشة والمشتري',
           time: 'خلال 48 ساعة',
           done: false
         },
@@ -247,7 +247,7 @@ export async function createOrder(
         {
           status: 'shipped' as OrderStatus,
           title: 'الشحن من محافظات الصعيد',
-          description: 'تسليم الطرد لشركة شحن صعيد إكسبريس',
+          description: 'شحن وتوصيل مباشر بالتنسيق بين الورشة والمشتري',
           time: 'خلال 48 ساعة',
           done: false
         },

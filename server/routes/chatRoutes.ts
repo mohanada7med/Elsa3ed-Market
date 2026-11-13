@@ -75,18 +75,29 @@ router.get('/conversations', requireAuth, async (req: AuthenticatedRequest, res:
 
 /**
  * 4. POST /api/chat/conversations
- * Start or retrieve a support conversation with Platform Admin
- * (or between Admin and specific user). Direct Buyer <-> Seller messaging is blocked.
+ * Start or retrieve a conversation:
+ * - Buyer <-> Seller (direct coordination for orders, shipping, or product inquiries)
+ * - Buyer <-> Admin / Seller <-> Admin (Platform Support)
  */
 router.post('/conversations', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { sellerId, buyerId, productId, orderId, initialMessage } = req.body;
 
+    const targetSellerId =
+      req.user!.role === 'seller'
+        ? (req.user!.sellerId || req.user!.id)
+        : (sellerId || 'admin');
+
+    const targetBuyerId =
+      req.user!.role === 'buyer'
+        ? req.user!.id
+        : (buyerId || 'admin');
+
     const conversation = await ChatService.getOrCreateConversation({
-      buyerId: req.user!.role === 'admin' ? buyerId : req.user!.id,
-      buyerName: req.user!.name || req.user!.username,
-      buyerAvatar: req.user!.avatar || req.user!.profileImage?.secureUrl,
-      sellerId: req.user!.role === 'admin' ? sellerId : (req.user!.role === 'seller' ? (req.user!.sellerId || req.user!.id) : 'admin'),
+      buyerId: targetBuyerId,
+      buyerName: req.user!.role === 'buyer' ? (req.user!.name || req.user!.username) : undefined,
+      buyerAvatar: req.user!.role === 'buyer' ? (req.user!.avatar || req.user!.profileImage?.secureUrl) : undefined,
+      sellerId: targetSellerId,
       productId,
       orderId,
       initialMessage,
@@ -99,10 +110,32 @@ router.post('/conversations', requireAuth, async (req: AuthenticatedRequest, res
     });
   } catch (error: any) {
     Logger.error('[ChatAPI] Error creating conversation:', error);
+    const msg = error?.message || '';
+    if (msg === 'FORBIDDEN_ACCESS' || msg === 'FORBIDDEN_ROLE' || msg === 'FORBIDDEN_DIRECT_CHAT') {
+      return res.status(403).json({
+        success: false,
+        error: 'FORBIDDEN',
+        message: 'غير مصرح لك ببدء هذه المحادثة'
+      });
+    }
+    if (msg === 'TARGET_NOT_FOUND') {
+      return res.status(404).json({
+        success: false,
+        error: 'NOT_FOUND',
+        message: 'تعذر العثور على الطرف المطلوب للمحادثة'
+      });
+    }
+    if (msg === 'SELF_CHAT_NOT_ALLOWED') {
+      return res.status(400).json({
+        success: false,
+        error: 'INVALID_TARGET',
+        message: 'لا يمكنك فتح محادثة مع حسابك الشخصي'
+      });
+    }
     return res.status(500).json({
       success: false,
       error: 'SERVER_ERROR',
-      message: 'فشل بدء المحادثة مع الإدارة'
+      message: 'فشل بدء المحادثة'
     });
   }
 });

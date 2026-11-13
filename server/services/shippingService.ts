@@ -143,63 +143,31 @@ const SELLER_VALID_TRANSITIONS: Record<ShipmentStatus, ShipmentStatus[]> = {
 };
 
 const SHIPMENT_STATUS_LABELS: Record<ShipmentStatus, { title: string; desc: string }> = {
-  not_booked: { title: 'غير محجوزة', desc: 'لم يتم حجز بوليصة الشحن بعد' },
-  booked: { title: 'تم حجز الشحنة', desc: 'تم حجز بوليصة الشحن لدى شركة الشحن المعتمدة' },
-  awaiting_pickup: { title: 'بانتظار استلام المندوب', desc: 'الشحنة مجهزة ومغلفة في انتظار مندوب شركة الشحن للاستلام من الورشة' },
-  picked_up: { title: 'تم استلام الشحنة من الورشة', desc: 'تسلم مندوب شركة الشحن الطرد بنجاح وبدأت رحلة الشحن' },
-  in_transit: { title: 'قيد الشحن والتوزيع', desc: 'الشحنة في طريقها عبر مراكز الفرز والتوزيع' },
-  out_for_delivery: { title: 'خرجت للتوصيل للعميل', desc: 'الشحنة مع مندوب التوصيل النهائي لتسليمها لعنوان العميل' },
-  delivered: { title: 'تم التسليم بنجاح', desc: 'تم تسليم الشحنة للعميل بنجاح' },
+  not_booked: { title: 'بانتظار تجهيز الشحن', desc: 'لم يتم تسجيل بيانات الشحن بعد' },
+  booked: { title: 'تم تجهيز الشحنة', desc: 'تم تسجيل الشحنة وجارٍ التنسيق المباشر مع المشتري' },
+  awaiting_pickup: { title: 'جاهزة للإرسال والتوصيل', desc: 'الشحنة مغلفة وجاهزة للتحرك وتسليمها للمشتري' },
+  picked_up: { title: 'انطلقت الشحنة من الورشة', desc: 'غادر الطرد مقر الورشة في طريقه إلى المشتري' },
+  in_transit: { title: 'في الطريق للمشتري', desc: 'الشحنة في طريقها لعنوان المشتري بالتنسيق المباشر مع البائع' },
+  out_for_delivery: { title: 'خرجت للتوصيل للعميل', desc: 'الشحنة في المرحلة النهائية لتسليمها لعنوان المشتري' },
+  delivered: { title: 'تم التسليم بنجاح', desc: 'تم تسليم الشحنة للمشتري بنجاح' },
   failed: { title: 'تعذر التسليم', desc: 'تعذر تسليم الشحنة لوجود عائق في العنوان أو عدم الرد' },
   refused: { title: 'رفض العميل الاستلام', desc: 'قام العميل برفض استلام الشحنة' },
   returned: { title: 'مرتجع إلى الورشة', desc: 'عادت الشحنة وتم إرجاعها إلى مقر الورشة' },
-  cancelled: { title: 'تم إلغاء الشحنة', desc: 'تم إلغاء بوليصة الشحن' }
+  cancelled: { title: 'تم إلغاء الشحنة', desc: 'تم إلغاء سجل الشحنة' }
 };
 
 /**
- * Get active and approved shipping companies (Public & Seller safe - No secrets)
+ * Shipping companies are disabled; platform uses direct seller-to-buyer coordination.
  */
 export async function getApprovedShippingCompanies(): Promise<ShippingCompanyDocument[]> {
-  const { db, isMongo } = await getDatabase();
-
-  if (isMongo && db) {
-    try {
-      const companies = (await db
-        .collection('shipping_companies')
-        .find({ isActive: true, isApproved: true })
-        .sort({ name: 1 })
-        .toArray()) as unknown as ShippingCompanyDocument[];
-
-      if (companies.length > 0) return companies;
-    } catch (err) {
-      console.error('[ShippingService] Mongo fetch approved companies error:', err);
-    }
-  }
-
-  return (memoryDb.shippingCompanies || []).filter((c) => c.isActive && c.isApproved);
+  return [];
 }
 
 /**
- * Get all shipping companies (Admin only)
+ * Shipping companies are disabled; platform uses direct seller-to-buyer coordination.
  */
 export async function getAllShippingCompanies(): Promise<ShippingCompanyDocument[]> {
-  const { db, isMongo } = await getDatabase();
-
-  if (isMongo && db) {
-    try {
-      const companies = (await db
-        .collection('shipping_companies')
-        .find({})
-        .sort({ createdAt: -1 })
-        .toArray()) as unknown as ShippingCompanyDocument[];
-
-      if (companies.length > 0) return companies;
-    } catch (err) {
-      console.error('[ShippingService] Mongo fetch all companies error:', err);
-    }
-  }
-
-  return memoryDb.shippingCompanies || [];
+  return [];
 }
 
 /**
@@ -527,14 +495,14 @@ export async function getSellerReadyOrders(sellerId: string): Promise<OrderDocum
 }
 
 /**
- * Create/register shipment details for an order (Seller only)
+ * Create/register direct shipment details for an order (Seller only)
  */
 export async function createShipment(
   seller: AuthenticatedUser,
   input: {
     orderId: string;
-    companyId: string;
-    trackingNumber: string;
+    companyId?: string;
+    trackingNumber?: string;
     shippingLabelRef?: string;
     actualShippingCost: number;
     bookingDate: string;
@@ -546,7 +514,6 @@ export async function createShipment(
   const sellerId = seller.sellerId || seller.id;
   const {
     orderId,
-    companyId,
     trackingNumber,
     shippingLabelRef,
     actualShippingCost,
@@ -560,15 +527,7 @@ export async function createShipment(
     throw new Error('رقم الطلب المرتبط بالشحنة مطلوب');
   }
 
-  if (!companyId) {
-    throw new Error('يرجى اختيار شركة شحن معتمدة من القائمة');
-  }
-
-  if (!trackingNumber || !trackingNumber.trim()) {
-    throw new Error('رقم التتبع أو البوليصة إلزامي');
-  }
-
-  const cost = Number(actualShippingCost);
+  const cost = Number(actualShippingCost || 0);
   if (isNaN(cost) || cost < 0) {
     throw new Error('تكلفة الشحن الفعلية يجب أن تكون رقماً موجباً أو صفراً');
   }
@@ -602,29 +561,7 @@ export async function createShipment(
     throw new Error('لا يمكن إنشاء شحنة لطلب تم إلغاؤه مسبقاً');
   }
 
-  // 2. Fetch and verify approved shipping company
-  let company: ShippingCompanyDocument | null = null;
-  if (isMongo && db) {
-    try {
-      company = (await db.collection('shipping_companies').findOne({ id: companyId })) as unknown as ShippingCompanyDocument | null;
-    } catch (e) {
-      console.error('[ShippingService] Mongo fetch company error:', e);
-    }
-  }
-
-  if (!company) {
-    company = memoryDb.shippingCompanies.find((c) => c.id === companyId) || null;
-  }
-
-  if (!company) {
-    throw new Error('شركة الشحن المحددة غير موجودة');
-  }
-
-  if (!company.isActive || !company.isApproved) {
-    throw new Error('شركة الشحن غير نشطة أو لم تعد معتمدة من إدارة المنصة');
-  }
-
-  // 3. Duplicate prevention: Check if active shipment already exists for this order
+  // 2. Duplicate prevention: Check if active shipment already exists for this order
   let existingShipment: ShipmentDocument | null = null;
   if (isMongo && db) {
     try {
@@ -646,37 +583,35 @@ export async function createShipment(
 
   if (existingShipment && !allowReshipment) {
     throw new Error(
-      `يوجد شحنة نشطة بالفعل مسجلة لهذا الطلب برقم تتبع (${existingShipment.trackingNumber}) مع ${existingShipment.companyName}. لمنع ازدواجية الشحن لا يمكن إنشاء شحنة ثانية إلا في حالة إعادة الإرسال المعتمدة.`
+      `يوجد سجل شحن نشط بالفعل لهذا الطلب بكود متابعة (${existingShipment.trackingNumber}). لمنع التكرار لا يمكن إنشاء سجل ثانٍ إلا في حالة إعادة الإرسال.`
     );
   }
 
-  // 4. Calculate COD and settlement independent statuses
+  // 3. Calculate COD and settlement independent statuses
   const isCOD = order.paymentMethod === 'cod' || order.paymentMethod === 'cash_on_delivery';
   const codAmount = isCOD ? Number(order.total || 0) : 0;
   const codCollectionStatus: CODCollectionStatus = isCOD ? 'pending_collection' : 'not_applicable';
   const sellerSettlementStatus: SellerSettlementStatus = 'pending';
 
-  // 5. Generate verified tracking URL if template is available
-  let trackingUrl: string | undefined = undefined;
-  if (company.trackingUrlTemplate && trackingNumber.trim()) {
-    trackingUrl = company.trackingUrlTemplate.replace('{trackingNumber}', encodeURIComponent(trackingNumber.trim()));
-  }
+  const finalTrackingNumber =
+    trackingNumber?.trim() || `WAH-${Math.floor(100000 + Math.random() * 900000)}`;
+  const directProviderName = 'شحن مباشر من البائع';
 
   const now = new Date().toISOString();
   const shipmentId = `shp-${Date.now()}`;
   const initialStatus: ShipmentStatus = handoverDate ? 'awaiting_pickup' : 'booked';
 
-  // 6. Build items summary
+  // 4. Build items summary
   const sellerItems = (order.items || []).filter((item) => item.sellerId === sellerId);
   const itemCount = sellerItems.reduce((acc, it) => acc + (Number(it.quantity) || 1), 0);
   const itemsSummary = sellerItems.map((it) => `${it.productTitle} (×${it.quantity})`).join('، ') || 'منتجات الحرف التراثية';
 
-  // 7. Initial Tracking Event
+  // 5. Initial Tracking Event
   const initialEvent: ShipmentTrackingEvent = {
     id: `evt-${Date.now()}-1`,
     status: initialStatus,
     title: SHIPMENT_STATUS_LABELS[initialStatus].title,
-    description: `تم تسجيل بوليصة الشحن لدى ${company.name} برقم تتبع ${trackingNumber.trim()}`,
+    description: `تم تجهيز الشحن المباشر من الورشة بكود متابعة ${finalTrackingNumber}`,
     timestamp: now,
     actorId: seller.id,
     actorName: seller.name || 'الورشة الحرفية',
@@ -696,13 +631,12 @@ export async function createShipment(
     buyerName: order.shippingAddress?.fullName || order.buyerName || 'عميل وه',
     buyerPhone: order.shippingAddress?.phone || order.buyerPhone || '',
     shippingAddress: order.shippingAddress,
-    companyId: company.id,
-    companyName: company.name,
-    companyCode: company.code,
-    bookingMethod: company.bookingMethod,
-    trackingNumber: trackingNumber.trim(),
+    companyId: 'direct_seller',
+    companyName: directProviderName,
+    companyCode: 'direct',
+    bookingMethod: 'manual_dispatch',
+    trackingNumber: finalTrackingNumber,
     shippingLabelRef: shippingLabelRef?.trim(),
-    trackingUrl,
     actualShippingCost: cost,
     bookingDate: bookingDate || now,
     handoverDate: handoverDate || undefined,
@@ -722,7 +656,7 @@ export async function createShipment(
     createdBy: seller.id
   };
 
-  // 8. Save shipment
+  // 6. Save shipment
   if (isMongo && db) {
     try {
       await db.collection('shipments').insertOne(newShipment as any);
@@ -734,12 +668,12 @@ export async function createShipment(
 
   memoryDb.shipments.unshift(newShipment);
 
-  // 9. Synchronize order status and timeline
+  // 7. Synchronize order status and timeline
   const newOrderStatus = order.status === 'pending' || order.status === 'confirmed' ? 'processing' : order.status;
   order.status = newOrderStatus;
   order.shipmentId = newShipment.id;
   order.shipmentStatus = newShipment.status;
-  order.shippingProvider = company.name;
+  order.shippingProvider = directProviderName;
   order.trackingNumber = newShipment.trackingNumber;
   order.codCollectionStatus = codCollectionStatus;
   order.sellerSettlementStatus = sellerSettlementStatus;
@@ -747,8 +681,8 @@ export async function createShipment(
 
   order.timeline.push({
     status: 'processing',
-    title: `حجز الشحنة (${company.name})`,
-    description: `تم إصدار بوليصة الشحن برقم: ${newShipment.trackingNumber}`,
+    title: 'تجهيز الشحن المباشر من الورشة',
+    description: `تم تسجيل الشحن المباشر بكود متابعة: ${newShipment.trackingNumber}`,
     time: 'الآن',
     done: true
   });
@@ -781,24 +715,23 @@ export async function createShipment(
     memoryDb.orders[memOrderIdx] = order;
   }
 
-  // 10. Audit log and notifications
+  // 8. Audit log and notifications
   await addAuditLog({
     userName: seller.name || 'حرفي منصة وه',
     userRole: seller.role,
-    action: 'تسجيل بوليصة شحن لطلب',
+    action: 'تسجيل شحن مباشر لطلب',
     resource: 'shipments',
     resourceId: newShipment.id,
     status: 'نجاح',
-    details: `تم حجز شحنة الطلب #${order.orderNumber} مع ${company.name}، بوليصة رقم: ${newShipment.trackingNumber}.`
+    details: `تم تجهيز الشحن المباشر للطلب #${order.orderNumber}، كود متابعة: ${newShipment.trackingNumber}.`
   });
 
   try {
-    // Notify buyer
     await createNotification({
       userId: order.buyerId,
       recipientId: order.buyerId,
       title: `تم تجهيز شحنتك للطلب #${order.orderNumber}`,
-      message: `تم حجز شحنة طلبك مع شركة "${company.name}" برقم تتبع ${newShipment.trackingNumber}. يمكنك متابعة مسار الطرد.`,
+      message: `قام البائع بتجهيز طلبك للشحن المباشر بكود متابعة ${newShipment.trackingNumber}. يمكنك مراسلة البائع مباشرة لتنسيق موعد التسليم.`,
       type: 'order_status',
       link: 'orders',
       recipientRole: 'buyer',
@@ -862,9 +795,9 @@ export async function updateShipmentStatus(
       );
     }
 
-    // Protection rule: Delivered status cannot be marked freely without verification or proof
+    // Protection rule: Delivered status requires a clear delivery confirmation note
     if (newStatus === 'delivered' && !payload.proofOfDeliveryNote?.trim()) {
-      throw new Error('لتأكيد تسليم الشحنة للعميل بنجاح، يجب إدخال إفادة أو كود أو مستند إثبات التسليم المعتمد من شركة الشحن.');
+      throw new Error('لتأكيد تسليم الشحنة للمشتري بنجاح، يرجى كتابة ملاحظة أو تأكيد استلام العميل.');
     }
 
     // Failed or returned status requires reason

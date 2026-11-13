@@ -133,6 +133,26 @@ export async function findUserByEmail(email: string): Promise<UserDocument | nul
   return (memUser as unknown as UserDocument) || null;
 }
 
+export async function findUserByGoogleUid(googleUid: string): Promise<UserDocument | null> {
+  const trimmed = googleUid?.trim();
+  if (!trimmed) return null;
+  const { db, isMongo } = await getDatabase();
+
+  if (isMongo && db) {
+    try {
+      const user = await db.collection('users').findOne({ googleUid: trimmed });
+      if (user) {
+        return user as unknown as UserDocument;
+      }
+    } catch (e) {
+      Logger.error('[UserService] Error querying user by googleUid in MongoDB:', e);
+    }
+  }
+
+  const memUser = memoryDb.users.find((u) => (u as any).googleUid === trimmed);
+  return (memUser as unknown as UserDocument) || null;
+}
+
 export async function findUserById(id: string): Promise<UserDocument | null> {
   const { db, isMongo } = await getDatabase();
 
@@ -186,6 +206,8 @@ export async function createUser(userData: {
   name: string;
   email?: string;
   passwordHash?: string;
+  googleUid?: string;
+  authProvider?: 'local' | 'google' | 'hybrid';
   phone: string;
   role: UserRole;
   avatar?: string;
@@ -210,6 +232,8 @@ export async function createUser(userData: {
     usernameNormalized,
     name: userData.name.trim(),
     passwordHash: userData.passwordHash,
+    googleUid: userData.googleUid?.trim() || undefined,
+    authProvider: userData.authProvider || (userData.googleUid ? 'google' : 'local'),
     phone: userData.phone.trim(),
     role: userData.role || 'buyer',
     avatar: userData.avatar?.trim() ? userData.avatar.trim() : DEFAULT_USER_AVATAR,
@@ -1309,16 +1333,8 @@ export async function changeUserPersonalPassword(
     throw new Error('معرف المستخدم غير صالح');
   }
 
-  if (!currentPassword || typeof currentPassword !== 'string') {
-    throw new Error('كلمة المرور الحالية مطلوبة');
-  }
-
   if (!newPassword || typeof newPassword !== 'string' || newPassword.length < 6) {
     throw new Error('كلمة المرور الجديدة يجب ألا تقل عن 6 خانات');
-  }
-
-  if (currentPassword === newPassword) {
-    throw new Error('كلمة المرور الجديدة يجب أن تكون مختلفة عن كلمة المرور المؤقتة');
   }
 
   const { db, isMongo } = await getDatabase();
@@ -1330,19 +1346,32 @@ export async function changeUserPersonalPassword(
     user = (memoryDb.users.find((u) => u.id === userId) as any) || null;
   }
 
-  if (!user || !user.passwordHash) {
-    throw new Error('المستخدم غير موجود أو لا يملك كلمة مرور مسجلة');
+  if (!user) {
+    throw new Error('المستخدم غير موجود');
   }
 
-  // Validate current password
-  const isMatch = await bcrypt.compare(currentPassword, user.passwordHash);
-  if (!isMatch) {
-    throw new Error('كلمة المرور المؤقتة الحالية غير صحيحة');
+  // If user already has a passwordHash, strictly verify currentPassword
+  if (user.passwordHash) {
+    if (!currentPassword || typeof currentPassword !== 'string') {
+      throw new Error('كلمة المرور الحالية مطلوبة');
+    }
+    if (currentPassword === newPassword) {
+      throw new Error('كلمة المرور الجديدة يجب أن تكون مختلفة عن كلمة المرور الحالية');
+    }
+    const isMatch = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!isMatch) {
+      throw new Error('كلمة المرور الحالية غير صحيحة');
+    }
+  } else if (!user.googleUid && user.authProvider !== 'google') {
+    throw new Error('لا يملك هذا الحساب كلمة مرور مسجلة');
   }
 
   // Hash new password
   const newHash = await bcrypt.hash(newPassword, 10);
   const now = new Date().toISOString();
+  const nextProvider = user.googleUid || user.authProvider === 'google' || user.authProvider === 'hybrid'
+    ? 'hybrid'
+    : 'local';
 
   if (isMongo && db) {
     await db.collection('users').updateOne(
@@ -1350,6 +1379,7 @@ export async function changeUserPersonalPassword(
       {
         $set: {
           passwordHash: newHash,
+          authProvider: nextProvider,
           mustChangePassword: false,
           updatedAt: now
         },
@@ -1358,6 +1388,7 @@ export async function changeUserPersonalPassword(
     );
   } else {
     (user as any).passwordHash = newHash;
+    (user as any).authProvider = nextProvider;
     (user as any).mustChangePassword = false;
     (user as any).authVersion = ((user as any).authVersion || 0) + 1;
     (user as any).updatedAt = now;

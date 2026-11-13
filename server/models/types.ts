@@ -427,6 +427,8 @@ export interface UserDocument {
   name: string;
   email?: string;
   passwordHash?: string;
+  googleUid?: string;
+  authProvider?: 'local' | 'google' | 'hybrid';
   authVersion?: number;
   phone: string;
   role: UserRole;
@@ -728,9 +730,10 @@ export interface ConversationDocument {
   buyerName: string;
   buyerAvatar?: string;
   sellerId: string;
+  sellerUserId?: string;
   sellerName: string;
   sellerAvatar?: string;
-  conversationType?: 'buyer_support' | 'seller_support';
+  conversationType?: 'buyer_support' | 'seller_support' | 'direct';
   participantRole?: 'buyer' | 'seller';
   participantId?: string;
   participantName?: string;

@@ -1,6 +1,6 @@
 import express from 'express';
 import type { Request, Response } from 'express';
-import { register, login, verifyToken } from '../services/authService.ts';
+import { register, login, verifyToken, authenticateWithGoogle } from '../services/authService.ts';
 import { findUserById, updateUser, DEFAULT_USER_AVATAR, changeUserPersonalPassword, deleteOwnAccount, revokeUserSessions } from '../services/userService.ts';
 import {
   createPasswordResetRequest,
@@ -247,6 +247,60 @@ router.post('/login', async (req: Request, res: Response) => {
   }
 });
 
+// POST /api/auth/google (Unified Google Sign-In & Sign-Up via verified Firebase ID Token)
+router.post('/google', async (req: Request, res: Response) => {
+  try {
+    const { idToken, mode, role, phone, governorate, workshopName, specialty } = req.body || {};
+
+    if (!idToken || typeof idToken !== 'string' || !idToken.trim()) {
+      return res.status(400).json({
+        success: false,
+        error: 'رمز التحقق من Google مفقود'
+      });
+    }
+
+    const result = await authenticateWithGoogle({
+      idToken: idToken.trim(),
+      mode: mode === 'register' ? 'register' : 'login',
+      role: role === 'seller' ? 'seller' : 'buyer',
+      phone: typeof phone === 'string' ? phone : undefined,
+      governorate: typeof governorate === 'string' ? governorate : undefined,
+      workshopName: typeof workshopName === 'string' ? workshopName : undefined,
+      specialty: typeof specialty === 'string' ? specialty : undefined
+    });
+
+    setAuthCookie(res, result.session.token);
+
+    res.status(result.isNewUser ? 201 : 200).json({
+      success: true,
+      isNewUser: result.isNewUser,
+      message: result.isNewUser
+        ? (result.session.user.sellerStatus === 'pending'
+          ? 'تم تسجيل حساب الورشة عبر Google بنجاح، وهو قيد المراجعة والاعتماد'
+          : 'تم إنشاء حسابك عبر Google بنجاح')
+        : 'تم تسجيل الدخول عبر Google بنجاح',
+      data: {
+        ...result.session,
+        isNewUser: result.isNewUser
+      }
+    });
+  } catch (error: any) {
+    if (error?.code === 'SELLER_DETAILS_REQUIRED') {
+      return res.status(422).json({
+        success: false,
+        code: 'SELLER_DETAILS_REQUIRED',
+        googleProfile: error.googleProfile,
+        error: error.message
+      });
+    }
+    const isAuthError = error?.message?.includes('موقوف') || error?.message?.includes('تعليق') || error?.message?.includes('توقيع');
+    res.status(isAuthError ? 401 : 400).json({
+      success: false,
+      error: error?.message || 'تعذر تسجيل الدخول عبر Google'
+    });
+  }
+});
+
 // GET /api/auth/me (Restore and validate session)
 router.get('/me', async (req: AuthenticatedRequest, res: Response) => {
   // Fast path: if middleware already authenticated the user, return immediately without extra DB queries
@@ -265,6 +319,8 @@ router.get('/me', async (req: AuthenticatedRequest, res: Response) => {
         avatar: user.avatar,
         profileImage: user.profileImage,
         mustChangePassword: Boolean(user.mustChangePassword),
+        hasPassword: user.hasPassword !== undefined ? user.hasPassword : true,
+        authProvider: user.authProvider || 'local',
         sellerStatus: user.sellerStatus || (user.role === 'seller' ? 'pending' : undefined),
         seller: user.seller || null
       }
@@ -338,6 +394,8 @@ router.get('/me', async (req: AuthenticatedRequest, res: Response) => {
     data: {
       ...sanitized,
       mustChangePassword: Boolean(user.mustChangePassword),
+      hasPassword: Boolean(passwordHash),
+      authProvider: user.authProvider || (passwordHash ? 'local' : (user.googleUid ? 'google' : 'local')),
       sellerStatus: sellerStatus || (sellerDoc ? sellerDoc.status : undefined),
       seller: sellerDetails
     }
@@ -449,13 +507,13 @@ router.post('/reset-password', resetPasswordLimiter, async (req: Request, res: R
   }
 });
 
-// POST /api/auth/change-password - Change temporary password to new personal password
+// POST /api/auth/change-password - Change temporary password to new personal password (or set initial password for Google accounts)
 router.post('/change-password', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = req.user!.id;
     const { currentPassword, newPassword } = req.body;
 
-    if (!currentPassword || typeof currentPassword !== 'string') {
+    if (req.user?.hasPassword !== false && (!currentPassword || typeof currentPassword !== 'string')) {
       return res.status(400).json({
         success: false,
         error: 'كلمة المرور الحالية أو المؤقتة مطلوبة'
@@ -469,7 +527,7 @@ router.post('/change-password', requireAuth, async (req: AuthenticatedRequest, r
       });
     }
 
-    const result = await changeUserPersonalPassword(userId, currentPassword, newPassword);
+    const result = await changeUserPersonalPassword(userId, typeof currentPassword === 'string' ? currentPassword : '', newPassword);
     invalidateAuthSession(userId);
     clearAuthCookie(res);
     res.json({

@@ -215,7 +215,7 @@ router.post('/seller/shipments', requireSeller, async (req: AuthenticatedRequest
     const shipment = await createShipment(req.user!, req.body);
     res.status(201).json({
       success: true,
-      message: `تم تسجيل بوليصة الشحن بنجاح لدى ${shipment.companyName}`,
+      message: `تم تسجيل وتجهيز بيانات الشحن المباشر بنجاح بكود ${shipment.trackingNumber}`,
       data: shipment
     });
   } catch (error: any) {

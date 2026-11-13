@@ -30,17 +30,29 @@ import { api } from '../../services/api.ts';
 import type { Conversation, ChatMessage } from '../../types.ts';
 
 const BUYER_QUICK_INQUIRIES = [
-  'عايز استفسر عن خامات القطعة وموعد الشحن',
-  'هل متاح تنفيذ طلب مخصص أو تعديل في المقاسات؟',
-  'متابعة حالة شحن وتوصيل طلبي',
-  'استفسار بخصوص الدفع والضمان التراثي'
+  'عايز استفسر عن حالة طلبي مع الدعم الفني',
+  'مشكلة أو استفسار بخصوص الدفع الإلكتروني',
+  'استفسار حول سياسة المنصة والضمان التراثي'
+];
+
+const BUYER_TO_SELLER_QUICK_INQUIRIES = [
+  'السلام عليكم، أود التنسيق حول موعد وطريقة شحن طلبي',
+  'هل القطعة متوفرة حالياً وما هي مدة التجهيز والتوصيل؟',
+  'أرجو التأكد من التغليف الآمن للقطعة قبل الشحن',
+  'هل يمكن تحديد موعد مناسب لاستلام الشحنة؟'
 ];
 
 const SELLER_QUICK_INQUIRIES = [
   'استفسار بخصوص تحويل المستحقات والأرباح',
   'طلب اعتماد ومراجعة منتج حرفي جديد',
-  'استفسار حول شحن وتوصيل طلب للزبون',
   'طلب مساعدة فنية في إعدادات متجر الورشة'
+];
+
+const SELLER_TO_BUYER_QUICK_REPLIES = [
+  'أهلاً بك، جاري تجهيز طلبك حالياً وسننسق معك موعد الشحن والتوصيل.',
+  'تم تغليف القطعة بأمان، هل يناسبك الاستلام غداً أم في وقت محدد؟',
+  'برجاء تأكيد العنوان التفصيلي ورقم الهاتف المتاح لاستلام الشحنة.',
+  'تم شحن طلبك مباشرة ويمكنك متابعة التحديثات معنا هنا أولاً بأول.'
 ];
 
 const ADMIN_QUICK_REPLIES = [
@@ -79,7 +91,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
   const [isSending, setIsSending] = useState(false);
   const [isStartingNewChat, setIsStartingNewChat] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filterType, setFilterType] = useState<'all' | 'buyers' | 'sellers' | 'orders'>('all');
+  const [filterType, setFilterType] = useState<'all' | 'buyers' | 'sellers' | 'direct' | 'support' | 'orders'>('all');
   const [adminMenuOpen, setAdminMenuOpen] = useState(false);
 
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
@@ -414,13 +426,15 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
   const handleStartNewAdminChat = async (initialTopic?: string) => {
     if (!currentUser?.id || isStartingNewChat) return;
 
-    // إذا كان للمستخدم محادثة سابقة مع الإدارة، نحددها ونفتحها مباشرة لنواصل فيها
-    if (!isAdmin && conversations.length > 0) {
-      const existing = conversations[0];
-      setSelectedConv(existing);
-      setActiveConversationId(existing.id);
-      inputRef.current?.focus();
-      return;
+    // إذا كان للمستخدم محادثة دعم فني سابقة مع الإدارة، نحددها ونفتحها مباشرة
+    if (!isAdmin) {
+      const existingSupport = conversations.find((c) => c.sellerId === 'admin' || c.buyerId === 'admin');
+      if (existingSupport) {
+        setSelectedConv(existingSupport);
+        setActiveConversationId(existingSupport.id);
+        inputRef.current?.focus();
+        return;
+      }
     }
 
     setIsStartingNewChat(true);
@@ -486,19 +500,30 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
   };
 
   const filteredConversations = conversations.filter((c) => {
+    const isSupport = c.sellerId === 'admin' || c.buyerId === 'admin';
     const partnerName = isAdmin
-      ? (c.buyerId === 'admin' ? c.sellerName : c.buyerName)
-      : (isSeller ? c.buyerName : c.sellerName);
+      ? (!isSupport
+        ? `${c.buyerName || ''} ${c.sellerName || ''}`
+        : (c.buyerId === 'admin' ? c.sellerName : c.buyerName))
+      : isSupport
+        ? 'إدارة منصة وَه'
+        : (isSeller ? c.buyerName : c.sellerName);
 
     const matchesSearch =
-      partnerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (partnerName || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
       (c.productTitle && c.productTitle.toLowerCase().includes(searchQuery.toLowerCase())) ||
       (c.orderNumber && c.orderNumber.toLowerCase().includes(searchQuery.toLowerCase())) ||
       (c.lastMessageText && c.lastMessageText.toLowerCase().includes(searchQuery.toLowerCase()));
 
     if (!matchesSearch) return false;
-    if (filterType === 'buyers') return c.sellerId === 'admin' || c.conversationType === 'buyer_support';
-    if (filterType === 'sellers') return c.buyerId === 'admin' || c.conversationType === 'seller_support';
+    if (filterType === 'buyers') {
+      return isAdmin ? (c.sellerId === 'admin' || c.conversationType === 'buyer_support') : !isSupport;
+    }
+    if (filterType === 'sellers') {
+      return isAdmin ? (c.buyerId === 'admin' || c.conversationType === 'seller_support') : !isSupport;
+    }
+    if (filterType === 'direct') return !isSupport;
+    if (filterType === 'support') return isSupport;
     if (filterType === 'orders') return Boolean(c.orderId);
     return true;
   });
@@ -509,8 +534,13 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
   let isPartnerAdmin = false;
 
   if (selectedConv) {
+    const isSelectedSupport = selectedConv.sellerId === 'admin' || selectedConv.buyerId === 'admin';
     if (isAdmin) {
-      if (selectedConv.buyerId === 'admin') {
+      if (!isSelectedSupport) {
+        displayPartnerName = `${selectedConv.buyerName || 'مشتري'} ↔ ${selectedConv.sellerName || 'ورشة'}`;
+        displayPartnerAvatar = selectedConv.buyerAvatar || selectedConv.sellerAvatar || '';
+        displayPartnerRoleLabel = 'مباشرة';
+      } else if (selectedConv.buyerId === 'admin') {
         displayPartnerName = selectedConv.sellerName || 'ورشة الحرفي';
         displayPartnerAvatar = selectedConv.sellerAvatar || '';
         displayPartnerRoleLabel = 'ورشة حرفية';
@@ -519,17 +549,29 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
         displayPartnerAvatar = selectedConv.buyerAvatar || '';
         displayPartnerRoleLabel = 'مشتري';
       }
-    } else {
+    } else if (isSelectedSupport) {
       displayPartnerName = 'إدارة منصة وَه';
       displayPartnerAvatar = '';
       displayPartnerRoleLabel = 'الدعم الفني المعتمد';
       isPartnerAdmin = true;
+    } else if (isSeller) {
+      displayPartnerName = selectedConv.buyerName || 'عميل المنصة';
+      displayPartnerAvatar = selectedConv.buyerAvatar || '';
+      displayPartnerRoleLabel = 'مشتري — تنسيق الشحن';
+      isPartnerAdmin = false;
+    } else {
+      displayPartnerName = selectedConv.sellerName || 'ورشة حرفية';
+      displayPartnerAvatar = selectedConv.sellerAvatar || '';
+      displayPartnerRoleLabel = 'ورشة حرفية';
+      isPartnerAdmin = false;
     }
   }
 
   const activeQuickInquiries = isAdmin
     ? ADMIN_QUICK_REPLIES
-    : (isSeller ? SELLER_QUICK_INQUIRIES : BUYER_QUICK_INQUIRIES);
+    : isPartnerAdmin
+      ? (isSeller ? SELLER_QUICK_INQUIRIES : BUYER_QUICK_INQUIRIES)
+      : (isSeller ? SELLER_TO_BUYER_QUICK_REPLIES : BUYER_TO_SELLER_QUICK_INQUIRIES);
 
   return (
     <div
@@ -563,10 +605,14 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                   <button
                     onClick={() => handleStartNewAdminChat()}
                     disabled={isStartingNewChat}
-                    className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600 text-white dark:text-[#1b1512] font-black text-xs transition shadow-sm active:scale-95 cursor-pointer disabled:opacity-50"
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600 text-white dark:text-[#1b1512] font-black text-xs transition shadow-sm active:scale-95 cursor-pointer disabled:opacity-50 whitespace-nowrap shrink-0"
                   >
                     <Plus className="w-3.5 h-3.5 stroke-[3]" />
-                    <span>{conversations.length > 0 ? 'متابعة الدعم' : 'محادثة جديدة'}</span>
+                    <span>
+                      {conversations.some((c) => c.sellerId === 'admin' || c.buyerId === 'admin')
+                        ? 'الدعم الفني'
+                        : 'محادثة الدعم'}
+                    </span>
                   </button>
                 )}
                 {isAdmin && (
@@ -599,21 +645,21 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
               <Search className="w-4 h-4 text-amber-700/50 dark:text-amber-400/50 absolute right-3 top-3" />
             </div>
 
-            <div className="flex items-center gap-1 p-1 bg-white/60 dark:bg-[#18120e] rounded-xl border border-amber-900/10 dark:border-amber-950/60 text-xs font-bold shadow-2xs">
+            <div className="flex items-center gap-1 p-1 bg-white/60 dark:bg-[#18120e] rounded-xl border border-amber-900/10 dark:border-amber-950/60 text-xs font-bold shadow-2xs overflow-x-auto no-scrollbar">
               <button
                 onClick={() => setFilterType('all')}
-                className={`flex-1 py-1.5 rounded-lg text-center transition ${filterType === 'all'
+                className={`flex-1 py-1.5 px-2 rounded-lg text-center transition whitespace-nowrap shrink-0 cursor-pointer ${filterType === 'all'
                   ? 'bg-amber-700 dark:bg-amber-600 text-white shadow-xs'
                   : 'text-stone-600 dark:text-amber-200/50 hover:text-stone-900 dark:hover:text-amber-100'
                   }`}
               >
                 الكل
               </button>
-              {isAdmin && (
+              {isAdmin ? (
                 <>
                   <button
                     onClick={() => setFilterType('buyers')}
-                    className={`flex-1 py-1.5 rounded-lg text-center transition ${filterType === 'buyers'
+                    className={`flex-1 py-1.5 px-2 rounded-lg text-center transition whitespace-nowrap shrink-0 cursor-pointer ${filterType === 'buyers'
                       ? 'bg-amber-700 dark:bg-amber-600 text-white shadow-xs'
                       : 'text-stone-600 dark:text-amber-200/50 hover:text-stone-900 dark:hover:text-amber-100'
                       }`}
@@ -622,18 +668,48 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                   </button>
                   <button
                     onClick={() => setFilterType('sellers')}
-                    className={`flex-1 py-1.5 rounded-lg text-center transition ${filterType === 'sellers'
+                    className={`flex-1 py-1.5 px-2 rounded-lg text-center transition whitespace-nowrap shrink-0 cursor-pointer ${filterType === 'sellers'
                       ? 'bg-amber-700 dark:bg-amber-600 text-white shadow-xs'
                       : 'text-stone-600 dark:text-amber-200/50 hover:text-stone-900 dark:hover:text-amber-100'
                       }`}
                   >
                     الورش
                   </button>
+                  <button
+                    onClick={() => setFilterType('direct')}
+                    className={`flex-1 py-1.5 px-2 rounded-lg text-center transition whitespace-nowrap shrink-0 cursor-pointer ${filterType === 'direct'
+                      ? 'bg-amber-700 dark:bg-amber-600 text-white shadow-xs'
+                      : 'text-stone-600 dark:text-amber-200/50 hover:text-stone-900 dark:hover:text-amber-100'
+                      }`}
+                  >
+                    مباشرة
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => setFilterType('direct')}
+                    className={`flex-1 py-1.5 px-2 rounded-lg text-center transition whitespace-nowrap shrink-0 cursor-pointer ${filterType === 'direct'
+                      ? 'bg-amber-700 dark:bg-amber-600 text-white shadow-xs'
+                      : 'text-stone-600 dark:text-amber-200/50 hover:text-stone-900 dark:hover:text-amber-100'
+                      }`}
+                  >
+                    {isSeller ? 'المشترين' : 'الورش'}
+                  </button>
+                  <button
+                    onClick={() => setFilterType('support')}
+                    className={`flex-1 py-1.5 px-2 rounded-lg text-center transition whitespace-nowrap shrink-0 cursor-pointer ${filterType === 'support'
+                      ? 'bg-amber-700 dark:bg-amber-600 text-white shadow-xs'
+                      : 'text-stone-600 dark:text-amber-200/50 hover:text-stone-900 dark:hover:text-amber-100'
+                      }`}
+                  >
+                    الدعم
+                  </button>
                 </>
               )}
               <button
                 onClick={() => setFilterType('orders')}
-                className={`flex-1 py-1.5 rounded-lg text-center transition ${filterType === 'orders'
+                className={`flex-1 py-1.5 px-2 rounded-lg text-center transition whitespace-nowrap shrink-0 cursor-pointer ${filterType === 'orders'
                   ? 'bg-amber-700 dark:bg-amber-600 text-white shadow-xs'
                   : 'text-stone-600 dark:text-amber-200/50 hover:text-stone-900 dark:hover:text-amber-100'
                   }`}
@@ -656,12 +732,17 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
               </div>
             ) : (
               filteredConversations.map((conv) => {
+                const isConvSupport = conv.sellerId === 'admin' || conv.buyerId === 'admin';
                 let otherName = 'إدارة منصة وَه';
                 let otherAvatar = '';
                 let unread = 0;
 
                 if (isAdmin) {
-                  if (conv.buyerId === 'admin') {
+                  if (!isConvSupport) {
+                    otherName = `${conv.buyerName || 'مشتري'} ↔ ${conv.sellerName || 'ورشة'}`;
+                    otherAvatar = conv.buyerAvatar || conv.sellerAvatar || '';
+                    unread = 0;
+                  } else if (conv.buyerId === 'admin') {
                     otherName = conv.sellerName || 'ورشة الحرفي';
                     otherAvatar = conv.sellerAvatar || '';
                     unread = conv.buyerUnreadCount || 0;
@@ -670,8 +751,24 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                     otherAvatar = conv.buyerAvatar || '';
                     unread = conv.sellerUnreadCount || 0;
                   }
+                } else if (isSeller) {
+                  if (isConvSupport) {
+                    otherName = 'إدارة منصة وَه';
+                    otherAvatar = '';
+                  } else {
+                    otherName = conv.buyerName || 'مشتري المنصة';
+                    otherAvatar = conv.buyerAvatar || '';
+                  }
+                  unread = conv.sellerUnreadCount || 0;
                 } else {
-                  unread = isSeller ? (conv.sellerUnreadCount || 0) : (conv.buyerUnreadCount || 0);
+                  if (isConvSupport) {
+                    otherName = 'إدارة منصة وَه';
+                    otherAvatar = '';
+                  } else {
+                    otherName = conv.sellerName || 'ورشة حرفية';
+                    otherAvatar = conv.sellerAvatar || '';
+                  }
+                  unread = conv.buyerUnreadCount || 0;
                 }
 
                 const isSelected = selectedConv?.id === conv.id;
@@ -693,7 +790,13 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                         <img src={otherAvatar} alt={otherName} className="w-11 h-11 rounded-xl object-cover border border-amber-900/20 dark:border-amber-900/40" />
                       ) : (
                         <div className="w-11 h-11 rounded-xl bg-amber-100 dark:bg-[#1b1512] border border-amber-300/60 dark:border-amber-700/30 flex items-center justify-center text-amber-800 dark:text-amber-400 font-black">
-                          {isAdmin ? <User className="w-5 h-5" /> : <ShieldCheck className="w-5 h-5" />}
+                          {isConvSupport && !isAdmin ? (
+                            <ShieldCheck className="w-5 h-5" />
+                          ) : isSeller || isAdmin ? (
+                            <User className="w-5 h-5" />
+                          ) : (
+                            <Store className="w-5 h-5" />
+                          )}
                         </div>
                       )}
                       {unread > 0 && (
@@ -798,7 +901,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                     </div>
                     <div className="flex items-center gap-1 text-[10px] text-stone-500 dark:text-amber-200/50">
                       <Lock className="w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" />
-                      <span>قناة رسمية مشفرة</span>
+                      <span>{isPartnerAdmin ? 'قناة دعم رسمية مشفرة' : 'تواصل مباشر لتنسيق الطلب والشحن'}</span>
                     </div>
                   </div>
                 </div>
@@ -1008,7 +1111,11 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                         مرحباً بك في المحادثة
                       </p>
                       <p className="text-stone-500 dark:text-amber-200/50 text-[11px]">
-                        اكتب استفسارك لإدارة منصة وَه في الأسفل
+                        {isPartnerAdmin
+                          ? 'اكتب استفسارك لإدارة منصة وَه في الأسفل'
+                          : isSeller
+                            ? 'تواصل مع المشتري لترتيب موعد وتفاصيل الشحن والتوصيل'
+                            : 'اكتب رسالتك للبائع أو الورشة في الأسفل'}
                       </p>
                     </div>
                   ) : (

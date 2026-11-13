@@ -134,14 +134,20 @@ class ChatRealtimeService {
   public broadcastConversationUpdate(conversation: ConversationDocument): void {
     this.notifyUser(conversation.buyerId, 'chat:conversation_updated', { conversation });
     this.notifyUser(conversation.sellerId, 'chat:conversation_updated', { conversation });
+    if (conversation.sellerUserId && conversation.sellerUserId !== conversation.sellerId) {
+      this.notifyUser(conversation.sellerUserId, 'chat:conversation_updated', { conversation });
+    }
   }
 
   /**
    * Broadcast conversation deletion to participants and admins
    */
-  public broadcastConversationDeleted(conversationId: string, buyerId: string, sellerId: string): void {
+  public broadcastConversationDeleted(conversationId: string, buyerId: string, sellerId: string, sellerUserId?: string): void {
     this.notifyUser(buyerId, 'chat:conversation_deleted', { conversationId });
     this.notifyUser(sellerId, 'chat:conversation_deleted', { conversationId });
+    if (sellerUserId && sellerUserId !== sellerId) {
+      this.notifyUser(sellerUserId, 'chat:conversation_deleted', { conversationId });
+    }
     this.notifyUser('admin', 'chat:conversation_deleted', { conversationId });
   }
 
@@ -157,9 +163,12 @@ class ChatRealtimeService {
   /**
    * Broadcast conversation messages cleared
    */
-  public broadcastConversationCleared(conversationId: string, buyerId: string, sellerId: string): void {
+  public broadcastConversationCleared(conversationId: string, buyerId: string, sellerId: string, sellerUserId?: string): void {
     this.notifyUser(buyerId, 'chat:conversation_cleared', { conversationId });
     this.notifyUser(sellerId, 'chat:conversation_cleared', { conversationId });
+    if (sellerUserId && sellerUserId !== sellerId) {
+      this.notifyUser(sellerUserId, 'chat:conversation_cleared', { conversationId });
+    }
     this.notifyUser('admin', 'chat:conversation_cleared', { conversationId });
   }
 

@@ -5,6 +5,7 @@ import React, {
 } from 'react';
 import { useApp } from '../../context/AppContext';
 import { api } from '../../services/api';
+import { signInWithGooglePopup } from '../../config/firebase';
 import ForgotPasswordModal from './ForgotPasswordModal';
 import {
   X,
@@ -56,6 +57,7 @@ export const AuthModal: React.FC = () => {
     authModalTab,
     setAuthModalTab,
     login,
+    loginWithGoogle,
     register,
     addToast,
     setPostLoginRedirect,
@@ -113,6 +115,17 @@ export const AuthModal: React.FC = () => {
   const [submitting, setSubmitting] =
     useState(false);
 
+  const [googleLoading, setGoogleLoading] =
+    useState(false);
+
+  const [pendingGoogleSeller, setPendingGoogleSeller] =
+    useState<{
+      idToken: string;
+      name: string;
+      email: string;
+      picture: string;
+    } | null>(null);
+
   const [error, setError] =
     useState('');
 
@@ -121,6 +134,8 @@ export const AuthModal: React.FC = () => {
 
   const avatarInputRef =
     useRef<HTMLInputElement>(null);
+
+  const isBusy = submitting || googleLoading;
 
   /* =========================================================
      PREVENT BACKGROUND SCROLL
@@ -251,13 +266,14 @@ export const AuthModal: React.FC = () => {
   ========================================================= */
 
   const closeModal = () => {
-    if (submitting) return;
+    if (isBusy) return;
 
     setIsForgotSuccessModalOpen(false);
     setIsAuthModalOpen(false);
     setPostLoginRedirect(null);
 
     setForgotPassword(false);
+    setPendingGoogleSeller(null);
     setError('');
 
     setShowPassword(false);
@@ -273,11 +289,12 @@ export const AuthModal: React.FC = () => {
   const switchTab = (
     tab: 'login' | 'register'
   ) => {
-    if (submitting) return;
+    if (isBusy) return;
 
     setAuthModalTab(tab);
 
     setForgotPassword(false);
+    setPendingGoogleSeller(null);
     setError('');
 
     if (tab === 'register') {
@@ -637,6 +654,147 @@ export const AuthModal: React.FC = () => {
   };
 
   /* =========================================================
+     GOOGLE SIGN-IN & SIGN-UP
+  ========================================================= */
+
+  const handleGoogleAuth = async (
+    mode: 'login' | 'register'
+  ) => {
+    if (isBusy) return;
+
+    setError('');
+
+    const normalizedGovernorate =
+      governorate === 'أخرى'
+        ? customGovernorate.trim()
+        : governorate.trim();
+
+    if (
+      mode === 'register' &&
+      governorate === 'أخرى' &&
+      !normalizedGovernorate
+    ) {
+      setError('من فضلك اكتب اسم المحافظة أو اختار محافظة من القائمة.');
+      return;
+    }
+
+    let obtainedIdToken = '';
+    let obtainedProfile: { name: string; email: string; picture: string } | null = null;
+
+    try {
+      setGoogleLoading(true);
+      const googleRes = await signInWithGooglePopup();
+      obtainedIdToken = googleRes.idToken;
+      obtainedProfile = {
+        name: googleRes.displayName || '',
+        email: googleRes.email || '',
+        picture: googleRes.photoURL || '',
+      };
+
+      await loginWithGoogle({
+        idToken: googleRes.idToken,
+        mode,
+        role: mode === 'register' ? roleType : 'buyer',
+        phone: mode === 'register' && phone.trim() ? phone.trim() : undefined,
+        governorate: normalizedGovernorate || undefined,
+        workshopName:
+          mode === 'register' && roleType === 'seller' && workshopName.trim()
+            ? workshopName.trim()
+            : undefined,
+      });
+
+      setPendingGoogleSeller(null);
+      setIsAuthModalOpen(false);
+      setUsername('');
+      setPassword('');
+      setName('');
+      setPhone('');
+      setEmail('');
+      setGovernorate('');
+      setCustomGovernorate('');
+      setWorkshopName('');
+      setRoleType('buyer');
+      setError('');
+    } catch (err: any) {
+      if (err?.code === 'SELLER_DETAILS_REQUIRED' && obtainedIdToken) {
+        setPendingGoogleSeller({
+          idToken: obtainedIdToken,
+          name: err?.googleProfile?.name || obtainedProfile?.name || '',
+          email: err?.googleProfile?.email || obtainedProfile?.email || '',
+          picture: err?.googleProfile?.picture || obtainedProfile?.picture || '',
+        });
+        setError('');
+        return;
+      }
+
+      setError(
+        err?.message ||
+        'تعذر إتمام التسجيل عبر Google. حاول مرة أخرى.'
+      );
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
+
+  const handleCompleteGoogleSeller = async (
+    event: React.FormEvent
+  ) => {
+    event.preventDefault();
+    if (!pendingGoogleSeller || isBusy) return;
+
+    setError('');
+    const cleanWorkshop = workshopName.trim();
+    const cleanPhone = phone.trim();
+    const normalizedGovernorate =
+      governorate === 'أخرى'
+        ? customGovernorate.trim()
+        : governorate.trim();
+
+    if (cleanWorkshop.length < 2) {
+      setError('من فضلك اكتب اسم الورشة أو المشروع (حرفان على الأقل).');
+      return;
+    }
+
+    if (cleanPhone.length < 8) {
+      setError('من فضلك اكتب رقم موبايل صحيح للتواصل مع الورشة.');
+      return;
+    }
+
+    if (governorate === 'أخرى' && !normalizedGovernorate) {
+      setError('من فضلك اكتب اسم المحافظة.');
+      return;
+    }
+
+    try {
+      setGoogleLoading(true);
+      await loginWithGoogle({
+        idToken: pendingGoogleSeller.idToken,
+        mode: 'register',
+        role: 'seller',
+        workshopName: cleanWorkshop,
+        phone: cleanPhone,
+        governorate: normalizedGovernorate || undefined,
+      });
+
+      setPendingGoogleSeller(null);
+      setIsAuthModalOpen(false);
+      setWorkshopName('');
+      setPhone('');
+      setGovernorate('');
+      setCustomGovernorate('');
+      setRoleType('buyer');
+      setError('');
+    } catch (err: any) {
+      setError(
+        err?.message ||
+        'تعذر إكمال تسجيل الورشة عبر Google. حاول مرة أخرى.'
+      );
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
+
+  /* =========================================================
      FORGOT PASSWORD
   ========================================================= */
 
@@ -907,7 +1065,7 @@ export const AuthModal: React.FC = () => {
             id="auth-modal-close"
             type="button"
             onClick={closeModal}
-            disabled={submitting}
+            disabled={isBusy}
             aria-label="إغلاق"
             className="
               absolute
@@ -1375,6 +1533,87 @@ export const AuthModal: React.FC = () => {
                     onSubmit={handleLogin}
                     className="space-y-4 sm:space-y-5"
                   >
+                    {/* Google Sign-In */}
+
+                    <button
+                      id="auth-google-login-btn"
+                      type="button"
+                      onClick={() => handleGoogleAuth('login')}
+                      disabled={isBusy}
+                      className="
+                        flex
+                        min-h-[52px]
+                        sm:min-h-[56px]
+                        w-full
+                        items-center
+                        justify-center
+                        gap-3
+                        rounded-2xl
+                        border
+                        border-black/15
+                        bg-white/95
+                        px-4
+                        text-[14px]
+                        sm:text-[15px]
+                        font-black
+                        text-espresso
+                        shadow-sm
+                        transition-all
+                        hover:border-primary/50
+                        hover:bg-white
+                        hover:shadow-md
+                        active:scale-[0.99]
+                        disabled:cursor-not-allowed
+                        disabled:opacity-60
+                        dark:border-white/15
+                        dark:bg-cream/10
+                        dark:text-cream
+                        dark:hover:border-primary/60
+                        dark:hover:bg-cream/15
+                        cursor-pointer
+                      "
+                    >
+                      {googleLoading ? (
+                        <>
+                          <Loader2 size={20} className="animate-spin text-primary" />
+                          <span>جاري الاتصال بحساب Google...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span
+                            aria-hidden="true"
+                            className="
+                              flex
+                              h-7
+                              w-7
+                              shrink-0
+                              items-center
+                              justify-center
+                              rounded-full
+                              border
+                              border-black/10
+                              bg-white
+                              text-[15px]
+                              font-black
+                              text-[#4285F4]
+                              shadow-xs
+                            "
+                          >
+                            G
+                          </span>
+                          <span>المتابعة باستخدام Google</span>
+                        </>
+                      )}
+                    </button>
+
+                    <div className="relative flex items-center gap-3 py-0.5">
+                      <span className="h-px flex-1 bg-black/10 dark:bg-white/10" />
+                      <span className="text-[11px] font-bold text-black/45 dark:text-white/45">
+                        أو الدخول باسم المستخدم
+                      </span>
+                      <span className="h-px flex-1 bg-black/10 dark:bg-white/10" />
+                    </div>
+
                     {/* Username */}
 
                     <div>
@@ -1559,7 +1798,7 @@ export const AuthModal: React.FC = () => {
                     <button
                       id="auth-submit-btn"
                       type="submit"
-                      disabled={submitting}
+                      disabled={isBusy}
                       className={primaryButton}
                     >
                       {submitting ? (
@@ -1605,7 +1844,137 @@ export const AuthModal: React.FC = () => {
                     REGISTER
                 ================================================== */}
 
-                {authModalTab === 'register' && (
+                {authModalTab === 'register' && pendingGoogleSeller && (
+                  <form
+                    onSubmit={handleCompleteGoogleSeller}
+                    className="space-y-4 sm:space-y-5"
+                  >
+                    <div
+                      className="
+                        rounded-2xl
+                        border
+                        border-primary/25
+                        bg-primary/10
+                        p-4
+                        dark:border-primary/35
+                      "
+                    >
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={pendingGoogleSeller.picture || DEFAULT_AVATAR}
+                          alt={pendingGoogleSeller.name || 'Google'}
+                          className="h-11 w-11 rounded-xl object-cover border border-black/10 dark:border-white/10"
+                          referrerPolicy="no-referrer"
+                        />
+                        <div className="min-w-0">
+                          <p className="truncate text-[14px] font-black text-espresso dark:text-cream">
+                            أهلاً {pendingGoogleSeller.name}
+                          </p>
+                          <p className="truncate text-[11px] font-medium text-black/60 dark:text-white/60" dir="ltr">
+                            {pendingGoogleSeller.email}
+                          </p>
+                        </div>
+                      </div>
+                      <p className="mt-2.5 text-[12px] font-bold leading-5 text-espresso dark:text-cream">
+                        تم توثيق حسابك عبر Google. أكمل بيانات الورشة لإرسال طلب الانضمام كبائع:
+                      </p>
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="google-seller-workshop-input"
+                        className={labelClass}
+                      >
+                        اسم الورشة أو المشروع
+                        <span className="mr-1 text-primary">*</span>
+                      </label>
+                      <div className="relative">
+                        <Store size={20} className={iconClass} />
+                        <input
+                          id="google-seller-workshop-input"
+                          type="text"
+                          required
+                          value={workshopName}
+                          onChange={(e) => setWorkshopName(e.target.value)}
+                          placeholder="مثال: ورشة فخار المحروسة"
+                          className={inputClass}
+                          autoComplete="organization"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="google-seller-phone-input"
+                        className={labelClass}
+                      >
+                        رقم الموبايل
+                        <span className="mr-1 text-primary">*</span>
+                      </label>
+                      <div className="relative">
+                        <Phone size={20} className={iconClass} />
+                        <input
+                          id="google-seller-phone-input"
+                          type="tel"
+                          required
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          placeholder="01xxxxxxxxx"
+                          className={inputClass}
+                          autoComplete="tel"
+                          inputMode="tel"
+                          dir="ltr"
+                        />
+                      </div>
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={isBusy}
+                      className={primaryButton}
+                    >
+                      {googleLoading ? (
+                        <>
+                          <Loader2 size={21} className="animate-spin" />
+                          جاري إنشاء حساب الورشة...
+                        </>
+                      ) : (
+                        <>
+                          إتمام التسجيل عبر Google
+                          <ArrowLeft size={19} />
+                        </>
+                      )}
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={isBusy}
+                      onClick={() => {
+                        setPendingGoogleSeller(null);
+                        setError('');
+                      }}
+                      className="
+                        flex
+                        min-h-[44px]
+                        w-full
+                        items-center
+                        justify-center
+                        gap-2
+                        text-[13px]
+                        font-black
+                        text-black/60
+                        hover:text-primary
+                        dark:text-white/60
+                        cursor-pointer
+                      "
+                    >
+                      <ArrowRight size={16} />
+                      الرجوع لخيارات التسجيل
+                    </button>
+                  </form>
+                )}
+
+                {authModalTab === 'register' && !pendingGoogleSeller && (
                   <form
                     onSubmit={handleRegister}
                     className="space-y-4 sm:space-y-5"
@@ -1739,6 +2108,91 @@ export const AuthModal: React.FC = () => {
                           </span>
                         </button>
                       </div>
+                    </div>
+
+                    {/* Google Sign-Up */}
+
+                    <button
+                      id="auth-google-register-btn"
+                      type="button"
+                      onClick={() => handleGoogleAuth('register')}
+                      disabled={isBusy}
+                      className="
+                        flex
+                        min-h-[52px]
+                        sm:min-h-[56px]
+                        w-full
+                        items-center
+                        justify-center
+                        gap-3
+                        rounded-2xl
+                        border
+                        border-black/15
+                        bg-white/95
+                        px-4
+                        text-[14px]
+                        sm:text-[15px]
+                        font-black
+                        text-espresso
+                        shadow-sm
+                        transition-all
+                        hover:border-primary/50
+                        hover:bg-white
+                        hover:shadow-md
+                        active:scale-[0.99]
+                        disabled:cursor-not-allowed
+                        disabled:opacity-60
+                        dark:border-white/15
+                        dark:bg-cream/10
+                        dark:text-cream
+                        dark:hover:border-primary/60
+                        dark:hover:bg-cream/15
+                        cursor-pointer
+                      "
+                    >
+                      {googleLoading ? (
+                        <>
+                          <Loader2 size={20} className="animate-spin text-primary" />
+                          <span>جاري التسجيل عبر Google...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span
+                            aria-hidden="true"
+                            className="
+                              flex
+                              h-7
+                              w-7
+                              shrink-0
+                              items-center
+                              justify-center
+                              rounded-full
+                              border
+                              border-black/10
+                              bg-white
+                              text-[15px]
+                              font-black
+                              text-[#4285F4]
+                              shadow-xs
+                            "
+                          >
+                            G
+                          </span>
+                          <span>
+                            {roleType === 'seller'
+                              ? 'إنشاء حساب بائع عبر Google'
+                              : 'التسجيل السريع باستخدام Google'}
+                          </span>
+                        </>
+                      )}
+                    </button>
+
+                    <div className="relative flex items-center gap-3 py-0.5">
+                      <span className="h-px flex-1 bg-black/10 dark:bg-white/10" />
+                      <span className="text-[11px] font-bold text-black/45 dark:text-white/45">
+                        أو التسجيل بالبيانات يدوياً
+                      </span>
+                      <span className="h-px flex-1 bg-black/10 dark:bg-white/10" />
                     </div>
 
                     {/* Avatar */}
@@ -2318,7 +2772,7 @@ export const AuthModal: React.FC = () => {
                     <button
                       id="auth-submit-btn"
                       type="submit"
-                      disabled={submitting}
+                      disabled={isBusy}
                       className={primaryButton}
                     >
                       {submitting ? (

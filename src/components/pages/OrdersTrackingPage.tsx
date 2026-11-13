@@ -24,8 +24,8 @@ const STATUS_STEPS: { status: OrderStatus; label: string; desc: string }[] = [
   { status: 'pending', label: 'تم تسجيل الطلب', desc: 'تم استلام طلبك ومراجعته بالورشة' },
   { status: 'confirmed', label: 'تأكيد الورش الحرفية', desc: 'تم تأكيد توافر القطع وجودة الصنعة اليدوية' },
   { status: 'processing', label: 'التجهيز والتغليف الآمن', desc: 'يتم الآن فحص القطعة وتغليفها بمواد امتصاص الصدمات' },
-  { status: 'shipped', label: 'في الطريق مع شحن الصعيد', desc: 'خرجت الشحنة من الصعيد وهي متجهة لمدينتك' },
-  { status: 'out_for_delivery', label: 'خرجت للتوصيل', desc: 'مندوب الشحن في طريقه لتسليم الطلب على عنوانك' },
+  { status: 'shipped', label: 'في الطريق للتوصيل', desc: 'تم شحن الطلب بالتنسيق المباشر مع الورشة وهو في طريقه إليك' },
+  { status: 'out_for_delivery', label: 'خرجت للتوصيل', desc: 'الشحنة في طريقها لتسليم الطلب على عنوانك بالتنسيق معك' },
   { status: 'delivered', label: 'تم الاستلام بنجاح', desc: 'تم تسليم الطلب إلى باب المنزل' }
 ];
 
@@ -476,14 +476,14 @@ export const OrdersTrackingPage: React.FC = () => {
                       <div>
                         <div className="flex items-center gap-2">
                           <span className="font-bold text-xs text-primary dark:text-primary-hover">
-                            {currentSelected.shippingProvider ? `الشحن عبر: ${currentSelected.shippingProvider}` : 'الشحن قيد المتابعة مع شركة الشحن المعتمدة'}
+                            شحن مباشر بالتنسيق مع الورشة
                           </span>
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/15 text-emerald-700 dark:text-emerald-300">
-                            بوليصة مسجلة
+                            شحن مباشر
                           </span>
                         </div>
                         <p className="text-[11px] text-espresso/70 dark:text-cream/70 font-mono mt-0.5">
-                          رقم بوليصة التتبع: <strong className="text-espresso dark:text-cream font-bold">{currentSelected.trackingNumber}</strong>
+                          مرجع الشحنة: <strong className="text-espresso dark:text-cream font-bold">{currentSelected.trackingNumber}</strong>
                         </p>
                       </div>
                     </div>
@@ -625,19 +625,41 @@ export const OrdersTrackingPage: React.FC = () => {
 
                 {/* Order Chat & Actions */}
                 <div className="pt-4 border-t border-black/10 dark:border-white/10 flex flex-wrap items-center justify-between gap-3">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      openChatWithArtisan({
-                        orderId: currentSelected.id,
-                        initialMessage: `السلام عليكم، أود التواصل مع إدارة المنصة بخصوص طلبي رقم (${currentSelected.orderNumber || currentSelected.id}).`
-                      });
-                    }}
-                    className="px-4 py-2.5 bg-primary/15 hover:bg-primary/25 text-primary dark:text-primary-hover text-xs font-bold rounded-xl border border-primary/30 transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
-                  >
-                    <MessageSquare className="w-4 h-4 text-primary dark:text-primary-hover" />
-                    <span>مراسلة إدارة المنصة بخصوص هذا الطلب</span>
-                  </button>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {Boolean(currentSelected.sellerIds?.[0] || currentSelected.items?.[0]?.product?.sellerId) && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const targetSellerId =
+                            currentSelected.sellerIds?.[0] || currentSelected.items?.[0]?.product?.sellerId;
+                          openChatWithArtisan({
+                            sellerId: targetSellerId,
+                            orderId: currentSelected.id,
+                            initialMessage: `السلام عليكم، أود التنسيق بخصوص شحن وتوصيل طلبي رقم (${currentSelected.orderNumber || currentSelected.id}).`
+                          });
+                        }}
+                        className="px-4 py-2.5 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
+                      >
+                        <MessageSquare className="w-4 h-4" />
+                        <span>مراسلة البائع / الورشة لترتيب الشحن</span>
+                      </button>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        openChatWithArtisan({
+                          sellerId: 'admin',
+                          orderId: currentSelected.id,
+                          initialMessage: `السلام عليكم، أود التواصل مع إدارة المنصة بخصوص طلبي رقم (${currentSelected.orderNumber || currentSelected.id}).`
+                        });
+                      }}
+                      className="px-4 py-2.5 bg-primary/15 hover:bg-primary/25 text-primary dark:text-primary-hover text-xs font-bold rounded-xl border border-primary/30 transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
+                    >
+                      <MessageSquare className="w-4 h-4 text-primary dark:text-primary-hover" />
+                      <span>مراسلة إدارة المنصة</span>
+                    </button>
+                  </div>
 
                   {/* Report Issue to Admin Button */}
                   <button

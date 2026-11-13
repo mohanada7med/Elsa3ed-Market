@@ -291,11 +291,12 @@ export const BuyerAccountPage: React.FC = () => {
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    const hasExistingPassword = currentUser?.hasPassword !== false;
     if (newPassword.length < 6) {
       addToast('كلمة المرور قصيرة', 'كلمة المرور الجديدة يجب ألا تقل عن 6 خانات.', 'warning');
       return;
     }
-    if (newPassword === currentPassword) {
+    if (hasExistingPassword && newPassword === currentPassword) {
       addToast('كلمة المرور لم تتغير', 'اختر كلمة مرور جديدة مختلفة عن الحالية.', 'warning');
       return;
     }
@@ -306,11 +307,11 @@ export const BuyerAccountPage: React.FC = () => {
 
     setIsChangingPassword(true);
     try {
-      await changePersonalPassword(currentPassword, newPassword);
+      await changePersonalPassword(hasExistingPassword ? currentPassword : '', newPassword);
       setCurrentPassword('');
       setNewPassword('');
       setConfirmNewPassword('');
-      await logout('تم تغيير كلمة المرور وتسجيل الخروج من كل الأجهزة. سجّل الدخول مجددًا بكلمة المرور الجديدة.');
+      await logout('تم تحديث كلمة المرور وتسجيل الخروج من كل الأجهزة. سجّل الدخول مجددًا بكلمة المرور الجديدة.');
     } catch (error: any) {
       addToast('تعذر تغيير كلمة المرور', error?.message || 'حاول مرة أخرى.', 'error');
     } finally {
@@ -904,22 +905,26 @@ export const BuyerAccountPage: React.FC = () => {
               <div>
                 <h2 className="font-black text-lg">الأمان وكلمة المرور</h2>
                 <p className="text-xs text-black/60 dark:text-white/60 mt-1">
-                  تحديث كلمة المرور يسجل خروج حسابك من جميع الأجهزة.
+                  {currentUser?.hasPassword === false
+                    ? 'حسابك مسجّل عبر Google. يمكنك تعيين كلمة مرور إضافية للدخول باسم المستخدم أيضاً.'
+                    : 'تحديث كلمة المرور يسجل خروج حسابك من جميع الأجهزة.'}
                 </p>
               </div>
             </div>
             <form onSubmit={handleChangePassword} className="space-y-3">
-              <input
-                type="password"
-                required
-                autoComplete="current-password"
-                value={currentPassword}
-                onChange={(event) => setCurrentPassword(event.target.value)}
-                placeholder="كلمة المرور الحالية"
-                aria-label="كلمة المرور الحالية"
-                className="w-full px-4 py-3 bg-black/[0.035] dark:bg-cream/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-sm outline-none focus:border-primary"
-                dir="ltr"
-              />
+              {currentUser?.hasPassword !== false && (
+                <input
+                  type="password"
+                  required
+                  autoComplete="current-password"
+                  value={currentPassword}
+                  onChange={(event) => setCurrentPassword(event.target.value)}
+                  placeholder="كلمة المرور الحالية"
+                  aria-label="كلمة المرور الحالية"
+                  className="w-full px-4 py-3 bg-black/[0.035] dark:bg-cream/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-sm outline-none focus:border-primary"
+                  dir="ltr"
+                />
+              )}
               <input
                 type="password"
                 required

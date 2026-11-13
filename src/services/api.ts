@@ -2162,8 +2162,8 @@ export const api = {
     user: { id?: string; role?: string; sellerId?: string },
     payload: {
       orderId: string;
-      companyId: string;
-      trackingNumber: string;
+      companyId?: string;
+      trackingNumber?: string;
       shippingLabelRef?: string;
       actualShippingCost: number;
       bookingDate: string;
@@ -3033,6 +3033,43 @@ export const api = {
       setStoredToken(json.data.token);
     }
     return json.data;
+  },
+
+  async googleAuth(params: {
+    idToken: string;
+    mode?: 'login' | 'register';
+    role?: 'buyer' | 'seller';
+    phone?: string;
+    governorate?: string;
+    workshopName?: string;
+    specialty?: string;
+  }): Promise<{ user: any; token?: string; isNewUser?: boolean }> {
+    const res = await fetch(`${API_BASE}/auth/google`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params)
+    });
+    const json: ApiResponse<{ user: any; token?: string; isNewUser?: boolean }> & {
+      googleProfile?: { name?: string; email?: string; picture?: string };
+      isNewUser?: boolean;
+    } = await res.json();
+
+    if (!json.success || !json.data) {
+      const error: any = new Error(json.error || 'فشل تسجيل الدخول عبر Google');
+      if (json.code) error.code = json.code;
+      if (json.googleProfile) error.googleProfile = json.googleProfile;
+      throw error;
+    }
+
+    if (json.data.token) {
+      setStoredToken(json.data.token);
+    }
+
+    return {
+      ...json.data,
+      isNewUser: json.data.isNewUser ?? json.isNewUser
+    };
   },
 
   async logout(): Promise<{ success: boolean; message: string }> {

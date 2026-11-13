@@ -85,6 +85,7 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
   if (!mounted || !isOpen || typeof document === 'undefined') return null;
 
   const isSeller = isSellerMode || currentRole === 'seller' || currentUser.role === 'seller';
+  const requiresPassword = currentUser?.hasPassword !== false;
 
   const handleDelete = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,14 +96,14 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
       return;
     }
 
-    if (!password.trim()) {
+    if (requiresPassword && !password.trim()) {
       setErrorMessage('يرجى كتابة كلمة المرور لتأكيد هويتك وحذف الحساب');
       return;
     }
 
     try {
       setIsDeleting(true);
-      await deleteMyAccount(password);
+      await deleteMyAccount(requiresPassword ? password : '');
       onClose();
     } catch (err: any) {
       setErrorMessage(err?.message || 'فشل حذف الحساب، يرجى التأكد من كلمة المرور');
@@ -204,23 +205,25 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
 
         {/* Delete Form */}
         <form onSubmit={handleDelete} className="space-y-3.5 sm:space-y-4 pt-1">
-          <div>
-            <label className="block text-xs font-bold mb-1.5 text-[#3B1E0E] dark:text-[#FFF9EE]">
-              أدخل كلمة مرور الحساب للتأكيد <span className="text-rose-500">*</span>
-            </label>
-            <div className="relative">
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="اكتب كلمة مرورك الحالية..."
-                disabled={isDeleting}
-                className="w-full pl-3 pr-10 py-2.5 sm:py-3 bg-black/[0.035] dark:bg-white/[0.04] border border-black/15 dark:border-white/15 rounded-xl text-xs sm:text-sm outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 transition-colors"
-              />
-              <Lock className="w-4 h-4 text-black/40 dark:text-white/40 absolute right-3.5 top-3 sm:top-3.5 pointer-events-none" />
+          {requiresPassword && (
+            <div>
+              <label className="block text-xs font-bold mb-1.5 text-[#3B1E0E] dark:text-[#FFF9EE]">
+                أدخل كلمة مرور الحساب للتأكيد <span className="text-rose-500">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="اكتب كلمة مرورك الحالية..."
+                  disabled={isDeleting}
+                  className="w-full pl-3 pr-10 py-2.5 sm:py-3 bg-black/[0.035] dark:bg-white/[0.04] border border-black/15 dark:border-white/15 rounded-xl text-xs sm:text-sm outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 transition-colors"
+                />
+                <Lock className="w-4 h-4 text-black/40 dark:text-white/40 absolute right-3.5 top-3 sm:top-3.5 pointer-events-none" />
+              </div>
             </div>
-          </div>
+          )}
 
           <label className="flex items-start gap-2.5 p-2.5 sm:p-3 rounded-xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/10 dark:border-white/10 cursor-pointer select-none">
             <input
@@ -247,7 +250,7 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
 
             <button
               type="submit"
-              disabled={isDeleting || !confirmationChecked || !password.trim()}
+              disabled={isDeleting || !confirmationChecked || (requiresPassword && !password.trim())}
               className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed active:scale-95"
             >
               {isDeleting ? (

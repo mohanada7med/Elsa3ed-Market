@@ -142,6 +142,7 @@ export const SellerDashboard: React.FC = () => {
     refreshSellerStats,
     updateSellerProfile,
     chatUnreadCount,
+    openChatWithBuyer,
     confirmModal,
     openReportModal
   } = useApp();
@@ -1026,8 +1027,8 @@ export const SellerDashboard: React.FC = () => {
         },
         {
           id: 'messages',
-          label: 'كلمنا',
-          sublabel: 'لو محتاج مساعدة أو عندك سؤال',
+          label: 'المراسلات والشحن',
+          sublabel: 'التواصل مع المشترين والدعم',
           icon: MessageSquare,
           badge: chatUnreadCount > 0 ? chatUnreadCount : undefined,
           elementId: 'seller-nav-messages-btn'
@@ -2322,6 +2323,7 @@ export const SellerDashboard: React.FC = () => {
               addToast={addToast}
               confirmModal={confirmModal}
               openReportModal={openReportModal}
+              openChatWithBuyer={openChatWithBuyer}
             />
           )}
 

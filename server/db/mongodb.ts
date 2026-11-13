@@ -108,91 +108,7 @@ class MemoryStore {
     updatedAt: new Date().toISOString(),
     updatedBy: 'النظام'
   };
-  shippingCompanies: import('../models/types.ts').ShippingCompanyDocument[] = [
-    {
-      id: 'ship-comp-aramex',
-      name: 'أرامكس مصر - Aramex Egypt',
-      nameEn: 'Aramex Egypt',
-      code: 'aramex',
-      bookingMethod: 'external_booking',
-      trackingUrlTemplate: 'https://www.aramex.com/track/results?shipmentNumber={trackingNumber}',
-      websiteUrl: 'https://www.aramex.com',
-      contactPhone: '16996',
-      supportEmail: 'cairo@aramex.com',
-      coverageGovernorates: ['all'],
-      pickupTerms: 'حجز الشحنة عبر بوابة أرامكس الخارجية وتدوين رقم البوليصة. تسليم للمندوب من مقر الورشة أو أقرب فرع.',
-      notes: 'تغطية واسعة للشحن الداخلي والدولي للقطع الحرفية التراثية.',
-      isActive: true,
-      isApproved: true,
-      approvedAt: '2026-01-01T00:00:00.000Z',
-      approvedBy: 'إدارة منصة وه',
-      hasApiIntegration: false,
-      createdAt: '2026-01-01T00:00:00.000Z',
-      updatedAt: '2026-01-01T00:00:00.000Z'
-    },
-    {
-      id: 'ship-comp-egypt-post',
-      name: 'البريد المصري السريع - Egypt Post',
-      nameEn: 'Egypt Post Express',
-      code: 'egypt_post',
-      bookingMethod: 'external_booking',
-      trackingUrlTemplate: 'https://egyptpost.org/tracking?item={trackingNumber}',
-      websiteUrl: 'https://egyptpost.org',
-      contactPhone: '16789',
-      supportEmail: 'contact@egyptpost.org',
-      coverageGovernorates: ['all'],
-      pickupTerms: 'تغطية تصل لكافة قرى ومراكز محافظات الصعيد. تسليم عبر أقرب مكتب بريد أو التنسيق مع خدمة مندوب البريد السريع.',
-      notes: 'أنسب تكلفة اقتصادية للطرود الحرفية في القرى والنجوع النائية.',
-      isActive: true,
-      isApproved: true,
-      approvedAt: '2026-01-01T00:00:00.000Z',
-      approvedBy: 'إدارة منصة وه',
-      hasApiIntegration: false,
-      createdAt: '2026-01-01T00:00:00.000Z',
-      updatedAt: '2026-01-01T00:00:00.000Z'
-    },
-    {
-      id: 'ship-comp-mylerz',
-      name: 'شركة مايلرز - Mylerz Egypt',
-      nameEn: 'Mylerz',
-      code: 'mylerz',
-      bookingMethod: 'external_booking',
-      trackingUrlTemplate: 'https://mylerz.net/tracking/{trackingNumber}',
-      websiteUrl: 'https://mylerz.net',
-      contactPhone: '0221299999',
-      supportEmail: 'info@mylerz.net',
-      coverageGovernorates: ['all'],
-      pickupTerms: 'حجز الشحنة عبر حساب التاجر لدى مايلرز. تسليم للمندوب مع دعم كامل لتحصيل مبالغ الدفع عند الاستلام COD.',
-      notes: 'سرعة توصيل ممتازة وتحديث دوري لحالة الشحنات في المدن الكبرى.',
-      isActive: true,
-      isApproved: true,
-      approvedAt: '2026-01-01T00:00:00.000Z',
-      approvedBy: 'إدارة منصة وه',
-      hasApiIntegration: false,
-      createdAt: '2026-01-01T00:00:00.000Z',
-      updatedAt: '2026-01-01T00:00:00.000Z'
-    },
-    {
-      id: 'ship-comp-saed-logistics',
-      name: 'الصعيد إكسبريس للخدمات اللوجستية',
-      nameEn: 'Saed Express Logistics',
-      code: 'saed_express',
-      bookingMethod: 'external_booking',
-      websiteUrl: 'https://saed-express.com',
-      contactPhone: '01012345678',
-      supportEmail: 'ops@saed-express.com',
-      coverageGovernorates: ['أسوان', 'الأقصر', 'قنا', 'سوهاج', 'أسيوط', 'المنيا', 'بني سويف', 'الوادي الجديد', 'الفيوم'],
-      pickupTerms: 'خدمة نقل مخصصة لمنتجات الحرف التراثية والفخار والسجاد اليدوي بين محافظات الصعيد والمحافظات المركزية.',
-      notes: 'متخصصة في العناية بالمنتجات الحرفية سهلة الكسر والقطع التراثية الكبيرة.',
-      isActive: true,
-      isApproved: true,
-      approvedAt: '2026-01-01T00:00:00.000Z',
-      approvedBy: 'إدارة منصة وه',
-      hasApiIntegration: false,
-      createdAt: '2026-01-01T00:00:00.000Z',
-      updatedAt: '2026-01-01T00:00:00.000Z'
-    }
-  ];
+  shippingCompanies: import('../models/types.ts').ShippingCompanyDocument[] = [];
   shipments: import('../models/types.ts').ShipmentDocument[] = [];
   craftReels: any;
 }
@@ -518,16 +434,11 @@ async function seedMongoDatabase(database: Db) {
     // Execute non-blocking batch indexing in background
     await Promise.allSettled(indexOperations);
 
-    // Seed approved shipping companies if none exist in MongoDB
+    // Shipping companies have been removed in favor of direct seller-to-buyer shipping coordination
     try {
-      await database.collection('shipping_companies').deleteMany({ code: 'bosta' });
-      const companyCount = await database.collection('shipping_companies').countDocuments();
-      if (companyCount === 0 && memoryDb.shippingCompanies?.length > 0) {
-        await database.collection('shipping_companies').insertMany(memoryDb.shippingCompanies as any);
-        Logger.info(`[MongoDB] Successfully seeded ${memoryDb.shippingCompanies.length} approved shipping companies`);
-      }
-    } catch (shipSeedErr) {
-      Logger.warn('[MongoDB] Shipping companies auto-seed non-fatal error:', shipSeedErr);
+      await database.collection('shipping_companies').deleteMany({});
+    } catch (shipCleanErr) {
+      Logger.warn('[MongoDB] Shipping companies cleanup non-fatal error:', shipCleanErr);
     }
 
     // Safely migrate and enrich heritage places schema without altering existing data

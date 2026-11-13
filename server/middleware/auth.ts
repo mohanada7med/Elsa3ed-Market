@@ -20,6 +20,8 @@ export interface AuthenticatedUser {
   sellerId?: string;
   sellerStatus?: SellerStatus;
   mustChangePassword?: boolean;
+  hasPassword?: boolean;
+  authProvider?: 'local' | 'google' | 'hybrid';
   authVersion?: number;
   seller?: any;
 }
@@ -183,6 +185,8 @@ export async function authenticate(req: AuthenticatedRequest, res: Response, nex
     avatar: userProfile.avatar,
     profileImage: userProfile.profileImage,
     mustChangePassword: Boolean(userProfile.mustChangePassword),
+    hasPassword: Boolean(userProfile.passwordHash),
+    authProvider: userProfile.authProvider || (userProfile.passwordHash ? 'local' : (userProfile.googleUid ? 'google' : 'local')),
     authVersion: userProfile.authVersion ?? 0,
     seller: sellerDetails
   };

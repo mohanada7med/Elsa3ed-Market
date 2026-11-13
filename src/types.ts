@@ -449,6 +449,8 @@ export interface UserProfile {
   sellerStatus?: SellerStatus;
   seller?: any;
   mustChangePassword?: boolean;
+  authProvider?: 'local' | 'google' | 'hybrid';
+  hasPassword?: boolean;
 }
 
 export interface PasswordResetRequest {
@@ -725,9 +727,10 @@ export interface Conversation {
   buyerName: string;
   buyerAvatar?: string;
   sellerId: string;
+  sellerUserId?: string;
   sellerName: string;
   sellerAvatar?: string;
-  conversationType?: 'buyer_support' | 'seller_support';
+  conversationType?: 'buyer_support' | 'seller_support' | 'direct';
   participantRole?: 'buyer' | 'seller';
   participantId?: string;
   participantName?: string;

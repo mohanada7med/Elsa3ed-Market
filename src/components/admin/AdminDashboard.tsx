@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext.tsx';
-import { Product, OrderStatus, ProductStatus, Category, Review, CraftStory, Seller, Governorate, CraftReel, ShippingCompany, Shipment } from '../../types.ts';
+import { Product, OrderStatus, ProductStatus, Category, Review, CraftStory, Seller, Governorate, CraftReel, Shipment } from '../../types.ts';
 import { api } from '../../services/api.ts';
 import { craftReelsService } from '../../services/craftReelsService.ts';
 import { AdminPayouts } from './AdminPayouts.tsx';
@@ -484,97 +484,10 @@ export const AdminDashboard: React.FC = () => {
       if (cfg) {
         setAdminShippingSettings(cfg);
       }
-      fetchAdminCompanies();
     } catch (err: any) {
       console.warn('Failed to load shipping settings:', err);
     } finally {
       setIsLoadingShippingSettings(false);
-    }
-  };
-
-  // Approved Shipping Companies State
-  const [adminCompanies, setAdminCompanies] = useState<ShippingCompany[]>([]);
-  const [isLoadingCompanies, setIsLoadingCompanies] = useState(false);
-  const [isAddingCompany, setIsAddingCompany] = useState(false);
-  const [newCompanyForm, setNewCompanyForm] = useState<{
-    name: string;
-    nameEn: string;
-    code: string;
-    bookingMethod: 'external_booking' | 'carrier_api' | 'manual_dispatch';
-    websiteUrl: string;
-    contactPhone: string;
-    supportEmail: string;
-    trackingUrlTemplate: string;
-    pickupTerms: string;
-    notes: string;
-  }>({
-    name: '',
-    nameEn: '',
-    code: '',
-    bookingMethod: 'external_booking',
-    websiteUrl: '',
-    contactPhone: '',
-    supportEmail: '',
-    trackingUrlTemplate: '',
-    pickupTerms: '',
-    notes: ''
-  });
-
-  const fetchAdminCompanies = async () => {
-    setIsLoadingCompanies(true);
-    try {
-      const comps = await api.getAdminShippingCompanies(currentUser);
-      if (Array.isArray(comps)) {
-        setAdminCompanies(comps);
-      }
-    } catch (err: any) {
-      console.warn('Failed to load admin shipping companies:', err);
-    } finally {
-      setIsLoadingCompanies(false);
-    }
-  };
-
-  const handleToggleCompany = async (company: ShippingCompany) => {
-    try {
-      const updated = await api.updateAdminShippingCompany(currentUser, company.id, {
-        isActive: !company.isActive
-      });
-      setAdminCompanies((prev) => prev.map((c) => (c.id === company.id ? updated : c)));
-      addToast(
-        company.isActive ? 'تم تعطيل الشركة' : 'تم تفعيل الشركة',
-        `تم تحديث حالة تفعيل "${company.name}"`,
-        'info'
-      );
-    } catch (err: any) {
-      addToast('خطأ في التحديث', err.message || 'تعذر تحديث حالة الشركة', 'error');
-    }
-  };
-
-  const handleCreateCompanySubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newCompanyForm.name.trim() || !newCompanyForm.code.trim()) {
-      addToast('بيانات ناقصة', 'اسم ورمز شركة الشحن مطلوبان', 'error');
-      return;
-    }
-    try {
-      const created = await api.createAdminShippingCompany(currentUser, newCompanyForm);
-      setAdminCompanies((prev) => [created, ...prev]);
-      setIsAddingCompany(false);
-      setNewCompanyForm({
-        name: '',
-        nameEn: '',
-        code: '',
-        bookingMethod: 'external_booking',
-        websiteUrl: '',
-        contactPhone: '',
-        supportEmail: '',
-        trackingUrlTemplate: '',
-        pickupTerms: '',
-        notes: ''
-      });
-      addToast('تمت إضافة شركة الشحن', `تم اعتماد "${created.name}" بنجاح`, 'success');
-    } catch (err: any) {
-      addToast('تعذر إضافة الشركة', err.message || 'حدث خطأ أثناء الإضافة', 'error');
     }
   };
 
@@ -1527,7 +1440,7 @@ export const AdminDashboard: React.FC = () => {
         {
           id: 'shipping-settings' as const,
           label: 'الشحن والتوصيل',
-          sublabel: 'شركات الشحن والأسعار',
+          sublabel: 'أسعار التوصيل والحد المجاني',
           icon: Truck,
           elementId: 'admin-tab-shipping-settings'
         }
@@ -2681,12 +2594,12 @@ export const AdminDashboard: React.FC = () => {
                     <Truck className="w-5 h-5" />
                   </div>
                   <span className="text-[10px] font-bold text-orange-700 dark:text-orange-400">
-                    شركات الشحن 🚚
+                    أسعار التوصيل 🚚
                   </span>
                 </div>
-                <h4 className="font-black text-sm mt-3">إدارة الشحن واللوجستيات</h4>
+                <h4 className="font-black text-sm mt-3">إدارة الشحن والتوصيل</h4>
                 <p className={`text-xs mt-1 ${activeTab === 'shipping-settings' ? 'text-white/80' : 'text-black/60 dark:text-white/60'}`}>
-                  إدارة شركات الشحن المعتمدة للحرفيين وأسعار التوصيل
+                  إدارة أسعار التوصيل وحد الشحن المجاني للعملاء
                 </p>
                 <div className="mt-4 pt-3 border-t border-border flex items-center justify-between text-xs">
                   <span className="font-bold">إعدادات الشحن</span>
@@ -4101,7 +4014,7 @@ export const AdminDashboard: React.FC = () => {
                                   </div>
                                 </div>
                               ) : (
-                                <span className="text-[10px] text-gray-400 font-medium">لم تُحجز بوليصة</span>
+                                <span className="text-[10px] text-gray-400 font-medium">لم يُسجّل شحن بعد</span>
                               )}
                             </td>
                             <td className="py-3 px-4">
@@ -4381,7 +4294,7 @@ export const AdminDashboard: React.FC = () => {
                     <span>إعدادات الشحن والتوصيل</span>
                   </h3>
                   <p className="text-xs text-black/60 dark:text-white/60 mt-1">
-                    إدارة أسعار وتكاليف الشحن للعملاء، حد الشحن المجاني، وشركات الشحن المعتمدة للورش الحرفية.
+                    إدارة أسعار وتكاليف التوصيل للعملاء، وحد الشحن المجاني للطلبات، مع تنسيق الشحن مباشرة بين الورشة والمشتري.
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -4399,10 +4312,10 @@ export const AdminDashboard: React.FC = () => {
                     <DollarSign className="w-5 h-5 text-emerald-600" />
                     <div>
                       <h4 className="font-bold text-sm text-foreground">
-                        تسعير الشحن للمشترين (Shipping Rates & Thresholds)
+                        تسعير التوصيل للمشترين (Delivery Rates & Thresholds)
                       </h4>
                       <p className="text-[11px] text-black/60 dark:text-white/60">
-                        تحديد تكلفة الشحن التي تظهر للعميل في السلة وصفحة إتمام الطلب
+                        تحديد تكلفة التوصيل التي تظهر للعميل في السلة وصفحة إتمام الطلب
                       </p>
                     </div>
                   </div>
@@ -4447,7 +4360,7 @@ export const AdminDashboard: React.FC = () => {
                         onChange={(e) => setAdminShippingSettings({ ...adminShippingSettings, freeShippingThreshold: Number(e.target.value) })}
                         className="w-full px-4 py-2.5 bg-surface border border-border rounded-xl text-xs font-mono font-bold text-gray-800 dark:text-gray-100 outline-none"
                       />
-                      <span className="text-[10px] text-emerald-600 font-bold">شحن مجاني للطلبات فوق هذا المبلغ</span>
+                      <span className="text-[10px] text-emerald-600 font-bold">توصيل مجاني للطلبات فوق هذا المبلغ</span>
                     </div>
                   </div>
 
@@ -4478,197 +4391,11 @@ export const AdminDashboard: React.FC = () => {
                   ) : (
                     <>
                       <Check className="w-4 h-4" />
-                      <span>حفظ وتطبيق إعدادات تسعير الشحن</span>
+                      <span>حفظ وتطبيق إعدادات تسعير التوصيل</span>
                     </>
                   )}
                 </button>
               </form>
-
-              {/* SECTION: APPROVED SHIPPING COMPANIES MANAGEMENT */}
-              <div className="pt-8 border-t border-border space-y-6">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div>
-                    <h4 className="font-bold text-base sm:text-lg text-foreground flex items-center gap-2">
-                      <ShieldCheck className="w-5 h-5 text-emerald-600" />
-                      <span>شركات الشحن المعتمدة للورش الحرفية (Approved Shipping Companies)</span>
-                    </h4>
-                    <p className="text-xs text-black/60 dark:text-white/60 mt-1">
-                      إدارة شركات الشحن المتاحة في لوحة تحكم الحرفيين، تفعيل وتعطيل الشركات، وتحديد آليات الحجز والتتبع.
-                    </p>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => setIsAddingCompany(!isAddingCompany)}
-                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer self-start sm:self-auto"
-                  >
-                    {isAddingCompany ? <X className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
-                    <span>{isAddingCompany ? 'إلغاء' : 'إضافة شركة شحن معتمدة'}</span>
-                  </button>
-                </div>
-
-                {/* Add Company Form */}
-                {isAddingCompany && (
-                  <form
-                    onSubmit={handleCreateCompanySubmit}
-                    className="p-5 rounded-2xl bg-surface border border-border space-y-4 animate-in fade-in duration-200"
-                  >
-                    <h5 className="font-bold text-sm text-espresso dark:text-cream">
-                      إضافة شركة شحن جديدة لمنظومة وَه
-                    </h5>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-1">
-                        <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
-                          اسم شركة الشحن (بالعربية) *
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={newCompanyForm.name}
-                          onChange={(e) => setNewCompanyForm({ ...newCompanyForm, name: e.target.value })}
-                          placeholder="مثال: أرامكس مصر أو البريد السريع"
-                          className="w-full px-3.5 py-2 bg-black/[0.02] dark:bg-white/[0.05] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none"
-                        />
-                      </div>
-
-                      <div className="space-y-1">
-                        <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
-                          الرمز التعريفي (Code) *
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={newCompanyForm.code}
-                          onChange={(e) => setNewCompanyForm({ ...newCompanyForm, code: e.target.value })}
-                          placeholder="مثال: aramex أو egypt_post"
-                          className="w-full px-3.5 py-2 bg-black/[0.02] dark:bg-white/[0.05] border border-black/10 dark:border-white/10 rounded-xl text-xs font-mono outline-none"
-                        />
-                      </div>
-
-                      <div className="space-y-1">
-                        <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
-                          آلية الحجز والتسجيل
-                        </label>
-                        <select
-                          value={newCompanyForm.bookingMethod}
-                          onChange={(e) => setNewCompanyForm({ ...newCompanyForm, bookingMethod: e.target.value as any })}
-                          className="w-full px-3.5 py-2 bg-black/[0.02] dark:bg-white/[0.05] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none cursor-pointer"
-                        >
-                          <option value="external_booking">حجز خارجي مسجل (External Booking via Carrier)</option>
-                          <option value="carrier_api">ربط إلكتروني مباشر عبر API</option>
-                          <option value="manual_dispatch">توصيل يدوي / تنسيق مباشر</option>
-                        </select>
-                      </div>
-
-                      <div className="space-y-1">
-                        <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
-                          هاتف خدمة العملاء / المندوب
-                        </label>
-                        <input
-                          type="text"
-                          value={newCompanyForm.contactPhone}
-                          onChange={(e) => setNewCompanyForm({ ...newCompanyForm, contactPhone: e.target.value })}
-                          placeholder="مثال: 16996 أو 01012345678"
-                          className="w-full px-3.5 py-2 bg-black/[0.02] dark:bg-white/[0.05] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none font-mono"
-                        />
-                      </div>
-
-                      <div className="space-y-1 sm:col-span-2">
-                        <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
-                          قالب رابط التتبع (Tracking URL Template)
-                        </label>
-                        <input
-                          type="text"
-                          value={newCompanyForm.trackingUrlTemplate}
-                          onChange={(e) => setNewCompanyForm({ ...newCompanyForm, trackingUrlTemplate: e.target.value })}
-                          placeholder="مثال: https://carrier.com/track?num={trackingNumber}"
-                          className="w-full px-3.5 py-2 bg-black/[0.02] dark:bg-white/[0.05] border border-black/10 dark:border-white/10 rounded-xl text-xs font-mono outline-none"
-                        />
-                      </div>
-
-                      <div className="space-y-1 sm:col-span-2">
-                        <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
-                          شروط الاستلام وملاحظات التشغيل للورش
-                        </label>
-                        <textarea
-                          rows={2}
-                          value={newCompanyForm.pickupTerms}
-                          onChange={(e) => setNewCompanyForm({ ...newCompanyForm, pickupTerms: e.target.value })}
-                          placeholder="تعليمات الاستلام، مواعيد التسليم للمندوب، وتغطية محافظات الصعيد..."
-                          className="w-full px-3.5 py-2 bg-black/[0.02] dark:bg-white/[0.05] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none resize-none"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="flex justify-end gap-2 pt-2">
-                      <button
-                        type="button"
-                        onClick={() => setIsAddingCompany(false)}
-                        className="px-4 py-2 border rounded-xl text-xs font-bold cursor-pointer"
-                      >
-                        إلغاء
-                      </button>
-                      <button
-                        type="submit"
-                        className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold cursor-pointer shadow-xs"
-                      >
-                        حفظ واعتماد الشركة
-                      </button>
-                    </div>
-                  </form>
-                )}
-
-                {/* Companies Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {adminCompanies.map((comp) => (
-                    <div
-                      key={comp.id}
-                      className="p-5 rounded-2xl bg-surface border border-border space-y-3 shadow-xs"
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <div>
-                          <h5 className="font-bold text-sm text-foreground">
-                            {comp.name}
-                          </h5>
-                          <span className="text-[10px] font-mono text-gray-500 block">
-                            رمز: {comp.code} • {comp.bookingMethod}
-                          </span>
-                        </div>
-
-                        <button
-                          type="button"
-                          onClick={() => handleToggleCompany(comp)}
-                          className={`px-2.5 py-1 rounded-full text-[10px] font-bold border transition-colors cursor-pointer ${comp.isActive
-                            ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20'
-                            : 'bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20'
-                            }`}
-                        >
-                          {comp.isActive ? 'مفعلة للحرفيين ✓' : 'معطلة ✕'}
-                        </button>
-                      </div>
-
-                      {comp.contactPhone && (
-                        <div className="text-xs text-black/60 dark:text-white/60 flex items-center gap-1.5">
-                          <Phone className="w-3.5 h-3.5 text-primary" />
-                          <span className="font-mono">{comp.contactPhone}</span>
-                        </div>
-                      )}
-
-                      {comp.pickupTerms && (
-                        <p className="text-[11px] text-black/60 dark:text-white/60 line-clamp-2 bg-black/[0.02] dark:bg-white/[0.02] p-2 rounded-lg">
-                          {comp.pickupTerms}
-                        </p>
-                      )}
-
-                      <div className="text-[10px] text-gray-400 flex items-center justify-between border-t border-black/5 dark:border-white/5 pt-2">
-                        <span>معتمدة من: {comp.approvedBy || 'النظام'}</span>
-                        <span>{comp.hasApiIntegration ? 'ربط API متوفر' : 'حجز خارجي'}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
             </div>
           )}
 
@@ -7748,15 +7475,13 @@ export const AdminDashboard: React.FC = () => {
               {/* Tracking Number & Quick Links */}
               <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/40 flex items-center justify-between">
                 <div>
-                  <span className="text-[10px] text-amber-800 dark:text-amber-300 font-bold block">رقم بوليصة التتبع (Tracking Number):</span>
+                  <span className="text-[10px] text-amber-800 dark:text-amber-300 font-bold block">مرجع الشحنة (Reference):</span>
                   <span className="font-mono text-base font-black text-amber-950 dark:text-amber-100">
                     {trackingModalOrder.trackingNumber || 'غير متوفر'}
                   </span>
-                  {trackingModalOrder.shippingCompanyName && (
-                    <span className="text-[11px] font-bold text-gray-500 block mt-0.5">
-                      شركة الشحن: {trackingModalOrder.shippingCompanyName}
-                    </span>
-                  )}
+                  <span className="text-[11px] font-bold text-gray-500 block mt-0.5">
+                    طريقة الشحن: شحن مباشر بالتنسيق بين الورشة والمشتري
+                  </span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <button

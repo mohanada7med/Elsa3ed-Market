@@ -1433,14 +1433,15 @@ export const ProductDetailsView: React.FC = () => {
                     type="button"
                     onClick={() =>
                       openChatWithArtisan({
+                        sellerId: product.sellerId,
                         productId: product.id,
-                        initialMessage: `السلام عليكم، أود الاستفسار من إدارة المنصة حول عمل "${product.title}" المعروض على سوق وه.`,
+                        initialMessage: `السلام عليكم، أود التواصل مع الورشة حول منتج "${product.title}" وموعد وتفاصيل الشحن.`,
                       })
                     }
                     className="mt-3 flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl border border-primary/20 bg-primary/5 px-4 text-xs font-bold text-[#7b542b] transition hover:bg-primary/10 dark:border-[#C99444]/20 dark:bg-[#C99444]/5 dark:text-primary-hover dark:hover:bg-primary-hover/10"
                   >
                     <MessageSquare size={16} />
-                    استفسار لإدارة المنصة حول هذا المنتج
+                    تواصل مع البائع / الورشة حول هذا المنتج
                   </button>
                 </>
               ) : isOwner ? (
