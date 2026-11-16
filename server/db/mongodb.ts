@@ -57,6 +57,36 @@ const globalCache: MongoGlobalCache = (globalThis as any).__mongoCache || {
 };
 (globalThis as any).__mongoCache = globalCache;
 
+// Initial authentic Upper Egypt platform coupons
+export const INITIAL_DISCOUNTS: DiscountCouponDocument[] = [
+  {
+    id: 'disc-omda10',
+    code: 'OMDA10',
+    discountPercent: 10,
+    minOrderValue: 150,
+    maxDiscount: 100,
+    active: true,
+    validUntil: undefined,
+    usageCount: 0,
+    description: 'كوبون هدية أبطال اختبار العمدة ومعلومات الصعيد (خصم 10%)',
+    createdAt: '2025-01-01T00:00:00.000Z',
+    updatedAt: '2025-01-01T00:00:00.000Z'
+  },
+  {
+    id: 'disc-saeed10',
+    code: 'SAEED10',
+    discountPercent: 10,
+    minOrderValue: 200,
+    maxDiscount: 150,
+    active: true,
+    validUntil: undefined,
+    usageCount: 0,
+    description: 'كوبون ترحيبي لزوار ومتسوقي سوق الصعيد (خصم 10%)',
+    createdAt: '2025-01-01T00:00:00.000Z',
+    updatedAt: '2025-01-01T00:00:00.000Z'
+  }
+];
+
 // Clean in-memory storage with default platform categories
 class MemoryStore {
   products: Product[] = [];
@@ -66,7 +96,7 @@ class MemoryStore {
   users: UserProfile[] = [];
   carts: CartDocument[] = [];
   orders: OrderDocument[] = [];
-  discounts: DiscountCouponDocument[] = [];
+  discounts: DiscountCouponDocument[] = [...INITIAL_DISCOUNTS];
   reviews: ReviewDocument[] = [];
   stockMovements: StockMovementDocument[] = [];
   craftStories: CraftStoryDocument[] = [];
@@ -455,6 +485,20 @@ async function seedMongoDatabase(database: Db) {
     const eventsCount = await database.collection('wah_events').countDocuments().catch(() => 0);
     if (eventsCount === 0) {
       Logger.info('[MongoDB] wah_events collection is ready');
+    }
+
+    // Clean up any legacy mock / dead fake coupons from MongoDB
+    await database.collection('discounts').deleteMany({
+      code: { $in: ['SAEED100', 'ASWAN20', 'RAMADAN', 'TEST10'] }
+    }).catch(() => {});
+
+    // Ensure authentic platform coupons exist
+    for (const initCoupon of INITIAL_DISCOUNTS) {
+      await database.collection('discounts').updateOne(
+        { code: initCoupon.code },
+        { $setOnInsert: initCoupon },
+        { upsert: true }
+      ).catch(() => {});
     }
 
     // Parallel index creation grouped by collection to ensure optimal performance and integrity

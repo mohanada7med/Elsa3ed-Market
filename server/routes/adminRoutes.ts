@@ -1423,8 +1423,8 @@ router.post('/discounts', async (req: AuthenticatedRequest, res: Response) => {
   }
 });
 
-// PUT /api/admin/discounts/:id - Update discount
-router.put('/discounts/:id', async (req: AuthenticatedRequest, res: Response) => {
+// PUT & PATCH /api/admin/discounts/:id - Update discount
+const handleUpdateDiscount = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const updated = await updateDiscount(req.params.id, req.body);
     res.json({
@@ -1439,7 +1439,10 @@ router.put('/discounts/:id', async (req: AuthenticatedRequest, res: Response) =>
       error: error?.message || 'فشل تعديل كود الخصم'
     });
   }
-});
+};
+
+router.put('/discounts/:id', handleUpdateDiscount);
+router.patch('/discounts/:id', handleUpdateDiscount);
 
 // DELETE /api/admin/discounts/:id - Delete discount
 router.delete('/discounts/:id', async (req: AuthenticatedRequest, res: Response) => {

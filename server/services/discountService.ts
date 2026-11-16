@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb';
 import { memoryDb, getDatabase } from '../db/mongodb.ts';
 import type { DiscountCouponDocument } from '../models/types.ts';
 
@@ -8,18 +9,41 @@ export interface DiscountValidationResult {
   message?: string;
 }
 
+/**
+ * Builds an $or query array to match a coupon by its custom `id`, `code`, or MongoDB `_id`.
+ */
+function buildCouponQueryFilters(idOrCode: string): any[] {
+  const clean = idOrCode.trim();
+  const filters: any[] = [{ id: clean }, { code: clean.toUpperCase() }];
+  if (ObjectId.isValid(clean) && clean.length === 24) {
+    try {
+      filters.push({ _id: new ObjectId(clean) });
+    } catch {
+      // Ignore invalid ObjectId format
+    }
+  }
+  return filters;
+}
+
 export async function getActiveCoupon(code: string): Promise<DiscountCouponDocument | null> {
   const cleanCode = code.trim().toUpperCase();
-  const { db, isMongo } = await getDatabase();
+  if (!cleanCode) return null;
 
+  const { db, isMongo } = await getDatabase();
   let coupon: DiscountCouponDocument | null = null;
 
   if (isMongo && db) {
     try {
-      coupon = (await db.collection('discounts').findOne({
+      const doc = await db.collection('discounts').findOne({
         code: cleanCode,
         active: true
-      })) as unknown as DiscountCouponDocument | null;
+      });
+      if (doc) {
+        coupon = {
+          ...(doc as any),
+          id: (doc as any).id || doc._id?.toString()
+        };
+      }
     } catch (e) {
       console.error('[DiscountService] Error fetching coupon from Mongo:', e);
     }
@@ -33,9 +57,16 @@ export async function getActiveCoupon(code: string): Promise<DiscountCouponDocum
     return null;
   }
 
-  // Check expiration
-  if (coupon.validUntil && new Date(coupon.validUntil) < new Date()) {
-    return null;
+  // Check expiration if validUntil is specified
+  if (coupon.validUntil) {
+    const expiryDate = new Date(coupon.validUntil);
+    // If only a date string was provided without time (e.g. YYYY-MM-DD), count until end of day
+    if (!coupon.validUntil.includes('T')) {
+      expiryDate.setHours(23, 59, 59, 999);
+    }
+    if (expiryDate.getTime() < Date.now()) {
+      return null;
+    }
   }
 
   return coupon;
@@ -111,7 +142,12 @@ export async function getAllDiscounts(): Promise<DiscountCouponDocument[]> {
   if (isMongo && db) {
     try {
       const discounts = await db.collection('discounts').find({}).sort({ createdAt: -1 }).toArray();
-      return discounts as unknown as DiscountCouponDocument[];
+      if (discounts && discounts.length > 0) {
+        return discounts.map((d: any) => ({
+          ...d,
+          id: d.id || d._id?.toString()
+        })) as unknown as DiscountCouponDocument[];
+      }
     } catch (e) {
       console.error('[DiscountService] Error fetching discounts from Mongo:', e);
     }
@@ -129,18 +165,30 @@ export async function createDiscount(data: {
   description?: string;
 }): Promise<DiscountCouponDocument> {
   const cleanCode = data.code.trim().toUpperCase();
+  if (!cleanCode) {
+    throw new Error('كود الخصم مطلوب');
+  }
+
+  const discountPercent = Number(data.discountPercent);
+  if (isNaN(discountPercent) || discountPercent < 1 || discountPercent > 95) {
+    throw new Error('نسبة الخصم يجب أن تكون بين 1% و 95%');
+  }
+
+  const minOrderValue = Math.max(0, Number(data.minOrderValue || 0));
+  const maxDiscount = data.maxDiscount ? Math.max(1, Number(data.maxDiscount)) : undefined;
+
   const id = `coupon-${Date.now()}`;
   const now = new Date().toISOString();
 
   const newCoupon: DiscountCouponDocument = {
     id,
     code: cleanCode,
-    discountPercent: Number(data.discountPercent),
-    maxDiscount: data.maxDiscount !== undefined ? Number(data.maxDiscount) : undefined,
-    minOrderValue: Number(data.minOrderValue || 0),
+    discountPercent,
+    maxDiscount,
+    minOrderValue,
     active: data.active !== undefined ? Boolean(data.active) : true,
     validUntil: data.validUntil || undefined,
-    description: data.description || undefined,
+    description: data.description?.trim() || undefined,
     usageCount: 0,
     createdAt: now,
     updatedAt: now
@@ -149,17 +197,26 @@ export async function createDiscount(data: {
   const { db, isMongo } = await getDatabase();
   if (isMongo && db) {
     try {
+      const existing = await db.collection('discounts').findOne({ code: cleanCode });
+      if (existing) {
+        throw new Error(`كود الخصم "${cleanCode}" مسجل بالفعل`);
+      }
       await db.collection('discounts').insertOne(newCoupon as any);
+      // Keep memory store in sync
+      const existsInMem = memoryDb.discounts.some((d) => d.code === cleanCode);
+      if (!existsInMem) {
+        memoryDb.discounts.unshift(newCoupon);
+      }
       return newCoupon;
-    } catch (e) {
+    } catch (e: any) {
       console.error('[DiscountService] Error inserting discount in Mongo:', e);
-      throw new Error('كود الخصم موجود بالفعل أو حدث خطأ أثناء الحفظ');
+      throw new Error(e?.message || 'كود الخصم موجود بالفعل أو حدث خطأ أثناء الحفظ');
     }
   }
 
-  const exists = memoryDb.discounts.some(d => d.code === cleanCode);
+  const exists = memoryDb.discounts.some((d) => d.code === cleanCode);
   if (exists) {
-    throw new Error('كود الخصم موجود بالفعل');
+    throw new Error(`كود الخصم "${cleanCode}" مسجل بالفعل`);
   }
   memoryDb.discounts.unshift(newCoupon);
   return newCoupon;
@@ -172,24 +229,73 @@ export async function updateDiscount(
   const { db, isMongo } = await getDatabase();
   const now = new Date().toISOString();
   const updatePayload: any = { ...data, updatedAt: now };
+
+  // Crucial: remove MongoDB _id and fixed id from $set so driver doesn't throw immutable field error
+  delete updatePayload._id;
+  delete updatePayload.id;
+
   if (updatePayload.code) {
     updatePayload.code = updatePayload.code.trim().toUpperCase();
   }
+  if (updatePayload.discountPercent !== undefined) {
+    const pct = Number(updatePayload.discountPercent);
+    if (isNaN(pct) || pct < 1 || pct > 95) {
+      throw new Error('نسبة الخصم يجب أن تكون بين 1% و 95%');
+    }
+    updatePayload.discountPercent = pct;
+  }
+  if (updatePayload.minOrderValue !== undefined) {
+    updatePayload.minOrderValue = Math.max(0, Number(updatePayload.minOrderValue));
+  }
+  if (updatePayload.maxDiscount !== undefined) {
+    updatePayload.maxDiscount =
+      updatePayload.maxDiscount !== null && updatePayload.maxDiscount !== ''
+        ? Math.max(1, Number(updatePayload.maxDiscount))
+        : undefined;
+  }
+  if (updatePayload.active !== undefined) {
+    updatePayload.active = Boolean(updatePayload.active);
+  }
+  if (updatePayload.description !== undefined) {
+    updatePayload.description = updatePayload.description?.trim() || undefined;
+  }
+  if (updatePayload.validUntil !== undefined) {
+    updatePayload.validUntil = updatePayload.validUntil?.trim() || undefined;
+  }
+
+  const queryFilters = buildCouponQueryFilters(id);
 
   if (isMongo && db) {
     try {
       const res = await db.collection('discounts').findOneAndUpdate(
-        { $or: [{ id }, { _id: id as any }] },
+        { $or: queryFilters },
         { $set: updatePayload },
         { returnDocument: 'after' }
       );
-      if (res) return res as unknown as DiscountCouponDocument;
-    } catch (e) {
+      if (res) {
+        const doc = res as any;
+        const result: DiscountCouponDocument = {
+          ...doc,
+          id: doc.id || doc._id?.toString()
+        };
+        // Update memoryDb too
+        const mIdx = memoryDb.discounts.findIndex(
+          (d) => d.id === id || d.code.toUpperCase() === (result.code || '').toUpperCase()
+        );
+        if (mIdx !== -1) {
+          memoryDb.discounts[mIdx] = result;
+        }
+        return result;
+      }
+    } catch (e: any) {
       console.error('[DiscountService] Error updating discount in Mongo:', e);
+      throw new Error(e?.message || 'حدث خطأ أثناء تعديل كود الخصم');
     }
   }
 
-  const idx = memoryDb.discounts.findIndex(d => d.id === id);
+  const idx = memoryDb.discounts.findIndex(
+    (d) => d.id === id || d.code.toUpperCase() === id.toUpperCase()
+  );
   if (idx !== -1) {
     memoryDb.discounts[idx] = { ...memoryDb.discounts[idx], ...updatePayload };
     return memoryDb.discounts[idx];
@@ -199,30 +305,41 @@ export async function updateDiscount(
 
 export async function deleteDiscount(id: string): Promise<boolean> {
   const { db, isMongo } = await getDatabase();
+  const queryFilters = buildCouponQueryFilters(id);
+  let deleted = false;
+
   if (isMongo && db) {
     try {
       const res = await db.collection('discounts').deleteOne({
-        $or: [{ id }, { _id: id as any }]
+        $or: queryFilters
       });
-      return res.deletedCount > 0;
+      if (res.deletedCount > 0) {
+        deleted = true;
+      }
     } catch (e) {
       console.error('[DiscountService] Error deleting discount from Mongo:', e);
     }
   }
-  const idx = memoryDb.discounts.findIndex(d => d.id === id);
+
+  const idx = memoryDb.discounts.findIndex(
+    (d) => d.id === id || d.code.toUpperCase() === id.toUpperCase()
+  );
   if (idx !== -1) {
     memoryDb.discounts.splice(idx, 1);
-    return true;
+    deleted = true;
   }
-  return false;
+
+  return deleted;
 }
 
 export async function toggleDiscountStatus(id: string): Promise<DiscountCouponDocument> {
   const { db, isMongo } = await getDatabase();
+  const queryFilters = buildCouponQueryFilters(id);
+
   if (isMongo && db) {
     try {
       const current = await db.collection('discounts').findOne({
-        $or: [{ id }, { _id: id as any }]
+        $or: queryFilters
       });
       if (current) {
         const nextActive = !current.active;
@@ -231,14 +348,29 @@ export async function toggleDiscountStatus(id: string): Promise<DiscountCouponDo
           { $set: { active: nextActive, updatedAt: new Date().toISOString() } },
           { returnDocument: 'after' }
         );
-        return res as unknown as DiscountCouponDocument;
+        if (res) {
+          const doc = res as any;
+          const result: DiscountCouponDocument = {
+            ...doc,
+            id: doc.id || doc._id?.toString()
+          };
+          const mIdx = memoryDb.discounts.findIndex(
+            (d) => d.id === id || d.code === result.code
+          );
+          if (mIdx !== -1) {
+            memoryDb.discounts[mIdx] = result;
+          }
+          return result;
+        }
       }
     } catch (e) {
       console.error('[DiscountService] Error toggling discount in Mongo:', e);
     }
   }
 
-  const doc = memoryDb.discounts.find(d => d.id === id);
+  const doc = memoryDb.discounts.find(
+    (d) => d.id === id || d.code.toUpperCase() === id.toUpperCase()
+  );
   if (doc) {
     doc.active = !doc.active;
     doc.updatedAt = new Date().toISOString();

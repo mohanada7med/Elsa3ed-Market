@@ -986,7 +986,7 @@ export const CheckoutPage: React.FC = () => {
                           type="text"
                           value={couponCode}
                           onChange={(e) => setCouponCode(e.target.value)}
-                          placeholder="كود الخصم (جرب: SAEED100)"
+                          placeholder="كود الخصم (مثال: SAEED10)"
                           className="w-full pl-3 pr-9 py-2.5 text-xs bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-primary text-[#342b26] dark:text-[#eee2d7] transition-colors placeholder:text-black/40 dark:placeholder:text-white/40"
                         />
                       </div>

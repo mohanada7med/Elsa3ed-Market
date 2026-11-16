@@ -323,7 +323,7 @@ export const CartDrawer: React.FC = () => {
                         type="text"
                         value={couponInput}
                         onChange={(e) => setCouponInput(e.target.value)}
-                        placeholder="كود الخصم (جرب SAEED100)"
+                        placeholder="كود الخصم (مثال: SAEED10)"
                         aria-label="أدخل كود قسيمة الخصم الترويجية"
                         className="flex-1 px-3 py-2.5 text-sm sm:text-xs bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-espresso dark:text-cream rounded-[1rem] outline-none focus:border-primary min-h-[40px]"
                       />
