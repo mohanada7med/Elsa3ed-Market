@@ -16,3 +16,6 @@ build/
 .vscode/
 .idea/
 scratch/
+.next-feature-validation/
+public/**/originals/
+bun.lock

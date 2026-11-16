@@ -31,7 +31,6 @@ import {
 } from 'lucide-react';
 
 import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner';
-import { SocialStoryCardModal } from '../common/SocialStoryCardModal';
 
 interface QuizQuestion {
   id: string;
@@ -463,7 +462,6 @@ export const DialectDictionaryPage: React.FC = () => {
   const [score, setScore] = useState(0);
   const [completed, setCompleted] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [storyModalOpen, setStoryModalOpen] = useState(false);
 
   const [showIntro, setShowIntro] = useState(true);
   const [gameStarted, setGameStarted] = useState(false);
@@ -1144,15 +1142,6 @@ export const DialectDictionaryPage: React.FC = () => {
                 <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   <button
                     type="button"
-                    onClick={() => setStoryModalOpen(true)}
-                    className="sm:col-span-2 flex h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#C99444] to-[#B07A30] hover:opacity-95 text-[#1B1009] text-xs font-black transition-opacity shadow-md cursor-pointer"
-                  >
-                    <Sparkles size={15} />
-                    تصميم وتصدير بطاقة ستوري (Story Card)
-                  </button>
-
-                  <button
-                    type="button"
                     onClick={shareWhatsAppMessage}
                     className="sm:col-span-2 flex h-11 items-center justify-center gap-2 rounded-xl bg-[#25D366] hover:bg-[#1EBA59] text-white text-xs font-black transition-colors cursor-pointer"
                   >
@@ -1166,7 +1155,7 @@ export const DialectDictionaryPage: React.FC = () => {
                     className="sm:col-span-2 flex h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#E1306C] via-[#FD1D1D] to-[#F56040] text-white text-xs font-black transition-opacity hover:opacity-90 cursor-pointer"
                   >
                     <Share2 size={15} />
-                    مشاركة النتيجة ستوري
+                    مشاركة النتيجة
                   </button>
 
                   <button
@@ -1216,18 +1205,6 @@ export const DialectDictionaryPage: React.FC = () => {
       )}
 
 
-      {/* النافذة المنبثقة لبطاقة الستوري التراثية */}
-      <SocialStoryCardModal
-        isOpen={storyModalOpen}
-        onClose={() => setStoryModalOpen(false)}
-        type="quiz"
-        title={result.title}
-        subtitle="اختبار لهجة وتراث صعيد مصر • منصة وه"
-        badge={result.badge}
-        scoreText={`${score} من 10`}
-        image="/mascot/quiz.webp"
-        url={shareUrl}
-      />
 
     </WrapperTag>
   );
