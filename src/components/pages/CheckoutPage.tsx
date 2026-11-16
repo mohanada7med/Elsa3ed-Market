@@ -15,7 +15,8 @@ import {
   Banknote,
   Lock,
   Loader2,
-  ExternalLink
+  ExternalLink,
+  Tag
 } from 'lucide-react';
 
 export const CheckoutPage: React.FC = () => {
@@ -30,7 +31,9 @@ export const CheckoutPage: React.FC = () => {
     createOrder,
     cancelOrder,
     setActivePage,
-    addToast
+    addToast,
+    applyDiscountCode,
+    removeDiscountCode
   } = useApp();
 
   // Form State
@@ -43,6 +46,22 @@ export const CheckoutPage: React.FC = () => {
   const [address, setAddress] = useState('');
   const [notes, setNotes] = useState('');
   const [sellerTipAmount, setSellerTipAmount] = useState('0');
+  const [couponCode, setCouponCode] = useState('');
+  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
+
+  const handleApplyCoupon = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!couponCode.trim() || isApplyingCoupon) return;
+    setIsApplyingCoupon(true);
+    try {
+      const res = await applyDiscountCode(couponCode.trim());
+      if (res && res.success) {
+        setCouponCode('');
+      }
+    } finally {
+      setIsApplyingCoupon(false);
+    }
+  };
   const [sellerTipSellerId, setSellerTipSellerId] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<'paymob_card' | 'paymob_wallet' | 'cod'>('paymob_card');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -939,6 +958,47 @@ export const CheckoutPage: React.FC = () => {
                       );
                     })}
                   </div>
+                </div>
+
+                {/* Promo Code Input Box */}
+                <div className="mt-4 pt-4 border-t border-black/10 dark:border-white/10">
+                  {appliedDiscount ? (
+                    <div className="flex items-center justify-between p-3 bg-emerald-500/[0.08] dark:bg-emerald-950/30 border border-emerald-500/20 rounded-2xl text-xs">
+                      <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 font-bold min-w-0">
+                        <Tag className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                        <span className="truncate">
+                          تم تطبيق الكوبون <strong className="text-emerald-700 dark:text-emerald-300 font-black">{appliedDiscount.code}</strong> (خصم {appliedDiscount.discountPercent}%)
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={removeDiscountCode}
+                        className="text-xs text-rose-600 dark:text-rose-400 hover:underline font-bold cursor-pointer px-2.5 py-1 rounded-lg hover:bg-rose-500/10 shrink-0 transition-colors"
+                      >
+                        إلغاء
+                      </button>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleApplyCoupon} className="flex gap-2">
+                      <div className="relative flex-1">
+                        <Tag className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#998d83] dark:text-white/40 pointer-events-none" />
+                        <input
+                          type="text"
+                          value={couponCode}
+                          onChange={(e) => setCouponCode(e.target.value)}
+                          placeholder="كود الخصم (جرب: SAEED100)"
+                          className="w-full pl-3 pr-9 py-2.5 text-xs bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-primary text-[#342b26] dark:text-[#eee2d7] transition-colors placeholder:text-black/40 dark:placeholder:text-white/40"
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        disabled={!couponCode.trim() || isApplyingCoupon}
+                        className="px-4 py-2.5 bg-primary hover:bg-primary-hover disabled:opacity-50 text-white rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer shadow-sm active:scale-95 flex items-center justify-center gap-1.5 min-w-[70px]"
+                      >
+                        {isApplyingCoupon ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'تطبيق'}
+                      </button>
+                    </form>
+                  )}
                 </div>
 
                 {/* Price breakdown */}

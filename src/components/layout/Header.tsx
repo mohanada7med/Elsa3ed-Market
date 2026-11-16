@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import { PAGE_ROUTES, useApp } from '../../context/AppContext';
-import type { ActivePage } from '../../types';
+import type { ActivePage, GlobalSearchResult } from '../../types';
+import { wahApi } from '../../services/api';
 import { resolveNotificationNavigation } from '../../utils/notificationRouter';
 import {
   Menu,
@@ -37,6 +38,11 @@ import {
   User,
   HomeIcon,
   ChevronLeft,
+  TrendingUp,
+  History,
+  ArrowUpLeft,
+  Loader2,
+  Tag,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -459,6 +465,15 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
     chatUnreadCount,
     unreadNotificationsCount,
     openReportModal,
+    navigateToProduct,
+    navigateToSeller,
+    navigateToGovernorate,
+    navigateToPlace,
+    navigateToFood,
+    navigateToEvent,
+    navigateToPerson,
+    products,
+    sellers,
   } = useApp();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -466,6 +481,134 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [searchOverlayOpen, setSearchOverlayOpen] = useState(false);
   const [hoveredPortalId, setHoveredPortalId] = useState<string | null>(null);
+
+  // Live Instant Predictive Search State
+  const [liveResults, setLiveResults] = useState<GlobalSearchResult[]>([]);
+  const [isLiveSearching, setIsLiveSearching] = useState(false);
+  const [searchCategory, setSearchCategory] = useState<'all' | 'product' | 'seller' | 'food' | 'place'>('all');
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+
+  // Load recent searches from localStorage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('wah_recent_searches');
+      if (saved) setRecentSearches(JSON.parse(saved));
+    } catch {}
+  }, []);
+
+  const saveRecentSearch = (term: string) => {
+    const clean = term.trim();
+    if (!clean) return;
+    setRecentSearches(prev => {
+      const updated = [clean, ...prev.filter(t => t !== clean)].slice(0, 6);
+      try { localStorage.setItem('wah_recent_searches', JSON.stringify(updated)); } catch {}
+      return updated;
+    });
+  };
+
+  const clearRecentSearches = () => {
+    setRecentSearches([]);
+    try { localStorage.removeItem('wah_recent_searches'); } catch {}
+  };
+
+  // Debounced Live Search Effect
+  useEffect(() => {
+    const query = searchQuery.trim();
+    if (query.length < 2) {
+      setLiveResults([]);
+      setIsLiveSearching(false);
+      return;
+    }
+
+    let active = true;
+    setIsLiveSearching(true);
+    const timer = setTimeout(async () => {
+      try {
+        const data = await wahApi.globalSearch(query);
+        if (!active) return;
+        if (Array.isArray(data) && data.length > 0) {
+          setLiveResults(data);
+        } else {
+          // Client fallback across products & sellers
+          const localMatches: GlobalSearchResult[] = [];
+          (products || []).forEach(p => {
+            if (p.title?.toLowerCase().includes(query.toLowerCase()) || p.description?.toLowerCase().includes(query.toLowerCase())) {
+              localMatches.push({
+                id: p.id,
+                slug: p.id,
+                title: p.title,
+                type: 'product',
+                typeLabel: 'منتج صعيدي',
+                subtitle: `${p.price} ج.م • ${p.sellerGovernorate || 'صعيد مصر'}`,
+                coverImage: p.images?.[0] || '/mascot/pro.webp',
+                url: `/products/${p.id}`
+              });
+            }
+          });
+          (sellers || []).forEach(s => {
+            if (s.name?.toLowerCase().includes(query.toLowerCase()) || s.brandName?.toLowerCase().includes(query.toLowerCase())) {
+              localMatches.push({
+                id: s.id,
+                slug: s.id,
+                title: s.brandName || s.name,
+                type: 'seller',
+                typeLabel: 'شيخ صنعة',
+                subtitle: `${s.specialty || 'حرفي'} • ${s.governorate || 'صعيد مصر'}`,
+                coverImage: s.avatar || s.coverImage || '/mascot/make.webp',
+                url: `/sellers/${s.id}`
+              });
+            }
+          });
+          setLiveResults(localMatches);
+        }
+      } catch {
+        if (active) setLiveResults([]);
+      } finally {
+        if (active) setIsLiveSearching(false);
+      }
+    }, 220);
+
+    return () => {
+      active = false;
+      clearTimeout(timer);
+    };
+  }, [searchQuery, products, sellers]);
+
+  const filteredResults = useMemo(() => {
+    if (searchCategory === 'all') return liveResults;
+    if (searchCategory === 'place') return liveResults.filter(r => r.type === 'place' || r.type === 'governorate');
+    return liveResults.filter(r => r.type === searchCategory);
+  }, [liveResults, searchCategory]);
+
+  const handleSelectResult = (item: GlobalSearchResult) => {
+    saveRecentSearch(item.title);
+    setSearchOverlayOpen(false);
+    switch (item.type) {
+      case 'product':
+        navigateToProduct(item.id || item.slug);
+        break;
+      case 'seller':
+        navigateToSeller(item.id || item.slug);
+        break;
+      case 'food':
+        navigateToFood(item.slug);
+        break;
+      case 'place':
+        navigateToPlace(item.slug);
+        break;
+      case 'governorate':
+        navigateToGovernorate(item.slug);
+        break;
+      case 'event':
+        navigateToEvent(item.slug);
+        break;
+      case 'person':
+        navigateToPerson(item.slug);
+        break;
+      default:
+        setActivePage('products');
+    }
+  };
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const profileMenuRef = useRef<HTMLDivElement>(null);
@@ -524,9 +667,15 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
 
   const handleSearchSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    if (!searchQuery.trim()) return;
-    setActivePage('products');
+    const q = searchQuery.trim();
+    if (!q) return;
+    saveRecentSearch(q);
     setSearchOverlayOpen(false);
+    if (filteredResults.length === 1) {
+      handleSelectResult(filteredResults[0]);
+    } else {
+      setActivePage('global-search');
+    }
   };
 
   const roleNavLinks = useMemo(() => {
@@ -1742,24 +1891,231 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     borderColor,
                   }}
                 >
-                  <Search size={18} style={{ color: secondaryText }} />
+                  {isLiveSearching ? (
+                    <Loader2 size={18} className="animate-spin text-primary shrink-0" />
+                  ) : (
+                    <Search size={18} style={{ color: secondaryText }} className="shrink-0" />
+                  )}
                   <input
                     ref={searchInputRef}
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="ابحث عن منتج، ورشة، مكان..."
+                    placeholder="ابحث عن منتج، ورشة، مكان، أكلة..."
                     className="h-12 min-w-0 flex-1 bg-transparent text-sm font-bold outline-none placeholder:opacity-60"
                     style={{ color: mainText }}
                   />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery('')}
+                      className="text-xs text-foreground-muted hover:text-foreground cursor-pointer px-1"
+                      aria-label="مسح نص البحث"
+                    >
+                      <X size={15} />
+                    </button>
+                  )}
                   <button
                     type="submit"
-                    className="rounded-xl px-3 py-1.5 text-xs font-bold text-white cursor-pointer bg-primary"
+                    className="rounded-xl px-4 py-2 text-xs font-bold text-white cursor-pointer bg-primary hover:bg-primary-hover transition-colors shadow-sm"
                   >
                     دوّر
                   </button>
                 </div>
               </form>
+
+              {/* Dynamic Live Predictive Results or Trending Suggestions */}
+              {searchQuery.trim().length >= 2 ? (
+                <div className="mt-3">
+                  {/* Category Filter Chips */}
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+                    {[
+                      { id: 'all', label: `الكل (${liveResults.length})` },
+                      { id: 'product', label: 'منتجات', icon: ShoppingBag },
+                      { id: 'seller', label: 'ورش وصناع', icon: Store },
+                      { id: 'food', label: 'أكلات', icon: UtensilsCrossed },
+                      { id: 'place', label: 'معالم', icon: Landmark },
+                    ].map((tab) => (
+                      <button
+                        key={tab.id}
+                        type="button"
+                        onClick={() => setSearchCategory(tab.id as any)}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer shrink-0 ${
+                          searchCategory === tab.id
+                            ? 'bg-primary text-white shadow-xs'
+                            : 'bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-foreground-secondary'
+                        }`}
+                      >
+                        {tab.icon && <tab.icon size={12} />}
+                        <span>{tab.label}</span>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Results Box */}
+                  <div
+                    className="mt-2.5 rounded-2xl border p-2 shadow-2xl backdrop-blur-xl overflow-hidden max-h-[55vh] overflow-y-auto"
+                    style={{
+                      backgroundColor: isDark ? 'rgba(35, 18, 9, 0.96)' : 'rgba(255, 255, 255, 0.97)',
+                      borderColor,
+                    }}
+                  >
+                    {isLiveSearching && liveResults.length === 0 ? (
+                      <div className="py-12 text-center flex flex-col items-center justify-center gap-2">
+                        <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                        <p className="text-xs font-bold text-foreground-muted">جاري البحث في تراث وسوق الصعيد...</p>
+                      </div>
+                    ) : filteredResults.length > 0 ? (
+                      <div className="divide-y divide-black/5 dark:divide-white/5">
+                        {filteredResults.slice(0, 8).map((item) => (
+                          <div
+                            key={`${item.type}-${item.id || item.slug}`}
+                            onClick={() => handleSelectResult(item)}
+                            className="flex items-center gap-3 p-3 rounded-xl hover:bg-primary/10 transition-all cursor-pointer group"
+                          >
+                            <img
+                              src={item.coverImage || '/mascot/pro.webp'}
+                              alt={item.title}
+                              className="w-12 h-12 rounded-xl object-cover shrink-0 border border-black/10 dark:border-white/10"
+                              onError={(e) => {
+                                (e.currentTarget as HTMLImageElement).src = '/mascot/pro.webp';
+                              }}
+                            />
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <h4 className="text-xs font-black truncate text-foreground group-hover:text-primary transition-colors">
+                                  {item.title}
+                                </h4>
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#C99444]/15 text-[#C99444] shrink-0">
+                                  {item.typeLabel || item.type}
+                                </span>
+                              </div>
+                              {item.subtitle && (
+                                <p className="text-[11px] text-foreground-muted truncate mt-0.5">
+                                  {item.subtitle}
+                                </p>
+                              )}
+                            </div>
+                            <ArrowUpLeft className="w-4 h-4 text-foreground-muted group-hover:text-primary group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 transition-transform shrink-0" />
+                          </div>
+                        ))}
+
+                        {/* View all button */}
+                        <div className="p-2 pt-3 text-center">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              saveRecentSearch(searchQuery);
+                              setSearchOverlayOpen(false);
+                              setActivePage('global-search');
+                            }}
+                            className="text-xs font-bold text-primary hover:underline inline-flex items-center gap-1 cursor-pointer"
+                          >
+                            <span>عرض كل النتائج في صفحة البحث الشامل ({liveResults.length} نتيجة)</span>
+                            <ArrowLeft size={13} />
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="py-8 px-4 text-center">
+                        <img src="/mascot/empty-search.webp" alt="" className="w-20 h-20 mx-auto object-contain mb-3" />
+                        <p className="text-xs font-black text-foreground">ملقيناش نتائج تطابق &quot;{searchQuery}&quot;</p>
+                        <p className="text-[11px] text-foreground-muted mt-1">
+                          جرّب كلمة تانية، أو دوّر باسم المحافظة (قنا، أسوان) أو نوع الصنعة (كليم، فخار، تلي).
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div
+                  className="mt-4 rounded-2xl border p-4 shadow-xl"
+                  style={{
+                    backgroundColor: isDark ? 'rgba(35, 18, 9, 0.85)' : 'rgba(255, 255, 255, 0.9)',
+                    borderColor,
+                  }}
+                >
+                  {/* Trending Words */}
+                  <div>
+                    <div className="flex items-center gap-1.5 text-xs font-black text-primary mb-2.5">
+                      <TrendingUp size={14} />
+                      <span>أكثر الكلمات بحثاً في الصعيد</span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {['فخار قنا', 'كليم نوبي', 'فايش صعيدي', 'تلي أسيوط', 'عسل سدر', 'فضة يدوية', 'صنّاع أخميم'].map((word) => (
+                        <button
+                          key={word}
+                          type="button"
+                          onClick={() => setSearchQuery(word)}
+                          className="px-3 py-1.5 rounded-full text-xs font-bold border border-primary/20 bg-primary/5 hover:bg-primary hover:text-white transition-all cursor-pointer"
+                        >
+                          {word}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Quick Portals */}
+                  <div className="mt-5 pt-4 border-t border-black/5 dark:border-white/5">
+                    <div className="flex items-center gap-1.5 text-xs font-black text-foreground mb-2.5">
+                      <Sparkles size={14} className="text-[#C99444]" />
+                      <span>استكشف أقسام منصة وه</span>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {[
+                        { label: 'سوق الحرف', icon: ShoppingBag, page: 'products' },
+                        { label: 'شيوخ الصنعة', icon: Store, page: 'sellers' },
+                        { label: 'أكلات زمان', icon: UtensilsCrossed, page: 'food' },
+                        { label: 'معالم وآثار', icon: Landmark, page: 'places' },
+                      ].map((item) => (
+                        <button
+                          key={item.page}
+                          type="button"
+                          onClick={() => {
+                            setSearchOverlayOpen(false);
+                            setActivePage(item.page as any);
+                          }}
+                          className="flex items-center gap-2 p-2.5 rounded-xl border border-black/5 dark:border-white/5 bg-black/[0.02] dark:bg-white/[0.02] hover:bg-primary/10 hover:border-primary/30 transition-all text-right cursor-pointer"
+                        >
+                          <item.icon size={15} className="text-primary shrink-0" />
+                          <span className="text-xs font-bold text-foreground truncate">{item.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Recent Searches */}
+                  {recentSearches.length > 0 && (
+                    <div className="mt-5 pt-4 border-t border-black/5 dark:border-white/5">
+                      <div className="flex items-center justify-between text-xs font-bold text-foreground-muted mb-2">
+                        <div className="flex items-center gap-1.5">
+                          <History size={13} />
+                          <span>عمليات البحث الأخيرة</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={clearRecentSearches}
+                          className="text-[10px] text-rose-500 hover:underline cursor-pointer"
+                        >
+                          مسح السجل
+                        </button>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {recentSearches.map((term) => (
+                          <button
+                            key={term}
+                            type="button"
+                            onClick={() => setSearchQuery(term)}
+                            className="px-3 py-1 rounded-lg text-xs bg-black/5 dark:bg-white/5 hover:bg-black/10 text-foreground-secondary transition-colors cursor-pointer"
+                          >
+                            {term}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </motion.div>
           </motion.div>
         )}

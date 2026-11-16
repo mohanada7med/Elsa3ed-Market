@@ -27,9 +27,11 @@ import {
   X,
   Zap,
   Target,
+  Tag,
 } from 'lucide-react';
 
 import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner';
+import { SocialStoryCardModal } from '../common/SocialStoryCardModal';
 
 interface QuizQuestion {
   id: string;
@@ -453,7 +455,7 @@ const createQuiz = (): QuizQuestion[] => {
 };
 
 export const DialectDictionaryPage: React.FC = () => {
-  const { activePage, setActivePage } = useApp();
+  const { activePage, setActivePage, addToast } = useApp();
 
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -461,6 +463,7 @@ export const DialectDictionaryPage: React.FC = () => {
   const [score, setScore] = useState(0);
   const [completed, setCompleted] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [storyModalOpen, setStoryModalOpen] = useState(false);
 
   const [showIntro, setShowIntro] = useState(true);
   const [gameStarted, setGameStarted] = useState(false);
@@ -768,20 +771,20 @@ export const DialectDictionaryPage: React.FC = () => {
       )}
 
       {/* 2. شاشة البداية */}
-{showIntro && countdown === null && (
+      {showIntro && countdown === null && (
         <div className="relative z-10">
-<section className="mx-auto max-w-[1700px] px-5 pb-12 pt-0 sm:px-8 sm:pb-16 sm:px-12 xl:px-16">
-              <div className="grid gap-10 lg:grid-cols-[1fr_420px] lg:items-end lg:gap-20">
+          <section className="mx-auto max-w-[1700px] px-5 pb-12 pt-0 sm:px-8 sm:pb-16 sm:px-12 xl:px-16">
+            <div className="grid gap-10 lg:grid-cols-[1fr_420px] lg:items-end lg:gap-20">
               <div>
                 <div className="mb-3 flex items-center gap-2 text-[10px] font-extrabold tracking-normal text-primary dark:text-primary-hover sm:mb-6 sm:gap-3 sm:text-xs">
-  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent/10 sm:h-8 sm:w-8">
-    <Target size={14} className="text-accent" />
-  </span>
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent/10 sm:h-8 sm:w-8">
+                    <Target size={14} className="text-accent" />
+                  </span>
 
-  <span className="font-['Cairo'] tracking-normal">
-اختبار الصعيد / UPPER EGYPT QUIZ
-   </span>
-</div>
+                  <span className="font-['Cairo'] tracking-normal">
+                    اختبار الصعيد / UPPER EGYPT QUIZ
+                  </span>
+                </div>
 
                 <h1 className="max-w-6xl text-5xl sm:text-7xl lg:text-[8rem] font-black leading-[0.95] tracking-tight">
                   انت
@@ -1043,7 +1046,7 @@ export const DialectDictionaryPage: React.FC = () => {
           <div className="rounded-3xl border border-black/[0.08] bg-[#e8e0d2] p-6 sm:p-10 text-center dark:border-white/[0.08] dark:bg-[#121210]">
             <div className="max-w-xl mx-auto">
               <img
-                src={score >= 70 ? "/mascot/quiz.png" : "/mascot/empty-search.png"}
+                src={score >= 7 ? "/mascot/quiz.png" : "/mascot/empty-search.png"}
                 alt="نتيجة التحدي"
                 className="h-36 sm:h-44 w-auto mx-auto object-contain drop-shadow-xl mb-4 animate-fade-in"
               />
@@ -1091,6 +1094,33 @@ export const DialectDictionaryPage: React.FC = () => {
                 </div>
               )}
 
+              {/* هدية عم وه للفائزين */}
+              {score >= 8 && (
+                <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-[#C99444]/20 to-amber-500/15 border-2 border-[#C99444]/40 text-center animate-fade-in shadow-lg">
+                  <div className="flex items-center justify-center gap-2 text-amber-700 dark:text-[#C99444] font-black text-sm mb-1.5">
+                    <Sparkles size={16} />
+                    <span>هدية عم وه لعمدة الصعيد! 🎁</span>
+                  </div>
+                  <p className="text-xs text-black/70 dark:text-white/80 font-bold mb-3">
+                    عشانك صعيدي أصيل وودنك واعية للكلام، ليك خصم 10% على أي قطعة تختارها من شيوخ الصنعة:
+                  </p>
+                  <div className="inline-flex items-center gap-3 px-4 py-2 bg-white dark:bg-[#1a1815] border border-[#C99444] rounded-xl shadow-xs">
+                    <Tag size={16} className="text-[#C99444]" />
+                    <span className="font-mono text-sm font-black tracking-wider text-primary dark:text-[#C99444]">OMDA10</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard?.writeText('OMDA10');
+                        addToast('تم نسخ الكوبون!', 'استخدم كود OMDA10 في صفحة الدفع للحصول على خصم 10%', 'success');
+                      }}
+                      className="text-[11px] font-bold text-[#C99444] hover:underline px-2 py-0.5 rounded-md hover:bg-[#C99444]/10 cursor-pointer"
+                    >
+                      نسخ الكود
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* بطاقة المشاركة */}
               <div className="rounded-2xl bg-espresso p-5 sm:p-6 text-white text-right relative overflow-hidden mb-6">
                 <div className="flex items-center justify-between mb-3 border-b border-white/10 pb-3">
@@ -1114,13 +1144,21 @@ export const DialectDictionaryPage: React.FC = () => {
                 <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   <button
                     type="button"
+                    onClick={() => setStoryModalOpen(true)}
+                    className="sm:col-span-2 flex h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#C99444] to-[#B07A30] hover:opacity-95 text-[#1B1009] text-xs font-black transition-opacity shadow-md cursor-pointer"
+                  >
+                    <Sparkles size={15} />
+                    تصميم وتصدير بطاقة ستوري (Story Card)
+                  </button>
+
+                  <button
+                    type="button"
                     onClick={shareWhatsAppMessage}
                     className="sm:col-span-2 flex h-11 items-center justify-center gap-2 rounded-xl bg-[#25D366] hover:bg-[#1EBA59] text-white text-xs font-black transition-colors cursor-pointer"
                   >
                     <MessageCircle size={15} />
                     واتساب
                   </button>
-
 
                   <button
                     type="button"
@@ -1177,6 +1215,19 @@ export const DialectDictionaryPage: React.FC = () => {
         </section>
       )}
 
+
+      {/* النافذة المنبثقة لبطاقة الستوري التراثية */}
+      <SocialStoryCardModal
+        isOpen={storyModalOpen}
+        onClose={() => setStoryModalOpen(false)}
+        type="quiz"
+        title={result.title}
+        subtitle="اختبار لهجة وتراث صعيد مصر • منصة وه"
+        badge={result.badge}
+        scoreText={`${score} من 10`}
+        image="/mascot/quiz.webp"
+        url={shareUrl}
+      />
 
     </WrapperTag>
   );

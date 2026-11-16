@@ -41,6 +41,7 @@ import {
 
 import { getWhatsAppUrl } from '../common/WhatsAppButton';
 import { QrCodeModal } from '../common/QrCodeModal';
+import { SocialStoryCardModal } from '../common/SocialStoryCardModal';
 
 export const ProductDetailsView: React.FC = () => {
   const {
@@ -77,6 +78,7 @@ export const ProductDetailsView: React.FC = () => {
     (!effectiveProductId ? products[0] : undefined);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [storyModalOpen, setStoryModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<
     'desc' | 'specs' | 'reviews' | 'shipping'
   >('desc');
@@ -838,6 +840,15 @@ export const ProductDetailsView: React.FC = () => {
                   title="مشاركة على واتساب"
                 >
                   <MessageCircle size={17} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStoryModalOpen(true)}
+                  aria-label="تصدير بطاقة ستوري"
+                  className="flex h-11 w-11 items-center justify-center rounded-full border border-[#C99444]/40 bg-[#C99444]/20 text-[#C99444] backdrop-blur-xl transition hover:bg-[#C99444] hover:text-[#1A0E08] cursor-pointer"
+                  title="تصدير بطاقة ستوري"
+                >
+                  <Sparkles size={17} />
                 </button>
 
                 {(currentRole === 'buyer' ||
@@ -2645,6 +2656,22 @@ export const ProductDetailsView: React.FC = () => {
             </button>
           </div>
         </div>
+      )}
+      {product && (
+        <SocialStoryCardModal
+          isOpen={storyModalOpen}
+          onClose={() => setStoryModalOpen(false)}
+          type="product"
+          title={product.title}
+          subtitle={product.categoryName || 'مشغولات صعيدية أصلية'}
+          image={product.images?.[0]}
+          price={product.price}
+          originalPrice={product.originalPrice}
+          badge="صناعة يدوية 100%"
+          governorate={product.sellerGovernorate || product.specifications?.originGovernorate}
+          artisanName={product.sellerName}
+          url={typeof window !== 'undefined' ? `${window.location.origin}/products/${encodeURIComponent(product.id)}` : ''}
+        />
       )}
     </main>
   );
