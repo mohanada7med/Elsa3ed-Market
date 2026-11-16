@@ -1590,8 +1590,20 @@ export const api = {
     return json.data;
   },
 
-  async getAdminAuditLogs(user: { id: string; role: string }): Promise<AuditLog[]> {
-    const res = await fetch(`${API_BASE}/admin/audit-logs`, {
+  async getAdminAuditLogs(
+    user: { id: string; role: string },
+    filters?: { status?: string; role?: string; resource?: string; search?: string; limit?: number }
+  ): Promise<AuditLog[]> {
+    const params = new URLSearchParams();
+    if (filters?.status && filters.status !== 'all') params.append('status', filters.status);
+    if (filters?.role && filters.role !== 'all') params.append('role', filters.role);
+    if (filters?.resource && filters.resource !== 'all') params.append('resource', filters.resource);
+    if (filters?.search) params.append('search', filters.search);
+    if (filters?.limit) params.append('limit', String(filters.limit));
+    const query = params.toString() ? `?${params.toString()}` : '';
+
+    const res = await fetch(`${API_BASE}/admin/audit-logs${query}`, {
+      credentials: 'include',
       headers: getAuthHeaders(user)
     });
     const json: ApiResponse<AuditLog[]> = await res.json();

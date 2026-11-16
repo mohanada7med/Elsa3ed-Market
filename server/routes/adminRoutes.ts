@@ -12,7 +12,7 @@ import {
   updateProduct,
   createProduct
 } from '../services/productService.ts';
-import { getAuditLogs, deleteAuditLog, clearAllAuditLogs } from '../services/auditService.ts';
+import { getAuditLogs, deleteAuditLog, clearAllAuditLogs, createAuditLog } from '../services/auditService.ts';
 import {
   getAdminOrders,
   updateAdminOrderStatus,
@@ -783,6 +783,16 @@ router.put('/paid-promotion-requests/:id/activate', async (req: AuthenticatedReq
       paidAmount: Number(paidAmount),
       homepagePosition
     });
+    await createAuditLog({
+      actorId: req.user?.id,
+      userName: req.user?.name || 'مدير المنصة',
+      userRole: 'admin',
+      action: 'تفعيل إعلان ترويجي مدفوع',
+      resource: 'الإعلانات والترويج',
+      resourceId: req.params.id,
+      status: 'نجاح',
+      details: `تم تفعيل طلب الترويج المدفوع #${req.params.id} لمدة ${durationDays} يوم بقيمة ${paidAmount} ج.م`
+    }).catch(() => {});
     res.json({ success: true, message: 'تم تأكيد الدفع وتفعيل مساحة الترويج', data: request });
   } catch (error) {
     const message = (error as Error).message || 'تعذر تفعيل مساحة الترويج';
@@ -804,6 +814,15 @@ router.put('/paid-promotion', async (req: AuthenticatedRequest, res: Response) =
       paidAmount: Number(paidAmount),
       homepagePosition
     });
+    await createAuditLog({
+      actorId: req.user?.id,
+      userName: req.user?.name || 'مدير المنصة',
+      userRole: 'admin',
+      action: 'تعديل مساحة الترويج الرئيسية',
+      resource: 'الإعلانات والترويج',
+      status: 'نجاح',
+      details: `تم تعديل محتوى المساحة الترويجية بالرئيسية (${contentType}: ${contentId})`
+    }).catch(() => {});
     res.json({ success: true, message: 'تم تحديث مساحة الترشيح', data: promotion });
   } catch (error) {
     const message = (error as Error).message || 'تعذر تحديث مساحة الترشيح';
@@ -815,9 +834,18 @@ router.put('/paid-promotion', async (req: AuthenticatedRequest, res: Response) =
   }
 });
 
-router.delete('/paid-promotion', async (_req: AuthenticatedRequest, res: Response) => {
+router.delete('/paid-promotion', async (req: AuthenticatedRequest, res: Response) => {
   try {
     await removeActivePaidPromotion();
+    await createAuditLog({
+      actorId: req.user?.id,
+      userName: req.user?.name || 'مدير المنصة',
+      userRole: 'admin',
+      action: 'إيقاف مساحة الترويج',
+      resource: 'الإعلانات والترويج',
+      status: 'نجاح',
+      details: 'تم إيقاف وحذف مساحة الترويج الرئيسية النشطة'
+    }).catch(() => {});
     res.json({ success: true, message: 'تم إيقاف مساحة الترشيح' });
   } catch (error) {
     console.error('[AdminRoutes] Failed to remove active paid promotion:', error);
@@ -828,6 +856,16 @@ router.delete('/paid-promotion', async (_req: AuthenticatedRequest, res: Respons
 router.post('/paid-promotion-requests/:id/reject', async (req: AuthenticatedRequest, res: Response) => {
   try {
     await rejectPaidPromotionRequest(req.params.id);
+    await createAuditLog({
+      actorId: req.user?.id,
+      userName: req.user?.name || 'مدير المنصة',
+      userRole: 'admin',
+      action: 'رفض طلب ترويج مدفوع',
+      resource: 'الإعلانات والترويج',
+      resourceId: req.params.id,
+      status: 'تنبيه',
+      details: `تم رفض طلب الاشتراك الإعلاني #${req.params.id}`
+    }).catch(() => {});
     res.json({ success: true, message: 'تم رفض طلب الاشتراك' });
   } catch (error) {
     const message = (error as Error).message || 'تعذر رفض طلب الاشتراك';
@@ -1025,7 +1063,14 @@ router.put('/products/:id', async (req: AuthenticatedRequest, res: Response) => 
 // GET /api/admin/audit-logs - View audit trail
 router.get('/audit-logs', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const logs = await getAuditLogs();
+    const { status, role, resource, search, limit } = req.query;
+    const logs = await getAuditLogs({
+      status: status as string,
+      role: role as string,
+      resource: resource as string,
+      search: search as string,
+      limit: limit ? Number(limit) : 500
+    });
     res.json({
       success: true,
       count: logs.length,

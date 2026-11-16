@@ -278,10 +278,28 @@ export async function login(identifier: string, password: string): Promise<AuthS
 
   const user = await findUserByIdentifier(identifier);
   if (!user) {
+    await createAuditLog({
+      userName: identifier,
+      userRole: 'buyer',
+      action: 'محاولة تسجيل دخول فاشلة',
+      resource: 'users',
+      status: 'خطأ',
+      details: `محاولة تسجيل دخول فاشلة لمعرف غير مسجل: (${identifier})`
+    }).catch(() => {});
     throw new Error('اسم المستخدم أو كلمة المرور غير صحيحة');
   }
 
   if (!user.passwordHash && (user.googleUid || user.authProvider === 'google')) {
+    await createAuditLog({
+      actorId: user.id,
+      userName: user.name,
+      userRole: user.role,
+      action: 'تنبيه تسجيل دخول',
+      resource: 'users',
+      resourceId: user.id,
+      status: 'تنبيه',
+      details: `محاولة تسجيل دخول بكلمة مرور لحساب مسجل عبر Google: (${user.username || user.name})`
+    }).catch(() => {});
     throw new Error('هذا الحساب مسجّل عبر Google. اضغط على "المتابعة باستخدام Google" لتسجيل الدخول.');
   }
 
@@ -291,10 +309,30 @@ export async function login(identifier: string, password: string): Promise<AuthS
 
   const isMatch = await comparePassword(password, user.passwordHash);
   if (!isMatch) {
+    await createAuditLog({
+      actorId: user.id,
+      userName: user.name,
+      userRole: user.role,
+      action: 'محاولة تسجيل دخول فاشلة',
+      resource: 'users',
+      resourceId: user.id,
+      status: 'خطأ',
+      details: `محاولة تسجيل دخول بكلمة مرور خاطئة للحساب: (${user.username || user.name})`
+    }).catch(() => {});
     throw new Error('اسم المستخدم أو كلمة المرور غير صحيحة');
   }
 
   if (user.status === 'suspended' || user.status === 'blocked') {
+    await createAuditLog({
+      actorId: user.id,
+      userName: user.name,
+      userRole: user.role,
+      action: 'محاولة دخول بحساب موقوف',
+      resource: 'users',
+      resourceId: user.id,
+      status: 'تنبيه',
+      details: `محاولة تسجيل دخول بحساب موقوف/معلق: (${user.username || user.name})`
+    }).catch(() => {});
     throw new Error('تم تعليق هذا الحساب من قبل إدارة المنصة. يرجى التواصل مع الإدارة.');
   }
 

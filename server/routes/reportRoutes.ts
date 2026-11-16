@@ -9,6 +9,7 @@ import {
   updateAdminReport,
   deleteAdminReport
 } from '../services/reportService.ts';
+import { createAuditLog } from '../services/auditService.ts';
 
 const router = express.Router();
 
@@ -104,6 +105,17 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
       user
     );
 
+    await createAuditLog({
+      actorId: user.id,
+      userName: name || user.name || 'عميل',
+      userRole: user.role,
+      action: 'تقديم بلاغ / شكوى جديدة',
+      resource: 'الدعم والبلاغات',
+      resourceId: ticket.id,
+      status: 'تنبيه',
+      details: `تم تقديم تذكرة بلاغ جديدة بعنوان: "${ticket.subject}" (الأولوية: ${ticket.priority})`
+    }).catch(() => {});
+
     return res.status(201).json({
       success: true,
       message: 'تم إرسال بلاغك بنجاح وجاري مراجعته من الإدارة',
@@ -190,6 +202,17 @@ router.patch('/admin/:id', async (req: AuthenticatedRequest, res: Response) => {
       { id: req.user?.id || 'admin', name: req.user?.name || 'إدارة منصة وه' }
     );
 
+    await createAuditLog({
+      actorId: req.user?.id,
+      userName: req.user?.name || 'مدير المنصة',
+      userRole: 'admin',
+      action: 'تحديث حالة تذكرة بلاغ',
+      resource: 'الدعم والبلاغات',
+      resourceId: reportId,
+      status: 'نجاح',
+      details: `قام المسؤول بتحديث حالة التذكرة #${reportId} إلى "${status}"`
+    }).catch(() => {});
+
     return res.json({
       success: true,
       message: 'تم تحديث حالة البلاغ وحفظ الرد بنجاح',
@@ -218,6 +241,17 @@ router.delete('/admin/:id', async (req: AuthenticatedRequest, res: Response) => 
     if (!success) {
       return res.status(404).json({ success: false, error: 'البلاغ غير موجود أو تم حذفه مسبقاً' });
     }
+
+    await createAuditLog({
+      actorId: req.user?.id,
+      userName: req.user?.name || 'مدير المنصة',
+      userRole: 'admin',
+      action: 'حذف تذكرة بلاغ',
+      resource: 'الدعم والبلاغات',
+      resourceId: reportId,
+      status: 'تنبيه',
+      details: `قام المسؤول بحذف تذكرة البلاغ #${reportId} نهائياً`
+    }).catch(() => {});
 
     return res.json({
       success: true,

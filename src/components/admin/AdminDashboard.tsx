@@ -181,6 +181,56 @@ export const AdminDashboard: React.FC = () => {
   const [adminReelSearchTerm, setAdminReelSearchTerm] = useState('');
   const [adminReelGovFilter, setAdminReelGovFilter] = useState('all');
 
+  // Audit Logs Filter & Search State
+  const [auditSearchTerm, setAuditSearchTerm] = useState('');
+  const [auditStatusFilter, setAuditStatusFilter] = useState<'all' | 'نجاح' | 'تنبيه' | 'خطأ'>('all');
+  const [auditRoleFilter, setAuditRoleFilter] = useState<'all' | 'admin' | 'seller' | 'buyer'>('all');
+  const [auditResourceFilter, setAuditResourceFilter] = useState('all');
+  const [expandedAuditLogId, setExpandedAuditLogId] = useState<string | null>(null);
+
+  const auditStats = useMemo(() => {
+    let success = 0;
+    let warning = 0;
+    let error = 0;
+    for (const log of auditLogs) {
+      if (log.status === 'نجاح') success++;
+      else if (log.status === 'تنبيه') warning++;
+      else if (log.status === 'خطأ') error++;
+    }
+    return {
+      total: auditLogs.length,
+      success,
+      warning,
+      error
+    };
+  }, [auditLogs]);
+
+  const uniqueAuditResources = useMemo(() => {
+    const set = new Set<string>();
+    for (const log of auditLogs) {
+      if (log.resource) set.add(log.resource);
+    }
+    return Array.from(set).sort();
+  }, [auditLogs]);
+
+  const filteredAuditLogs = useMemo(() => {
+    const q = auditSearchTerm.trim().toLowerCase();
+    return auditLogs.filter((log) => {
+      if (auditStatusFilter !== 'all' && log.status !== auditStatusFilter) return false;
+      if (auditRoleFilter !== 'all' && log.userRole !== auditRoleFilter) return false;
+      if (auditResourceFilter !== 'all' && log.resource !== auditResourceFilter) return false;
+      if (!q) return true;
+      return (
+        (log.userName && log.userName.toLowerCase().includes(q)) ||
+        (log.action && log.action.toLowerCase().includes(q)) ||
+        (log.resource && log.resource.toLowerCase().includes(q)) ||
+        (log.details && log.details.toLowerCase().includes(q)) ||
+        (log.actorId && log.actorId.toLowerCase().includes(q)) ||
+        (log.resourceId && log.resourceId.toLowerCase().includes(q))
+      );
+    });
+  }, [auditLogs, auditSearchTerm, auditStatusFilter, auditRoleFilter, auditResourceFilter]);
+
   const refreshAdminReelsFromDb = async () => {
     try {
       const dbReels = await craftReelsService.fetchReelsFromDb();
@@ -319,6 +369,14 @@ export const AdminDashboard: React.FC = () => {
 
   // User Management Full Control State
   const [adminUsers, setAdminUsers] = useState<any[]>([]);
+  const [totalUsersCount, setTotalUsersCount] = useState<number>(0);
+  const [usersBreakdown, setUsersBreakdown] = useState<{ buyers: number; sellers: number; admins: number; active: number }>({
+    buyers: 0,
+    sellers: 0,
+    admins: 0,
+    active: 0
+  });
+  const [isLoadingTotalUsers, setIsLoadingTotalUsers] = useState<boolean>(false);
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [userSearchTerm, setUserSearchTerm] = useState('');
   const [userRoleFilter, setUserRoleFilter] = useState('all');
@@ -657,6 +715,27 @@ export const AdminDashboard: React.FC = () => {
     }
   };
 
+  const fetchTotalUsersCount = useCallback(async () => {
+    if (currentUser?.role !== 'admin') return;
+    setIsLoadingTotalUsers(true);
+    try {
+      const allUsers = await api.getAdminUsers({ id: currentUser.id, role: currentUser.role });
+      if (Array.isArray(allUsers)) {
+        setTotalUsersCount(allUsers.length);
+        const buyers = allUsers.filter((u: any) => u.role === 'buyer').length;
+        const sellers = allUsers.filter((u: any) => u.role === 'seller').length;
+        const admins = allUsers.filter((u: any) => u.role === 'admin').length;
+        const active = allUsers.filter((u: any) => u.status !== 'suspended').length;
+        setUsersBreakdown({ buyers, sellers, admins, active });
+        setAdminUsers((prev) => (prev.length === 0 ? allUsers : prev));
+      }
+    } catch (err) {
+      console.error('Failed fetching total users count:', err);
+    } finally {
+      setIsLoadingTotalUsers(false);
+    }
+  }, [currentUser]);
+
   const openUserDetails = async (userId: string) => {
     try {
       const details = await api.getAdminUserDetails(
@@ -744,6 +823,7 @@ export const AdminDashboard: React.FC = () => {
       addToast('تم التحديث', 'تم حفظ وتحديث بيانات المستخدم بنجاح', 'success');
       setSelectedUserForEdit(null);
       fetchAdminUsers();
+      fetchTotalUsersCount();
       if (selectedUserForDetails?.id === selectedUserForEdit.id) {
         openUserDetails(selectedUserForEdit.id);
       }
@@ -824,6 +904,7 @@ export const AdminDashboard: React.FC = () => {
       setNewUserWorkshopName('');
       setNewUserSpecialty('');
       fetchAdminUsers();
+      fetchTotalUsersCount();
     } catch (err: any) {
       addToast('خطأ في الإنشاء', err?.message || 'فشل في إنشاء الحساب', 'error');
     } finally {
@@ -842,6 +923,7 @@ export const AdminDashboard: React.FC = () => {
       addToast('تم حذف الحساب', res?.message || 'تم حذف الحساب وتنظيف أصوله وبياناته بنجاح', 'success');
       setSelectedUserForDelete(null);
       fetchAdminUsers();
+      fetchTotalUsersCount();
       refreshSellers();
     } catch (err: any) {
       addToast('خطأ في الحذف', err?.message || 'تعذر حذف الحساب', 'error');
@@ -1078,6 +1160,19 @@ export const AdminDashboard: React.FC = () => {
       return () => clearTimeout(timer);
     }
   }, [userSearchTerm]);
+
+  // Synchronize total platform users for overview
+  useEffect(() => {
+    if (currentUser?.role === 'admin') {
+      fetchTotalUsersCount();
+    }
+  }, [currentUser?.role, fetchTotalUsersCount]);
+
+  useEffect(() => {
+    if (activeTab === 'overview' && currentUser?.role === 'admin') {
+      fetchTotalUsersCount();
+    }
+  }, [activeTab, currentUser?.role, fetchTotalUsersCount]);
 
   const fetchPasswordResets = async () => {
     setIsLoadingPasswordResets(true);
@@ -1724,7 +1819,7 @@ export const AdminDashboard: React.FC = () => {
         {
           id: 'users' as const,
           label: 'إدارة المستخدمين والحسابات',
-          sublabel: `${adminUsers.length || '...'} حساب مسجل`,
+          sublabel: `${totalUsersCount || adminUsers.length || '...'} حساب مسجل`,
           icon: Users,
           elementId: 'admin-tab-users'
         },
@@ -2882,11 +2977,11 @@ export const AdminDashboard: React.FC = () => {
             {activeTab === 'overview' && (
               <div className="space-y-6">
                 {/* Overview Top Header with Refresh Button */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-espresso dark:bg-background  p-5 rounded-3xl border border-border shadow-xs">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-espresso dark:bg-background p-5 rounded-3xl border border-border shadow-xs">
                   <div>
                     <h2 className="font-black text-lg text-white dark:text-primary-hover">نظرة عامة على شغل المنصة</h2>
                     <p className="text-xs text-white dark:text-white mt-0.5">
-                      متابعة حية للمبيعات، ورش الصعيد، طابور الاعتماد وشحنات المحافظات
+                      متابعة حية للمستخدمين، المبيعات، ورش الصعيد، طابور الاعتماد وشحنات المحافظات
                     </p>
                   </div>
                   <RefreshDataButton
@@ -2894,14 +2989,42 @@ export const AdminDashboard: React.FC = () => {
                       await Promise.all([
                         refreshAdminProducts(),
                         refreshSellers(),
-                        refreshOrders()
+                        refreshOrders(),
+                        fetchTotalUsersCount()
                       ]);
                     }}
                     label="تحديث الأرقام"
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                  {/* Total Platform Users */}
+                  <div
+                    onClick={() => setActiveTab('users')}
+                    className="bg-surface backdrop-blur-xl p-5 rounded-2xl border border-border shadow-sm text-foreground hover:border-primary/50 transition-all cursor-pointer group"
+                    title="اضغط للانتقال لإدارة كافة المستخدمين والحسابات"
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs text-foreground-secondary block">إجمالي مستخدمي المنصة</span>
+                      <div className="w-7 h-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
+                        <Users className="w-3.5 h-3.5" />
+                      </div>
+                    </div>
+                    <span className="text-2xl font-black text-foreground font-black">
+                      {isLoadingTotalUsers ? (
+                        <RefreshCw className="w-5 h-5 animate-spin inline-block text-primary" />
+                      ) : (
+                        `${totalUsersCount.toLocaleString()} مستخدم`
+                      )}
+                    </span>
+                    <span className="text-[10px] text-primary dark:text-primary-hover font-bold block mt-1">
+                      {totalUsersCount > 0
+                        ? `${usersBreakdown.buyers} مشتري • ${usersBreakdown.sellers} ورشة • ${usersBreakdown.active} نشط`
+                        : 'كل الحسابات المسجلة'}
+                    </span>
+                  </div>
+
+                  {/* GMV Sales */}
                   <div className="bg-surface backdrop-blur-xl p-5 rounded-2xl border border-border shadow-sm text-foreground">
                     <span className="text-xs text-foreground-secondary block mb-1">إجمالي مبيعات المنصة (GMV)</span>
                     <span className="text-2xl font-black text-foreground font-black">{totalMarketplaceSales.toLocaleString()} ج.م</span>
@@ -2910,7 +3033,12 @@ export const AdminDashboard: React.FC = () => {
                     </span>
                   </div>
 
-                  <div className="bg-surface backdrop-blur-xl p-5 rounded-2xl border border-border shadow-sm text-foreground">
+                  {/* Sellers */}
+                  <div
+                    onClick={() => setActiveTab('sellers')}
+                    className="bg-surface backdrop-blur-xl p-5 rounded-2xl border border-border shadow-sm text-foreground hover:border-primary/50 transition-all cursor-pointer"
+                    title="اضغط للانتقال لقائمة الحرفيين والورش"
+                  >
                     <span className="text-xs text-foreground-secondary block mb-1">إجمالي الحرفيين والورش</span>
                     <span className="text-2xl font-black text-foreground font-black">{sellers.length} ورشة</span>
                     <span className="text-[10px] text-primary dark:text-primary-hover font-bold block mt-1">
@@ -2920,7 +3048,12 @@ export const AdminDashboard: React.FC = () => {
                     </span>
                   </div>
 
-                  <div className="bg-surface backdrop-blur-xl p-5 rounded-2xl border border-border shadow-sm text-foreground">
+                  {/* Products */}
+                  <div
+                    onClick={() => setActiveTab('approvals')}
+                    className="bg-surface backdrop-blur-xl p-5 rounded-2xl border border-border shadow-sm text-foreground hover:border-primary/50 transition-all cursor-pointer"
+                    title="اضغط للانتقال للمنتجات التراثية"
+                  >
                     <span className="text-xs text-foreground-secondary block mb-1">المنتجات الحرفية النشطة</span>
                     <span className="text-2xl font-black text-foreground font-black">
                       {adminProducts.filter((p) => p.approvalStatus === 'approved').length} قطعة
@@ -2932,7 +3065,12 @@ export const AdminDashboard: React.FC = () => {
                     </span>
                   </div>
 
-                  <div className="bg-surface backdrop-blur-xl p-5 rounded-2xl border border-border shadow-sm text-foreground">
+                  {/* Orders */}
+                  <div
+                    onClick={() => setActiveTab('orders')}
+                    className="bg-surface backdrop-blur-xl p-5 rounded-2xl border border-border shadow-sm text-foreground hover:border-primary/50 transition-all cursor-pointer"
+                    title="اضغط للانتقال لإدارة الطلبات"
+                  >
                     <span className="text-xs text-foreground-secondary block mb-1">طلبات الشحن المتنفذة</span>
                     <span className="text-2xl font-black text-foreground font-black">{activeOrders.length} شحنة</span>
                     <span className="text-[10px] text-foreground-secondary block mt-1">
@@ -5221,101 +5359,373 @@ export const AdminDashboard: React.FC = () => {
 
             {/* TAB 6: AUDIT LOGS */}
             {activeTab === 'audit' && (
-              <div className="bg-surface backdrop-blur-xl rounded-[2rem] border border-border p-6 shadow-sm space-y-4 text-foreground">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div>
-                    <h3 className="font-bold text-base text-foreground">سجل العمليات والنشاط (Audit Logs)</h3>
-                    <p className="text-xs text-black/60 dark:text-white/60">
-                      سجل بيوضح كل عمليات الاعتماد والرفض وتعديل المنتجات مع الوقت واسم المسؤول
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        confirmModal({
-                          title: 'مسح كامل سجل العمليات',
-                          message: 'هل أنت متأكد من مسح كامل سجل العمليات والنشاط؟ لا يمكن التراجع عن هذا الإجراء.',
-                          confirmText: 'تفريغ السجل',
-                          danger: true,
-                          onConfirm: async () => {
-                            await clearAuditLogs();
-                          }
-                        });
-                      }}
-                      className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-colors"
-                      title="مسح سجل العمليات بالكامل"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                      <span>مسح كامل السجل</span>
-                    </button>
-                    <RefreshDataButton
-                      onRefresh={refreshAuditLogs}
-                      label="تحديث السجل"
-                    />
+              <div className="space-y-6">
+                {/* Header & Controls */}
+                <div className="bg-surface backdrop-blur-xl rounded-[2rem] border border-border p-6 shadow-sm text-foreground">
+                  <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <div>
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-10 h-10 rounded-2xl bg-primary/10 text-primary flex items-center justify-center font-black">
+                          <FileText className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h3 className="font-black text-lg text-foreground flex items-center gap-2">
+                            سجل العمليات والنشاط والرقابة
+                            <span className="text-xs px-2.5 py-0.5 rounded-full bg-primary/10 text-primary font-bold">
+                              Audit Logs
+                            </span>
+                          </h3>
+                          <p className="text-xs text-foreground-secondary mt-0.5">
+                            رصد وتوثيق لحظي لكل العمليات الكبيرة والصغيرة (الإدارية، الحركات المالية، تعديلات الكوبونات، بلاغات الدعم، ومحاولات الأمان)
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2.5">
+                      <RefreshDataButton
+                        onRefresh={refreshAuditLogs}
+                        label="تحديث فوري للسجل"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          confirmModal({
+                            title: 'مسح كامل سجل العمليات',
+                            message: 'هل أنت متأكد من مسح كافة سجلات النشاط والرقابة المحفوظة؟ لا يمكن التراجع عن هذا الإجراء.',
+                            confirmText: 'تفريغ السجل بالكامل',
+                            danger: true,
+                            onConfirm: async () => {
+                              await clearAuditLogs();
+                            }
+                          });
+                        }}
+                        className="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-900/50 border border-rose-200 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer transition-all active:scale-95"
+                        title="مسح سجل العمليات بالكامل"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        <span>مسح كامل السجل</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
 
-                <div className="wah-table-container overflow-x-auto rounded-2xl border border-border">
-                  <table className="w-full text-xs text-right">
-                    <thead className="bg-black/5 dark:bg-cream/5 text-black/60 dark:text-white/60 border-b border-border">
-                      <tr>
-                        <th className="py-3 px-4 font-bold">الوقت والتاريخ</th>
-                        <th className="py-3 px-4 font-bold">المستخدم والدور</th>
-                        <th className="py-3 px-4 font-bold">العملية</th>
-                        <th className="py-3 px-4 font-bold">القسم / العنصر</th>
-                        <th className="py-3 px-4 font-bold">تفاصيل العملية</th>
-                        <th className="py-3 px-4 font-bold">الحالة</th>
-                        <th className="py-3 px-4 font-bold text-center">إجراءات</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-black/10 dark:divide-white/10">
-                      {auditLogs.map((log) => (
-                        <tr key={log.id} className="hover:bg-black/5 dark:bg-cream/5">
-                          <td className="py-3 px-4 font-black text-black/60 dark:text-white/60 whitespace-nowrap">{log.timestamp}</td>
-                          <td className="py-3 px-4 font-bold text-foreground">
-                            {log.userName}
-                            <span className="block text-[10px] text-black/60 dark:text-white/60 font-normal">{log.userRole}</span>
-                          </td>
-                          <td className="py-3 px-4 font-bold text-primary dark:text-primary-hover">{log.action}</td>
-                          <td className="py-3 px-4 text-foreground">{log.resource}</td>
-                          <td className="py-3 px-4 text-black/60 dark:text-white/60 max-w-xs">{log.details}</td>
-                          <td className="py-3 px-4">
-                            <span
-                              className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${log.status === 'نجاح'
-                                ? 'bg-emerald-100 text-emerald-800'
-                                : log.status === 'تنبيه'
-                                  ? 'bg-amber-100 text-amber-800'
-                                  : 'bg-rose-100 text-rose-800'
-                                }`}
-                            >
-                              {log.status}
-                            </span>
-                          </td>
-                          <td className="py-3 px-4 text-center">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                confirmModal({
-                                  title: 'حذف بند السجل',
-                                  message: 'هل أنت متأكد من رغبتك في حذف بند السجل هذا نهائياً؟',
-                                  confirmText: 'حذف',
-                                  danger: true,
-                                  onConfirm: async () => {
-                                    await deleteAuditLog(log.id);
-                                  }
-                                });
-                              }}
-                              className="p-1 rounded-lg hover:bg-rose-50 text-black/40 hover:text-rose-600 transition-colors cursor-pointer"
-                              title="حذف بند السجل"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </td>
+                {/* 4 KPI Metrics */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="bg-surface backdrop-blur-xl p-5 rounded-2xl border border-border shadow-sm flex items-center justify-between">
+                    <div>
+                      <span className="text-xs text-foreground-secondary font-bold block mb-1">إجمالي العمليات المسجلة</span>
+                      <span className="text-2xl font-black text-foreground">{auditStats.total}</span>
+                      <span className="text-[10px] text-foreground-secondary block mt-1">كافة الأنشطة الموثقة</span>
+                    </div>
+                    <div className="w-12 h-12 rounded-2xl bg-black/5 dark:bg-white/5 text-foreground flex items-center justify-center font-black">
+                      <FileText className="w-6 h-6" />
+                    </div>
+                  </div>
+
+                  <div className="bg-surface backdrop-blur-xl p-5 rounded-2xl border border-emerald-500/20 shadow-sm flex items-center justify-between">
+                    <div>
+                      <span className="text-xs text-emerald-600 dark:text-emerald-400 font-bold block mb-1">عمليات مكتملة بنجاح</span>
+                      <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400">{auditStats.success}</span>
+                      <span className="text-[10px] text-foreground-secondary block mt-1">اعتمادات، مبيعات، وتحديثات</span>
+                    </div>
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-black">
+                      <CheckCircle2 className="w-6 h-6" />
+                    </div>
+                  </div>
+
+                  <div className="bg-surface backdrop-blur-xl p-5 rounded-2xl border border-amber-500/20 shadow-sm flex items-center justify-between">
+                    <div>
+                      <span className="text-xs text-amber-600 dark:text-amber-400 font-bold block mb-1">تنبيهات وملاحظات</span>
+                      <span className="text-2xl font-black text-amber-600 dark:text-amber-400">{auditStats.warning}</span>
+                      <span className="text-[10px] text-foreground-secondary block mt-1">إلغاءات، رفض، وتنبيهات</span>
+                    </div>
+                    <div className="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-black">
+                      <AlertTriangle className="w-6 h-6" />
+                    </div>
+                  </div>
+
+                  <div className="bg-surface backdrop-blur-xl p-5 rounded-2xl border border-rose-500/20 shadow-sm flex items-center justify-between">
+                    <div>
+                      <span className="text-xs text-rose-600 dark:text-rose-400 font-bold block mb-1">محاولات أمنية وأخطاء</span>
+                      <span className="text-2xl font-black text-rose-600 dark:text-rose-400">{auditStats.error}</span>
+                      <span className="text-[10px] text-foreground-secondary block mt-1">فشل دخول ومحاولات مشبوهة</span>
+                    </div>
+                    <div className="w-12 h-12 rounded-2xl bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center font-black">
+                      <ShieldAlert className="w-6 h-6" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Filters & Search Toolbar */}
+                <div className="bg-surface backdrop-blur-xl rounded-2xl border border-border p-4 shadow-sm space-y-3">
+                  <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3">
+                    {/* Search Input */}
+                    <div className="relative flex-1">
+                      <Search className="w-4 h-4 text-foreground-secondary absolute right-3.5 top-1/2 -translate-y-1/2" />
+                      <input
+                        type="text"
+                        value={auditSearchTerm}
+                        onChange={(e) => setAuditSearchTerm(e.target.value)}
+                        placeholder="ابحث بالاسم، نوع العملية، القسم، المعرف، أو تفاصيل الحدث..."
+                        className="w-full bg-black/5 dark:bg-white/5 border border-border rounded-xl pr-10 pl-8 py-2.5 text-xs text-foreground placeholder:text-foreground-secondary focus:outline-none focus:border-primary transition-colors"
+                      />
+                      {auditSearchTerm && (
+                        <button
+                          type="button"
+                          onClick={() => setAuditSearchTerm('')}
+                          className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground-secondary hover:text-foreground"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Role Filter */}
+                    <div className="w-full md:w-44">
+                      <select
+                        value={auditRoleFilter}
+                        onChange={(e) => setAuditRoleFilter(e.target.value as any)}
+                        aria-label="تصفية حسب نوع الدور"
+                        className="w-full bg-black/5 dark:bg-white/5 border border-border rounded-xl px-3 py-2.5 text-xs text-foreground focus:outline-none focus:border-primary transition-colors cursor-pointer"
+                      >
+                        <option value="all">كافة الأدوار</option>
+                        <option value="admin">مدير المنصة (Admin)</option>
+                        <option value="seller">ورشة / بائع (Seller)</option>
+                        <option value="buyer">مشتري / عميل (Buyer)</option>
+                      </select>
+                    </div>
+
+                    {/* Resource Filter */}
+                    <div className="w-full md:w-44">
+                      <select
+                        value={auditResourceFilter}
+                        onChange={(e) => setAuditResourceFilter(e.target.value)}
+                        aria-label="تصفية حسب القسم أو العنصر"
+                        className="w-full bg-black/5 dark:bg-white/5 border border-border rounded-xl px-3 py-2.5 text-xs text-foreground focus:outline-none focus:border-primary transition-colors cursor-pointer"
+                      >
+                        <option value="all">كافة الأقسام والموارد</option>
+                        {uniqueAuditResources.map((res) => (
+                          <option key={res} value={res}>
+                            {res}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Status Pills & Active Count */}
+                  <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-border">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => setAuditStatusFilter('all')}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                          auditStatusFilter === 'all'
+                            ? 'bg-primary text-primary-foreground shadow-sm'
+                            : 'bg-black/5 dark:bg-white/5 text-foreground-secondary hover:text-foreground'
+                        }`}
+                      >
+                        الكل ({auditStats.total})
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setAuditStatusFilter('نجاح')}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                          auditStatusFilter === 'نجاح'
+                            ? 'bg-emerald-600 text-white shadow-sm'
+                            : 'bg-black/5 dark:bg-white/5 text-foreground-secondary hover:text-foreground'
+                        }`}
+                      >
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        نجاح ({auditStats.success})
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setAuditStatusFilter('تنبيه')}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                          auditStatusFilter === 'تنبيه'
+                            ? 'bg-amber-600 text-white shadow-sm'
+                            : 'bg-black/5 dark:bg-white/5 text-foreground-secondary hover:text-foreground'
+                        }`}
+                      >
+                        <AlertTriangle className="w-3.5 h-3.5" />
+                        تنبيه ({auditStats.warning})
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setAuditStatusFilter('خطأ')}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                          auditStatusFilter === 'خطأ'
+                            ? 'bg-rose-600 text-white shadow-sm'
+                            : 'bg-black/5 dark:bg-white/5 text-foreground-secondary hover:text-foreground'
+                        }`}
+                      >
+                        <ShieldAlert className="w-3.5 h-3.5" />
+                        خطأ ({auditStats.error})
+                      </button>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-xs text-foreground-secondary">
+                      <span>عرض {filteredAuditLogs.length} من أصل {auditLogs.length} عملية</span>
+                      {(auditSearchTerm || auditStatusFilter !== 'all' || auditRoleFilter !== 'all' || auditResourceFilter !== 'all') && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setAuditSearchTerm('');
+                            setAuditStatusFilter('all');
+                            setAuditRoleFilter('all');
+                            setAuditResourceFilter('all');
+                          }}
+                          className="text-primary hover:underline font-bold"
+                        >
+                          إعادة ضبط التصفية
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Audit Logs Table */}
+                <div className="bg-surface backdrop-blur-xl rounded-2xl border border-border shadow-sm overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-xs text-right">
+                      <thead className="bg-black/5 dark:bg-white/5 text-foreground-secondary border-b border-border">
+                        <tr>
+                          <th className="py-3.5 px-4 font-bold">الوقت والتاريخ</th>
+                          <th className="py-3.5 px-4 font-bold">المستخدم والدور</th>
+                          <th className="py-3.5 px-4 font-bold">العملية والحدث</th>
+                          <th className="py-3.5 px-4 font-bold">القسم / العنصر</th>
+                          <th className="py-3.5 px-4 font-bold">التفاصيل والبيانات</th>
+                          <th className="py-3.5 px-4 font-bold">الحالة</th>
+                          <th className="py-3.5 px-4 font-bold text-center">إجراءات</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody className="divide-y divide-border">
+                        {filteredAuditLogs.length === 0 ? (
+                          <tr>
+                            <td colSpan={7} className="py-12 text-center text-foreground-secondary">
+                              <div className="flex flex-col items-center justify-center gap-2">
+                                <FileText className="w-8 h-8 opacity-40" />
+                                <span className="font-bold">لا توجد سجلات مطابقة لمعايير البحث أو التصفية الحالية</span>
+                                <span className="text-[11px]">جرّب تغيير كلمات البحث أو إعادة تعيين الفلاتر</span>
+                              </div>
+                            </td>
+                          </tr>
+                        ) : (
+                          filteredAuditLogs.map((log) => {
+                            const isExpanded = expandedAuditLogId === log.id;
+                            const hasMetadata = log.metadata && Object.keys(log.metadata).length > 0;
+                            return (
+                              <tr key={log.id} className="hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+                                <td className="py-3.5 px-4 whitespace-nowrap">
+                                  <div className="flex items-center gap-1.5 text-foreground font-medium">
+                                    <Clock className="w-3.5 h-3.5 text-foreground-secondary flex-shrink-0" />
+                                    <span>{log.timestamp}</span>
+                                  </div>
+                                </td>
+                                <td className="py-3.5 px-4">
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-[11px]">
+                                      {log.userName ? log.userName.charAt(0) : '؟'}
+                                    </div>
+                                    <div>
+                                      <div className="font-bold text-foreground">{log.userName || 'غير معروف'}</div>
+                                      <span
+                                        className={`inline-block text-[10px] px-1.5 py-0.2 rounded font-bold ${
+                                          log.userRole === 'admin'
+                                            ? 'bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300'
+                                            : log.userRole === 'seller'
+                                            ? 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300'
+                                            : 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300'
+                                        }`}
+                                      >
+                                        {log.userRole === 'admin'
+                                          ? 'مدير المنصة'
+                                          : log.userRole === 'seller'
+                                          ? 'ورشة / بائع'
+                                          : 'مشتري / عميل'}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </td>
+                                <td className="py-3.5 px-4 font-bold text-foreground">
+                                  <span className="text-primary dark:text-primary-hover">{log.action}</span>
+                                </td>
+                                <td className="py-3.5 px-4">
+                                  <div className="flex flex-col gap-0.5">
+                                    <span className="font-medium text-foreground">{log.resource}</span>
+                                    {log.resourceId && (
+                                      <span className="text-[10px] text-foreground-secondary font-mono">
+                                        ID: {log.resourceId}
+                                      </span>
+                                    )}
+                                  </div>
+                                </td>
+                                <td className="py-3.5 px-4 max-w-sm">
+                                  <div className="text-foreground-secondary leading-relaxed">
+                                    {log.details}
+                                  </div>
+                                  {hasMetadata && (
+                                    <div className="mt-1.5">
+                                      <button
+                                        type="button"
+                                        onClick={() => setExpandedAuditLogId(isExpanded ? null : log.id)}
+                                        className="text-[10px] font-bold text-primary hover:underline flex items-center gap-1 cursor-pointer"
+                                      >
+                                        <span>{isExpanded ? 'إخفاء البيانات الإضافية' : 'عرض البيانات الإضافية'}</span>
+                                        <ChevronDown className={`w-3 h-3 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                                      </button>
+                                      {isExpanded && (
+                                        <div className="mt-1.5 p-2 bg-black/5 dark:bg-white/5 rounded-lg border border-border text-[10px] font-mono text-foreground overflow-x-auto">
+                                          <pre className="whitespace-pre-wrap">{JSON.stringify(log.metadata, null, 2)}</pre>
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
+                                </td>
+                                <td className="py-3.5 px-4 whitespace-nowrap">
+                                  <span
+                                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold ${
+                                      log.status === 'نجاح'
+                                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
+                                        : log.status === 'تنبيه'
+                                        ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 border border-amber-300 dark:border-amber-800'
+                                        : 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 border border-rose-300 dark:border-rose-800'
+                                    }`}
+                                  >
+                                    {log.status === 'نجاح' && <CheckCircle2 className="w-3 h-3" />}
+                                    {log.status === 'تنبيه' && <AlertTriangle className="w-3 h-3" />}
+                                    {log.status === 'خطأ' && <ShieldAlert className="w-3 h-3" />}
+                                    <span>{log.status}</span>
+                                  </span>
+                                </td>
+                                <td className="py-3.5 px-4 text-center whitespace-nowrap">
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      confirmModal({
+                                        title: 'حذف بند السجل',
+                                        message: 'هل أنت متأكد من رغبتك في حذف بند السجل هذا نهائياً؟',
+                                        confirmText: 'حذف',
+                                        danger: true,
+                                        onConfirm: async () => {
+                                          await deleteAuditLog(log.id);
+                                        }
+                                      });
+                                    }}
+                                    className="p-1.5 rounded-lg hover:bg-rose-50 text-foreground-secondary hover:text-rose-600 dark:hover:bg-rose-950/40 dark:hover:text-rose-300 transition-colors cursor-pointer"
+                                    title="حذف بند السجل"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                </td>
+                              </tr>
+                            );
+                          })
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             )}

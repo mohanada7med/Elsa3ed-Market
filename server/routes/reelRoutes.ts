@@ -8,6 +8,7 @@ import type { AuthenticatedRequest } from '../middleware/auth.ts';
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
 import type { CraftReelDocument, CraftReelCommentDocument } from '../models/types.ts';
 import { Logger } from '../utils/logger.ts';
+import { createAuditLog } from '../services/auditService.ts';
 
 import { storageService } from '../services/storage/storageProvider.ts';
 import { extractCloudinaryPublicId, cloudinaryStorage } from '../services/storage/cloudinaryProvider.ts';
@@ -808,16 +809,16 @@ router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =
     memoryDb.reels.unshift(newReel);
 
     // Audit Log
-    memoryDb.auditLogs.unshift({
-      id: `audit-${Date.now()}`,
+    await createAuditLog({
+      actorId: user.id,
       userName: user.name,
       userRole: user.role,
       action: 'إضافة فيديو ريلز جديد',
       resource: 'craft_reels',
-      timestamp: new Date().toISOString(),
+      resourceId: newReel.id,
       status: 'نجاح',
       details: `تم إضافة الفيديو "${newReel.title}" للورشة "${newReel.workshopName}" (${newReel.governorate}) [${newReel.id}]`
-    });
+    }).catch(() => {});
 
     Logger.info(`[Reels] Created new reel: ${newReel.id} by ${user.role} (${user.id}) - Cloudinary Public ID: ${resolvedPublicId || 'N/A'}`);
 
@@ -985,16 +986,16 @@ router.put('/:id', requireAuth, async (req: AuthenticatedRequest, res: Response)
     }
 
     // Audit Log
-    memoryDb.auditLogs.unshift({
-      id: `audit-${Date.now()}`,
+    await createAuditLog({
+      actorId: user.id,
       userName: user.name,
       userRole: user.role,
       action: 'تعديل مقطع فيديو ريلز',
       resource: 'craft_reels',
-      timestamp: new Date().toISOString(),
+      resourceId: id,
       status: 'نجاح',
       details: `قام ${user.name} بتعديل بيانات الفيديو "${updatedReel.title}" [${id}]`
-    });
+    }).catch(() => {});
 
     Logger.info(`[Reels] Updated reel ${id} by ${user.role} (${user.id})`);
 
@@ -1072,16 +1073,16 @@ router.delete('/:id', requireAuth, async (req: AuthenticatedRequest, res: Respon
     memoryDb.reels = memoryDb.reels.filter((r) => r.id !== id);
 
     // Audit Log
-    memoryDb.auditLogs.unshift({
-      id: `audit-${Date.now()}`,
+    await createAuditLog({
+      actorId: user.id,
       userName: user.name,
       userRole: user.role,
       action: 'حذف مقطع فيديو ريلز',
       resource: 'craft_reels',
-      timestamp: new Date().toISOString(),
+      resourceId: id,
       status: 'تنبيه',
       details: `تم حذف الفيديو "${existingReel.title}" من ورشة "${existingReel.workshopName}" بواسطة ${user.name} [${id}]`
-    });
+    }).catch(() => {});
 
     Logger.info(`[Reels] Deleted reel ${id} by ${user.role} (${user.id})`);
 
@@ -1146,16 +1147,15 @@ router.post('/bulk-delete', requireAuth, async (req: AuthenticatedRequest, res: 
     memoryDb.reels = memoryDb.reels.filter((r) => !ids.includes(r.id));
 
     // Audit Log
-    memoryDb.auditLogs.unshift({
-      id: `audit-${Date.now()}`,
+    await createAuditLog({
+      actorId: user.id,
       userName: user.name,
       userRole: user.role,
       action: 'حذف جماعي لفيديوهات ريلز',
       resource: 'craft_reels',
-      timestamp: new Date().toISOString(),
       status: 'تنبيه',
       details: `قام المدير ${user.name} بحذف ${ids.length} مقطع فيديو دفعة واحدة وتطهيرها من الكلاود`
-    });
+    }).catch(() => {});
 
     Logger.info(`[Reels] Bulk deleted ${ids.length} reels by admin (${user.id})`);
 

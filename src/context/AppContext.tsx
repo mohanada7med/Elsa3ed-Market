@@ -1398,7 +1398,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const refreshAuditLogs = useCallback(async () => {
     try {
       const logs = await api.getAdminAuditLogs({ id: currentUser.id, role: currentRole });
-      if (logs && logs.length > 0) {
+      if (Array.isArray(logs)) {
         setAuditLogs(logs);
       }
     } catch (e) {

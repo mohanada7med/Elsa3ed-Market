@@ -643,6 +643,18 @@ export async function cancelBuyerOrder(
     console.error('[OrderService] Error sending cancellation notifications:', notifErr);
   }
 
+  // Audit Log
+  await addAuditLog({
+    actorId: buyerId,
+    userName: order.buyerName || 'المشتري',
+    userRole: 'buyer',
+    action: 'إلغاء طلب شراء من المشتري',
+    resource: 'الطلبات',
+    resourceId: order.id,
+    status: 'تنبيه',
+    details: `قام المشتري بإلغاء الطلب #${order.orderNumber} بقيمة ${order.total} ج.م وتم استرجاع كميات المنتجات للمخزون تلقائياً`
+  }).catch(() => {});
+
   return order;
 }
 

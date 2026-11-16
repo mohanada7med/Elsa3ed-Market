@@ -420,11 +420,14 @@ export interface AuditLog {
   id: string;
   userName: string;
   userRole: UserRole;
+  actorId?: string;
   action: string;
   resource: string;
+  resourceId?: string;
   timestamp: string;
   status: 'نجاح' | 'تنبيه' | 'خطأ';
   details: string;
+  metadata?: Record<string, any>;
 }
 
 export interface UserProfile {

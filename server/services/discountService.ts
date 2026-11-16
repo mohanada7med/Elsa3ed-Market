@@ -1,6 +1,7 @@
 import { ObjectId } from 'mongodb';
 import { memoryDb, getDatabase } from '../db/mongodb.ts';
 import type { DiscountCouponDocument } from '../models/types.ts';
+import { createAuditLog } from './auditService.ts';
 
 export interface DiscountValidationResult {
   valid: boolean;
@@ -207,6 +208,15 @@ export async function createDiscount(data: {
       if (!existsInMem) {
         memoryDb.discounts.unshift(newCoupon);
       }
+      await createAuditLog({
+        userName: 'مدير المنصة',
+        userRole: 'admin',
+        action: 'إنشاء كود خصم جديد',
+        resource: 'كوبونات الخصم',
+        resourceId: newCoupon.id,
+        status: 'نجاح',
+        details: `تم إنشاء كود الخصم "${cleanCode}" بنسبة خصم ${discountPercent}% وحد أدنى ${minOrderValue} ج.م`
+      }).catch(() => {});
       return newCoupon;
     } catch (e: any) {
       console.error('[DiscountService] Error inserting discount in Mongo:', e);
@@ -219,6 +229,15 @@ export async function createDiscount(data: {
     throw new Error(`كود الخصم "${cleanCode}" مسجل بالفعل`);
   }
   memoryDb.discounts.unshift(newCoupon);
+  await createAuditLog({
+    userName: 'مدير المنصة',
+    userRole: 'admin',
+    action: 'إنشاء كود خصم جديد',
+    resource: 'كوبونات الخصم',
+    resourceId: newCoupon.id,
+    status: 'نجاح',
+    details: `تم إنشاء كود الخصم "${cleanCode}" بنسبة خصم ${discountPercent}% وحد أدنى ${minOrderValue} ج.م`
+  }).catch(() => {});
   return newCoupon;
 }
 
@@ -285,6 +304,15 @@ export async function updateDiscount(
         if (mIdx !== -1) {
           memoryDb.discounts[mIdx] = result;
         }
+        await createAuditLog({
+          userName: 'مدير المنصة',
+          userRole: 'admin',
+          action: 'تعديل كود خصم',
+          resource: 'كوبونات الخصم',
+          resourceId: result.id,
+          status: 'نجاح',
+          details: `تم تحديث بيانات كود الخصم "${result.code}" بنجاح (نسبة الخصم: ${result.discountPercent}%، الحد الأدنى: ${result.minOrderValue} ج.م)`
+        }).catch(() => {});
         return result;
       }
     } catch (e: any) {
@@ -298,6 +326,15 @@ export async function updateDiscount(
   );
   if (idx !== -1) {
     memoryDb.discounts[idx] = { ...memoryDb.discounts[idx], ...updatePayload };
+    await createAuditLog({
+      userName: 'مدير المنصة',
+      userRole: 'admin',
+      action: 'تعديل كود خصم',
+      resource: 'كوبونات الخصم',
+      resourceId: memoryDb.discounts[idx].id,
+      status: 'نجاح',
+      details: `تم تحديث بيانات كود الخصم "${memoryDb.discounts[idx].code}" بنجاح (نسبة الخصم: ${memoryDb.discounts[idx].discountPercent}%، الحد الأدنى: ${memoryDb.discounts[idx].minOrderValue} ج.م)`
+    }).catch(() => {});
     return memoryDb.discounts[idx];
   }
   throw new Error('كود الخصم غير موجود');
@@ -327,6 +364,18 @@ export async function deleteDiscount(id: string): Promise<boolean> {
   if (idx !== -1) {
     memoryDb.discounts.splice(idx, 1);
     deleted = true;
+  }
+
+  if (deleted) {
+    await createAuditLog({
+      userName: 'مدير المنصة',
+      userRole: 'admin',
+      action: 'حذف كود خصم',
+      resource: 'كوبونات الخصم',
+      resourceId: id,
+      status: 'تنبيه',
+      details: `تم حذف كود الخصم "${id}" نهائياً من قاعدة البيانات`
+    }).catch(() => {});
   }
 
   return deleted;
@@ -360,6 +409,15 @@ export async function toggleDiscountStatus(id: string): Promise<DiscountCouponDo
           if (mIdx !== -1) {
             memoryDb.discounts[mIdx] = result;
           }
+          await createAuditLog({
+            userName: 'مدير المنصة',
+            userRole: 'admin',
+            action: 'تغيير حالة كود خصم',
+            resource: 'كوبونات الخصم',
+            resourceId: result.id,
+            status: 'نجاح',
+            details: `تم ${result.active ? 'تفعيل' : 'تعطيل'} كود الخصم "${result.code}" مؤقتاً`
+          }).catch(() => {});
           return result;
         }
       }
@@ -374,6 +432,15 @@ export async function toggleDiscountStatus(id: string): Promise<DiscountCouponDo
   if (doc) {
     doc.active = !doc.active;
     doc.updatedAt = new Date().toISOString();
+    await createAuditLog({
+      userName: 'مدير المنصة',
+      userRole: 'admin',
+      action: 'تغيير حالة كود خصم',
+      resource: 'كوبونات الخصم',
+      resourceId: doc.id,
+      status: 'نجاح',
+      details: `تم ${doc.active ? 'تفعيل' : 'تعطيل'} كود الخصم "${doc.code}" مؤقتاً`
+    }).catch(() => {});
     return doc;
   }
   throw new Error('كود الخصم غير موجود');
