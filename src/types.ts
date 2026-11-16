@@ -127,6 +127,8 @@ export interface PaidPromotionRequest {
   sellerId: string;
   sellerName: string;
   sellerUserId: string;
+  sellerPhone?: string;
+  sellerGovernorate?: string;
   message: string;
   status: 'pending' | 'active' | 'rejected' | 'expired';
   createdAt: string;
@@ -140,6 +142,7 @@ export interface PaidPromotionRequest {
   homepagePosition?: HomePromotionPosition;
   paymentConfirmedAt?: string;
   paymentConfirmedBy?: string;
+  rejectionReason?: string;
 }
 
 export type HomePromotionPosition =

@@ -3,7 +3,7 @@ import type { Response } from 'express';
 import { requireSeller, requireAuth, invalidateAuthSession } from '../middleware/auth.ts';
 import type { AuthenticatedRequest } from '../middleware/auth.ts';
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
-import { createPaidPromotionRequest, getSellerPaidPromotionRequest } from '../services/communityService.ts';
+import { createPaidPromotionRequest, getSellerPaidPromotionRequest, cancelSellerPromotionRequest } from '../services/communityService.ts';
 import type { SellerStatus } from '../models/types.ts';
 import {
   getSellerProducts,
@@ -293,14 +293,40 @@ router.post('/promotion-request', async (req: AuthenticatedRequest, res: Respons
     if (req.user?.role !== 'seller') {
       return res.status(403).json({ success: false, error: 'طلب الاشتراك متاح لحسابات الورش فقط', code: 'SELLER_ONLY' });
     }
-    const request = await createPaidPromotionRequest(req.user, String(req.body.message || ''));
-    res.status(201).json({ success: true, message: 'تم إرسال طلب مساحة الترويج للإدارة', data: request });
+    const { message, contentType, contentId, durationDays, homepagePosition, paidAmount } = req.body || {};
+    const request = await createPaidPromotionRequest(req.user, {
+      message: typeof message === 'string' ? message : '',
+      contentType: contentType === 'product' ? 'product' : 'seller',
+      contentId: contentId ? String(contentId) : undefined,
+      durationDays: durationDays ? Number(durationDays) : 7,
+      homepagePosition: homepagePosition || 'after-hero',
+      paidAmount: paidAmount ? Number(paidAmount) : undefined
+    });
+    res.status(201).json({ success: true, message: 'تم إرسال طلب مساحة الترويج للإدارة بنجاح', data: request });
   } catch (error) {
     const message = (error as Error).message || 'تعذر إرسال طلب الاشتراك';
     res.status(message.includes('اعتماد') ? 403 : 400).json({
       success: false,
       error: message,
       code: 'PROMOTION_REQUEST_ERROR'
+    });
+  }
+});
+
+router.delete('/promotion-request/:id', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    if (req.user?.role !== 'seller') {
+      return res.status(403).json({ success: false, error: 'الخدمة متاحة لحسابات الورش فقط', code: 'SELLER_ONLY' });
+    }
+    const sellerId = req.user.sellerId || req.user.id;
+    await cancelSellerPromotionRequest(sellerId, req.params.id);
+    res.json({ success: true, message: 'تم إلغاء طلب مساحة الترويج بنجاح' });
+  } catch (error) {
+    const message = (error as Error).message || 'تعذر إلغاء الطلب';
+    res.status(400).json({
+      success: false,
+      error: message,
+      code: 'PROMOTION_CANCEL_ERROR'
     });
   }
 });

@@ -754,9 +754,10 @@ router.get('/products', async (req: AuthenticatedRequest, res: Response) => {
   }
 });
 
-router.get('/paid-promotion-requests', async (_req: AuthenticatedRequest, res: Response) => {
+router.get('/paid-promotion-requests', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const requests = await getAdminPaidPromotionRequests();
+    const status = typeof req.query.status === 'string' ? req.query.status : undefined;
+    const requests = await getAdminPaidPromotionRequests(status);
     res.json({ success: true, count: requests.length, data: requests });
   } catch (error) {
     console.error('[AdminRoutes] Failed to fetch paid promotion requests:', error);
@@ -855,7 +856,8 @@ router.delete('/paid-promotion', async (req: AuthenticatedRequest, res: Response
 
 router.post('/paid-promotion-requests/:id/reject', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    await rejectPaidPromotionRequest(req.params.id);
+    const reason = typeof req.body.reason === 'string' ? req.body.reason.trim() : undefined;
+    await rejectPaidPromotionRequest(req.params.id, reason);
     await createAuditLog({
       actorId: req.user?.id,
       userName: req.user?.name || 'مدير المنصة',
@@ -864,9 +866,9 @@ router.post('/paid-promotion-requests/:id/reject', async (req: AuthenticatedRequ
       resource: 'الإعلانات والترويج',
       resourceId: req.params.id,
       status: 'تنبيه',
-      details: `تم رفض طلب الاشتراك الإعلاني #${req.params.id}`
+      details: `تم رفض طلب الاشتراك الإعلاني #${req.params.id}${reason ? ` (السبب: ${reason})` : ''}`
     }).catch(() => {});
-    res.json({ success: true, message: 'تم رفض طلب الاشتراك' });
+    res.json({ success: true, message: 'تم رفض طلب الاشتراك وإخطار البائع' });
   } catch (error) {
     const message = (error as Error).message || 'تعذر رفض طلب الاشتراك';
     res.status(message.includes('غير موجود') ? 404 : 400).json({

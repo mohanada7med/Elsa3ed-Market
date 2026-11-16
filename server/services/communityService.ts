@@ -2,6 +2,7 @@ import { getDatabase, memoryDb } from '../db/mongodb.ts';
 import type { AuthenticatedUser } from '../middleware/auth.ts';
 import type { ProductDocument, SellerDocument } from '../models/types.ts';
 import { createNotification } from './notificationService.ts';
+import { createAuditLog } from './auditService.ts';
 
 export interface SellerFollow {
   id: string;
@@ -15,6 +16,8 @@ export interface PaidPromotionRequest {
   sellerId: string;
   sellerName: string;
   sellerUserId: string;
+  sellerPhone?: string;
+  sellerGovernorate?: string;
   message: string;
   status: 'pending' | 'active' | 'rejected' | 'expired';
   createdAt: string;
@@ -28,6 +31,7 @@ export interface PaidPromotionRequest {
   homepagePosition?: HomePromotionPosition;
   paymentConfirmedAt?: string;
   paymentConfirmedBy?: string;
+  rejectionReason?: string;
   requestId?: string;
 }
 
@@ -154,9 +158,18 @@ export async function notifySellerFollowers(
   });
 }
 
+export interface CreatePromotionRequestInput {
+  message?: string;
+  contentType?: 'product' | 'seller';
+  contentId?: string;
+  durationDays?: number;
+  homepagePosition?: HomePromotionPosition;
+  paidAmount?: number;
+}
+
 export async function createPaidPromotionRequest(
   user: AuthenticatedUser,
-  message: string
+  messageOrInput: string | CreatePromotionRequestInput
 ): Promise<PaidPromotionRequest> {
   if (user.role !== 'seller') throw new Error('طلب الاشتراك متاح لحسابات الورش فقط');
   const sellerId = user.sellerId || user.id;
@@ -169,18 +182,97 @@ export async function createPaidPromotionRequest(
     : memoryDb.paidPromotionRequests.find((item) => item.sellerId === sellerId && item.status === 'pending');
   if (existing) throw new Error('لديك طلب اشتراك قيد المراجعة بالفعل');
 
+  const input = typeof messageOrInput === 'string' ? { message: messageOrInput } : (messageOrInput || {});
+  const message = (input.message || '').trim().slice(0, 1000);
+  const contentType = input.contentType === 'product' ? 'product' : 'seller';
+  const contentId = input.contentId ? String(input.contentId).trim() : undefined;
+  const durationDays = input.durationDays ? Math.max(1, Math.min(365, Number(input.durationDays))) : 7;
+  const homepagePosition = input.homepagePosition || 'after-hero';
+  const paidAmount = input.paidAmount ? Number(input.paidAmount) : undefined;
+
   const request: PaidPromotionRequest = {
     id: `promo-request-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
     sellerId,
     sellerName: seller.brandName || seller.name,
     sellerUserId: user.id,
-    message: message.trim().slice(0, 1000),
+    sellerPhone: seller.phone || user.phone,
+    sellerGovernorate: seller.governorate || user.governorate,
+    message,
+    contentType,
+    contentId: contentId || (contentType === 'seller' ? sellerId : undefined),
+    durationDays,
+    homepagePosition,
+    paidAmount,
     status: 'pending',
     createdAt: new Date().toISOString()
   };
   if (isMongo && db) await db.collection('paid_promotion_requests').insertOne(request);
   else memoryDb.paidPromotionRequests.unshift(request);
+
+  // Notify Admins about the new incoming promotion request
+  const promoTitle = `طلب ترويج جديد من ورشة ${request.sellerName}`;
+  const promoMsg = `ترغب الورشة في ترويج ${contentType === 'product' ? 'قطعة محددة' : 'ملف الورشة'} لمدة ${durationDays} يوماً بموضع "${homepagePosition}".`;
+  if (isMongo && db) {
+    const adminDocs = await db.collection('users').find({ role: 'admin' }).toArray();
+    for (const a of adminDocs) {
+      createNotification({
+        userId: a.id,
+        title: promoTitle,
+        message: promoMsg,
+        type: 'promotion',
+        link: 'admin-dashboard',
+        metadata: { requestId: request.id, sellerId }
+      }).catch(() => {});
+    }
+  } else {
+    const adminDocs = memoryDb.users.filter((u) => u.role === 'admin');
+    for (const a of adminDocs) {
+      createNotification({
+        userId: a.id,
+        title: promoTitle,
+        message: promoMsg,
+        type: 'promotion',
+        link: 'admin-dashboard',
+        metadata: { requestId: request.id, sellerId }
+      }).catch(() => {});
+    }
+  }
+
+  await createAuditLog({
+    actorId: user.id,
+    userName: seller.brandName || seller.name || user.name,
+    userRole: 'seller',
+    action: 'طلب مساحة ترشيح وه المدفوعة',
+    resource: 'الإعلانات والترويج',
+    resourceId: request.id,
+    status: 'نجاح',
+    details: `قدمت الورشة "${request.sellerName}" طلب ترويج مدفوع (${contentType === 'product' ? 'منتج محدد' : 'ملف الورشة'}) لمدة ${durationDays} يوم`,
+    metadata: { contentType, contentId: request.contentId, durationDays, homepagePosition }
+  }).catch(() => {});
+
   return request;
+}
+
+export async function cancelSellerPromotionRequest(sellerId: string, requestId: string): Promise<void> {
+  const { db, isMongo } = await getDatabase();
+  if (isMongo && db) {
+    const res = await db.collection('paid_promotion_requests').deleteOne({
+      id: requestId,
+      sellerId,
+      status: 'pending'
+    });
+    if (res.deletedCount === 0) {
+      throw new Error('تعذر إلغاء الطلب؛ قد يكون تمت مراجعته بالفعل من الإدارة');
+    }
+  } else {
+    const idx = memoryDb.paidPromotionRequests.findIndex(
+      (item) => item.id === requestId && item.sellerId === sellerId && item.status === 'pending'
+    );
+    if (idx === -1) {
+      throw new Error('تعذر إلغاء الطلب؛ قد يكون تمت مراجعته بالفعل من الإدارة');
+    }
+    memoryDb.paidPromotionRequests.splice(idx, 1);
+  }
 }
 
 export async function getSellerPaidPromotionRequest(sellerId: string): Promise<PaidPromotionRequest | null> {
@@ -194,15 +286,18 @@ export async function getSellerPaidPromotionRequest(sellerId: string): Promise<P
   return (requests[0] as PaidPromotionRequest | undefined) || null;
 }
 
-export async function getAdminPaidPromotionRequests(): Promise<PaidPromotionRequest[]> {
+export async function getAdminPaidPromotionRequests(statusFilter?: string): Promise<PaidPromotionRequest[]> {
   const { db, isMongo } = await getDatabase();
+  const query = statusFilter && statusFilter !== 'all' ? { status: statusFilter } : {};
   if (isMongo && db) {
     return await db.collection('paid_promotion_requests')
-      .find({ status: 'pending' })
-      .sort({ createdAt: 1 })
+      .find(query)
+      .sort({ createdAt: -1 })
       .toArray() as unknown as PaidPromotionRequest[];
   }
-  return memoryDb.paidPromotionRequests.filter((item) => item.status === 'pending') as PaidPromotionRequest[];
+  return memoryDb.paidPromotionRequests
+    .filter((item) => !statusFilter || statusFilter === 'all' || item.status === statusFilter)
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt)) as PaidPromotionRequest[];
 }
 
 export async function activatePaidPromotion(
@@ -455,19 +550,40 @@ export async function removeActivePaidPromotion(): Promise<void> {
   }
 }
 
-export async function rejectPaidPromotionRequest(requestId: string): Promise<void> {
+export async function rejectPaidPromotionRequest(requestId: string, reason?: string): Promise<void> {
   const { db, isMongo } = await getDatabase();
+  const rejectionReason = reason ? String(reason).trim().slice(0, 500) : undefined;
+  const updatedAt = new Date().toISOString();
+
+  let targetRequest: PaidPromotionRequest | null = null;
   if (isMongo && db) {
+    targetRequest = await db.collection('paid_promotion_requests').findOne({ id: requestId }) as unknown as PaidPromotionRequest | null;
+    if (!targetRequest || targetRequest.status !== 'pending') {
+      throw new Error('طلب الاشتراك غير موجود أو تمت مراجعته بالفعل');
+    }
     const result = await db.collection('paid_promotion_requests').updateOne(
       { id: requestId, status: 'pending' },
-      { $set: { status: 'rejected', updatedAt: new Date().toISOString() } }
+      { $set: { status: 'rejected', rejectionReason, updatedAt } }
     );
     if (!result.matchedCount) throw new Error('طلب الاشتراك غير موجود أو تمت مراجعته');
-    return;
+  } else {
+    targetRequest = (memoryDb.paidPromotionRequests.find((item) => item.id === requestId && item.status === 'pending') as unknown as PaidPromotionRequest) || null;
+    if (!targetRequest) throw new Error('طلب الاشتراك غير موجود أو تمت مراجعته');
+    Object.assign(targetRequest, { status: 'rejected', rejectionReason, updatedAt });
   }
-  const request = memoryDb.paidPromotionRequests.find((item) => item.id === requestId && item.status === 'pending');
-  if (!request) throw new Error('طلب الاشتراك غير موجود أو تمت مراجعته');
-  Object.assign(request, { status: 'rejected', updatedAt: new Date().toISOString() });
+
+  if (targetRequest?.sellerUserId) {
+    await createNotification({
+      userId: targetRequest.sellerUserId,
+      title: 'مراجعة طلب مساحة الترويج',
+      message: rejectionReason
+        ? `نعتذر، تم رفض طلب الترويج للسبب التالي: "${rejectionReason}". يمكنك تقديم طلب جديد.`
+        : 'نعتذر، تعذر قبول طلب مساحة الترويج في الوقت الحالي. يمكنك التقديم مجدداً في وقت لاحق.',
+      type: 'promotion',
+      link: 'seller-dashboard',
+      metadata: { requestId, reason: rejectionReason }
+    }).catch(() => {});
+  }
 }
 
 export async function getActivePaidPromotion(): Promise<PaidPromotionContent | null> {

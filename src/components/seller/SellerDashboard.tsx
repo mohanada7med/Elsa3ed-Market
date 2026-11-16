@@ -2954,7 +2954,14 @@ export const SellerDashboard: React.FC = () => {
           )}
 
           {activeTab === 'promotion' && currentUser.role === 'seller' && (
-            <SellerPromotionPanel user={currentUser} addToast={addToast} />
+            <SellerPromotionPanel
+              user={currentUser}
+              seller={currentSeller}
+              products={sellerProducts}
+              addToast={addToast}
+              onNavigateToProducts={() => handleSelectTab('products')}
+              onNavigateToHome={() => setActivePage('home')}
+            />
           )}
 
           {/* TAB: REPORTS & SUPPORT */}

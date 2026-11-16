@@ -1324,20 +1324,38 @@ export const api = {
 
   async requestPaidPromotion(
     user: { id: string; role: string },
-    message: string
+    payload: string | {
+      message?: string;
+      contentType?: 'product' | 'seller';
+      contentId?: string;
+      durationDays?: number;
+      homepagePosition?: HomePromotionPosition;
+      paidAmount?: number;
+    }
   ): Promise<PaidPromotionRequest> {
+    const body = typeof payload === 'string' ? { message: payload } : payload;
     const res = await fetch(`${API_BASE}/seller/promotion-request`, {
       method: 'POST',
       headers: getAuthHeaders(user),
-      body: JSON.stringify({ message })
+      body: JSON.stringify(body)
     });
     const json: ApiResponse<PaidPromotionRequest> = await res.json();
     if (!res.ok || !json.success || !json.data) throw new Error(json.error || 'تعذر إرسال طلب الاشتراك');
     return json.data;
   },
 
-  async getAdminPromotionRequests(user: { id: string; role: string }): Promise<PaidPromotionRequest[]> {
-    const res = await fetch(`${API_BASE}/admin/paid-promotion-requests`, { headers: getAuthHeaders(user) });
+  async cancelSellerPromotionRequest(user: { id: string; role: string }, requestId: string): Promise<void> {
+    const res = await fetch(`${API_BASE}/seller/promotion-request/${encodeURIComponent(requestId)}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<null> = await res.json();
+    if (!res.ok || !json.success) throw new Error(json.error || 'تعذر إلغاء الطلب');
+  },
+
+  async getAdminPromotionRequests(user: { id: string; role: string }, status?: string): Promise<PaidPromotionRequest[]> {
+    const url = status ? `${API_BASE}/admin/paid-promotion-requests?status=${encodeURIComponent(status)}` : `${API_BASE}/admin/paid-promotion-requests`;
+    const res = await fetch(url, { headers: getAuthHeaders(user) });
     const json: ApiResponse<PaidPromotionRequest[]> = await res.json();
     if (!res.ok || !json.success) throw new Error(json.error || 'تعذر تحميل طلبات الاشتراك');
     return json.data || [];
@@ -1400,10 +1418,11 @@ export const api = {
     if (!res.ok || !json.success) throw new Error(json.error || 'تعذر إيقاف مساحة الترشيح');
   },
 
-  async rejectPaidPromotionRequest(user: { id: string; role: string }, requestId: string): Promise<void> {
+  async rejectPaidPromotionRequest(user: { id: string; role: string }, requestId: string, reason?: string): Promise<void> {
     const res = await fetch(`${API_BASE}/admin/paid-promotion-requests/${encodeURIComponent(requestId)}/reject`, {
       method: 'POST',
-      headers: getAuthHeaders(user)
+      headers: getAuthHeaders(user),
+      body: JSON.stringify({ reason })
     });
     const json: ApiResponse<null> = await res.json();
     if (!res.ok || !json.success) throw new Error(json.error || 'تعذر رفض طلب الاشتراك');
