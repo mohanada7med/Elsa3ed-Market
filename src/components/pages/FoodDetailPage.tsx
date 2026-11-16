@@ -7,7 +7,7 @@ import { ArrowLeft, ArrowRight, Check, Clock, Edit3, MapPin, RotateCcw, Share2, 
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { EventImageLightboxModal } from '../common/EventImageLightboxModal';
 
-const fallbackCover = '/mascot/welcome.png';
+const fallbackCover = '/mascot/welcoming.webp';
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 /* ---------- الثيم: تلقائي من إعدادات النظام (من غير زرار) ----------
