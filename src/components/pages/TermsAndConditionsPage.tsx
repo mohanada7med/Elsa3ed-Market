@@ -88,7 +88,7 @@ export const TermsAndConditionsPage: React.FC = () => {
           <aside className="lg:col-span-4">
             <div className="sticky top-24 p-5 rounded-2xl bg-white dark:bg-[#26160D] border border-[#C99444]/30 shadow-sm space-y-2">
               <h3 className="font-cairo font-bold text-sm text-[#3B1E0E] dark:text-[#FFF9EE] pb-2 border-b border-black/10 dark:border-white/10 flex items-center gap-2">
-                <FileCheck className="w-4 h-4 text-primary" />
+                <FileCheck className="w-4 h-4 text-primary dark:text-primary-hover" />
                 <span>بنود ميثاق التعامل</span>
               </h3>
               <nav className="space-y-1">
@@ -125,8 +125,8 @@ export const TermsAndConditionsPage: React.FC = () => {
           <main className="lg:col-span-8 space-y-8 text-xs sm:text-sm leading-relaxed">
             {/* Section 1: Covenant */}
             <article id="covenant" className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#26160D] border border-[#C99444]/20 shadow-xs space-y-3 scroll-mt-24">
-              <div className="flex items-center gap-2 text-primary font-bold">
-                <Scale className="w-5 h-5 text-primary" />
+              <div className="flex items-center gap-2 text-primary dark:text-primary-hover font-bold">
+                <Scale className="w-5 h-5 text-primary dark:text-primary-hover" />
                 <h2 className="font-cairo font-black text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
                   1. عهد الصنعة ومقدمة الميثاق
                 </h2>
@@ -138,7 +138,7 @@ export const TermsAndConditionsPage: React.FC = () => {
 
             {/* Section 2: Handicraft Nature */}
             <article id="handicraft-nature" className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#26160D] border border-[#C99444]/20 shadow-xs space-y-3 scroll-mt-24">
-              <div className="flex items-center gap-2 text-primary font-bold">
+              <div className="flex items-center gap-2 text-primary dark:text-primary-hover font-bold">
                 <Sparkles className="w-5 h-5 text-amber-500" />
                 <h2 className="font-cairo font-black text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
                   2. طبيعة الحرف اليدوية وتفرد القطع
@@ -160,7 +160,7 @@ export const TermsAndConditionsPage: React.FC = () => {
 
             {/* Section 3: Orders and Pricing */}
             <article id="orders-pricing" className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#26160D] border border-[#C99444]/20 shadow-xs space-y-3 scroll-mt-24">
-              <div className="flex items-center gap-2 text-primary font-bold">
+              <div className="flex items-center gap-2 text-primary dark:text-primary-hover font-bold">
                 <FileCheck className="w-5 h-5 text-emerald-500" />
                 <h2 className="font-cairo font-black text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
                   3. الطلبات، الأسعار، وطرق الدفع
@@ -176,7 +176,7 @@ export const TermsAndConditionsPage: React.FC = () => {
 
             {/* Section 4: Shipping and Delivery */}
             <article id="shipping-delivery" className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#26160D] border border-[#C99444]/20 shadow-xs space-y-3 scroll-mt-24">
-              <div className="flex items-center gap-2 text-primary font-bold">
+              <div className="flex items-center gap-2 text-primary dark:text-primary-hover font-bold">
                 <Truck className="w-5 h-5 text-blue-500" />
                 <h2 className="font-cairo font-black text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
                   4. الشحن، التغليف، وحق المعاينة
@@ -199,7 +199,7 @@ export const TermsAndConditionsPage: React.FC = () => {
 
             {/* Section 5: Returns and Refunds */}
             <article id="returns-refunds" className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#26160D] border border-[#C99444]/20 shadow-xs space-y-3 scroll-mt-24">
-              <div className="flex items-center gap-2 text-primary font-bold">
+              <div className="flex items-center gap-2 text-primary dark:text-primary-hover font-bold">
                 <RotateCcw className="w-5 h-5 text-rose-500" />
                 <h2 className="font-cairo font-black text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
                   5. سياسة الاستبدال، الاسترجاع، والتعويض
@@ -217,7 +217,7 @@ export const TermsAndConditionsPage: React.FC = () => {
 
             {/* Section 6: Artisan Rights */}
             <article id="artisan-rights" className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#26160D] border border-[#C99444]/20 shadow-xs space-y-3 scroll-mt-24">
-              <div className="flex items-center gap-2 text-primary font-bold">
+              <div className="flex items-center gap-2 text-primary dark:text-primary-hover font-bold">
                 <Store className="w-5 h-5 text-amber-500" />
                 <h2 className="font-cairo font-black text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
                   6. ميثاق حماية الورش والحرفيين
@@ -235,7 +235,7 @@ export const TermsAndConditionsPage: React.FC = () => {
 
             {/* Section 7: Intellectual Property */}
             <article id="intellectual-property" className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#26160D] border border-[#C99444]/20 shadow-xs space-y-3 scroll-mt-24">
-              <div className="flex items-center gap-2 text-primary font-bold">
+              <div className="flex items-center gap-2 text-primary dark:text-primary-hover font-bold">
                 <Award className="w-5 h-5 text-purple-500" />
                 <h2 className="font-cairo font-black text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
                   7. الملكية الفكرية وتوثيق تراث الصعيد
@@ -251,7 +251,7 @@ export const TermsAndConditionsPage: React.FC = () => {
 
             {/* Section 8: Governing Law */}
             <article id="governing-law" className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#C99444]/15 via-white dark:via-[#26160D] to-[#3B1E0E]/10 border border-[#C99444]/40 shadow-md space-y-4 scroll-mt-24">
-              <div className="flex items-center gap-2 text-primary font-bold">
+              <div className="flex items-center gap-2 text-primary dark:text-primary-hover font-bold">
                 <ShieldCheck className="w-5 h-5 text-emerald-500" />
                 <h2 className="font-cairo font-black text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
                   8. القانون الحاكم والتحكيم العادل

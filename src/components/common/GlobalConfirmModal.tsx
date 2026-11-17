@@ -57,7 +57,7 @@ export const GlobalConfirmModal: React.FC = () => {
             <div
               className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 ${danger
                   ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20'
-                  : 'bg-primary/10 text-primary dark:text-primary-hover border border-primary/20'
+                  : 'bg-primary/10 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover border border-primary/20'
                 }`}
             >
               {danger ? <Trash2 className="w-5 h-5" /> : <AlertTriangle className="w-5 h-5" />}

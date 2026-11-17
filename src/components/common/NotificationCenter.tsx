@@ -242,12 +242,12 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
 
       case 'product_pending_review':
         return (
-          <Sparkles className="h-4 w-4 text-amber-600 dark:text-primary-hover" />
+          <Sparkles className="h-4 w-4 text-amber-600 dark:text-primary dark:text-primary-hover-hover" />
         );
 
       case 'low_stock':
         return (
-          <AlertTriangle className="h-4 w-4 text-amber-500 dark:text-primary-hover" />
+          <AlertTriangle className="h-4 w-4 text-amber-500 dark:text-primary dark:text-primary-hover-hover" />
         );
 
       case 'payout_requested':
@@ -259,7 +259,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
 
       case 'new_review':
         return (
-          <Star className="h-4 w-4 text-primary-hover " />
+          <Star className="h-4 w-4 text-primary dark:text-primary-hover-hover " />
         );
 
       case 'new_seller_registered':
@@ -269,12 +269,12 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
 
       case 'password_reset_requested':
         return (
-          <KeyRound className="h-4 w-4 text-primary" />
+          <KeyRound className="h-4 w-4 text-primary dark:text-primary-hover" />
         );
 
       default:
         return (
-          <Bell className="h-4 w-4 text-primary" />
+          <Bell className="h-4 w-4 text-primary dark:text-primary-hover" />
         );
     }
   };
@@ -370,7 +370,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
           transition-all
           duration-200
           hover:border-primary
-          hover:text-primary
+          hover:text-primary dark:text-primary-hover
           hover:bg-white
           dark:hover:bg-white/10
           active:scale-95
@@ -503,7 +503,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     shrink-0
                   "
                 >
-                  <Bell className="w-4 h-4 text-primary" />
+                  <Bell className="w-4 h-4 text-primary dark:text-primary-hover" />
                 </div>
 
                 <div className="min-w-0">
@@ -566,7 +566,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                   justify-center
                   rounded-lg
                   text-[#8C6F53] dark:text-[#D6C6B1]
-                  hover:text-primary
+                  hover:text-primary dark:text-primary-hover
                   hover:bg-black/5
                   dark:hover:bg-white/5
                   transition-colors
@@ -668,7 +668,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                         transition-all
                         cursor-pointer
                         ${browserNotificationSettings.soundEnabled
-                          ? 'bg-primary/15 border-primary/30 text-primary'
+                          ? 'bg-primary/15 border-primary/30 text-primary dark:text-primary-hover'
                           : 'bg-black/5 dark:bg-[#26160D] text-[#8C6F53] dark:text-[#D6C6B1] border-[#E0C79B] dark:border-[#6B3A1F]'
                         }
                       `}
@@ -697,7 +697,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                         border
                         border-primary/30
                         hover:border-primary
-                        text-primary
+                        text-primary dark:text-primary-hover
                         hover:bg-primary
                         hover:text-white
                         text-[9px]
@@ -817,7 +817,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                       className="
                         text-[10px]
                         font-black
-                        text-primary
+                        text-primary dark:text-primary-hover
                         hover:underline
                         flex
                         items-center
@@ -955,7 +955,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                               truncate
                               ${notification.read
                                 ? 'text-[#3B1E0E] dark:text-[#FFF9EE]'
-                                : 'text-primary'
+                                : 'text-primary dark:text-primary-hover'
                               }
                             `}
                           >
@@ -1014,7 +1014,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                                 gap-1
                                 text-[10px]
                                 font-black
-                                text-primary
+                                text-primary dark:text-primary-hover
                               "
                             >
                               عرض التفاصيل
@@ -1040,7 +1040,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                                   w-7
                                   h-7
                                   rounded-lg
-                                  text-primary
+                                  text-primary dark:text-primary-hover
                                   hover:bg-primary/10
                                   transition-all
                                   flex
@@ -1111,7 +1111,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                       flex
                       items-center
                       justify-center
-                      text-primary/40
+                      text-primary dark:text-primary-hover/40
                     "
                   >
                     <Bell className="w-7 h-7" />

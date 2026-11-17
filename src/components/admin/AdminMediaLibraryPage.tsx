@@ -158,7 +158,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-black/10 dark:border-white/10">
           <div>
             <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-xl bg-primary/10 dark:bg-[#C99444]/10 text-primary dark:text-primary-hover flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 dark:bg-[#C99444]/10 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover flex items-center justify-center">
                 <ImageIcon className="w-5 h-5" />
               </div>
               <div>
@@ -264,7 +264,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
 
         {/* Stats bar */}
         <div className="flex items-center justify-between mt-4 text-xs text-black/60 dark:text-white/60">
-          <span>إجمالي الصور الموثقة: <strong className="text-primary dark:text-primary-hover">{totalItems}</strong></span>
+          <span>إجمالي الصور الموثقة: <strong className="text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">{totalItems}</strong></span>
           <span>صفحة {currentPage} من {totalPages}</span>
         </div>
       </div>
@@ -281,7 +281,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
       <div className="w-full">
         {isLoading ? (
           <div className="py-20 flex flex-col items-center justify-center gap-3">
-            <Loader2 className="w-8 h-8 text-primary animate-spin" />
+            <Loader2 className="w-8 h-8 text-primary dark:text-primary-hover animate-spin" />
             <p className="text-xs sm:text-sm text-black/60 dark:text-white/60">
               جاري فحص ومزامنة الوسائط من Cloudinary...
             </p>
@@ -368,7 +368,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
                           </span>
                           <button
                             onClick={() => handleCopy(item.publicId!, item.id || item.publicId!)}
-                            className="p-1 text-black/50 dark:text-white/50 hover:text-primary shrink-0"
+                            className="p-1 text-black/50 dark:text-white/50 hover:text-primary dark:text-primary-hover shrink-0"
                             title="نسخ المعرف السحابي"
                           >
                             {copiedPublicId === (item.id || item.publicId) ? (
@@ -385,7 +385,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
                     <div className="pt-2 border-t border-black/10 dark:border-white/10 flex items-center justify-between gap-2 mt-2">
                       <button
                         onClick={() => handleCopy(url, `url-${item.id || item.publicId}`)}
-                        className="text-[11px] font-bold text-primary dark:text-primary-hover hover:underline flex items-center gap-1"
+                        className="text-[11px] font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover hover:underline flex items-center gap-1"
                       >
                         {copiedPublicId === `url-${item.id || item.publicId}` ? (
                           <>
@@ -446,7 +446,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
           <div className="bg-white/80 dark:bg-espresso-900/90 backdrop-blur-xl rounded-2xl w-full max-w-lg border border-black/10 dark:border-white/10 p-5 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-4 border-b border-black/10 dark:border-white/10 mb-4">
               <div className="flex items-center gap-2">
-                <ImageIcon className="w-5 h-5 text-primary" />
+                <ImageIcon className="w-5 h-5 text-primary dark:text-primary-hover" />
                 <h3 className="text-base font-bold">رفع وسائط إلى Cloudinary</h3>
               </div>
               <button

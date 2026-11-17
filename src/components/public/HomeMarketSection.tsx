@@ -27,7 +27,7 @@ export const HomeMarketSection: React.FC = () => {
       <div className="relative z-10 mb-6 sm:mb-16">
         <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
           <div>
-            <div className="mb-3 flex items-center gap-2 text-[10px] font-extrabold tracking-normal text-primary dark:text-primary-hover sm:mb-6 sm:gap-3 sm:text-xs">
+            <div className="mb-3 flex items-center gap-2 text-[10px] font-extrabold tracking-normal text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover sm:mb-6 sm:gap-3 sm:text-xs">
   <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent/10 sm:h-8 sm:w-8">
     <ShoppingBasket size={14} className="text-accent" />
   </span>
@@ -40,7 +40,7 @@ export const HomeMarketSection: React.FC = () => {
             <h1 className="flex max-w-6xl flex-col items-start gap-1 text-3xl font-black leading-[0.95] tracking-tight xs:text-4xl sm:gap-2 sm:text-6xl md:text-7xl lg:text-7xl xl:text-[6.5rem]">
               <span>سوق</span>
               <span className="inline-flex items-center gap-3 sm:gap-5">
-                <span className="text-primary dark:text-primary-hover">وه</span>
+                <span className="text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">وه</span>
                 <span className="relative inline-flex h-16 w-16 rotate-[-7deg] items-center justify-center transition-all duration-500 hover:rotate-0 hover:scale-110 sm:h-32 sm:w-32 lg:h-35 lg:w-32">
                   <span className="absolute left-1/2 top-1 h-8 w-10 -translate-x-1/2 rounded-t-full border-[4px] border-b-0 border-[#704323] dark:border-[#D6A56B] sm:h-16 sm:w-20 sm:border-[7px]" />
                   <span className="absolute bottom-2.5 left-1.5 right-1.5 h-10 overflow-hidden rounded-b-xl border-[4px] border-[#704323] bg-gradient-to-br from-[#D6A56B] via-[#B77A45] to-[#80502E] shadow-[inset_0_3px_5px_#ffffff55,0_7px_0_#59351F,0_12px_15px_#00000030] sm:bottom-4 sm:left-2 sm:right-2 sm:h-14 sm:rounded-b-2xl sm:border-[5px]">

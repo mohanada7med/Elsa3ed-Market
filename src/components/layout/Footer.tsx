@@ -221,7 +221,7 @@ export const Footer: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowIntroVideo(true)}
-                className="px-4 py-2.5 sm:px-7 sm:py-4 rounded-xl sm:rounded-2xl bg-white/[0.04] border border-primary/30 hover:border-primary hover:bg-primary/15 text-[11px] sm:text-sm font-bold text-white hover:text-primary-hover transition-all duration-200 flex items-center gap-2.5 cursor-pointer backdrop-blur-xl active:scale-95 shadow-lg hover:shadow-[0_0_20px_rgba(154,106,53,0.2)]"
+                className="px-4 py-2.5 sm:px-7 sm:py-4 rounded-xl sm:rounded-2xl bg-white/[0.04] border border-primary/30 hover:border-primary hover:bg-primary/15 text-[11px] sm:text-sm font-bold text-white hover:text-primary dark:text-primary-hover-hover transition-all duration-200 flex items-center gap-2.5 cursor-pointer backdrop-blur-xl active:scale-95 shadow-lg hover:shadow-[0_0_20px_rgba(154,106,53,0.2)]"
               >
                 <Film className="w-4 h-4 text-white" />
                 <span>اتفرج على فيلم وه</span>
@@ -264,15 +264,15 @@ export const Footer: React.FC = () => {
               منصة رقمية معمولة عشان تعرفك على روح صعيد مصر وتراثه الحي؛ بنوصلك بشيوخ الصنعة وأهل البلد في الجنوب، مع حكايات حية وتجربة تسوق موثقة.
             </p>
             <div className="flex items-center gap-3 pt-2 text-xs text-white/60">
-              <span className="flex items-center gap-1.5"><Compass className="w-4 h-4 text-primary-hover" /> من الفيوم لأسوان</span>
+              <span className="flex items-center gap-1.5"><Compass className="w-4 h-4 text-primary dark:text-primary-hover-hover" /> من الفيوم لأسوان</span>
               <span>•</span>
-              <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-primary-hover" /> توثيق معتمد 100%</span>
+              <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-primary dark:text-primary-hover-hover" /> توثيق معتمد 100%</span>
             </div>
           </div>
 
           {/* 2. خريطة بوابات المنصة */}
           <div className="lg:col-span-5 space-y-4">
-            <h4 className="text-xs font-cairo font-bold tracking-wider text-primary-hover uppercase pb-2 border-b border-white/10 flex items-center gap-2">
+            <h4 className="text-xs font-cairo font-bold tracking-wider text-primary dark:text-primary-hover-hover uppercase pb-2 border-b border-white/10 flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-white" />
               <span className="text-white">أبواب ودليل منصة وه</span>
             </h4>
@@ -282,7 +282,7 @@ export const Footer: React.FC = () => {
                   key={portal.page}
                   href={PAGE_ROUTES[portal.page as ActivePage] || `/${portal.page}`}
                   onClick={(event) => handlePageLinkClick(event, portal.page)}
-                  className="group flex items-center gap-2 text-xs text-white/75 hover:text-primary transition-colors duration-200 cursor-pointer text-right py-1"
+                  className="group flex items-center gap-2 text-xs text-white/75 hover:text-primary dark:text-primary-hover transition-colors duration-200 cursor-pointer text-right py-1"
                 >
                   <ChevronLeft className="w-3.5 h-3.5 text-white shrink-0 transition-transform duration-200 group-hover:-translate-x-1" />
                   <span className="truncate">{portal.label}</span>
@@ -403,7 +403,7 @@ export const Footer: React.FC = () => {
           <details className="group rounded-xl border border-white/10 bg-white/[0.03]">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-3.5 py-3 text-xs font-bold text-white [&::-webkit-details-marker]:hidden">
               <span className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-primary-hover" />
+                <Sparkles className="h-4 w-4 text-primary dark:text-primary-hover-hover" />
                 أبواب ودليل وه
                 <span className="text-[10px] font-normal text-white/45">({appPortals.length})</span>
               </span>
@@ -415,7 +415,7 @@ export const Footer: React.FC = () => {
                   key={portal.page}
                   href={PAGE_ROUTES[portal.page as ActivePage] || `/${portal.page}`}
                   onClick={(event) => handlePageLinkClick(event, portal.page)}
-                  className="flex min-h-9 items-center gap-1.5 text-right text-[10px] leading-4 text-white/75 transition-colors hover:text-primary-hover"
+                  className="flex min-h-9 items-center gap-1.5 text-right text-[10px] leading-4 text-white/75 transition-colors hover:text-primary dark:text-primary-hover-hover"
                 >
                   <ChevronLeft className="h-3 w-3 shrink-0 text-white/40" />
                   <span>{portal.label}</span>
@@ -427,7 +427,7 @@ export const Footer: React.FC = () => {
           <details className="group rounded-xl border border-white/10 bg-white/[0.03]">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-3.5 py-3 text-xs font-bold text-white [&::-webkit-details-marker]:hidden">
               <span className="flex items-center gap-2">
-                <ShoppingBag className="h-4 w-4 text-primary-hover" />
+                <ShoppingBag className="h-4 w-4 text-primary dark:text-primary-hover-hover" />
                 حسابك وخدماتك
                 <span className="text-[10px] font-normal text-white/45">({clientServices.length + 2})</span>
               </span>
@@ -464,7 +464,7 @@ export const Footer: React.FC = () => {
           <details className="group rounded-xl border border-white/10 bg-white/[0.03]">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-3.5 py-3 text-xs font-bold text-white [&::-webkit-details-marker]:hidden">
               <span className="flex items-center gap-2">
-                <Mail className="h-4 w-4 text-primary-hover" />
+                <Mail className="h-4 w-4 text-primary dark:text-primary-hover-hover" />
                 جوابات وحكاوي الجنوب
               </span>
               <ChevronLeft className="h-4 w-4 text-white/55 transition-transform group-open:-rotate-90" />
@@ -505,11 +505,11 @@ export const Footer: React.FC = () => {
           <div className="flex flex-col sm:flex-row items-center gap-3 text-xs text-white/60">
             <p className="font-medium tracking-wide">
               كل الحقوق محفوظة © {new Date().getFullYear()} —{' '}
-              <span className="text-white hover:text-primary font-bold cursor-pointer transition-colors duration-200">
+              <span className="text-white hover:text-primary dark:text-primary-hover font-bold cursor-pointer transition-colors duration-200">
                 مهند أحمد
               </span>{' '}
               &nbsp;|&nbsp; منصة{' '}
-              <span className="font-heritage font-bold text-white hover:text-primary transition-colors duration-200 cursor-pointer">
+              <span className="font-heritage font-bold text-white hover:text-primary dark:text-primary-hover transition-colors duration-200 cursor-pointer">
                 «وه — WAH»
               </span>
             </p>
@@ -518,7 +518,7 @@ export const Footer: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setActivePage('help')}
-                className="hover:text-primary-hover transition-colors cursor-pointer"
+                className="hover:text-primary dark:text-primary-hover-hover transition-colors cursor-pointer"
               >
                 المساعدة والتواصل
               </button>
@@ -526,7 +526,7 @@ export const Footer: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setActivePage('privacy')}
-                className="hover:text-primary-hover transition-colors cursor-pointer"
+                className="hover:text-primary dark:text-primary-hover-hover transition-colors cursor-pointer"
               >
                 سياسة الخصوصية
               </button>
@@ -534,7 +534,7 @@ export const Footer: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setActivePage('terms')}
-                className="hover:text-primary-hover transition-colors cursor-pointer"
+                className="hover:text-primary dark:text-primary-hover-hover transition-colors cursor-pointer"
               >
                 الشروط والأحكام
               </button>
@@ -560,7 +560,7 @@ export const Footer: React.FC = () => {
             type="button"
             onClick={scrollToTop}
             aria-label="العودة لأعلى الصفحة"
-            className="group flex items-center gap-2 text-xs text-white/70 hover:text-primary transition-colors duration-200 cursor-pointer font-bold"
+            className="group flex items-center gap-2 text-xs text-white/70 hover:text-primary dark:text-primary-hover transition-colors duration-200 cursor-pointer font-bold"
           >
             <span>اطلع فوق</span>
             <div className="w-9 h-9 rounded-xl border border-white/15 bg-white/[0.04] flex items-center justify-center group-hover:bg-primary group-hover:text-white group-hover:border-primary transition-all duration-200">

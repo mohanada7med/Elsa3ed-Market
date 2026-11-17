@@ -1109,11 +1109,11 @@ export const SellerDashboard: React.FC = () => {
               <div className="rounded-t-[2rem] bg-[#6B3A1F] text-[#FFF9EE] p-8 text-center sm:text-right relative overflow-hidden border-b border-black/10 dark:border-white/10">
                 <div className="absolute top-0 left-0 w-48 h-48 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
                 <div className="flex flex-col sm:flex-row items-center gap-5 relative z-10">
-                  <div className="w-16 h-16 rounded-2xl bg-primary/15 border border-primary/30 flex items-center justify-center text-primary shrink-0 shadow-inner">
+                  <div className="w-16 h-16 rounded-2xl bg-primary/15 border border-primary/30 flex items-center justify-center text-primary dark:text-primary-hover shrink-0 shadow-inner">
                     <Clock className="w-8 h-8 animate-pulse" />
                   </div>
                   <div>
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/15 text-primary text-xs font-bold mb-2 border border-primary/30">
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/15 text-primary dark:text-primary-hover text-xs font-bold mb-2 border border-primary/30">
                       <span className="w-2 h-2 rounded-full bg-primary animate-ping" />
                       <span>طلبك بيتراجع</span>
                     </div>
@@ -1147,7 +1147,7 @@ export const SellerDashboard: React.FC = () => {
                       ⏳
                     </div>
                     <div>
-                      <h3 className="text-xs font-bold text-primary">2. فحص الهوية والحرفة الصعيدية</h3>
+                      <h3 className="text-xs font-bold text-primary dark:text-primary-hover">2. فحص الهوية والحرفة الصعيدية</h3>
                       <p className="text-[11px] text-black/60 dark:text-white/60 mt-0.5">جاري التحقق من الأصالة والتراث</p>
                     </div>
                   </div>
@@ -1167,7 +1167,7 @@ export const SellerDashboard: React.FC = () => {
               <div className="p-6 sm:p-8 space-y-6">
                 <div className="bg-black/[0.035] dark:bg-cream/[0.04] border border-black/10 dark:border-white/10 rounded-2xl p-5">
                   <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
-                    <Store className="w-4 h-4 text-primary" />
+                    <Store className="w-4 h-4 text-primary dark:text-primary-hover" />
                     <span>بيانات الورشة المسجلة لدينا:</span>
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
@@ -1191,7 +1191,7 @@ export const SellerDashboard: React.FC = () => {
                 </div>
 
                 <div className="p-4 bg-primary/10 border border-primary/25 rounded-2xl flex items-start gap-3 text-xs text-black/70 dark:text-white/70 leading-relaxed">
-                  <AlertCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                  <AlertCircle className="w-5 h-5 text-primary dark:text-primary-hover shrink-0 mt-0.5" />
                   <p>
                     حفاظاً على معايير الجودة والأصالة الصعيدية في منصتنا، تتطلب ميزات إدارة المنتجات وإضافة القطع الحرفية واستقبال الطلبات موافقة مسبقة من إدارة المنصة. سنقوم بإشعاركم فور الانتهاء من التدقيق.
                   </p>
@@ -1212,7 +1212,7 @@ export const SellerDashboard: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setActivePage('home')}
-                    className="text-xs text-black/60 dark:text-white/60 hover:text-primary font-bold transition-colors cursor-pointer"
+                    className="text-xs text-black/60 dark:text-white/60 hover:text-primary dark:text-primary-hover font-bold transition-colors cursor-pointer"
                   >
                     العودة للصفحة الرئيسية
                   </button>
@@ -1264,7 +1264,7 @@ export const SellerDashboard: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setActivePage('home')}
-                    className="text-xs text-black/60 dark:text-white/60 hover:text-primary font-bold cursor-pointer"
+                    className="text-xs text-black/60 dark:text-white/60 hover:text-primary dark:text-primary-hover font-bold cursor-pointer"
                   >
                     العودة للرئيسية
                   </button>
@@ -1316,7 +1316,7 @@ export const SellerDashboard: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setActivePage('home')}
-                    className="text-xs text-black/60 dark:text-white/60 hover:text-primary font-bold cursor-pointer"
+                    className="text-xs text-black/60 dark:text-white/60 hover:text-primary dark:text-primary-hover font-bold cursor-pointer"
                   >
                     العودة للرئيسية
                   </button>
@@ -1347,7 +1347,7 @@ export const SellerDashboard: React.FC = () => {
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <span className="flex h-full w-full items-center justify-center text-xl font-black text-[#6B3A1F] dark:text-primary-hover">
+                  <span className="flex h-full w-full items-center justify-center text-xl font-black text-[#6B3A1F] dark:text-primary dark:text-primary-hover-hover">
                     {brandName.slice(0, 1) || 'و'}
                   </span>
                 )}
@@ -1404,7 +1404,7 @@ export const SellerDashboard: React.FC = () => {
                   id="seller-layout-sidebar-btn"
                   onClick={() => handleLayoutChange('sidebar')}
                   aria-pressed={layoutMode === 'sidebar'}
-                  className={`flex min-h-10 min-w-0 items-center justify-center gap-1 rounded-lg px-2 text-[10px] font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B47A35] sm:min-w-0 sm:flex-none sm:px-2.5 ${layoutMode === 'sidebar' ? 'bg-white text-[#704322] shadow-sm dark:bg-white/10 dark:text-primary-hover' : 'text-[#817568] hover:text-[#704322] dark:text-white/50 dark:hover:text-white'}`}
+                  className={`flex min-h-10 min-w-0 items-center justify-center gap-1 rounded-lg px-2 text-[10px] font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B47A35] sm:min-w-0 sm:flex-none sm:px-2.5 ${layoutMode === 'sidebar' ? 'bg-white text-[#704322] shadow-sm dark:bg-white/10 dark:text-primary dark:text-primary-hover-hover' : 'text-[#817568] hover:text-[#704322] dark:text-white/50 dark:hover:text-white'}`}
                   title="قائمة جانبية"
                 >
                   <PanelLeft className="h-3.5 w-3.5" /><span>قائمة</span>
@@ -1414,7 +1414,7 @@ export const SellerDashboard: React.FC = () => {
                   id="seller-layout-rail-btn"
                   onClick={() => handleLayoutChange('compact-rail')}
                   aria-pressed={layoutMode === 'compact-rail'}
-                  className={`flex min-h-10 min-w-0 items-center justify-center gap-1 rounded-lg px-2 text-[10px] font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B47A35] sm:min-w-0 sm:flex-none sm:px-2.5 ${layoutMode === 'compact-rail' ? 'bg-white text-[#704322] shadow-sm dark:bg-white/10 dark:text-primary-hover' : 'text-[#817568] hover:text-[#704322] dark:text-white/50 dark:hover:text-white'}`}
+                  className={`flex min-h-10 min-w-0 items-center justify-center gap-1 rounded-lg px-2 text-[10px] font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B47A35] sm:min-w-0 sm:flex-none sm:px-2.5 ${layoutMode === 'compact-rail' ? 'bg-white text-[#704322] shadow-sm dark:bg-white/10 dark:text-primary dark:text-primary-hover-hover' : 'text-[#817568] hover:text-[#704322] dark:text-white/50 dark:hover:text-white'}`}
                   title="أزرار عايمة"
                 >
                   <Columns2 className="h-3.5 w-3.5" /><span>عايم</span>
@@ -1424,7 +1424,7 @@ export const SellerDashboard: React.FC = () => {
                   id="seller-layout-hub-btn"
                   onClick={() => handleLayoutChange('full-hub')}
                   aria-pressed={layoutMode === 'full-hub'}
-                  className={`flex min-h-10 min-w-0 items-center justify-center gap-1 rounded-lg px-2 text-[10px] font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B47A35] sm:min-w-0 sm:flex-none sm:px-2.5 ${layoutMode === 'full-hub' ? 'bg-white text-[#704322] shadow-sm dark:bg-white/10 dark:text-primary-hover' : 'text-[#817568] hover:text-[#704322] dark:text-white/50 dark:hover:text-white'}`}
+                  className={`flex min-h-10 min-w-0 items-center justify-center gap-1 rounded-lg px-2 text-[10px] font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B47A35] sm:min-w-0 sm:flex-none sm:px-2.5 ${layoutMode === 'full-hub' ? 'bg-white text-[#704322] shadow-sm dark:bg-white/10 dark:text-primary dark:text-primary-hover-hover' : 'text-[#817568] hover:text-[#704322] dark:text-white/50 dark:hover:text-white'}`}
                   title="كل الأقسام في صفحة واحدة"
                 >
                   <StretchHorizontal className="h-3.5 w-3.5" /><span>الأقسام</span>
@@ -1434,7 +1434,7 @@ export const SellerDashboard: React.FC = () => {
                   id="seller-layout-bento-btn"
                   onClick={() => handleLayoutChange('bento')}
                   aria-pressed={layoutMode === 'bento'}
-                  className={`flex min-h-10 min-w-0 items-center justify-center gap-1 rounded-lg px-2 text-[10px] font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B47A35] sm:min-w-0 sm:flex-none sm:px-2.5 ${layoutMode === 'bento' ? 'bg-white text-[#704322] shadow-sm dark:bg-white/10 dark:text-primary-hover' : 'text-[#817568] hover:text-[#704322] dark:text-white/50 dark:hover:text-white'}`}
+                  className={`flex min-h-10 min-w-0 items-center justify-center gap-1 rounded-lg px-2 text-[10px] font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B47A35] sm:min-w-0 sm:flex-none sm:px-2.5 ${layoutMode === 'bento' ? 'bg-white text-[#704322] shadow-sm dark:bg-white/10 dark:text-primary dark:text-primary-hover-hover' : 'text-[#817568] hover:text-[#704322] dark:text-white/50 dark:hover:text-white'}`}
                   title="عرض الأقسام على شكل بطاقات"
                 >
                   <LayoutGrid className="h-3.5 w-3.5" /><span>بطاقات</span>
@@ -1452,7 +1452,7 @@ export const SellerDashboard: React.FC = () => {
           <aside className="hidden w-full shrink-0 space-y-4 rounded-[1.4rem] border border-[#E6DFD2] bg-white p-3 shadow-sm dark:border-white/10 dark:bg-[#211C17] lg:sticky lg:top-4 lg:z-20 lg:block lg:max-h-[calc(100vh-2rem)] lg:w-64 lg:overflow-y-auto xl:w-72">
             <div className="flex items-center justify-between rounded-xl bg-[#F7F4EF] p-2 dark:bg-white/[0.04]">
               <div className="flex items-center gap-2 text-xs font-bold">
-                <Store className="h-4 w-4 text-[#9A6735] dark:text-primary-hover" />
+                <Store className="h-4 w-4 text-[#9A6735] dark:text-primary dark:text-primary-hover-hover" />
                 <span className="text-[#51483F] dark:text-cream">{currentActiveItem?.label || 'لوحة الورشة'}</span>
               </div>
               
@@ -1502,11 +1502,11 @@ export const SellerDashboard: React.FC = () => {
                           onClick={() => handleSelectTab(item.id)}
                           className={`flex w-full cursor-pointer items-center justify-between rounded-xl p-2.5 text-right text-xs font-bold transition-all ${isActive
                             ? 'bg-[#704322] text-white shadow-sm'
-                            : 'text-[#62584D] hover:bg-[#F6F1E9] hover:text-[#704322] dark:text-cream/75 dark:hover:bg-white/[0.06] dark:hover:text-primary-hover'
+                            : 'text-[#62584D] hover:bg-[#F6F1E9] hover:text-[#704322] dark:text-cream/75 dark:hover:bg-white/[0.06] dark:hover:text-primary dark:text-primary-hover-hover'
                             }`}
                         >
                           <div className="flex items-center gap-2.5 min-w-0">
-                            <Icon className={`h-4 w-4 shrink-0 ${isActive ? 'text-white' : 'text-[#A47749] dark:text-primary-hover'}`} />
+                            <Icon className={`h-4 w-4 shrink-0 ${isActive ? 'text-white' : 'text-[#A47749] dark:text-primary dark:text-primary-hover-hover'}`} />
                             <div className="truncate text-right">
                               <span className="block truncate">{item.label}</span>
                               {item.sublabel && (
@@ -1538,7 +1538,7 @@ export const SellerDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={openAddProductModal}
-                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#F1E7D9] py-2.5 text-xs font-bold text-[#704322] transition-all hover:bg-[#E9D8C1] dark:bg-white/[0.06] dark:text-primary-hover dark:hover:bg-white/10"
+                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#F1E7D9] py-2.5 text-xs font-bold text-[#704322] transition-all hover:bg-[#E9D8C1] dark:bg-white/[0.06] dark:text-primary dark:text-primary-hover-hover dark:hover:bg-white/10"
               >
                 <Plus className="h-4 w-4" />
                 <span>أضف منتج</span>
@@ -1550,7 +1550,7 @@ export const SellerDashboard: React.FC = () => {
         {/* LAYOUT 2: COMPACT RAIL */}
         {layoutMode === 'compact-rail' && (
           <aside className="hidden lg:flex flex-col items-center w-20 shrink-0 bg-white/85 dark:bg-espresso-900/90 backdrop-blur-xl rounded-3xl border border-black/10 dark:border-white/10 py-5 px-2 gap-3 shadow-xl sticky top-4 z-20">
-            <div className="w-11 h-11 rounded-2xl bg-primary/15 text-primary dark:text-primary-hover flex items-center justify-center font-black text-base font-main shadow-xs mb-1">
+            <div className="w-11 h-11 rounded-2xl bg-primary/15 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover flex items-center justify-center font-black text-base font-main shadow-xs mb-1">
               {sellerAvatar ? (
                 <img src={sellerAvatar} alt="ص" className="w-full h-full object-cover rounded-2xl" />
               ) : (
@@ -1572,7 +1572,7 @@ export const SellerDashboard: React.FC = () => {
                       onClick={() => handleSelectTab(item.id)}
                       className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer relative ${isActive
                         ? 'bg-primary text-white shadow-md scale-105'
-                        : 'text-espresso dark:text-cream hover:bg-primary/15 hover:text-primary'
+                        : 'text-espresso dark:text-cream hover:bg-primary/15 hover:text-primary dark:text-primary-hover'
                         }`}
                       aria-label={item.label}
                     >
@@ -1601,7 +1601,7 @@ export const SellerDashboard: React.FC = () => {
             <button
               type="button"
               onClick={() => handleLayoutChange('sidebar')}
-              className="w-10 h-10 rounded-xl bg-black/5 dark:bg-cream/5 hover:bg-primary/15 text-black/60 dark:text-white/60 hover:text-primary flex items-center justify-center text-xs transition-colors cursor-pointer"
+              className="w-10 h-10 rounded-xl bg-black/5 dark:bg-cream/5 hover:bg-primary/15 text-black/60 dark:text-white/60 hover:text-primary dark:text-primary-hover flex items-center justify-center text-xs transition-colors cursor-pointer"
               title="توسيع إلى شريط جانبي كامل"
             >
               <PanelLeft className="w-4 h-4" />
@@ -1615,11 +1615,11 @@ export const SellerDashboard: React.FC = () => {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <StretchHorizontal className="w-5 h-5 text-primary dark:text-primary-hover" />
+                  <StretchHorizontal className="w-5 h-5 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover" />
                   <h3 className="font-black text-base text-espresso dark:text-cream">
                     كل أقسام ورشتك
                   </h3>
-                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-primary/15 text-primary dark:text-primary-hover">
+                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-primary/15 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
                     اختار القسم اللي محتاجه
                   </span>
                 </div>
@@ -1629,7 +1629,7 @@ export const SellerDashboard: React.FC = () => {
               </div>
 
               <div className="relative w-full md:w-72">
-                <Search className="w-3.5 h-3.5 text-primary absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <Search className="w-3.5 h-3.5 text-primary dark:text-primary-hover absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                   type="text"
                   value={navSearchQuery}
@@ -1655,7 +1655,7 @@ export const SellerDashboard: React.FC = () => {
                 onClick={() => setActiveHubSection('all')}
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${activeHubSection === 'all'
                   ? 'bg-primary text-white shadow-xs'
-                  : 'bg-black/5 dark:bg-cream/5 text-black/70 dark:text-white/70 hover:bg-primary/10 hover:text-primary'
+                  : 'bg-black/5 dark:bg-cream/5 text-black/70 dark:text-white/70 hover:bg-primary/10 hover:text-primary dark:text-primary-hover'
                   }`}
               >
                 كل الأقسام ({allNavItems.length})
@@ -1669,7 +1669,7 @@ export const SellerDashboard: React.FC = () => {
                     onClick={() => setActiveHubSection(sec.id)}
                     className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer flex items-center gap-1.5 ${isSelected
                       ? 'bg-primary text-white shadow-xs'
-                      : 'bg-black/5 dark:bg-cream/5 text-black/70 dark:text-white/70 hover:bg-primary/10 hover:text-primary'
+                      : 'bg-black/5 dark:bg-cream/5 text-black/70 dark:text-white/70 hover:bg-primary/10 hover:text-primary dark:text-primary-hover'
                       }`}
                   >
                     <span>{sec.title}</span>
@@ -1700,7 +1700,7 @@ export const SellerDashboard: React.FC = () => {
                       }`}
                   >
                     <div className="flex items-start gap-3 min-w-0">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform ${isActive ? 'bg-white/20 text-white' : 'bg-primary/10 text-primary'
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform ${isActive ? 'bg-white/20 text-white' : 'bg-primary/10 text-primary dark:text-primary-hover'
                         }`}>
                         <Icon className="w-5 h-5" />
                       </div>
@@ -1715,7 +1715,7 @@ export const SellerDashboard: React.FC = () => {
                     </div>
 
                     {item.badge !== undefined && (
-                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold shrink-0 ${isActive ? 'bg-white/20 text-white' : 'bg-primary/15 text-primary'
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold shrink-0 ${isActive ? 'bg-white/20 text-white' : 'bg-primary/15 text-primary dark:text-primary-hover'
                         }`}>
                         {item.badge}
                       </span>
@@ -1732,13 +1732,13 @@ export const SellerDashboard: React.FC = () => {
           <div className="w-full min-w-0 space-y-3 rounded-[1.5rem] border border-black/10 bg-white/80 p-3 shadow-xl backdrop-blur-xl dark:border-white/10 dark:bg-espresso-900/90 sm:space-y-4 sm:rounded-[2rem] sm:p-5">
             <div className="flex items-center justify-between gap-2 border-b border-black/10 pb-3 dark:border-white/10">
               <div className="flex items-center gap-2">
-                <LayoutGrid className="h-4 w-4 text-primary dark:text-primary-hover sm:h-5 sm:w-5" />
+                <LayoutGrid className="h-4 w-4 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover sm:h-5 sm:w-5" />
                 <h3 className="text-sm font-black text-espresso dark:text-cream sm:text-base">أقسام ورشتك</h3>
               </div>
               {currentActiveItem && (
                 <div className="max-w-[48%] truncate rounded-full bg-black/5 px-2.5 py-1 text-[10px] dark:bg-cream/5 sm:text-xs">
                   <span className="text-black/50 dark:text-white/50">مفتوح: </span>
-                  <span className="font-bold text-primary dark:text-primary-hover">{currentActiveItem.label}</span>
+                  <span className="font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">{currentActiveItem.label}</span>
                 </div>
               )}
             </div>
@@ -1835,7 +1835,7 @@ export const SellerDashboard: React.FC = () => {
         <main id="seller-main-pane" className="w-full min-w-0 flex-1 scroll-mt-24 space-y-5">
           <div className="flex flex-col gap-4 rounded-[1.4rem] border border-[#E6DFD2] bg-white p-4 shadow-sm dark:border-white/10 dark:bg-[#211C17] sm:flex-row sm:items-center sm:justify-between">
             <div className="flex min-w-0 items-center gap-3">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#F3EBDD] text-[#8C5C2D] dark:bg-white/[0.06] dark:text-primary-hover">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#F3EBDD] text-[#8C5C2D] dark:bg-white/[0.06] dark:text-primary dark:text-primary-hover-hover">
                 <Store className="h-5 w-5" />
               </span>
               <div className="min-w-0">
@@ -1998,7 +1998,7 @@ export const SellerDashboard: React.FC = () => {
                       <span className="mt-1 block text-[11px] text-black/50 dark:text-white/50">{pendingOrdersCount > 0 ? `${pendingOrdersCount} طلب مستنيك` : 'مفيش طلبات مستنية التجهيز'}</span>
                     </span>
                   </span>
-                  <span className="shrink-0 text-xs font-black text-primary transition group-hover:-translate-x-1">شوف ←</span>
+                  <span className="shrink-0 text-xs font-black text-primary dark:text-primary-hover transition group-hover:-translate-x-1">شوف ←</span>
                 </button>
                 <button
                   type="button"
@@ -2012,7 +2012,7 @@ export const SellerDashboard: React.FC = () => {
                       <span className="mt-1 block text-[11px] text-black/50 dark:text-white/50">{pendingProductsCount > 0 ? `${pendingProductsCount} منتج بيتراجع` : 'منتجاتك محدثة'}</span>
                     </span>
                   </span>
-                  <span className="shrink-0 text-xs font-black text-primary transition group-hover:-translate-x-1">شوف ←</span>
+                  <span className="shrink-0 text-xs font-black text-primary dark:text-primary-hover transition group-hover:-translate-x-1">شوف ←</span>
                 </button>
                 <button
                   type="button"
@@ -2026,14 +2026,14 @@ export const SellerDashboard: React.FC = () => {
                       <span className="mt-1 block text-[11px] text-black/50 dark:text-white/50">{totalValuation.toLocaleString('ar-EG')} ج.م</span>
                     </span>
                   </span>
-                  <span className="shrink-0 text-xs font-black text-primary transition group-hover:-translate-x-1">شوف ←</span>
+                  <span className="shrink-0 text-xs font-black text-primary dark:text-primary-hover transition group-hover:-translate-x-1">شوف ←</span>
                 </button>
               </section>
 
               {(lowStockCount > 0 || outOfStockCount > 0) && (
                 <div className="flex flex-col gap-4 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 dark:bg-amber-500/15 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex items-center gap-3">
-                    <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-primary-hover shrink-0" />
+                    <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-primary dark:text-primary-hover-hover shrink-0" />
                     <div className="text-xs">
                       <span className="font-bold text-espresso dark:text-cream block">تنبيهات المخزون الحرج:</span>
                       <span className="text-black/70 dark:text-white/70">
@@ -2117,12 +2117,12 @@ export const SellerDashboard: React.FC = () => {
                             <div className="flex flex-wrap items-center gap-2">
                               <h4 className="font-bold text-sm text-espresso dark:text-cream">{prod.title}</h4>
                               {getStatusBadge(prod.approvalStatus)}
-                              <span className="text-[10px] bg-primary/15 text-primary px-2 py-0.5 rounded font-bold">
+                              <span className="text-[10px] bg-primary/15 text-primary dark:text-primary-hover px-2 py-0.5 rounded font-bold">
                                 {prod.categoryName}
                               </span>
                             </div>
                             <p className="text-xs text-black/60 dark:text-white/60 font-medium">
-                              السعر: <strong className="text-primary font-black">{prod.price} ج.م</strong> • المخزون: <span className={prod.stockCount === 0 ? 'text-rose-600 dark:text-rose-400 font-bold' : prod.stockCount <= 5 ? 'text-amber-600 dark:text-primary-hover font-bold' : 'text-emerald-700 dark:text-emerald-400 font-bold'}>{prod.stockCount} قطعة</span> • الصنعة: {prod.specifications?.craftsmanship || 'يدوية'}
+                              السعر: <strong className="text-primary dark:text-primary-hover font-black">{prod.price} ج.م</strong> • المخزون: <span className={prod.stockCount === 0 ? 'text-rose-600 dark:text-rose-400 font-bold' : prod.stockCount <= 5 ? 'text-amber-600 dark:text-primary dark:text-primary-hover-hover font-bold' : 'text-emerald-700 dark:text-emerald-400 font-bold'}>{prod.stockCount} قطعة</span> • الصنعة: {prod.specifications?.craftsmanship || 'يدوية'}
                             </p>
                           </div>
                         </div>
@@ -2133,7 +2133,7 @@ export const SellerDashboard: React.FC = () => {
                             onClick={() => openStockModal(prod)}
                             className="px-3 py-1.5 bg-black/5 dark:bg-cream/5 hover:bg-black/10 dark:hover:bg-white/10 text-espresso dark:text-cream rounded-xl text-xs font-bold flex items-center gap-1.5 border border-black/10 dark:border-white/10 cursor-pointer transition-colors"
                           >
-                            <Boxes className="w-3.5 h-3.5 text-primary" />
+                            <Boxes className="w-3.5 h-3.5 text-primary dark:text-primary-hover" />
                             <span>عدّل الكمية ({prod.stockCount})</span>
                           </button>
 
@@ -2196,7 +2196,7 @@ export const SellerDashboard: React.FC = () => {
 
                 <div className="bg-white/75 dark:bg-espresso-900/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
                   <span className="text-xs text-black/60 dark:text-white/60 block mb-1 font-medium">قيمة المخزون</span>
-                  <span className="text-2xl font-black text-primary font-black">
+                  <span className="text-2xl font-black text-primary dark:text-primary-hover font-black">
                     {totalValuation.toLocaleString()} ج.م
                   </span>
                   <span className="text-[10px] text-black/60 dark:text-white/60 block mt-1">بسعر البيع الفعلي</span>
@@ -2204,10 +2204,10 @@ export const SellerDashboard: React.FC = () => {
 
                 <div className="bg-white/75 dark:bg-espresso-900/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
                   <span className="text-xs text-black/60 dark:text-white/60 block mb-1 font-medium">قطع أوشكت على النفاذ</span>
-                  <span className={`text-2xl font-black font-black ${lowStockCount > 0 ? 'text-amber-600 dark:text-primary-hover' : 'text-emerald-700 dark:text-emerald-400'}`}>
+                  <span className={`text-2xl font-black font-black ${lowStockCount > 0 ? 'text-amber-600 dark:text-primary dark:text-primary-hover-hover' : 'text-emerald-700 dark:text-emerald-400'}`}>
                     {lowStockCount} منتجات
                   </span>
-                  <span className="text-[10px] text-amber-700 dark:text-primary-hover font-bold block mt-1">مخزون أقل من 5 قطع</span>
+                  <span className="text-[10px] text-amber-700 dark:text-primary dark:text-primary-hover-hover font-bold block mt-1">مخزون أقل من 5 قطع</span>
                 </div>
 
                 <div className="bg-white/75 dark:bg-espresso-900/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
@@ -2268,7 +2268,7 @@ export const SellerDashboard: React.FC = () => {
                             </div>
                           </td>
                           <td className="py-3.5 text-black/60 dark:text-white/60 font-medium">{prod.categoryName}</td>
-                          <td className="py-3.5 font-black font-black text-primary">{prod.price} ج.م</td>
+                          <td className="py-3.5 font-black font-black text-primary dark:text-primary-hover">{prod.price} ج.م</td>
                           <td className="py-3.5 font-black font-bold text-sm text-espresso dark:text-cream">{prod.stockCount} قطعة</td>
                           <td className="py-3.5">
                             {prod.stockCount === 0 ? (
@@ -2277,7 +2277,7 @@ export const SellerDashboard: React.FC = () => {
                                 <span>نفذ من المخزن</span>
                               </span>
                             ) : prod.stockCount <= 5 ? (
-                              <span className="inline-flex items-center gap-1 bg-amber-500/15 text-amber-900 dark:text-primary-hover font-bold px-2 py-0.5 rounded-full text-[10px]">
+                              <span className="inline-flex items-center gap-1 bg-amber-500/15 text-amber-900 dark:text-primary dark:text-primary-hover-hover font-bold px-2 py-0.5 rounded-full text-[10px]">
                                 <AlertTriangle className="w-3 h-3" />
                                 <span>مخزون منخفض ({prod.stockCount})</span>
                               </span>
@@ -2336,8 +2336,8 @@ export const SellerDashboard: React.FC = () => {
               <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-lg backdrop-blur-xl">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div>
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 text-xs font-bold mb-2">
-                      <Sparkles className="w-3.5 h-3.5 text-primary" />
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary dark:text-primary-hover border border-primary/20 text-xs font-bold mb-2">
+                      <Sparkles className="w-3.5 h-3.5 text-primary dark:text-primary-hover" />
                       <span>إزاي ورشتك هتظهر للناس</span>
                     </div>
                     <h3 className="font-bold text-xl text-espresso dark:text-cream font-cairo">
@@ -2362,7 +2362,7 @@ export const SellerDashboard: React.FC = () => {
                   <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-lg backdrop-blur-xl space-y-5">
                     <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-xl bg-primary/10 text-primary dark:text-primary-hover flex items-center justify-center">
                           <Camera className="w-4 h-4" />
                         </div>
                         <div>
@@ -2547,10 +2547,10 @@ export const SellerDashboard: React.FC = () => {
                             className="hidden"
                           />
                           {isUploadingCover ? (
-                            <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                            <Loader2 className="w-6 h-6 animate-spin text-primary dark:text-primary-hover" />
                           ) : (
                             <>
-                              <Upload className="w-6 h-6 text-primary" />
+                              <Upload className="w-6 h-6 text-primary dark:text-primary-hover" />
                               <span className="text-sm font-bold">انقر لاختيار صورة من جهازك</span>
                             </>
                           )}
@@ -2756,7 +2756,7 @@ export const SellerDashboard: React.FC = () => {
                     <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] p-6 text-espresso dark:text-cream shadow-xl border border-black/10 dark:border-white/10 backdrop-blur-xl">
                       <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3 mb-4">
                         <div className="flex items-center gap-2">
-                          <Eye className="w-4 h-4 text-primary" />
+                          <Eye className="w-4 h-4 text-primary dark:text-primary-hover" />
                           <h4 className="font-bold text-sm">شكل صفحة ورشتك</h4>
                         </div>
                       </div>
@@ -2770,7 +2770,7 @@ export const SellerDashboard: React.FC = () => {
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                           <div className="absolute top-3 right-3 bg-white/90 dark:bg-espresso-900/90 backdrop-blur-xs text-espresso dark:text-cream text-[11px] font-bold px-3 py-1 rounded-full shadow-xs flex items-center gap-1 border border-black/10 dark:border-white/10">
-                            <MapPin className="w-3 h-3 text-primary" />
+                            <MapPin className="w-3 h-3 text-primary dark:text-primary-hover" />
                             <span>محافظة {sellerGovernorate}</span>
                           </div>
                           <div className="absolute -bottom-6 right-5">
@@ -2785,7 +2785,7 @@ export const SellerDashboard: React.FC = () => {
                         </div>
                         <div className="p-5 pt-8 space-y-3">
                           <h4 className="font-bold text-base font-cairo">{brandName}</h4>
-                          <span className="inline-block text-[11px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md">
+                          <span className="inline-block text-[11px] font-bold text-primary dark:text-primary-hover bg-primary/10 px-2 py-0.5 rounded-md">
                             {sellerSpecialty || 'حرفة يدوية تراثية أصيلة'}
                           </span>
                           <p className="text-xs text-black/60 dark:text-white/60 line-clamp-2">
@@ -2857,12 +2857,12 @@ export const SellerDashboard: React.FC = () => {
 
               {isLoadingReels ? (
                 <div className="p-12 text-center text-black/60 dark:text-white/60">
-                  <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary mb-2" />
+                  <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary dark:text-primary-hover mb-2" />
                   <span className="text-xs font-bold">جاري جلب فيديوهات ورشتكم...</span>
                 </div>
               ) : sellerReels.length === 0 ? (
                 <div className="bg-white/60 dark:bg-cream/[0.02] rounded-3xl border border-dashed border-black/10 dark:border-white/10 p-12 text-center space-y-4">
-                  <div className="w-16 h-16 rounded-3xl bg-primary/10 text-primary flex items-center justify-center mx-auto">
+                  <div className="w-16 h-16 rounded-3xl bg-primary/10 text-primary dark:text-primary-hover flex items-center justify-center mx-auto">
                     <Film className="w-8 h-8" />
                   </div>
                   <h3 className="font-black text-base text-espresso dark:text-cream">لا توجد مقاطع فيديو منشورة لورشتك بعد</h3>
@@ -2910,7 +2910,7 @@ export const SellerDashboard: React.FC = () => {
                               setSellerEditingReel(reel);
                               setIsSellerReelEditOpen(true);
                             }}
-                            className="p-2 text-primary hover:bg-primary/10 rounded-xl transition-colors cursor-pointer"
+                            className="p-2 text-primary dark:text-primary-hover hover:bg-primary/10 rounded-xl transition-colors cursor-pointer"
                             title="تعديل بيانات الفيديو"
                           >
                             <Edit2 className="w-4 h-4" />
@@ -3090,7 +3090,7 @@ export const SellerDashboard: React.FC = () => {
 
               {/* Guarantees Box */}
               <div className="p-4 bg-primary/10 border border-primary/20 rounded-2xl flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-primary dark:text-primary-hover shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-5 h-5 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover shrink-0 mt-0.5" />
                 <div className="text-xs text-espresso dark:text-cream leading-relaxed">
                   <strong>إحنا في وه بنحافظ على حقك:</strong> فريقنا بيراجع كل مشكلة بهدوء وحياد، وبيحاول يحافظ على حق الورشة والمشتري.
                 </div>
@@ -3284,7 +3284,7 @@ export const SellerDashboard: React.FC = () => {
               </div>
 
               <details className="rounded-2xl border border-primary/20 bg-primary/[0.04] p-3.5 dark:bg-primary/[0.06] sm:p-4">
-                <summary className="cursor-pointer rounded-xl text-sm font-black text-espresso marker:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:text-cream">
+                <summary className="cursor-pointer rounded-xl text-sm font-black text-espresso marker:text-primary dark:text-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:text-cream">
                   تفاصيل تساعد الزبون <span className="font-normal text-black/50 dark:text-white/60">(اختياري - مش لازم تملاها كلها)</span>
                   <span className="mt-1 block text-xs font-normal leading-relaxed text-black/60 dark:text-white/65">افتح لو حابب تضيف حكاية القطعة أو تفاصيلها.</span>
                 </summary>
@@ -3371,7 +3371,7 @@ export const SellerDashboard: React.FC = () => {
                   </label>
                   <span className={`text-[11px] font-bold ${existingImages.length + selectedImages.length === 0
                     ? 'text-rose-600 dark:text-rose-300'
-                    : 'text-primary dark:text-primary-hover'
+                    : 'text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover'
                     }`}>
                     ({existingImages.length + selectedImages.length} من 5 صور كحد أقصى)
                   </span>
@@ -3406,12 +3406,12 @@ export const SellerDashboard: React.FC = () => {
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                     />
                     <div className="flex flex-col items-center justify-center gap-2 pointer-events-none">
-                      <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+                      <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary dark:text-primary-hover flex items-center justify-center">
                         <Upload className="w-6 h-6" />
                       </div>
                       <div>
                         <p className="text-xs sm:text-sm font-bold text-espresso dark:text-cream">
-                          اسحب الصور هنا، أو <span className="text-primary underline font-black">اختارها من جهازك</span>
+                          اسحب الصور هنا، أو <span className="text-primary dark:text-primary-hover underline font-black">اختارها من جهازك</span>
                         </p>
                         <p className="text-[11px] text-black/60 dark:text-white/70 mt-1">
                           صيغ مدعومة: JPG، PNG، WebP (حتى 5 ميجابايت لكل صورة، 5 صور كحد أقصى)
@@ -3647,7 +3647,7 @@ export const SellerDashboard: React.FC = () => {
           >
             <div className="flex items-center justify-between pb-3 border-b border-black/10 dark:border-white/10">
               <div className="flex items-center gap-2 font-bold text-sm text-espresso dark:text-cream">
-                <Store className="w-4 h-4 text-primary" />
+                <Store className="w-4 h-4 text-primary dark:text-primary-hover" />
                 <span>اختار هتشتغل على إيه</span>
               </div>
               <button
@@ -3661,7 +3661,7 @@ export const SellerDashboard: React.FC = () => {
             </div>
 
             <label className="relative block">
-              <Search className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-primary dark:text-primary-hover" />
+              <Search className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover" />
               <input
                 type="search"
                 value={navSearchQuery}
@@ -3694,11 +3694,11 @@ export const SellerDashboard: React.FC = () => {
                         className={`flex min-h-12 w-full items-center justify-between rounded-xl p-3 text-right text-sm font-bold transition-all cursor-pointer ${
                           isActive
                             ? 'bg-primary text-white shadow-xs'
-                            : 'text-espresso hover:bg-primary/10 hover:text-primary dark:text-cream dark:hover:text-primary-hover'
+                            : 'text-espresso hover:bg-primary/10 hover:text-primary dark:text-primary-hover dark:text-cream dark:hover:text-primary dark:text-primary-hover-hover'
                         }`}
                       >
                         <div className="flex min-w-0 items-center gap-2.5">
-                          <Icon className={`h-4 w-4 shrink-0 ${isActive ? 'text-white' : 'text-primary dark:text-primary-hover'}`} />
+                          <Icon className={`h-4 w-4 shrink-0 ${isActive ? 'text-white' : 'text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover'}`} />
                           <span className="min-w-0">
                             <span className="block truncate">{item.label}</span>
                             {item.sublabel && (

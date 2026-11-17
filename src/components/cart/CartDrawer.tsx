@@ -132,7 +132,7 @@ export const CartDrawer: React.FC = () => {
               {/* Drawer Header */}
               <div className="p-4 sm:p-5 bg-white/70 dark:bg-espresso-900/70 backdrop-blur-md border-b border-black/10 dark:border-white/10 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-10 h-10 rounded-xl bg-primary/15 text-primary dark:text-primary-hover flex items-center justify-center shrink-0 shadow-inner">
+                  <div className="w-10 h-10 rounded-xl bg-primary/15 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover flex items-center justify-center shrink-0 shadow-inner">
                     <ShoppingBag className="w-5 h-5" />
                   </div>
                   <div>
@@ -230,7 +230,7 @@ export const CartDrawer: React.FC = () => {
                               setIsCartDrawerOpen(false);
                               navigateToProduct(prodId);
                             }}
-                            className="text-xs font-bold text-espresso dark:text-cream line-clamp-2 cursor-pointer hover:text-primary dark:hover:text-[#C99444] leading-snug"
+                            className="text-xs font-bold text-espresso dark:text-cream line-clamp-2 cursor-pointer hover:text-primary dark:text-primary-hover dark:hover:text-[#C99444] leading-snug"
                           >
                             {title}
                           </h4>
@@ -238,14 +238,14 @@ export const CartDrawer: React.FC = () => {
                           <div className="flex items-center gap-1.5 mt-1 text-[11px] text-black/60 dark:text-white/60">
                             <span>{sellerName}</span>
                             <span>•</span>
-                            <span className="bg-primary/10 text-primary dark:text-primary-hover px-1.5 py-0.5 rounded text-[10px] font-semibold">
+                            <span className="bg-primary/10 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover px-1.5 py-0.5 rounded text-[10px] font-semibold">
                               {sellerGov}
                             </span>
                           </div>
 
                           <div className="flex items-center justify-between mt-2.5">
                             <div className="flex items-center gap-1">
-                              <span className="text-sm font-black text-primary dark:text-primary-hover">
+                              <span className="text-sm font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
                                 {price * qty} ج.م
                               </span>
                               {qty > 1 && (
@@ -330,7 +330,7 @@ export const CartDrawer: React.FC = () => {
                       <button
                         type="submit"
                         aria-label="تطبيق كود الخصم"
-                        className="px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary dark:text-primary-hover border border-primary/30 text-xs font-bold rounded-[1rem] transition-colors shrink-0 min-h-[40px] cursor-pointer"
+                        className="px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover border border-primary/30 text-xs font-bold rounded-[1rem] transition-colors shrink-0 min-h-[40px] cursor-pointer"
                       >
                         تطبيق
                       </button>
@@ -359,7 +359,7 @@ export const CartDrawer: React.FC = () => {
                     )}
                     <div className="border-t border-black/10 dark:border-white/10 pt-2 flex justify-between text-sm font-black text-espresso dark:text-cream">
                       <span>الإجمالي النهائي:</span>
-                      <span className="text-base text-primary dark:text-primary-hover font-black">{cartTotal} ج.م</span>
+                      <span className="text-base text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover font-black">{cartTotal} ج.م</span>
                     </div>
                   </div>
 

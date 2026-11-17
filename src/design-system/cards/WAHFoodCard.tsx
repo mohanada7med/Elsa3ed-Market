@@ -48,7 +48,7 @@ export const WAHFoodCard: React.FC<WAHFoodCardProps> = ({
         </div>
         <div className="absolute bottom-2.5 right-2.5 z-10">
           <span className="bg-espresso/80 text-cream text-[10px] font-bold px-2.5 py-0.5 rounded-full backdrop-blur-md border border-white/10 flex items-center gap-1">
-            <MapPin className="w-3 h-3 text-primary" />
+            <MapPin className="w-3 h-3 text-primary dark:text-primary-hover" />
             <span>{originGovernorate}</span>
           </span>
         </div>
@@ -72,7 +72,7 @@ export const WAHFoodCard: React.FC<WAHFoodCardProps> = ({
           aria-hidden="true"
         />
         <div className="relative z-10 space-y-1.5">
-          <h3 className="font-bold text-espresso dark:text-cream text-base group-hover:text-primary dark:group-hover:text-[#C99444] transition-colors line-clamp-1">
+          <h3 className="font-bold text-espresso dark:text-cream text-base group-hover:text-primary dark:text-primary-hover dark:group-hover:text-[#C99444] transition-colors line-clamp-1">
             {title}
           </h3>
           <p className="text-xs text-black/60 dark:text-white/60 line-clamp-2 leading-relaxed">
@@ -80,7 +80,7 @@ export const WAHFoodCard: React.FC<WAHFoodCardProps> = ({
           </p>
         </div>
 
-        <div className="pt-3 mt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs font-bold text-primary dark:text-primary-hover relative z-10">
+        <div className="pt-3 mt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover relative z-10">
           <span className="flex items-center gap-1">
             <Utensils className="w-3.5 h-3.5" />
             <span>وصفة وسر المطبخ</span>

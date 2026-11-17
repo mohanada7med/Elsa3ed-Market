@@ -101,7 +101,7 @@ export const PaidPromotionRequestsPanel: React.FC<PaidPromotionRequestsPanelProp
       {/* HEADER */}
       <header className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-start gap-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary dark:text-primary-hover">
             <Megaphone className="h-6 w-6" />
           </div>
           <div>
@@ -150,7 +150,7 @@ export const PaidPromotionRequestsPanel: React.FC<PaidPromotionRequestsPanelProp
           <span className="text-[11px] font-bold text-foreground-secondary block mb-1">إجمالي طلبات الورش</span>
           <div className="flex items-center justify-between">
             <span className="text-2xl font-black text-foreground font-mono">{stats.total}</span>
-            <span className="h-8 w-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+            <span className="h-8 w-8 rounded-xl bg-primary/10 text-primary dark:text-primary-hover flex items-center justify-center">
               <TrendingUp className="h-4 w-4" />
             </span>
           </div>
@@ -392,7 +392,7 @@ const PromotionRequestCard: React.FC<PromotionRequestCardProps> = ({
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="font-black text-base text-foreground flex items-center gap-1.5">
-              <Store className="h-4 w-4 text-primary" />
+              <Store className="h-4 w-4 text-primary dark:text-primary-hover" />
               {request.sellerName}
             </h3>
             {sellerGov && (
@@ -445,7 +445,7 @@ const PromotionRequestCard: React.FC<PromotionRequestCardProps> = ({
           {/* Preferences Pill */}
           <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
             <span className="font-bold text-foreground">تفضيلات الورشة:</span>
-            <span className="rounded-lg bg-primary/10 px-2 py-0.5 font-bold text-primary">
+            <span className="rounded-lg bg-primary/10 px-2 py-0.5 font-bold text-primary dark:text-primary-hover">
               {request.contentType === 'product' ? 'ترويج منتج محدد' : 'ترويج ملف الورشة'}
             </span>
             {request.durationDays && (

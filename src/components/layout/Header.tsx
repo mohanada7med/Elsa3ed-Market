@@ -1278,7 +1278,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               className="flex items-center gap-2 text-xs font-bold"
               style={{ color: secondaryText }}
             >
-              <Sparkles size={13} className="text-primary" />
+              <Sparkles size={13} className="text-primary dark:text-primary-hover" />
               <span className="truncate">
                 من قلب الصعيد... حكاية بتبدأ
               </span>
@@ -1357,7 +1357,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 cursor-pointer"
               style={{ backgroundColor: hoverBg, color: mainText }}
             >
-              {isDark ? <Sun size={18} className="text-primary-hover" /> : <Moon size={18} />}
+              {isDark ? <Sun size={18} className="text-primary dark:text-primary-hover-hover" /> : <Moon size={18} />}
             </button>
 
             {!isShopBlockedStaff && (
@@ -1444,7 +1444,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       {currentRole === 'admin' ? 'الإدارة' : isSeller ? 'صاحب ورشة' : 'حسابي'}
                     </span>
                   </div>
-                  <ChevronDown size={15} className={`text-primary transition-transform duration-300 ${userDropdownOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown size={15} className={`text-primary dark:text-primary-hover transition-transform duration-300 ${userDropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 {/* Dropdown Menu */}
@@ -1502,7 +1502,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                               }}
                             >
                               <div className="flex items-center gap-3">
-                                <Icon size={18} className={isActive ? 'text-primary' : ''} />
+                                <Icon size={18} className={isActive ? 'text-primary dark:text-primary-hover' : ''} />
                                 <span>{item.label}</span>
                               </div>
                               {item.badge && (
@@ -1577,7 +1577,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               className="flex h-10 w-10 items-center justify-center rounded-full cursor-pointer touch-manipulation active:scale-95"
               style={{ backgroundColor: hoverBg, color: mainText }}
             >
-              <Menu size={18} className="text-primary-hover" />
+              <Menu size={18} className="text-primary dark:text-primary-hover-hover" />
             </button>
             <button
               type="button"
@@ -1587,7 +1587,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               className="flex h-10 w-10 items-center justify-center rounded-full cursor-pointer touch-manipulation transition-transform active:scale-95"
               style={{ backgroundColor: hoverBg, color: mainText }}
             >
-              {isDark ? <Sun size={18} className="text-primary-hover" /> : <Moon size={18} />}
+              {isDark ? <Sun size={18} className="text-primary dark:text-primary-hover-hover" /> : <Moon size={18} />}
             </button>
 
             <button
@@ -1732,7 +1732,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                               }}
                             >
                               <div className="flex items-center gap-3">
-                                <Icon size={17} className={isActive ? 'text-primary' : ''} />
+                                <Icon size={17} className={isActive ? 'text-primary dark:text-primary-hover' : ''} />
                                 <span>{item.label}</span>
                               </div>
                               {item.badge && (
@@ -1897,7 +1897,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   }}
                 >
                   {isLiveSearching ? (
-                    <Loader2 size={18} className="animate-spin text-primary shrink-0" />
+                    <Loader2 size={18} className="animate-spin text-primary dark:text-primary-hover shrink-0" />
                   ) : (
                     <Search size={18} style={{ color: secondaryText }} className="shrink-0" />
                   )}
@@ -1966,7 +1966,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   >
                     {isLiveSearching && liveResults.length === 0 ? (
                       <div className="py-12 text-center flex flex-col items-center justify-center gap-2">
-                        <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                        <Loader2 className="w-6 h-6 animate-spin text-primary dark:text-primary-hover" />
                         <p className="text-xs font-bold text-foreground-muted">جاري البحث في تراث وسوق الصعيد...</p>
                       </div>
                     ) : filteredResults.length > 0 ? (
@@ -1987,7 +1987,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                             />
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2">
-                                <h4 className="text-xs font-black truncate text-foreground group-hover:text-primary transition-colors">
+                                <h4 className="text-xs font-black truncate text-foreground group-hover:text-primary dark:text-primary-hover transition-colors">
                                   {item.title}
                                 </h4>
                                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#C99444]/15 text-[#C99444] shrink-0">
@@ -2000,7 +2000,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                 </p>
                               )}
                             </div>
-                            <ArrowUpLeft className="w-4 h-4 text-foreground-muted group-hover:text-primary group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 transition-transform shrink-0" />
+                            <ArrowUpLeft className="w-4 h-4 text-foreground-muted group-hover:text-primary dark:text-primary-hover group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 transition-transform shrink-0" />
                           </div>
                         ))}
 
@@ -2013,7 +2013,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                               setSearchOverlayOpen(false);
                               setActivePage('global-search');
                             }}
-                            className="text-xs font-bold text-primary hover:underline inline-flex items-center gap-1 cursor-pointer"
+                            className="text-xs font-bold text-primary dark:text-primary-hover hover:underline inline-flex items-center gap-1 cursor-pointer"
                           >
                             <span>عرض كل النتائج في صفحة البحث الشامل ({liveResults.length} نتيجة)</span>
                             <ArrowLeft size={13} />
@@ -2041,7 +2041,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 >
                   {/* Trending Words */}
                   <div>
-                    <div className="flex items-center gap-1.5 text-xs font-black text-primary mb-2.5">
+                    <div className="flex items-center gap-1.5 text-xs font-black text-primary dark:text-primary-hover mb-2.5">
                       <TrendingUp size={14} />
                       <span>أكثر الكلمات بحثاً في الصعيد</span>
                     </div>
@@ -2081,7 +2081,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                           }}
                           className="flex items-center gap-2 p-2.5 rounded-xl border border-black/5 dark:border-white/5 bg-black/[0.02] dark:bg-white/[0.02] hover:bg-primary/10 hover:border-primary/30 transition-all text-right cursor-pointer"
                         >
-                          <item.icon size={15} className="text-primary shrink-0" />
+                          <item.icon size={15} className="text-primary dark:text-primary-hover shrink-0" />
                           <span className="text-xs font-bold text-foreground truncate">{item.label}</span>
                         </button>
                       ))}

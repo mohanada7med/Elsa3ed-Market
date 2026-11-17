@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import FloatingDock from '../common/FloatingDock';
 import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner';
+import { ArchiveStatsCard } from '../common/ArchiveStatsCard';
 
 // كاش في الذاكرة لتفادي ضرب السيرفر عند الرجوع للصفحة
 let cachedFoods: UpperEgyptFood[] | null = null;
@@ -166,7 +167,7 @@ export const FoodHeritagePage: React.FC = () => {
         <div className="mx-auto flex h-14 max-w-[1700px] items-center justify-between px-4 sm:px-8 lg:px-12 xl:px-16">
           <button
             onClick={() => setActivePage('home')}
-            className="group flex min-h-[38px] cursor-pointer items-center gap-2 text-xs font-bold transition-colors hover:text-primary dark:hover:text-primary-hover"
+            className="group flex min-h-[38px] cursor-pointer items-center gap-2 text-xs font-bold transition-colors hover:text-primary dark:text-primary-hover dark:hover:text-primary dark:text-primary-hover-hover"
           >
             <span className="flex h-7 w-7 items-center justify-center rounded-full border border-black/10 transition-colors group-hover:bg-espresso group-hover:text-white dark:border-white/10 dark:group-hover:bg-white dark:group-hover:text-black">
               <ArrowLeft size={13} className="transition-transform group-hover:-translate-x-0.5" />
@@ -174,11 +175,7 @@ export const FoodHeritagePage: React.FC = () => {
             <span className="text-[11px] sm:text-xs">الرئيسية</span>
           </button>
 
-          <div className="flex items-center gap-2">
-            <span className="text-[9px] font-black uppercase tracking-[0.25em] text-primary dark:text-primary-hover">
-              WAH • طعم الصعيد
-            </span>
-          </div>
+         
 
           <div className="flex items-center gap-2">
             <button
@@ -186,7 +183,7 @@ export const FoodHeritagePage: React.FC = () => {
               className="group flex min-h-[34px] cursor-pointer items-center gap-1.5 rounded-full border border-black/10 px-3 py-1 text-[10px] font-bold transition-colors hover:bg-espresso hover:text-white dark:border-white/10 dark:hover:bg-white dark:hover:text-black sm:px-3.5 sm:py-1.5 sm:text-xs"
               title="يختار لك أكلة صعيدية عشوائية"
             >
-              <Shuffle size={12} className="text-primary dark:text-[#C99444]" />
+              <Shuffle size={12} className="text-primary dark:text-primary-hover dark:text-[#C99444]" />
               <span>أكلة على البركة!</span>
             </button>
 
@@ -206,7 +203,7 @@ export const FoodHeritagePage: React.FC = () => {
       <section className="relative z-10 mx-auto max-w-[1700px] px-4 pb-8 pt-8 sm:px-8 sm:pb-14 sm:pt-14 lg:px-12 lg:pb-16 lg:pt-20 xl:px-16">
         <div className="grid gap-14 lg:grid-cols-[1fr_420px] lg:items-end lg:gap-20">
           <div>
-            <div className="mb-7 flex items-center gap-3 text-[9px] font-black tracking-[0.28em] text-primary dark:text-primary-hover">
+            <div className="mb-7 flex items-center gap-3 text-[9px] font-black tracking-[0.28em] text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 dark:bg-[#C99444]/10">
                 <Sparkles size={13} />
               </span>
@@ -216,7 +213,7 @@ export const FoodHeritagePage: React.FC = () => {
             <h1 className="max-w-6xl text-5xl font-black leading-[0.92] tracking-tight sm:text-7xl lg:text-[8rem] xl:text-[9.5rem]">
               طعم
               <br />
-              <span className="mr-3 text-primary dark:text-primary-hover sm:mr-6 lg:mr-16">
+              <span className="mr-3 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover sm:mr-6 lg:mr-16">
                 الصعيد
               </span>
             </h1>
@@ -234,51 +231,21 @@ export const FoodHeritagePage: React.FC = () => {
             </div>
           </div>
 
-          <div className="relative">
-            <div className="relative overflow-hidden rounded-[2rem] border border-border-subtle bg-surface p-7 shadow-lg">
-              <div className="pointer-events-none absolute -left-20 -top-20 h-48 w-48 rounded-full border border-primary/15 dark:border-[#C99444]/10" />
-
-              <div className="relative">
-                <div className="mb-12 flex items-center justify-between">
-                  <div className="text-[8px] font-black tracking-[0.3em] text-black/35 dark:text-white/35">
-                    THE HERITAGE PANTRY
-                  </div>
-                  <Flame size={18} className="text-primary dark:text-primary-hover" />
-                </div>
-
-                <div className="grid grid-cols-2 gap-8">
-                  <div>
-                    <div className="text-5xl font-black tracking-[-0.07em]">
-                      {foods.length}
-                    </div>
-                    <div className="mt-3 text-[10px] font-medium leading-5 text-black/45 dark:text-white/40">
-                      أكلة تراثية
-                      <br />
-                      متوثقة
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="text-5xl font-black tracking-[-0.07em]">
-                      {governorates.length}
-                    </div>
-                    <div className="mt-3 text-[10px] font-medium leading-5 text-black/45 dark:text-white/40">
-                      محافظة
-                      <br />
-                      صعيدية
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-10 flex items-center gap-3 border-t border-black/10 pt-5 dark:border-white/10">
-                  <div className="h-2 w-2 rounded-full bg-primary dark:bg-[#C99444]" />
-                  <span className="text-[10px] font-bold">
-                    من قعر الطاجن ودفا الفرن البلدي
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <ArchiveStatsCard
+            eyebrow="THE HERITAGE PANTRY"
+            icon={Flame}
+            stats={[
+              {
+                value: foods.length,
+                label: <>أكلة تراثية<br />متوثقة</>,
+              },
+              {
+                value: governorates.length,
+                label: <>محافظة<br />صعيدية</>,
+              },
+            ]}
+            footer="من قعر الطاجن ودفا الفرن البلدي"
+          />
         </div>
       </section>
 
@@ -408,7 +375,7 @@ export const FoodHeritagePage: React.FC = () => {
           {(selectedCategory !== 'all' || selectedGovernorate !== 'all' || searchQuery) && (
             <button
               onClick={clearFilters}
-              className="shrink-0 cursor-pointer text-xs font-bold text-primary underline underline-offset-4 hover:opacity-80 dark:text-primary-hover"
+              className="shrink-0 cursor-pointer text-xs font-bold text-primary dark:text-primary-hover underline underline-offset-4 hover:opacity-80 dark:text-primary dark:text-primary-hover-hover"
             >
               تفريغ الفلاتر
             </button>
@@ -630,11 +597,11 @@ export const FoodHeritagePage: React.FC = () => {
                     />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5 text-[10px] font-bold text-primary dark:text-primary-hover">
+                    <div className="flex items-center gap-1.5 text-[10px] font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
                       <span>{food.governorateName}</span>
                       {food.prepTime && <span>• {food.prepTime}</span>}
                     </div>
-                    <h4 className="truncate text-base font-black transition-colors group-hover:text-primary dark:group-hover:text-primary-hover">
+                    <h4 className="truncate text-base font-black transition-colors group-hover:text-primary dark:text-primary-hover dark:group-hover:text-primary dark:text-primary-hover-hover">
                       {title}
                     </h4>
                     <p className="truncate text-xs text-black/50 dark:text-white/45">

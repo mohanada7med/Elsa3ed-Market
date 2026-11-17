@@ -69,7 +69,7 @@ export const ProductFilters: React.FC = () => {
         <button
           type="button"
           onClick={() => setIsMobileExpanded(!isMobileExpanded)}
-          className="flex items-center gap-2 text-xs font-bold text-primary dark:text-primary-hover bg-black/5 dark:bg-cream/5 hover:bg-black/10 dark:hover:bg-white/10 px-3.5 py-2.5 rounded-xl border border-black/10 dark:border-white/10 min-h-[44px] transition-colors cursor-pointer"
+          className="flex items-center gap-2 text-xs font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover bg-black/5 dark:bg-cream/5 hover:bg-black/10 dark:hover:bg-white/10 px-3.5 py-2.5 rounded-xl border border-black/10 dark:border-white/10 min-h-[44px] transition-colors cursor-pointer"
         >
           <Filter className="w-4 h-4" />
           <span>{isMobileExpanded ? 'إخفاء الفلاتر' : 'فلترة وترتيب المعروضات'}</span>
@@ -85,7 +85,7 @@ export const ProductFilters: React.FC = () => {
           <button
             type="button"
             onClick={resetFilters}
-            className="text-xs text-primary dark:text-primary-hover hover:underline flex items-center gap-1 font-bold p-2 cursor-pointer"
+            className="text-xs text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover hover:underline flex items-center gap-1 font-bold p-2 cursor-pointer"
           >
             <X className="w-3.5 h-3.5" />
             <span>رجّع الفلاتر</span>
@@ -97,7 +97,7 @@ export const ProductFilters: React.FC = () => {
         {/* Filter Header & Reset (Desktop) */}
         <div className="hidden sm:flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
           <div className="flex items-center gap-2 text-sm font-bold text-espresso dark:text-cream">
-            <Filter className="w-4 h-4 text-primary dark:text-primary-hover" />
+            <Filter className="w-4 h-4 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover" />
             <span>فلتر ونقي من روائع الصعيد</span>
             {activeCount > 0 && (
               <span className="w-5 h-5 rounded-full bg-primary text-white text-[10px] flex items-center justify-center font-bold">
@@ -110,7 +110,7 @@ export const ProductFilters: React.FC = () => {
             <button
               type="button"
               onClick={resetFilters}
-              className="text-xs text-primary dark:text-primary-hover hover:underline flex items-center gap-1 font-bold transition-colors cursor-pointer"
+              className="text-xs text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover hover:underline flex items-center gap-1 font-bold transition-colors cursor-pointer"
             >
               <X className="w-3.5 h-3.5" />
               <span>رجّع الفلاتر لأولها</span>
@@ -121,7 +121,7 @@ export const ProductFilters: React.FC = () => {
         {/* Governorate Pills (Upper Egypt) */}
         <div>
           <label className="block text-xs font-bold text-black/60 dark:text-white/60 mb-2 flex items-center gap-1.5">
-            <MapPin className="w-3.5 h-3.5 text-primary dark:text-primary-hover" />
+            <MapPin className="w-3.5 h-3.5 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover" />
             <span>المحافظة ومصدر الصنعة في الصعيد</span>
           </label>
           <div className="flex flex-wrap gap-1.5">
@@ -148,7 +148,7 @@ export const ProductFilters: React.FC = () => {
         {/* Category Dropdown/Pills */}
         <div>
           <label className="block text-xs font-bold text-black/60 dark:text-white/60 mb-2 flex items-center gap-1.5">
-            <Layers className="w-3.5 h-3.5 text-primary dark:text-primary-hover" />
+            <Layers className="w-3.5 h-3.5 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover" />
             <span>التصنيف ونوع الصنعة</span>
           </label>
           <div className="flex flex-wrap gap-1.5">
@@ -220,10 +220,10 @@ export const ProductFilters: React.FC = () => {
               type="checkbox"
               checked={selectedHandmadeOnly}
               onChange={(e) => setSelectedHandmadeOnly(e.target.checked)}
-              className="w-4 h-4 text-primary rounded focus:ring-primary border-black/20 dark:border-white/20 cursor-pointer"
+              className="w-4 h-4 text-primary dark:text-primary-hover rounded focus:ring-primary border-black/20 dark:border-white/20 cursor-pointer"
             />
             <span className="text-xs font-bold text-espresso dark:text-cream flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-amber-600 dark:text-primary-hover" />
+              <Sparkles className="w-3.5 h-3.5 text-amber-600 dark:text-primary dark:text-primary-hover-hover" />
               <span>شغل يدوي 100% بس بإيد شيوخ الصنعة</span>
             </span>
           </label>

@@ -228,7 +228,7 @@ export const SellerProfileView: React.FC = () => {
     return (
       <div dir="rtl" className="flex min-h-[70vh] items-center justify-center px-5">
         <div className="w-full max-w-md rounded-[2rem] border border-border-subtle bg-surface-subtle p-8 text-center shadow-xl sm:p-12">
-          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-primary/10 text-primary">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-primary/10 text-primary dark:text-primary-hover">
             <Store className="h-9 w-9" />
           </div>
           <h3 className="mt-6 text-2xl font-cairo font-bold text-foreground">الورشة دي مش معروضة دلوقتي</h3>
@@ -349,7 +349,7 @@ export const SellerProfileView: React.FC = () => {
             <div className="order-2 lg:order-1">
               <p className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm font-bold text-white/80">
                 <span className="inline-flex items-center gap-1.5">
-                  <MapPin className="h-4 w-4 text-primary" />
+                  <MapPin className="h-4 w-4 text-primary dark:text-primary-hover" />
                   {governorate}
                 </span>
                 <span className="text-white/90">{specialty}</span>

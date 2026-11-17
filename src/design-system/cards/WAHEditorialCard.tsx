@@ -74,7 +74,7 @@ export const WAHEditorialCard: React.FC<WAHEditorialCardProps> = ({
         {governorate && (
           <div className="absolute bottom-3 right-3 z-10">
             <span className="bg-espresso/80 text-cream text-[11px] font-bold px-2.5 py-0.5 rounded-full backdrop-blur-md border border-white/15 flex items-center gap-1">
-              <MapPin className="w-3 h-3 text-primary" />
+              <MapPin className="w-3 h-3 text-primary dark:text-primary-hover" />
               <span>{governorate}</span>
             </span>
           </div>
@@ -103,12 +103,12 @@ export const WAHEditorialCard: React.FC<WAHEditorialCardProps> = ({
 
         <div className="relative z-10 space-y-2">
           {subtitle && (
-            <p className="text-xs font-bold text-primary dark:text-primary-hover line-clamp-1">
+            <p className="text-xs font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover line-clamp-1">
               {subtitle}
             </p>
           )}
 
-          <h3 className="text-base sm:text-lg font-cairo font-bold text-espresso dark:text-cream leading-snug group-hover:text-primary dark:group-hover:text-[#C99444] transition-colors">
+          <h3 className="text-base sm:text-lg font-cairo font-bold text-espresso dark:text-cream leading-snug group-hover:text-primary dark:text-primary-hover dark:group-hover:text-[#C99444] transition-colors">
             {title}
           </h3>
 
@@ -120,7 +120,7 @@ export const WAHEditorialCard: React.FC<WAHEditorialCardProps> = ({
         </div>
 
         {/* Action Link Footer */}
-        <div className="pt-4 mt-4 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs font-bold text-primary dark:text-primary-hover group-hover:text-[#3B1E0E] dark:group-hover:text-[#C99444] relative z-10">
+        <div className="pt-4 mt-4 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover group-hover:text-[#3B1E0E] dark:group-hover:text-[#C99444] relative z-10">
           <span>اكتشف المزيد</span>
           <ArrowLeft className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" />
         </div>

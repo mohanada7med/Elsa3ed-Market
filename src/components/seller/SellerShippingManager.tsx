@@ -428,7 +428,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
       <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-lg backdrop-blur-xl">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 text-xs font-bold mb-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary dark:text-primary-hover border border-primary/20 text-xs font-bold mb-2">
               <Truck className="w-3.5 h-3.5" />
               <span>الشحن المباشر والتواصل مع المشتري</span>
             </div>
@@ -671,7 +671,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <h4 className="text-sm font-bold text-espresso dark:text-cream flex items-center gap-2">
-              <Package className="w-4 h-4 text-primary" />
+              <Package className="w-4 h-4 text-primary dark:text-primary-hover" />
               <span>مراحل تجهيز وتوصيل الطلبات ({ordersInProgress.length})</span>
             </h4>
             <span className="text-xs text-black/50 dark:text-white/50">
@@ -697,7 +697,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                   >
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="font-black font-bold text-sm text-primary">
+                        <span className="font-black font-bold text-sm text-primary dark:text-primary-hover">
                           #{order.orderNumber || order.id}
                         </span>
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${getOrderStatusBadge(order.status).color}`}>
@@ -747,7 +747,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                           const stage = ORDER_FULFILLMENT_STAGES.find((item) => item.status === event.currentTarget.value);
                           if (stage) void handleUpdateOrderStage(order, stage.status);
                         }}
-                        className="max-w-[220px] px-3 py-2 bg-white/90 dark:bg-espresso-800 border border-black/15 dark:border-white/15 rounded-xl text-xs font-bold text-primary outline-none focus:border-primary disabled:opacity-60"
+                        className="max-w-[220px] px-3 py-2 bg-white/90 dark:bg-espresso-800 border border-black/15 dark:border-white/15 rounded-xl text-xs font-bold text-primary dark:text-primary-hover outline-none focus:border-primary disabled:opacity-60"
                       >
                         {ORDER_FULFILLMENT_STAGES.map((stage) => (
                           <option key={stage.status} value={stage.status}>
@@ -755,7 +755,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                           </option>
                         ))}
                       </select>
-                      {isUpdating && <Loader2 className="w-4 h-4 animate-spin text-primary" />}
+                      {isUpdating && <Loader2 className="w-4 h-4 animate-spin text-primary dark:text-primary-hover" />}
                     </label>
                   </article>
                 );
@@ -804,7 +804,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-black/10 dark:border-white/10 pb-3">
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="font-black font-bold text-sm text-primary">
+                          <span className="font-black font-bold text-sm text-primary dark:text-primary-hover">
                             #{ord.orderNumber || ord.id}
                           </span>
                           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${getOrderStatusBadge(ord.status).color}`}>
@@ -832,7 +832,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                             href={`tel:${buyerPhone}`}
                             className="px-3 py-2 rounded-xl bg-black/5 dark:bg-white/5 hover:bg-black/10 text-espresso dark:text-cream text-xs font-bold flex items-center gap-1.5 transition-colors whitespace-nowrap shrink-0"
                           >
-                            <Phone className="w-3.5 h-3.5 text-primary" />
+                            <Phone className="w-3.5 h-3.5 text-primary dark:text-primary-hover" />
                             <span>اتصال</span>
                           </a>
                         )}
@@ -914,7 +914,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                           عنوان التوصيل والشحن:
                         </span>
                         <p className="text-black/70 dark:text-white/70 flex items-start gap-1">
-                          <MapPin className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
+                          <MapPin className="w-3.5 h-3.5 text-primary dark:text-primary-hover shrink-0 mt-0.5" />
                           <span>
                             {ord.shippingAddress?.governorate} - {ord.shippingAddress?.city}
                             {ord.shippingAddress?.streetAddress ? `، ${ord.shippingAddress.streetAddress}` : ''}
@@ -932,7 +932,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                           }`}>
                             {isCOD ? 'دفع عند الاستلام (COD)' : 'مدفوع إلكترونياً (Online)'}
                           </span>
-                          <span className="font-bold text-primary font-black">
+                          <span className="font-bold text-primary dark:text-primary-hover font-black">
                             {Number(ord.total || 0).toLocaleString('ar-EG')} ج.م
                           </span>
                         </div>
@@ -956,14 +956,14 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h4 className="text-sm font-bold text-espresso dark:text-cream flex items-center gap-2">
-              <Truck className="w-4 h-4 text-primary" />
+              <Truck className="w-4 h-4 text-primary dark:text-primary-hover" />
               <span>الشحنات المباشرة المسجلة ({displayedShipments.length})</span>
             </h4>
           </div>
 
           {isLoading ? (
             <div className="p-12 text-center text-xs text-black/50 dark:text-white/50 flex items-center justify-center gap-2 bg-white/40 dark:bg-espresso-900/40 rounded-2xl border border-black/10 dark:border-white/10">
-              <Loader2 className="w-5 h-5 animate-spin text-primary" />
+              <Loader2 className="w-5 h-5 animate-spin text-primary dark:text-primary-hover" />
               <span>جاري تحميل بيانات الشحنات المحدثة...</span>
             </div>
           ) : displayedShipments.length === 0 ? (
@@ -975,7 +975,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
               <button
                 type="button"
                 onClick={() => setShippingTab('ready')}
-                className="mt-2 px-3 py-1.5 text-xs text-primary bg-primary/10 hover:bg-primary/20 rounded-xl font-bold cursor-pointer transition-colors"
+                className="mt-2 px-3 py-1.5 text-xs text-primary dark:text-primary-hover bg-primary/10 hover:bg-primary/20 rounded-xl font-bold cursor-pointer transition-colors"
               >
                 عرض الطلبات الجاهزة للحجز الآن
               </button>
@@ -996,7 +996,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-black/10 dark:border-white/10 pb-3">
                       <div>
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className="font-black font-bold text-sm text-primary">
+                          <span className="font-black font-bold text-sm text-primary dark:text-primary-hover">
                             مرجع الشحنة: {shipment.trackingNumber}
                           </span>
 
@@ -1042,7 +1042,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                             href={`tel:${shipment.buyerPhone}`}
                             className="px-2.5 py-1.5 text-xs font-bold text-espresso dark:text-cream bg-black/5 dark:bg-white/5 hover:bg-black/10 rounded-xl flex items-center gap-1 transition-colors whitespace-nowrap shrink-0"
                           >
-                            <Phone className="w-3 h-3 text-primary" />
+                            <Phone className="w-3 h-3 text-primary dark:text-primary-hover" />
                             <span>اتصال</span>
                           </a>
                         )}
@@ -1100,7 +1100,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                           {shipment.buyerPhone}
                         </p>
                         <p className="text-black/60 dark:text-white/60 flex items-start gap-1">
-                          <MapPin className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
+                          <MapPin className="w-3.5 h-3.5 text-primary dark:text-primary-hover shrink-0 mt-0.5" />
                           <span>
                             {shipment.shippingAddress?.governorate} - {shipment.shippingAddress?.city}
                             {shipment.shippingAddress?.streetAddress ? `، ${shipment.shippingAddress.streetAddress}` : ''}
@@ -1167,7 +1167,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                         {/* Settlement Status */}
                         <div className="flex items-center justify-between text-[10px]">
                           <span className="text-black/60 dark:text-white/60">تسوية مستحقات الورشة:</span>
-                          <span className="font-bold text-primary">
+                          <span className="font-bold text-primary dark:text-primary-hover">
                             {shipment.sellerSettlementStatus === 'ready_for_payout'
                               ? 'جاهزة للصرف والمطالبة'
                               : shipment.sellerSettlementStatus === 'paid'
@@ -1282,7 +1282,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
 
               <div className="flex justify-between items-center text-black/70 dark:text-white/70">
                 <span>طريقة الدفع:</span>
-                <span className="font-bold text-primary">
+                <span className="font-bold text-primary dark:text-primary-hover">
                   {selectedOrderForBooking.paymentMethod === 'cod' || selectedOrderForBooking.paymentMethod === 'cash_on_delivery'
                     ? `دفع عند الاستلام (مطلوب تحصيل ${Number(selectedOrderForBooking.total).toLocaleString('ar-EG')} ج.م)`
                     : 'مدفوع إلكترونياً (Online)'}
@@ -1433,7 +1433,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                   value={updateFormData.status}
                   onChange={(e) => setUpdateFormData({ ...updateFormData, status: e.target.value as ShipmentStatus })}
                   required
-                  className="w-full px-3.5 py-2.5 bg-white/90 dark:bg-espresso-800 border border-black/15 dark:border-white/15 rounded-xl text-xs font-bold text-primary outline-none focus:border-primary"
+                  className="w-full px-3.5 py-2.5 bg-white/90 dark:bg-espresso-800 border border-black/15 dark:border-white/15 rounded-xl text-xs font-bold text-primary dark:text-primary-hover outline-none focus:border-primary"
                 >
                   <option value="awaiting_pickup">جاري التجهيز والتنسيق مع المشتري</option>
                   <option value="picked_up">تم تجهيز الشحنة للخروج للتوصيل</option>

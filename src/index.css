@@ -336,7 +336,7 @@
   --wah-info: var(--info);
 }
 
-:where(.dark, [data-theme="dark"]) .text-primary:not([class*="dark:text-"]) {
+:where(.dark, [data-theme="dark"]) .text-primary dark:text-primary-hover:not([class*="dark:text-"]) {
   color: var(--primary-text);
 }
 

@@ -138,7 +138,7 @@ export default function ForgotPasswordModal({
             "
           >
             <svg
-              className="w-8 h-8 text-primary"
+              className="w-8 h-8 text-primary dark:text-primary-hover"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -218,7 +218,7 @@ export default function ForgotPasswordModal({
                   m-0
                   text-sm
                   font-bold
-                  text-primary
+                  text-primary dark:text-primary-hover
                   text-center
                   break-all
                 "
@@ -312,7 +312,7 @@ export default function ForgotPasswordModal({
                 "
               >
                 <svg
-                  className="w-5 h-5 text-primary"
+                  className="w-5 h-5 text-primary dark:text-primary-hover"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -348,7 +348,7 @@ export default function ForgotPasswordModal({
                   "
                 >
                   بص في مجلد
-                  <strong className="text-primary">
+                  <strong className="text-primary dark:text-primary-hover">
                     {' '}Spam / Junk{' '}
                   </strong>
                   كمان، ساعات الرسائل الجديدة بتروح هناك

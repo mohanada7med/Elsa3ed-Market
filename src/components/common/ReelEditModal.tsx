@@ -259,7 +259,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
         {/* Header */}
         <div className="p-6 border-b border-black/10 dark:border-white/10 flex items-center justify-between bg-black/5 dark:bg-white/5">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary dark:text-[#C99444]">
+            <div className="w-12 h-12 rounded-2xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary dark:text-primary-hover dark:text-[#C99444]">
               <Film className="w-6 h-6" />
             </div>
             <div>
@@ -355,7 +355,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-bold text-espresso dark:text-cream flex items-center gap-1.5">
-                    <Film className="w-3.5 h-3.5 text-primary" />
+                    <Film className="w-3.5 h-3.5 text-primary dark:text-primary-hover" />
                     <span>تحديد أو استبدال الفيديو</span>
                   </label>
                   <div className="flex items-center bg-black/5 dark:bg-white/5 p-0.5 rounded-lg border border-black/10 dark:border-white/10 text-[11px]">
@@ -511,7 +511,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
                         type="checkbox"
                         checked={isFeatured}
                         onChange={(e) => setIsFeatured(e.target.checked)}
-                        className="rounded text-primary focus:ring-primary"
+                        className="rounded text-primary dark:text-primary-hover focus:ring-primary"
                       />
                       <Star className="w-3.5 h-3.5 text-amber-500" />
                       <span className="font-bold text-espresso dark:text-cream">فيديو مميز (Featured)</span>
@@ -522,7 +522,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
                         type="checkbox"
                         checked={isPinned}
                         onChange={(e) => setIsPinned(e.target.checked)}
-                        className="rounded text-primary focus:ring-primary"
+                        className="rounded text-primary dark:text-primary-hover focus:ring-primary"
                       />
                       <Pin className="w-3.5 h-3.5 text-blue-500" />
                       <span className="font-bold text-espresso dark:text-cream">تثبيت في الصدارة</span>
@@ -532,7 +532,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
                         type="checkbox"
                         checked={isVerifiedArtisan}
                         onChange={(e) => setIsVerifiedArtisan(e.target.checked)}
-                        className="rounded text-primary focus:ring-primary"
+                        className="rounded text-primary dark:text-primary-hover focus:ring-primary"
                       />
                       <span className="font-bold text-espresso dark:text-cream">حرفي موثق</span>
                     </label>
@@ -572,7 +572,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-espresso dark:text-cream flex items-center gap-1">
-                    <Tag className="w-3.5 h-3.5 text-primary" />
+                    <Tag className="w-3.5 h-3.5 text-primary dark:text-primary-hover" />
                     <span>تصنيف المحتوى</span>
                   </label>
                   <select
@@ -594,7 +594,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
 
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-espresso dark:text-cream flex items-center gap-1">
-                    <MapPin className="w-3.5 h-3.5 text-primary" />
+                    <MapPin className="w-3.5 h-3.5 text-primary dark:text-primary-hover" />
                     <span>المحافظة</span>
                   </label>
                   <select
@@ -614,7 +614,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
 
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-espresso dark:text-cream flex items-center gap-1">
-                    <Tag className="w-3.5 h-3.5 text-primary" />
+                    <Tag className="w-3.5 h-3.5 text-primary dark:text-primary-hover" />
                     <span>تصنيف الريلز</span>
                   </label>
                   <select
@@ -637,7 +637,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
 
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-espresso dark:text-cream flex items-center gap-1">
-                    <MapPin className="w-3.5 h-3.5 text-primary" />
+                    <MapPin className="w-3.5 h-3.5 text-primary dark:text-primary-hover" />
                     <span>الموقع / المكان</span>
                   </label>
                   <input
@@ -664,7 +664,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
               <div className="p-4 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-2xl space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <ShoppingBag className="w-4 h-4 text-primary" />
+                    <ShoppingBag className="w-4 h-4 text-primary dark:text-primary-hover" />
                     <span className="text-xs font-bold text-espresso dark:text-cream">
                       المنتج المرتبط (اختياري)
                     </span>
@@ -712,7 +712,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
                         type="number"
                         value={productPrice}
                         onChange={(e) => setProductPrice(e.target.value)}
-                        className="w-full p-2 bg-white dark:bg-[#26160D] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none font-bold text-primary"
+                        className="w-full p-2 bg-white dark:bg-[#26160D] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none font-bold text-primary dark:text-primary-hover"
                       />
                     </div>
                   </div>
@@ -761,7 +761,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
                       type="checkbox"
                       checked={inStock}
                       onChange={(e) => setInStock(e.target.checked)}
-                      className="rounded text-primary focus:ring-primary"
+                      className="rounded text-primary dark:text-primary-hover focus:ring-primary"
                     />
                     <span>المنتج متوفر بالمخزون وجاهز للطلب الفوري</span>
                   </label>
@@ -772,7 +772,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <label className="block text-xs font-bold text-espresso dark:text-cream flex items-center gap-1">
-                    <Music className="w-3.5 h-3.5 text-primary" />
+                    <Music className="w-3.5 h-3.5 text-primary dark:text-primary-hover" />
                     <span>الموسيقى التراثية الخلفية</span>
                   </label>
                   <input

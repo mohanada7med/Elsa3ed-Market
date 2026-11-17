@@ -426,7 +426,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
         {/* Header */}
         <div className="px-3 py-3 sm:px-8 sm:py-5 border-b border-black/10 dark:border-white/10 flex items-start sm:items-center justify-between gap-2 bg-black/[0.02] dark:bg-white/[0.02]">
           <div className="flex min-w-0 flex-1 items-start sm:items-center gap-2 sm:gap-3">
-            <div className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-primary/20 bg-primary/15 text-primary sm:mt-0 sm:h-11 sm:w-11 sm:rounded-2xl">
+            <div className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-primary/20 bg-primary/15 text-primary dark:text-primary-hover sm:mt-0 sm:h-11 sm:w-11 sm:rounded-2xl">
               <Landmark className="w-5 h-5" />
             </div>
             <div className="min-w-0">
@@ -434,7 +434,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                 <h2 className="min-w-0 break-words text-sm font-main font-black leading-snug sm:text-lg">
                   تعديل محتوى وميديا المعلم التراثي
                 </h2>
-                <span className="shrink-0 rounded-full bg-primary/20 px-2 py-0.5 text-[10px] font-bold text-primary">
+                <span className="shrink-0 rounded-full bg-primary/20 px-2 py-0.5 text-[10px] font-bold text-primary dark:text-primary-hover">
                   تحكم مباشر
                 </span>
               </div>
@@ -460,7 +460,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
             type="button"
             onClick={() => setActiveTab('basic')}
             className={`flex min-w-0 items-center justify-center gap-1.5 border-b-2 px-2 py-2 text-center transition-all sm:shrink-0 sm:px-4 sm:py-3 ${activeTab === 'basic'
-              ? 'border-primary text-primary font-black'
+              ? 'border-primary text-primary dark:text-primary-hover font-black'
               : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
               }`}
           >
@@ -472,7 +472,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
             type="button"
             onClick={() => setActiveTab('content')}
             className={`flex min-w-0 items-center justify-center gap-1.5 border-b-2 px-2 py-2 text-center transition-all sm:shrink-0 sm:px-4 sm:py-3 ${activeTab === 'content'
-              ? 'border-primary text-primary font-black'
+              ? 'border-primary text-primary dark:text-primary-hover font-black'
               : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
               }`}
           >
@@ -484,7 +484,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
             type="button"
             onClick={() => setActiveTab('visit')}
             className={`flex min-w-0 items-center justify-center gap-1.5 border-b-2 px-2 py-2 text-center transition-all sm:shrink-0 sm:px-4 sm:py-3 ${activeTab === 'visit'
-              ? 'border-primary text-primary font-black'
+              ? 'border-primary text-primary dark:text-primary-hover font-black'
               : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
               }`}
           >
@@ -496,7 +496,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
             type="button"
             onClick={() => setActiveTab('media')}
             className={`flex min-w-0 items-center justify-center gap-1.5 border-b-2 px-2 py-2 text-center transition-all sm:shrink-0 sm:px-4 sm:py-3 ${activeTab === 'media'
-              ? 'border-primary text-primary font-black'
+              ? 'border-primary text-primary dark:text-primary-hover font-black'
               : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
               }`}
           >
@@ -511,7 +511,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
             type="button"
             onClick={() => setActiveTab('preview')}
             className={`flex min-w-0 items-center justify-center gap-1.5 border-b-2 px-2 py-2 text-center transition-all sm:shrink-0 sm:px-4 sm:py-3 ${activeTab === 'preview'
-              ? 'border-primary text-primary font-black'
+              ? 'border-primary text-primary dark:text-primary-hover font-black'
               : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
               }`}
           >
@@ -597,7 +597,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
 
               {/* Coordinates */}
               <div className="p-4 rounded-2xl bg-black/[0.025] dark:bg-white/[0.025] border border-black/10 dark:border-white/10 space-y-3">
-                <div className="flex items-center gap-2 text-xs font-bold text-primary">
+                <div className="flex items-center gap-2 text-xs font-bold text-primary dark:text-primary-hover">
                   <MapPin className="w-3.5 h-3.5" />
                   <span>إحداثيات الخريطة الحية (GPS Coordinates)</span>
                 </div>
@@ -642,7 +642,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                       value="approved"
                       checked={status === 'approved'}
                       onChange={() => setStatus('approved')}
-                      className="text-primary focus:ring-primary"
+                      className="text-primary dark:text-primary-hover focus:ring-primary"
                     />
                     <span>منشور وموثق للعامة (Approved)</span>
                   </label>
@@ -653,7 +653,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                       value="pending_review"
                       checked={status === 'pending_review'}
                       onChange={() => setStatus('pending_review')}
-                      className="text-primary focus:ring-primary"
+                      className="text-primary dark:text-primary-hover focus:ring-primary"
                     />
                     <span>مسودة وقيد المراجعة</span>
                   </label>
@@ -852,7 +852,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
               {/* Cover Image Section */}
               <div className="p-3 sm:p-5 rounded-2xl bg-black/[0.025] dark:bg-white/[0.025] border border-black/10 dark:border-white/10 space-y-4">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="flex items-center gap-2 text-xs font-black text-primary">
+                  <div className="flex items-center gap-2 text-xs font-black text-primary dark:text-primary-hover">
                     <ImageIcon className="w-4 h-4" />
                     <span>الصورة الرئيسية للغلاف (Hero Cover Image)</span>
                   </div>
@@ -937,9 +937,9 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                 {/* Header Bar */}
                 <div className="flex flex-col gap-3 border-b border-black/10 pb-3 dark:border-white/10 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex min-w-0 flex-wrap items-center gap-2">
-                    <Layers className="w-4 h-4 text-primary" />
-                    <span className="text-xs font-black text-primary">معرض صور المعلم التراثي</span>
-                    <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-black">
+                    <Layers className="w-4 h-4 text-primary dark:text-primary-hover" />
+                    <span className="text-xs font-black text-primary dark:text-primary-hover">معرض صور المعلم التراثي</span>
+                    <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary dark:text-primary-hover text-[11px] font-black">
                       {gallery.length} صور
                     </span>
                   </div>
@@ -1013,11 +1013,11 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                     ${isUploading ? 'pointer-events-none opacity-80' : ''}
                   `}
                 >
-                  <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-inner">
+                  <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary dark:text-primary-hover flex items-center justify-center shadow-inner">
                     {isUploading ? (
-                      <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                      <Loader2 className="w-6 h-6 animate-spin text-primary dark:text-primary-hover" />
                     ) : (
-                      <Upload className="w-6 h-6 text-primary" />
+                      <Upload className="w-6 h-6 text-primary dark:text-primary-hover" />
                     )}
                   </div>
 
@@ -1048,7 +1048,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                           style={{ width: `${Math.max(uploadProgress, 20)}%` }}
                         />
                       </div>
-                      <span className="text-[10px] font-black font-bold text-primary">
+                      <span className="text-[10px] font-black font-bold text-primary dark:text-primary-hover">
                         {uploadProgress > 0 ? `${uploadProgress}%` : 'جاري التحميل...'}
                       </span>
                     </div>
@@ -1058,7 +1058,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                 {/* Bulk URL Mode */}
                 {showBulkModal && (
                   <div className="p-4 rounded-xl bg-primary/5 border border-primary/20 space-y-2 animate-in fade-in duration-200">
-                    <label className="block text-xs font-black text-primary">
+                    <label className="block text-xs font-black text-primary dark:text-primary-hover">
                       لصق روابط صور متعددة (رابط في كل سطر)
                     </label>
                     <textarea
@@ -1117,7 +1117,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                   <div className="space-y-3 pt-2">
                     <div className="flex flex-col gap-1 text-xs font-bold text-black/60 dark:text-white/60 sm:flex-row sm:items-center sm:justify-between">
                       <span className="break-words">الصور الحالية بالمعرض (يمكنك تعيين أي صورة كغلاف بنقرة واحدة أو إعادة ترتيبها)</span>
-                      <span className="font-black text-primary">{gallery.length} صور</span>
+                      <span className="font-black text-primary dark:text-primary-hover">{gallery.length} صور</span>
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -1224,7 +1224,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                                 توثيق #{idx + 1}
                               </span>
                               {isCover ? (
-                                <span className="text-[10px] font-black text-primary flex items-center gap-0.5">
+                                <span className="text-[10px] font-black text-primary dark:text-primary-hover flex items-center gap-0.5">
                                   <Star className="w-2.5 h-2.5 fill-primary" /> الغلاف
                                 </span>
                               ) : (
@@ -1234,7 +1234,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                                     setCoverImage(imgUrl);
                                     addToast('تم التعيين', 'تم تعيين الصورة كغلاف', 'success');
                                   }}
-                                  className="text-[10px] font-bold text-black/50 hover:text-primary transition cursor-pointer"
+                                  className="text-[10px] font-bold text-black/50 hover:text-primary dark:text-primary-hover transition cursor-pointer"
                                 >
                                   تعيين كغلاف
                                 </button>
@@ -1254,7 +1254,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
 
               {/* Videos Section */}
               <div className="p-3 sm:p-5 rounded-2xl bg-black/[0.025] dark:bg-white/[0.025] border border-black/10 dark:border-white/10 space-y-4">
-                <div className="flex items-center gap-2 text-xs font-black text-primary">
+                <div className="flex items-center gap-2 text-xs font-black text-primary dark:text-primary-hover">
                   <Video className="w-4 h-4" />
                   <span>الفيديوهات التوثيقية واليوتيوب</span>
                 </div>
@@ -1390,7 +1390,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                 </div>
 
                 <div className="p-4 rounded-2xl bg-white/70 dark:bg-espresso-800/80 border border-black/10 dark:border-white/10">
-                  <h4 className="text-xs font-bold text-primary mb-1">النبذة التوثيقية</h4>
+                  <h4 className="text-xs font-bold text-primary dark:text-primary-hover mb-1">النبذة التوثيقية</h4>
                   <p className="text-xs leading-relaxed text-black/80 dark:text-white/80">
                     {description || shortDescription || 'لم يتم إدخال وصف بعد...'}
                   </p>

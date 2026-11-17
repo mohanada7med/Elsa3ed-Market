@@ -503,7 +503,7 @@ export const GovernorateDetailPage: React.FC = () => {
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#261910]/30 pb-3 text-xs font-bold dark:border-[#C99444]/30">
           <button
             onClick={() => setActivePage('map')}
-            className="group inline-flex items-center gap-2 font-black text-[#261910] transition hover:text-primary dark:text-[#F0E6D8] dark:hover:text-[#C99444]"
+            className="group inline-flex items-center gap-2 font-black text-[#261910] transition hover:text-primary dark:text-primary-hover dark:text-[#F0E6D8] dark:hover:text-[#C99444]"
           >
             <ArrowLeft className="h-4 w-4 transition group-hover:-translate-x-1" />
             <span>العودة إلى أطلس وخريطة الصعيد</span>

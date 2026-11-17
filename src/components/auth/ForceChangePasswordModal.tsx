@@ -85,11 +85,11 @@ export const ForceChangePasswordModal: React.FC = () => {
         {/* Header Badge & Title */}
         <div className="flex items-center gap-4 border-b border-black/10 dark:border-white/10 pb-5">
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#6B3A1F]/20 to-[#6B3A1F]/5 border border-primary/20 flex items-center justify-center shrink-0 shadow-inner">
-            <KeyRound className="w-7 h-7 text-primary" />
+            <KeyRound className="w-7 h-7 text-primary dark:text-primary-hover" />
           </div>
           <div>
             <h3 className="font-black text-xl text-espresso dark:text-cream">تعيين كلمة مرور شخصية</h3>
-            <p className="text-xs text-primary font-bold mt-0.5 flex items-center gap-1.5">
+            <p className="text-xs text-primary dark:text-primary-hover font-bold mt-0.5 flex items-center gap-1.5">
               <ShieldCheck className="w-3.5 h-3.5" /> إجراء أمني إلزامي لتفعيل الحساب
             </p>
           </div>

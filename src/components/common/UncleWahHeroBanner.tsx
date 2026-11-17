@@ -245,7 +245,7 @@ export const UncleWahHeroBanner: React.FC<UncleWahHeroBannerProps> = ({
               </span>
             </blockquote>
 
-            <figcaption className="mt-3 flex items-center gap-1.5 border-t border-dashed border-border-subtle pt-2.5 text-[11px] font-black text-primary">
+            <figcaption className="mt-3 flex items-center gap-1.5 border-t border-dashed border-border-subtle pt-2.5 text-[11px] font-black text-primary dark:text-primary-hover">
               <span className="h-1.5 w-1.5 rounded-full bg-primary" />
               — عم وه، صاحب وموثّق حكاوي وتراث الصعيد
             </figcaption>
@@ -333,7 +333,7 @@ export const UncleWahHeroBanner: React.FC<UncleWahHeroBannerProps> = ({
 
           {/* Stickers */}
           <Sticker x={nearX} y={nearY} reduce={reduce} rotate={-5} delay={0} className="right-0 top-2">
-            <span className="inline-flex items-center gap-1.5 rounded-xl bg-background px-3 py-1.5 text-xs font-black text-primary shadow-lg">
+            <span className="inline-flex items-center gap-1.5 rounded-xl bg-background px-3 py-1.5 text-xs font-black text-primary dark:text-primary-hover shadow-lg">
               <Compass size={13} aria-hidden="true" />
               {doorBadge}
             </span>

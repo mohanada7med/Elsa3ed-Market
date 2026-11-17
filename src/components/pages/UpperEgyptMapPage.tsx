@@ -545,7 +545,7 @@ if (isLoading) {
       </div>
 
       {/* النص */}
-      <div className="flex items-center gap-2 text-sm font-bold text-primary">
+      <div className="flex items-center gap-2 text-sm font-bold text-primary dark:text-primary-hover">
         <Loader2 className="w-4 h-4 animate-spin" />
         <span>بنجهّز صور ومحطات الصعيد بأعلى جودة...</span>
       </div>
@@ -563,16 +563,14 @@ if (isLoading) {
           <div className="mx-auto flex h-[68px] max-w-[1400px] items-center justify-between px-5 sm:px-8">
             <button
               onClick={() => setActivePage('home')}
-              className="group flex items-center gap-3 text-sm font-bold transition-colors hover:text-primary cursor-pointer"
+              className="group flex items-center gap-3 text-sm font-bold transition-colors hover:text-primary dark:text-primary-hover cursor-pointer"
             >
               <span className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white/60 transition-colors group-hover:bg-espresso group-hover:text-white dark:border-white/10 dark:bg-cream/5 dark:group-hover:bg-white dark:group-hover:text-black">
                 <ArrowLeft size={17} className="transition-transform group-hover:-translate-x-1" />
               </span>
               <span className="hidden sm:block">الرئيسية</span>
             </button>
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-black">رحلة الصعيد</span>
-            </div>
+            
             <div className="w-10 sm:w-24" aria-hidden />
           </div>
         </header>
@@ -714,23 +712,23 @@ if (isLoading) {
 
                             <div className="space-y-2 p-4">
                               <h3 className="font-main text-3xl font-black leading-tight">{gov.name}</h3>
-                              {gov.nickname && <p className="line-clamp-1 text-xs font-bold text-primary">{gov.nickname}</p>}
+                              {gov.nickname && <p className="line-clamp-1 text-xs font-bold text-primary dark:text-primary-hover">{gov.nickname}</p>}
                               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t-2 border-dashed border-espresso/25 pt-3 text-[11px] font-bold text-black/65 dark:border-[#C99444]/30 dark:text-white/65">
                                 {gov.capitalCity && (
                                   <span className="flex items-center gap-1">
-                                    <MapPin size={12} className="text-primary" />
+                                    <MapPin size={12} className="text-primary dark:text-primary-hover" />
                                     {gov.capitalCity}
                                   </span>
                                 )}
                                 {counts.places > 0 && (
                                   <span className="flex items-center gap-1">
-                                    <Landmark size={12} className="text-primary" />
+                                    <Landmark size={12} className="text-primary dark:text-primary-hover" />
                                     {counts.places} معالم
                                   </span>
                                 )}
                                 {counts.crafts > 0 && (
                                   <span className="flex items-center gap-1">
-                                    <Hammer size={12} className="text-primary" />
+                                    <Hammer size={12} className="text-primary dark:text-primary-hover" />
                                     {counts.crafts} حرف
                                   </span>
                                 )}
@@ -743,7 +741,7 @@ if (isLoading) {
                             <div>
                               <div className="text-[10px] font-black text-black/50 dark:text-white/50">المحطة</div>
                               <br />
-                              <div className="font-main text-4xl font-black leading-none text-primary">
+                              <div className="font-main text-4xl font-black leading-none text-primary dark:text-primary-hover">
                                 {String(originalIndex + 1).padStart(2, '0')}
                               </div>
                             </div>
@@ -753,7 +751,7 @@ if (isLoading) {
                             <motion.div
                               animate={{ x: [0, -5, 0] }}
                               transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
-                              className="flex items-center gap-1 text-[11px] font-black text-primary"
+                              className="flex items-center gap-1 text-[11px] font-black text-primary dark:text-primary-hover"
                             >
                               <ChevronLeft size={14} />
                               افتح
@@ -874,13 +872,13 @@ if (isLoading) {
 
                         <div className="space-y-3 pt-6 text-center md:text-right">
                           <div className="flex flex-wrap justify-center gap-2 md:justify-start">
-                            <span className="rounded-md border-2 border-dashed border-primary px-2.5 py-1 text-[11px] font-black text-primary">المحطة {selectedIndex + 1}</span>
+                            <span className="rounded-md border-2 border-dashed border-primary px-2.5 py-1 text-[11px] font-black text-primary dark:text-primary-hover">المحطة {selectedIndex + 1}</span>
                             {selectedGov.region && (
                               <span className="rounded-md border-2 border-dashed border-espresso/50 px-2.5 py-1 text-[11px] font-black dark:border-[#C99444]/60">{selectedGov.region}</span>
                             )}
                           </div>
                           <h2 className="font-main text-5xl font-black leading-tight">{selectedGov.name}</h2>
-                          {selectedGov.nickname && <p className="text-lg font-black text-primary">{selectedGov.nickname}</p>}
+                          {selectedGov.nickname && <p className="text-lg font-black text-primary dark:text-primary-hover">{selectedGov.nickname}</p>}
                           {selectedGov.shortIntro && (
                             <p className="text-sm leading-loose text-black/70 dark:text-white/70">{selectedGov.shortIntro}</p>
                           )}
@@ -908,7 +906,7 @@ if (isLoading) {
                                   initial={{ opacity: 0, scale: 0.4 }}
                                   animate={{ opacity: 1, scale: 1 }}
                                   transition={{ delay: 0.35 + i * 0.06, type: 'spring', stiffness: 320, damping: 14 }}
-                                  className={`rounded-full bg-primary/12 px-3 py-1 text-xs font-black text-primary ${i % 2 ? 'rotate-1' : '-rotate-1'}`}
+                                  className={`rounded-full bg-primary/12 px-3 py-1 text-xs font-black text-primary dark:text-primary-hover ${i % 2 ? 'rotate-1' : '-rotate-1'}`}
                                 >
                                   {item}
                                 </motion.span>
@@ -949,7 +947,7 @@ if (isLoading) {
                                 <Icon size={17} />
                                 <span className="md:[writing-mode:vertical-rl]">{tab.label}</span>
                                 {count !== null && (
-                                  <span className={`rounded-full px-1.5 text-[10px] ${active ? 'bg-white/25' : 'bg-primary/20 text-primary'}`}>{count}</span>
+                                  <span className={`rounded-full px-1.5 text-[10px] ${active ? 'bg-white/25' : 'bg-primary/20 text-primary dark:text-primary-hover'}`}>{count}</span>
                                 )}
                               </motion.button>
                             );
@@ -992,7 +990,7 @@ if (isLoading) {
                                               />
                                             </div>
                                             <div className="px-1 pt-3 text-espresso">
-                                              {place.typeLabel && <span className="text-[11px] font-black text-primary">{place.typeLabel}</span>}
+                                              {place.typeLabel && <span className="text-[11px] font-black text-primary dark:text-primary-hover">{place.typeLabel}</span>}
                                               <h4 className="text-base font-black">{place.title}</h4>
                                               {place.shortDescription && <p className="line-clamp-2 text-xs leading-relaxed text-espresso/70">{place.shortDescription}</p>}
                                             </div>
@@ -1054,7 +1052,7 @@ if (isLoading) {
                                           <div className="flex flex-1 flex-col justify-between gap-3 p-3 text-espresso">
                                             <div>
                                               <h4 className="line-clamp-1 text-sm font-black">{product.title}</h4>
-                                              <div className="text-xs font-black text-primary">{product.price} جنيه</div>
+                                              <div className="text-xs font-black text-primary dark:text-primary-hover">{product.price} جنيه</div>
                                             </div>
                                             <motion.button
                                               whileTap={{ scale: 0.92 }}
@@ -1086,7 +1084,7 @@ if (isLoading) {
                                         {food.coverImage ? (
                                           <img src={getHighQualityImage(food.coverImage, 300)} alt={food.title} loading="lazy" className="h-16 w-16 shrink-0 rounded-lg object-cover" />
                                         ) : (
-                                          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary">
+                                          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary dark:text-primary-hover">
                                             <Utensils size={26} />
                                           </div>
                                         )}
@@ -1106,7 +1104,7 @@ if (isLoading) {
                                 <motion.div variants={rise} className="space-y-4 py-2">
                                   <div className="flex items-center gap-3">
                                     <motion.div animate={{ rotate: [0, -10, 10, 0] }} transition={{ duration: 4, repeat: Infinity }}>
-                                      <Scroll className="h-9 w-9 text-primary" />
+                                      <Scroll className="h-9 w-9 text-primary dark:text-primary-hover" />
                                     </motion.div>
                                     <h4 className="text-xl font-black">حكايات وذكريات من {selectedGov.name}</h4>
                                   </div>

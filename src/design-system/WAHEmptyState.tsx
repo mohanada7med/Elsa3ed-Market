@@ -53,7 +53,7 @@ export const WAHEmptyState: React.FC<WAHEmptyStateProps> = ({
             <div className="w-24 sm:w-28 h-2 rounded-[100%] bg-black/35 blur-xs mx-auto -mt-1" />
           </div>
         ) : renderedIcon ? (
-          <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-2xl bg-primary/15 text-primary dark:text-primary-hover flex items-center justify-center border border-primary/30 shadow-xs">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-2xl bg-primary/15 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover flex items-center justify-center border border-primary/30 shadow-xs">
             {renderedIcon}
           </div>
         ) : null}

@@ -54,7 +54,7 @@ export const QrCodeModal: React.FC<QrCodeModalProps> = ({ title, url, entityLabe
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="inline-flex h-10 shrink-0 items-center gap-2 rounded-xl border border-border-subtle bg-surface-subtle px-3 transition hover:border-primary/30 hover:text-primary sm:px-4"
+        className="inline-flex h-10 shrink-0 items-center gap-2 rounded-xl border border-border-subtle bg-surface-subtle px-3 transition hover:border-primary/30 hover:text-primary dark:text-primary-hover sm:px-4"
         aria-label={`إنشاء رمز QR لـ${entityLabel}`}
         title={`إنشاء رمز QR لـ${entityLabel}`}
       >
@@ -147,7 +147,7 @@ export const QrCodeModal: React.FC<QrCodeModalProps> = ({ title, url, entityLabe
                 <a
                   href={qrDataUrl}
                   download={`wah-${entityLabel}-qr.png`}
-                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-primary/20 px-5 text-sm font-black text-primary hover:bg-primary/5"
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-primary/20 px-5 text-sm font-black text-primary dark:text-primary-hover hover:bg-primary/5"
                 >
                   <Download size={16} />
                   تنزيل الصورة

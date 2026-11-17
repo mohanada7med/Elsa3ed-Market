@@ -120,7 +120,7 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ initialTok
 
           {/* Brand header */}
           <div className="text-center mb-8">
-            <div className="mx-auto w-14 h-14 rounded-2xl bg-primary/10 dark:bg-primary/20 text-primary flex items-center justify-center mb-4 shadow-inner">
+            <div className="mx-auto w-14 h-14 rounded-2xl bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-hover flex items-center justify-center mb-4 shadow-inner">
               <KeyRound size={28} />
             </div>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-espresso dark:text-cream">
@@ -134,7 +134,7 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ initialTok
           {/* Loading state */}
           {isCheckingToken && (
             <div className="py-12 flex flex-col items-center justify-center text-center space-y-4">
-              <Loader2 size={36} className="animate-spin text-primary" />
+              <Loader2 size={36} className="animate-spin text-primary dark:text-primary-hover" />
               <p className="text-sm font-medium text-black/60 dark:text-white/60">
                 جاري التحقق من أمان وصلاحية الرابط...
               </p>
@@ -170,7 +170,7 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ initialTok
           {/* Invalid / Expired / Missing Token state */}
           {!isCheckingToken && !isSuccess && tokenStatus !== 'valid' && (
             <div className="space-y-6 text-center py-4">
-              <div className="mx-auto w-16 h-16 rounded-full bg-amber-500/10 text-amber-600 dark:text-primary-hover flex items-center justify-center">
+              <div className="mx-auto w-16 h-16 rounded-full bg-amber-500/10 text-amber-600 dark:text-primary dark:text-primary-hover-hover flex items-center justify-center">
                 <AlertCircle size={36} />
               </div>
 
@@ -316,7 +316,7 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ initialTok
                 <button
                   type="button"
                   onClick={handleOpenLogin}
-                  className="text-xs sm:text-sm font-semibold text-primary hover:underline"
+                  className="text-xs sm:text-sm font-semibold text-primary dark:text-primary-hover hover:underline"
                 >
                   تذكرت كلمة السر؟ تسجيل الدخول
                 </button>

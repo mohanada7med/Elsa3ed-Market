@@ -18,7 +18,7 @@ export default function ErrorPage({
   return (
     <div className="min-h-screen bg-[#FFF9EE] dark:bg-[#1B1009] flex items-center justify-center p-4" dir="rtl">
       <div className="max-w-md w-full bg-[#F8EBD7] dark:bg-[#3B1E0E] backdrop-blur-xl rounded-3xl shadow-xl border border-[#E0C79B] dark:border-[#6B3A1F] p-8 text-center">
-        <div className="w-16 h-16 bg-primary/15 text-primary dark:text-[#C99444] rounded-2xl flex items-center justify-center mx-auto mb-5 border border-primary/20">
+        <div className="w-16 h-16 bg-primary/15 text-primary dark:text-primary-hover dark:text-[#C99444] rounded-2xl flex items-center justify-center mx-auto mb-5 border border-primary/20">
           <AlertTriangle className="w-8 h-8" aria-hidden="true" />
         </div>
 

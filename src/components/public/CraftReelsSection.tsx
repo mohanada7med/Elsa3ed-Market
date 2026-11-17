@@ -704,15 +704,7 @@ export const CraftReelsSection: React.FC = () => {
             blur-[130px] sm:blur-[180px]
           "
         />
-        <div
-          className="
-            absolute -bottom-20 right-10
-            w-[250px] sm:w-[450px]
-            h-[250px] sm:h-[450px]
-            bg-primary /10 dark:bg-primary /8 rounded-full
-            blur-[120px]
-          "
-        />
+        
         <div
           className="absolute inset-0 opacity-[0.035] dark:opacity-[0.035] mix-blend-multiply dark:mix-blend-screen"
           style={{
@@ -737,7 +729,7 @@ export const CraftReelsSection: React.FC = () => {
                 <span className="block">ريلز</span>
 
                 <span className="flex items-center gap-3 sm:gap-5">
-                  <span className="text-primary dark:text-primary-hover">
+                  <span className="text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
                     وه
                   </span>
 

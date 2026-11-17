@@ -48,7 +48,7 @@ export const WAHEventCard: React.FC<WAHEventCardProps> = ({
         </div>
         <div className="absolute bottom-2.5 right-2.5 z-10">
           <span className="bg-espresso/80 text-cream text-[10px] font-bold px-2.5 py-0.5 rounded-full backdrop-blur-md border border-white/10 flex items-center gap-1">
-            <MapPin className="w-3 h-3 text-primary" />
+            <MapPin className="w-3 h-3 text-primary dark:text-primary-hover" />
             <span>{governorate}</span>
           </span>
         </div>
@@ -60,7 +60,7 @@ export const WAHEventCard: React.FC<WAHEventCardProps> = ({
 
       <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between relative bg-white/75 dark:bg-espresso-900/90">
         <div className="relative z-10 space-y-1.5">
-          <h3 className="font-bold text-espresso dark:text-cream text-base group-hover:text-primary dark:group-hover:text-[#C99444] transition-colors line-clamp-1">
+          <h3 className="font-bold text-espresso dark:text-cream text-base group-hover:text-primary dark:text-primary-hover dark:group-hover:text-[#C99444] transition-colors line-clamp-1">
             {title}
           </h3>
           <p className="text-xs text-black/60 dark:text-white/60 line-clamp-2 leading-relaxed">
@@ -68,7 +68,7 @@ export const WAHEventCard: React.FC<WAHEventCardProps> = ({
           </p>
         </div>
 
-        <div className="pt-3 mt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs font-bold text-primary dark:text-primary-hover relative z-10">
+        <div className="pt-3 mt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover relative z-10">
           <span>تفاصيل الفعالية ومواعيدها</span>
           <span className="text-[11px] group-hover:-translate-x-1 transition-transform">←</span>
         </div>

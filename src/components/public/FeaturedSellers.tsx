@@ -32,7 +32,7 @@ export const FeaturedSellers: React.FC = () => {
         <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
           <div>
             {/* الشارة العلوية */}
-            <div className="mb-3 flex items-center gap-2 text-[10px] font-extrabold tracking-normal text-primary dark:text-primary-hover sm:mb-6 sm:gap-3 sm:text-xs">
+            <div className="mb-3 flex items-center gap-2 text-[10px] font-extrabold tracking-normal text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover sm:mb-6 sm:gap-3 sm:text-xs">
   <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent/10 sm:h-8 sm:w-8">
     <Hammer size={14} className="text-accent" />
   </span>
@@ -46,7 +46,7 @@ export const FeaturedSellers: React.FC = () => {
             <h1 className="max-w-6xl text-5xl sm:text-7xl lg:text-[8rem] font-black leading-[0.95] tracking-tight">
               أهل
               <br />
-              <span className="inline-block ms-4 sm:ms-8 lg:ms-12 text-primary dark:text-primary-hover">
+              <span className="inline-block ms-4 sm:ms-8 lg:ms-12 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
                 الصنعة!
               </span>
             </h1>
@@ -107,7 +107,7 @@ export const FeaturedSellers: React.FC = () => {
 
 <div className="absolute top-3 right-3">
   <div className="flex items-center gap-1.5 rounded-full bg-black/40 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-md border border-white/20 shadow-sm">
-    <MapPin className="w-3.5 h-3.5 text-primary-hover" />
+    <MapPin className="w-3.5 h-3.5 text-primary dark:text-primary-hover-hover" />
     <span>محافظة {seller.governorate}</span>
   </div>
 </div>            </div>
@@ -131,7 +131,7 @@ export const FeaturedSellers: React.FC = () => {
                   </div>
 
                   <div className="flex items-center gap-1 bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 px-3 py-1 rounded-xl text-xs font-black text-espresso dark:text-cream">
-                    <Star className="w-3.5 h-3.5  text-primary-hover" />
+                    <Star className="w-3.5 h-3.5  text-primary dark:text-primary-hover-hover" />
                     <span>{seller.rating}</span>
                     <span className="text-[10px] text-black/50 dark:text-white/50 font-medium">
                       ({seller.salesCount} طلب متسلم)
@@ -140,7 +140,7 @@ export const FeaturedSellers: React.FC = () => {
                 </div>
 
                 {/* Seller Brand & Name */}
-                <h3 className="font-black text-espresso dark:text-cream text-base group-hover:text-primary transition-colors leading-tight">
+                <h3 className="font-black text-espresso dark:text-cream text-base group-hover:text-primary dark:text-primary-hover transition-colors leading-tight">
                   {seller.brandName}
                 </h3>
                 <p className="text-xs text-black/60 dark:text-white/60 font-medium mt-0.5">
@@ -154,7 +154,7 @@ export const FeaturedSellers: React.FC = () => {
 
               {/* Footer info */}
               <div className="mt-4 pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs">
-                <span className="text-primary font-black bg-primary/10 px-2.5 py-1 rounded-lg text-[11px]">
+                <span className="text-primary dark:text-primary-hover font-black bg-primary/10 px-2.5 py-1 rounded-lg text-[11px]">
                   {seller.specialty}
                 </span>
                 <span className="text-black/50 dark:text-white/50 font-medium text-[11px]">

@@ -133,12 +133,12 @@ export const GlobalSearchResultsPage: React.FC = () => {
       <div className="max-w-[1600px] mx-auto px-5 sm:px-8 lg:px-12">
         {/* Header Search Input */}
         <div className="text-center max-w-3xl mx-auto mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/70 dark:bg-espresso-900/90 border border-black/10 dark:border-white/10 text-xs font-bold text-primary shadow-xs mb-3 backdrop-blur-xl">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/70 dark:bg-espresso-900/90 border border-black/10 dark:border-white/10 text-xs font-bold text-primary dark:text-primary-hover shadow-xs mb-3 backdrop-blur-xl">
             <Sparkles size={13} />
             <span>محرّك بحث التراث الصعيدي</span>
           </div>
           <h1 className="text-3xl sm:text-5xl font-main mb-3 tracking-tight">
-            البحث الشامل في منصة <span className="text-primary">وَه</span>
+            البحث الشامل في منصة <span className="text-primary dark:text-primary-hover">وَه</span>
           </h1>
           <p className="text-xs sm:text-sm text-black/60 dark:text-white/60 mb-6 font-medium">
             ابحث في كافة معالم، محافظات، حرف، أكلات، ناس، ومنتجات صعيد مصر
@@ -153,7 +153,7 @@ export const GlobalSearchResultsPage: React.FC = () => {
               className="w-full bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl text-sm sm:text-base rounded-[1.5rem] pr-12 pl-12 py-4 border border-black/10 dark:border-white/10 focus:border-primary shadow-lg outline-none transition-all text-espresso dark:text-cream placeholder:text-black/35 dark:placeholder:text-white/35"
               autoFocus
             />
-            <Search className="w-5 h-5 text-primary absolute right-4 top-1/2 -translate-y-1/2" />
+            <Search className="w-5 h-5 text-primary dark:text-primary-hover absolute right-4 top-1/2 -translate-y-1/2" />
             {searchQuery && (
               <button
                 type="button"
@@ -210,7 +210,7 @@ export const GlobalSearchResultsPage: React.FC = () => {
             </div>
           ) : !searchQuery.trim() ? (
             <div className="text-center py-20 bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg">
-              <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary dark:text-primary-hover flex items-center justify-center mx-auto mb-4">
                 <Search className="w-8 h-8" />
               </div>
               <h3 className="text-lg font-black text-espresso dark:text-cream">
@@ -222,7 +222,7 @@ export const GlobalSearchResultsPage: React.FC = () => {
             </div>
           ) : filteredResults.length === 0 ? (
             <div className="text-center py-20 bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg">
-              <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary dark:text-primary-hover flex items-center justify-center mx-auto mb-4">
                 <Sparkles className="w-8 h-8" />
               </div>
               <h3 className="text-lg font-black text-espresso dark:text-cream">
@@ -250,18 +250,18 @@ export const GlobalSearchResultsPage: React.FC = () => {
                           className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl object-cover border border-black/10 dark:border-white/10 shrink-0"
                         />
                       ) : (
-                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-primary/10 text-primary dark:text-primary-hover flex items-center justify-center shrink-0">
                           <Icon className="w-6 h-6" />
                         </div>
                       )}
 
                       <div className="min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                          <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary dark:text-primary-hover border border-primary/20">
                             {item.typeLabel}
                           </span>
                         </div>
-                        <h3 className="text-sm sm:text-base font-black text-espresso dark:text-cream group-hover:text-primary transition-colors truncate">
+                        <h3 className="text-sm sm:text-base font-black text-espresso dark:text-cream group-hover:text-primary dark:text-primary-hover transition-colors truncate">
                           {item.title}
                         </h3>
                         {item.subtitle && (
@@ -272,7 +272,7 @@ export const GlobalSearchResultsPage: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-1.5 text-xs font-black text-primary shrink-0">
+                    <div className="flex items-center gap-1.5 text-xs font-black text-primary dark:text-primary-hover shrink-0">
                       <span className="hidden sm:inline">استكشف</span>
                       <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                     </div>

@@ -71,7 +71,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
           dir="rtl"
         >
           <div className="max-w-md w-full bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] shadow-2xl border border-black/10 dark:border-white/10 p-8 text-center">
-            <div className="w-16 h-16 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mx-auto mb-5 border border-primary/20">
+            <div className="w-16 h-16 bg-primary/10 text-primary dark:text-primary-hover rounded-2xl flex items-center justify-center mx-auto mb-5 border border-primary/20">
               <AlertTriangle className="w-8 h-8" aria-hidden="true" />
             </div>
 

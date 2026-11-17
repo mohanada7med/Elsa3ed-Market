@@ -414,7 +414,7 @@ export const BuyerAccountPage: React.FC = () => {
         <button
           type="button"
           onClick={() => setActivePage('home')}
-          className="hover:text-primary transition-colors cursor-pointer"
+          className="hover:text-primary dark:text-primary-hover transition-colors cursor-pointer"
         >
           الرئيسية
         </button>
@@ -463,7 +463,7 @@ export const BuyerAccountPage: React.FC = () => {
             <div>
               <div className="flex items-center justify-center sm:justify-start gap-2">
                 <h1 className="text-xl sm:text-2xl font-black">{currentUser?.name || 'حسابي'}</h1>
-                <span className="bg-primary/10 border border-primary/30 text-primary text-[11px] font-bold px-2.5 py-0.5 rounded-full">
+                <span className="bg-primary/10 border border-primary/30 text-primary dark:text-primary-hover text-[11px] font-bold px-2.5 py-0.5 rounded-full">
                   {currentUser?.role === 'admin'
                     ? 'مدير المنصة'
                     : currentUser?.role === 'seller'
@@ -491,7 +491,7 @@ export const BuyerAccountPage: React.FC = () => {
                   disabled={isUploadingImage || isRemovingImage}
                   className="px-3 py-1.5 bg-black/5 dark:bg-cream/5 hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
                 >
-                  <Upload className="w-3.5 h-3.5 text-primary" />
+                  <Upload className="w-3.5 h-3.5 text-primary dark:text-primary-hover" />
                   <span>{isUploadingImage ? 'جاري الرفع...' : 'تغيير الصورة'}</span>
                 </button>
 
@@ -526,7 +526,7 @@ export const BuyerAccountPage: React.FC = () => {
                 onClick={() => setActiveTab('addresses')}
                 className="p-3 rounded-2xl bg-black/[0.035] dark:bg-cream/[0.04] border border-black/10 dark:border-white/10 hover:border-primary transition-all text-center cursor-pointer backdrop-blur-xl"
               >
-                <div className="flex items-center justify-center gap-1 text-primary font-bold text-base">
+                <div className="flex items-center justify-center gap-1 text-primary dark:text-primary-hover font-bold text-base">
                   <MapPin className="w-4 h-4" />
                   <span>{addresses.length}</span>
                 </div>
@@ -574,7 +574,7 @@ export const BuyerAccountPage: React.FC = () => {
               <Icon className="w-4 h-4 shrink-0" />
               <span>{tab.label}</span>
               {tab.badge !== undefined && tab.badge > 0 && (
-                <span className={`min-w-5 rounded-full px-1 text-[10px] ${isActive ? 'bg-white/20' : 'bg-primary/10 text-primary'}`}>
+                <span className={`min-w-5 rounded-full px-1 text-[10px] ${isActive ? 'bg-white/20' : 'bg-primary/10 text-primary dark:text-primary-hover'}`}>
                   {tab.badge > 99 ? '99+' : tab.badge}
                 </span>
               )}
@@ -702,8 +702,8 @@ export const BuyerAccountPage: React.FC = () => {
           {isAdmin ? (
             <div className="bg-white/75 dark:bg-espresso-900/90 p-6 rounded-[2rem] border border-primary/20 space-y-3 text-right shadow-lg backdrop-blur-xl">
               <div className="flex items-center justify-between">
-                <h4 className="font-bold text-xs text-primary dark:text-primary-hover">لوحة الإدارة العليا</h4>
-                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary dark:text-primary-hover border border-primary/20">
+                <h4 className="font-bold text-xs text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">لوحة الإدارة العليا</h4>
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover border border-primary/20">
                   <ShieldCheck className="w-3 h-3" />
                   مدير المنصة
                 </span>
@@ -779,12 +779,12 @@ export const BuyerAccountPage: React.FC = () => {
                 <>
                   <div className="flex items-center justify-between">
                     <h4 className="font-bold text-xs">حالة اعتماد الورشة</h4>
-                    <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-700 dark:text-primary-hover border border-amber-500/20">
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-700 dark:text-primary dark:text-primary-hover-hover border border-amber-500/20">
                       <Clock className="w-3 h-3" />
                       قيد المراجعة والتدقيق
                     </span>
                   </div>
-                  <div className="p-3 bg-amber-500/5 dark:bg-amber-500/10 rounded-xl border border-amber-500/20 text-xs text-amber-900 dark:text-primary-hover space-y-1">
+                  <div className="p-3 bg-amber-500/5 dark:bg-amber-500/10 rounded-xl border border-amber-500/20 text-xs text-amber-900 dark:text-primary dark:text-primary-hover-hover space-y-1">
                     <p className="font-bold">{currentUser.seller?.brandName || workshopName || 'ورشة مسجلة'}</p>
                     <p className="text-[11px] opacity-80">
                       محافظة {currentUser.seller?.governorate || applyGovernorate} • {currentUser.seller?.specialty || specialty}
@@ -831,7 +831,7 @@ export const BuyerAccountPage: React.FC = () => {
                 <>
                   <div className="flex items-center justify-between">
                     <h4 className="font-bold text-xs">افتح ورشتك في وه</h4>
-                    <span className="text-[10px] text-primary font-bold px-2 py-0.5 bg-primary/10 rounded-full">
+                    <span className="text-[10px] text-primary dark:text-primary-hover font-bold px-2 py-0.5 bg-primary/10 rounded-full">
                       متاح للمشترين
                     </span>
                   </div>
@@ -855,7 +855,7 @@ export const BuyerAccountPage: React.FC = () => {
           {/* Complaints & Support Center Card */}
           <div className="bg-white/80 dark:bg-espresso-900/90 p-5 rounded-[2rem] border border-amber-500/20 text-xs space-y-3 shadow-lg backdrop-blur-xl">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 font-black text-primary dark:text-primary-hover">
+              <div className="flex items-center gap-2 font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
                 <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                 <span>مركز المساعدة والبلاغات</span>
               </div>
@@ -900,7 +900,7 @@ export const BuyerAccountPage: React.FC = () => {
         >
           <div className="bg-white/75 dark:bg-espresso-900/90 p-6 sm:p-8 rounded-[2rem] border border-black/10 dark:border-white/10 space-y-5 shadow-lg backdrop-blur-xl">
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+              <div className="w-11 h-11 rounded-xl bg-primary/10 text-primary dark:text-primary-hover flex items-center justify-center">
                 <KeyRound className="w-5 h-5" />
               </div>
               <div>
@@ -1014,7 +1014,7 @@ export const BuyerAccountPage: React.FC = () => {
                   isDefault: previous.length === 0
                 }
               ])}
-              className="px-4 py-2.5 bg-primary/10 hover:bg-primary/15 text-primary font-bold text-xs rounded-xl border border-primary/20 transition-colors cursor-pointer"
+              className="px-4 py-2.5 bg-primary/10 hover:bg-primary/15 text-primary dark:text-primary-hover font-bold text-xs rounded-xl border border-primary/20 transition-colors cursor-pointer"
             >
               إضافة عنوان جديد
             </button>
@@ -1022,7 +1022,7 @@ export const BuyerAccountPage: React.FC = () => {
 
           {addresses.length === 0 ? (
             <form onSubmit={handleSaveAddresses} className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-dashed border-black/20 dark:border-white/20 p-10 text-center space-y-3">
-              <MapPin className="w-8 h-8 mx-auto text-primary" />
+              <MapPin className="w-8 h-8 mx-auto text-primary dark:text-primary-hover" />
               <p className="font-bold text-sm">لسه مفيش عناوين محفوظة</p>
               <p className="text-xs text-black/55 dark:text-white/55">أضف عنوانًا لتسهيل إتمام طلباتك القادمة.</p>
               <button
@@ -1157,15 +1157,15 @@ export const BuyerAccountPage: React.FC = () => {
               <h2 className="font-black text-lg">طلباتي</h2>
               <p className="text-xs text-black/60 dark:text-white/60 mt-1">تابع أحدث طلباتك وحالتها.</p>
             </div>
-            <button type="button" onClick={() => setActivePage('orders')} className="text-xs font-bold text-primary hover:underline cursor-pointer">
+            <button type="button" onClick={() => setActivePage('orders')} className="text-xs font-bold text-primary dark:text-primary-hover hover:underline cursor-pointer">
               عرض كل الطلبات
             </button>
           </div>
           {orders.length === 0 ? (
             <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-10 text-center space-y-3">
-              <Package className="w-8 h-8 mx-auto text-primary" />
+              <Package className="w-8 h-8 mx-auto text-primary dark:text-primary-hover" />
               <p className="font-bold text-sm">لا توجد طلبات حتى الآن</p>
-              <button type="button" onClick={() => setActivePage('products')} className="text-xs font-bold text-primary hover:underline cursor-pointer">
+              <button type="button" onClick={() => setActivePage('products')} className="text-xs font-bold text-primary dark:text-primary-hover hover:underline cursor-pointer">
                 ابدأ التسوق
               </button>
             </div>
@@ -1185,10 +1185,10 @@ export const BuyerAccountPage: React.FC = () => {
                     </p>
                   </div>
                   <div className="flex items-center justify-between sm:justify-end gap-4">
-                    <span className="text-xs font-bold text-primary">
+                    <span className="text-xs font-bold text-primary dark:text-primary-hover">
                       {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(order.total)}
                     </span>
-                    <span className="text-[11px] px-2.5 py-1 rounded-full bg-primary/10 text-primary font-bold">{order.status}</span>
+                    <span className="text-[11px] px-2.5 py-1 rounded-full bg-primary/10 text-primary dark:text-primary-hover font-bold">{order.status}</span>
                   </div>
                 </button>
               ))}
@@ -1235,7 +1235,7 @@ export const BuyerAccountPage: React.FC = () => {
           >
             <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary dark:text-primary-hover flex items-center justify-center">
                   <Store className="w-5 h-5" />
                 </div>
                 <div>

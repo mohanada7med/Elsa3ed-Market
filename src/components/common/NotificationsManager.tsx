@@ -274,21 +274,21 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
       case 'product_rejected':
         return <XCircle className="w-5 h-5 text-rose-600 dark:text-rose-400" />;
       case 'product_pending_review':
-        return <Sparkles className="w-5 h-5 text-amber-600 dark:text-primary-hover" />;
+        return <Sparkles className="w-5 h-5 text-amber-600 dark:text-primary dark:text-primary-hover-hover" />;
       case 'low_stock':
-        return <AlertTriangle className="w-5 h-5 text-amber-500 dark:text-primary-hover" />;
+        return <AlertTriangle className="w-5 h-5 text-amber-500 dark:text-primary dark:text-primary-hover-hover" />;
       case 'payout_requested':
       case 'payout_approved':
       case 'payout_paid':
         return <Wallet className="w-5 h-5 text-purple-600 dark:text-purple-400" />;
       case 'new_review':
-        return <Star className="w-5 h-5 text-primary-hover " />;
+        return <Star className="w-5 h-5 text-primary dark:text-primary-hover-hover " />;
       case 'new_seller_registered':
         return <UserPlus className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />;
       case 'password_reset_requested':
-        return <KeyRound className="w-5 h-5 text-primary" />;
+        return <KeyRound className="w-5 h-5 text-primary dark:text-primary-hover" />;
       default:
-        return <Bell className="w-5 h-5 text-primary" />;
+        return <Bell className="w-5 h-5 text-primary dark:text-primary-hover" />;
     }
   };
 
@@ -333,7 +333,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
         <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           <div className="space-y-2 max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-xs text-[#C99444] text-xs font-bold border border-white/15">
-              <Bell className="w-4 h-4 text-primary" />
+              <Bell className="w-4 h-4 text-primary dark:text-primary-hover" />
               <span>
                 {viewMode === 'admin'
                   ? 'مركز إشعارات الإدارة العامة والرقابة'
@@ -390,7 +390,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
       <div className="bg-white/75 dark:bg-espresso-900/90 p-5 sm:p-6 rounded-[2rem] border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-5 border-b border-black/10 dark:border-white/10">
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0 border border-primary/20">
+            <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary dark:text-primary-hover flex items-center justify-center shrink-0 border border-primary/20">
               <BellRing className="w-6 h-6" />
             </div>
             <div className="space-y-1">
@@ -424,7 +424,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               <button
                 type="button"
                 onClick={sendTestBrowserNotification}
-                className="px-4 py-2.5 bg-white/80 dark:bg-cream/5 hover:bg-black/5 dark:hover:bg-white/10 text-primary border border-primary/30 rounded-xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer shadow-xs"
+                className="px-4 py-2.5 bg-white/80 dark:bg-cream/5 hover:bg-black/5 dark:hover:bg-white/10 text-primary dark:text-primary-hover border border-primary/30 rounded-xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer shadow-xs"
               >
                 <Play className="w-3.5 h-3.5 fill-current" />
                 <span>تجربة إشعار ورنة تجريبية</span>
@@ -667,7 +667,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
           <div className="bg-white/75 dark:bg-espresso-900/90 p-5 rounded-[2rem] border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <h3 className="text-base font-black text-espresso dark:text-cream flex items-center gap-2">
-                <History className="w-5 h-5 text-primary" />
+                <History className="w-5 h-5 text-primary dark:text-primary-hover" />
                 <span>سجل الإعلانات والتنبيهات الموجهة (من قاعدة البيانات MongoDB)</span>
               </h3>
               <p className="text-xs text-black/60 dark:text-white/60 mt-1 font-medium">
@@ -681,7 +681,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                 disabled={isLoadingHistory}
                 className="px-4 py-2 bg-black/5 dark:bg-cream/5 hover:bg-black/10 dark:hover:bg-white/10 text-espresso dark:text-cream rounded-xl text-xs font-black transition-all flex items-center gap-2 border border-black/10 dark:border-white/10 cursor-pointer"
               >
-                <RotateCcw className={`w-3.5 h-3.5 ${isLoadingHistory ? 'animate-spin text-primary' : ''}`} />
+                <RotateCcw className={`w-3.5 h-3.5 ${isLoadingHistory ? 'animate-spin text-primary dark:text-primary-hover' : ''}`} />
                 <span>تحديث السجل</span>
               </button>
               <button
@@ -697,7 +697,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
 
           {isLoadingHistory ? (
             <div className="p-12 text-center bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10">
-              <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-2" />
+              <Loader2 className="w-8 h-8 animate-spin text-primary dark:text-primary-hover mx-auto mb-2" />
               <p className="text-xs font-bold text-black/60 dark:text-white/60">جارٍ تحميل سجل الإعلانات من قاعدة البيانات...</p>
             </div>
           ) : broadcastHistory.length > 0 ? (
@@ -752,7 +752,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                     <div className="flex flex-wrap items-center justify-between gap-3 pt-2 text-[11px] text-black/60 dark:text-white/60 font-medium">
                       <div className="flex items-center gap-4 flex-wrap">
                         <span className="flex items-center gap-1.5">
-                          <Users className="w-3.5 h-3.5 text-primary" />
+                          <Users className="w-3.5 h-3.5 text-primary dark:text-primary-hover" />
                           <span>عدد المستلمين الفعلي: <strong>{recipientsCount}</strong></span>
                         </span>
                         <span className="flex items-center gap-1.5">
@@ -776,7 +776,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
             </div>
           ) : (
             <div className="p-12 text-center bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 space-y-4">
-              <div className="w-16 h-16 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto">
+              <div className="w-16 h-16 rounded-full bg-primary/10 text-primary dark:text-primary-hover flex items-center justify-center mx-auto">
                 <History className="w-8 h-8" />
               </div>
               <h4 className="text-base font-black text-espresso dark:text-cream">
@@ -803,7 +803,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
             <div className="bg-white/75 dark:bg-espresso-900/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg">
               <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2">
                 <span>إجمالي الإشعارات المسجلة</span>
-                <Bell className="w-4 h-4 text-primary" />
+                <Bell className="w-4 h-4 text-primary dark:text-primary-hover" />
               </div>
               <span className="text-2xl font-black text-espresso dark:text-cream">
                 {notifications.length} إشعار
@@ -1008,7 +1008,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                           <h4
                             className={`text-sm sm:text-base font-black ${notif.read
                               ? 'text-espresso dark:text-cream'
-                              : 'text-primary'
+                              : 'text-primary dark:text-primary-hover'
                               }`}
                           >
                             {notif.title}
@@ -1124,7 +1124,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               </div>
             ) : (
               <div className="p-12 text-center space-y-4">
-                <div className="w-16 h-16 rounded-full bg-black/5 dark:bg-cream/5 flex items-center justify-center mx-auto text-primary/40">
+                <div className="w-16 h-16 rounded-full bg-black/5 dark:bg-cream/5 flex items-center justify-center mx-auto text-primary dark:text-primary-hover/40">
                   <Bell className="w-8 h-8" />
                 </div>
                 <h4 className="text-base font-black text-espresso dark:text-cream">
@@ -1144,7 +1144,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xl animate-in fade-in overflow-y-auto">
           <div className="bg-white/95 dark:bg-espresso-900/95 rounded-[2rem] border border-black/10 dark:border-white/10 max-w-xl w-full p-6 sm:p-8 shadow-2xl space-y-5 backdrop-blur-2xl my-8">
             <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-4">
-              <div className="flex items-center gap-2.5 text-primary">
+              <div className="flex items-center gap-2.5 text-primary dark:text-primary-hover">
                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
                   <Send className="w-5 h-5" />
                 </div>
@@ -1270,7 +1270,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                 <div className="p-3.5 bg-black/5 dark:bg-cream/5 rounded-2xl border border-black/10 dark:border-white/10 space-y-3">
                   <div className="flex items-center justify-between">
                     <label className="font-black text-espresso dark:text-cream flex items-center gap-1.5">
-                      <User className="w-3.5 h-3.5 text-primary" />
+                      <User className="w-3.5 h-3.5 text-primary dark:text-primary-hover" />
                       <span>اختيار المستخدم المستهدف (من قاعدة البيانات) *</span>
                     </label>
                     {selectedTargetUserId && (
@@ -1284,7 +1284,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                   {selectedTargetUserId ? (
                     <div className="p-3 bg-white dark:bg-[#1c1b18] rounded-xl border border-emerald-500/30 flex items-center justify-between gap-3 shadow-xs">
                       <div className="flex items-center gap-2.5 min-w-0">
-                        <div className="w-8 h-8 rounded-full bg-primary/15 text-primary flex items-center justify-center font-black text-xs shrink-0">
+                        <div className="w-8 h-8 rounded-full bg-primary/15 text-primary dark:text-primary-hover flex items-center justify-center font-black text-xs shrink-0">
                           {(selectedTargetUser?.name || selectedTargetUser?.fullName || 'U').charAt(0)}
                         </div>
                         <div className="min-w-0">
@@ -1297,7 +1297,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary/10 text-primary">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary/10 text-primary dark:text-primary-hover">
                           {selectedTargetUser?.role === 'seller' ? 'حرفي' : selectedTargetUser?.role === 'admin' ? 'مدير' : 'مشتري'}
                         </span>
                         <button
@@ -1494,7 +1494,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                   >
                     {isSendingBroadcast ? (
                       <>
-                        <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                        <Loader2 className="w-4 h-4 animate-spin text-primary dark:text-primary-hover" />
                         <span>جارٍ الحفظ والبث...</span>
                       </>
                     ) : (

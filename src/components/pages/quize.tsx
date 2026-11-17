@@ -712,7 +712,7 @@ export const DialectDictionaryPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setActivePage('home')}
-              className="group flex items-center gap-2 sm:gap-3 text-xs font-black hover:text-primary dark:hover:text-primary-hover cursor-pointer min-h-[44px] min-w-[44px]"
+              className="group flex items-center gap-2 sm:gap-3 text-xs font-black hover:text-primary dark:text-primary-hover dark:hover:text-primary dark:text-primary-hover-hover cursor-pointer min-h-[44px] min-w-[44px]"
             >
               <span className="flex h-9 w-9 items-center justify-center rounded-full border border-black/10 group-hover:bg-espresso group-hover:text-white dark:border-white/10 dark:group-hover:bg-white dark:group-hover:text-black">
                 <ArrowLeft
@@ -723,12 +723,6 @@ export const DialectDictionaryPage: React.FC = () => {
               <span className="hidden sm:block">الرئيسية</span>
             </button>
 
-            <div className="absolute left-1/2 -translate-x-1/2 text-center pointer-events-none">
-              <div className="text-[8px] font-black tracking-[0.45em] text-primary dark:text-primary-hover">
-                WAH
-              </div>
-              <div className="mt-0.5 text-xs font-black">اختبار اللهجة</div>
-            </div>
 
             <button
               type="button"
@@ -749,14 +743,14 @@ export const DialectDictionaryPage: React.FC = () => {
       {countdown !== null && (
         <section className="relative z-10 flex min-h-[calc(100vh-72px)] items-center justify-center px-5 py-12">
           <div className="relative text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-black/10 dark:border-white/10 bg-white dark:bg-[#121210] text-[9px] font-black tracking-[0.25em] text-primary dark:text-primary-hover mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-black/10 dark:border-white/10 bg-white dark:bg-[#121210] text-[9px] font-black tracking-[0.25em] text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover mb-6">
               <Zap size={14} />
               PREPARE FOR THE QUIZ
             </div>
 
             <div
               key={countdown}
-              className="text-[8rem] sm:text-[13rem] leading-none font-black text-primary dark:text-primary-hover select-none"
+              className="text-[8rem] sm:text-[13rem] leading-none font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover select-none"
             >
               {countdown}
             </div>
@@ -774,7 +768,7 @@ export const DialectDictionaryPage: React.FC = () => {
           <section className="mx-auto max-w-[1700px] px-5 pb-12 pt-0 sm:px-8 sm:pb-16 sm:px-12 xl:px-16">
             <div className="grid gap-10 lg:grid-cols-[1fr_420px] lg:items-end lg:gap-20">
               <div>
-                <div className="mb-3 flex items-center gap-2 text-[10px] font-extrabold tracking-normal text-primary dark:text-primary-hover sm:mb-6 sm:gap-3 sm:text-xs">
+                <div className="mb-3 flex items-center gap-2 text-[10px] font-extrabold tracking-normal text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover sm:mb-6 sm:gap-3 sm:text-xs">
                   <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent/10 sm:h-8 sm:w-8">
                     <Target size={14} className="text-accent" />
                   </span>
@@ -787,7 +781,7 @@ export const DialectDictionaryPage: React.FC = () => {
                 <h1 className="max-w-6xl text-5xl sm:text-7xl lg:text-[8rem] font-black leading-[0.95] tracking-tight">
                   انت
                   <br />
-                  <span className="ps-7 mr-3 sm:mr-8 lg:mr-20 text-primary dark:text-primary-hover ">
+                  <span className="ps-7 mr-3 sm:mr-8 lg:mr-20 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover ">
                     صعيدى؟
                   </span>
                 </h1>
@@ -825,7 +819,7 @@ export const DialectDictionaryPage: React.FC = () => {
                       </div>
                       <Flame
                         size={18}
-                        className="text-primary dark:text-primary-hover"
+                        className="text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover"
                       />
                     </div>
 
@@ -861,7 +855,7 @@ export const DialectDictionaryPage: React.FC = () => {
                     <div className="mt-6 flex items-center gap-2 border-t border-black/10 pt-4 dark:border-white/10">
                       <CircleDot
                         size={12}
-                        className="text-primary dark:text-primary-hover"
+                        className="text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover"
                       />
                       <span className="text-[10px] font-bold">
                         أصالة • حكاية • لهجة
@@ -884,7 +878,7 @@ export const DialectDictionaryPage: React.FC = () => {
                     className="hidden sm:block h-32 w-auto lg:h-44 object-contain drop-shadow-2xl shrink-0 -my-4 animate-fade-in"
                   />
                   <div>
-                    <div className="mb-2 text-[9px] font-black tracking-[0.25em] text-primary-hover">
+                    <div className="mb-2 text-[9px] font-black tracking-[0.25em] text-primary dark:text-primary-hover-hover">
                       READY TO START?
                     </div>
                     <h2 className="text-2xl sm:text-4xl font-black">
@@ -913,7 +907,7 @@ export const DialectDictionaryPage: React.FC = () => {
         <section className="relative z-20 mx-auto max-w-[1000px] px-4 pt-6 pb-20 sm:px-8 sm:pt-10">
           <div className="mb-5 flex items-center justify-between">
             <div className="flex items-center gap-2 text-xs font-black">
-              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10 text-primary dark:bg-[#d6aa72]/15 dark:text-primary-hover">
+              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10 text-primary dark:text-primary-hover dark:bg-[#d6aa72]/15 dark:text-primary dark:text-primary-hover-hover">
                 <Flame size={15} />
               </span>
               سؤال {currentIndex + 1} من {questions.length}
@@ -929,7 +923,7 @@ export const DialectDictionaryPage: React.FC = () => {
               <span>{formatTime(timeLeft)}</span>
             </div>
 
-            <div className="rounded-full bg-primary/10 dark:bg-[#d6aa72]/10 border border-primary/20 dark:border-[#d6aa72]/20 px-3 py-1.5 text-xs font-black text-primary dark:text-primary-hover">
+            <div className="rounded-full bg-primary/10 dark:bg-[#d6aa72]/10 border border-primary/20 dark:border-[#d6aa72]/20 px-3 py-1.5 text-xs font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
               النقاط: {score}
             </div>
           </div>
@@ -946,7 +940,7 @@ export const DialectDictionaryPage: React.FC = () => {
             key={currentQuestion.id}
             className="rounded-3xl border border-black/[0.08] bg-[#e8e0d2] p-5 dark:border-white/[0.08] dark:bg-[#121210] sm:p-8"
           >
-            <div className="mb-4 inline-flex items-center gap-1.5 text-[9px] font-black tracking-[0.2em] text-primary dark:text-primary-hover">
+            <div className="mb-4 inline-flex items-center gap-1.5 text-[9px] font-black tracking-[0.2em] text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
               <ScrollText size={12} />
               QUESTION ARCHIVE
             </div>
@@ -989,7 +983,7 @@ export const DialectDictionaryPage: React.FC = () => {
                         ? 'bg-emerald-500 text-white'
                         : selectedAnswer && isSelected
                           ? 'bg-rose-500 text-white'
-                          : 'border border-black/10 bg-[#f7f5f0] dark:border-white/10 dark:bg-[#201e1b] text-primary dark:text-primary-hover'
+                          : 'border border-black/10 bg-[#f7f5f0] dark:border-white/10 dark:bg-[#201e1b] text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover'
                         }`}
                     >
                       {selectedAnswer && isCorrect ? (
@@ -1048,7 +1042,7 @@ export const DialectDictionaryPage: React.FC = () => {
                 alt="نتيجة التحدي"
                 className="h-36 sm:h-44 w-auto mx-auto object-contain drop-shadow-xl mb-4 animate-fade-in"
               />
-              <div className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-black/10 dark:border-white/10 bg-white dark:bg-[#1a1815] px-3.5 py-1.5 text-xs font-black text-primary dark:text-primary-hover">
+              <div className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-black/10 dark:border-white/10 bg-white dark:bg-[#1a1815] px-3.5 py-1.5 text-xs font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
                 <Trophy size={14} />
                 {result.badge}
               </div>
@@ -1064,7 +1058,7 @@ export const DialectDictionaryPage: React.FC = () => {
                 <div className="text-[9px] font-black tracking-[0.25em] text-black/40 dark:text-white/40 mb-1">
                   YOUR FINAL SCORE
                 </div>
-                <div className="text-6xl sm:text-8xl font-black text-primary dark:text-primary-hover tracking-tight">
+                <div className="text-6xl sm:text-8xl font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover tracking-tight">
                   {score}
                   <span className="text-xl sm:text-3xl text-black/40 dark:text-white/40 font-bold">
                     /10
@@ -1084,7 +1078,7 @@ export const DialectDictionaryPage: React.FC = () => {
                 <div className="mb-6 inline-flex items-center gap-2 rounded-xl border border-black/10 dark:border-white/10 bg-white dark:bg-[#1a1815] px-4 py-2.5">
                   <Gem
                     size={16}
-                    className="text-primary dark:text-primary-hover"
+                    className="text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover"
                   />
                   <span className="text-xs font-black">
                     صعيدي أباً عن جد.. ودانك واعية للكلام وعارف أصل الحكاية.
@@ -1104,7 +1098,7 @@ export const DialectDictionaryPage: React.FC = () => {
                   </p>
                   <div className="inline-flex items-center gap-3 px-4 py-2 bg-white dark:bg-[#1a1815] border border-[#C99444] rounded-xl shadow-xs">
                     <Tag size={16} className="text-[#C99444]" />
-                    <span className="font-mono text-sm font-black tracking-wider text-primary dark:text-[#C99444]">OMDA10</span>
+                    <span className="font-mono text-sm font-black tracking-wider text-primary dark:text-primary-hover dark:text-[#C99444]">OMDA10</span>
                     <button
                       type="button"
                       onClick={() => {
@@ -1122,7 +1116,7 @@ export const DialectDictionaryPage: React.FC = () => {
               {/* بطاقة المشاركة */}
               <div className="rounded-2xl bg-espresso p-5 sm:p-6 text-white text-right relative overflow-hidden mb-6">
                 <div className="flex items-center justify-between mb-3 border-b border-white/10 pb-3">
-                  <div className="text-[8px] font-black tracking-[0.2em] text-primary-hover">
+                  <div className="text-[8px] font-black tracking-[0.2em] text-primary dark:text-primary-hover-hover">
                     WAH ARCHIVE CERTIFICATE
                   </div>
                   <div className="text-xs font-bold text-white/50">
@@ -1131,7 +1125,7 @@ export const DialectDictionaryPage: React.FC = () => {
                 </div>
 
                 <div className="py-2 text-center">
-                  <div className="text-3xl sm:text-4xl font-black text-primary-hover mb-1">
+                  <div className="text-3xl sm:text-4xl font-black text-primary dark:text-primary-hover-hover mb-1">
                     {score} / 10
                   </div>
                   <div className="text-sm font-bold text-white/90">

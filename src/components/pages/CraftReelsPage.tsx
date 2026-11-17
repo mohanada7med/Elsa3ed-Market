@@ -271,7 +271,7 @@ const PermissionModal: React.FC<{
           className="w-full max-w-md space-y-5 rounded-3xl border border-black/10 bg-cream p-6 text-right shadow-2xl dark:border-white/10 dark:bg-espresso-900"
         >
           <div className="flex items-center justify-between">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/30 bg-primary/10 text-primary">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/30 bg-primary/10 text-primary dark:text-primary-hover">
               <Lock className="h-6 w-6" />
             </div>
             <button
@@ -765,7 +765,7 @@ export const CraftReelsPage: React.FC = () => {
 
           {isLoading ? (
             <div className="flex h-full flex-col items-center justify-center gap-3 text-white">
-              <Loader2 className="h-10 w-10 animate-spin text-primary" />
+              <Loader2 className="h-10 w-10 animate-spin text-primary dark:text-primary-hover" />
               <p className="text-xs font-bold text-white/70">جارٍ تجهيز الحكايات...</p>
             </div>
           ) : filteredReels.length === 0 ? (
@@ -835,7 +835,7 @@ export const CraftReelsPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setActivePage('home')}
-              className="hover:text-primary dark:hover:text-[#C99444] transition-colors cursor-pointer"
+              className="hover:text-primary dark:text-primary-hover dark:hover:text-[#C99444] transition-colors cursor-pointer"
             >
               الرئيسية
             </button>
@@ -883,22 +883,25 @@ export const CraftReelsPage: React.FC = () => {
           onAction={handleOpenUpload}
         />
 
-        {/* Editorial Grand Header */}
-        <div className="relative rounded-[2rem] p-6 sm:p-10 bg-espresso text-cream overflow-hidden shadow-xl border border-black/10 dark:border-white/10">
-          <div className="absolute top-0 right-1/4 w-80 h-80 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
-          <div className="relative z-10 max-w-3xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 border border-primary/30 text-[#C99444] text-xs font-bold">
-              <Film className="w-3.5 h-3.5 text-[#C99444]" />
-              <span>فيديوهات وتجارب حية من قلب الصعيد</span>
-            </div>
-            <h1 className="text-2xl sm:text-4xl font-main font-black leading-tight">
+        <section className="grid gap-8 lg:grid-cols-[1fr_420px] lg:items-end lg:gap-14">
+          <div>
+            <div className="mb-7 flex items-center gap-3 text-[9px] font-black tracking-[0.28em] text-primary dark:text-primary-hover">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 dark:bg-primary/15">
+                <Film size={14} />
+              </span>
               حكايات الصنعة.. صوت وصورة من قلب الورشة
+            </div>
+            <h1 className="max-w-6xl text-4xl font-black leading-[0.92] tracking-tight sm:text-6xl lg:text-7xl">
+              ريلز وحكايات
+              <br />
+              <span className="text-primary dark:text-primary-hover">من قلب الصعيد</span>
             </h1>
-            <p className="text-xs sm:text-sm text-cream/80 leading-relaxed max-w-2xl font-light">
+            <p className="mt-8 max-w-2xl border-r-2 border-primary pr-5 text-sm font-medium leading-8 text-black/55 dark:text-white/55 sm:text-base">
               شاهد كبار شيوخ الصنعة وحرفيي صعيد مصر في ورشهم؛ أسرار الطين والحرير والنحاس والخوص، وتقدر تشتري القطعة مباشرة من الورشة مع كل حكاية.
             </p>
           </div>
-        </div>
+
+        </section>
 
         {/* Unified Search & Filters Bar */}
         <div className="space-y-4 rounded-2xl bg-white/60 dark:bg-espresso-900/60 p-4 sm:p-6 border border-black/10 dark:border-white/10 shadow-sm backdrop-blur-md">
@@ -1006,7 +1009,7 @@ export const CraftReelsPage: React.FC = () => {
 
           {isLoading ? (
             <div className="flex flex-col items-center justify-center gap-3 py-20">
-              <Loader2 className="h-10 w-10 animate-spin text-primary" />
+              <Loader2 className="h-10 w-10 animate-spin text-primary dark:text-primary-hover" />
               <p className="text-xs sm:text-sm font-bold text-espresso/60 dark:text-cream/60">
                 جارٍ تحميل حكايات ورش الصعيد...
               </p>
@@ -1047,7 +1050,7 @@ export const CraftReelsPage: React.FC = () => {
 
               {hasMore && (
                 <div ref={sentinelRef} className="flex justify-center py-10">
-                  <Loader2 className="h-6 w-6 animate-spin text-primary/60" />
+                  <Loader2 className="h-6 w-6 animate-spin text-primary dark:text-primary-hover/60" />
                 </div>
               )}
             </>

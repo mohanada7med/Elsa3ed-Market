@@ -212,7 +212,7 @@ export const SellerPromotionPanel: React.FC<SellerPromotionPanelProps> = ({
       <div className="relative overflow-hidden rounded-[2.5rem] border border-primary/20 bg-gradient-to-br from-primary/10 via-amber-500/5 to-surface p-6 shadow-xl sm:p-10">
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="max-w-2xl space-y-3">
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1 text-xs font-bold text-primary">
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1 text-xs font-bold text-primary dark:text-primary-hover">
               <Sparkles className="h-4 w-4 animate-pulse" />
               <span>خدمة نمو ومبيعات ورش الصعيد</span>
             </div>
@@ -229,7 +229,7 @@ export const SellerPromotionPanel: React.FC<SellerPromotionPanelProps> = ({
                 صدارة الصفحة الرئيسية
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-xl bg-black/5 dark:bg-white/5 border border-border px-3 py-1.5 text-xs font-bold text-foreground">
-                <BadgeCheck className="h-3.5 w-3.5 text-primary" />
+                <BadgeCheck className="h-3.5 w-3.5 text-primary dark:text-primary-hover" />
                 شارة ترشيح وه الذهبية
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-xl bg-black/5 dark:bg-white/5 border border-border px-3 py-1.5 text-xs font-bold text-foreground">
@@ -253,7 +253,7 @@ export const SellerPromotionPanel: React.FC<SellerPromotionPanelProps> = ({
               <button
                 type="button"
                 onClick={onNavigateToHome}
-                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 px-5 py-3 text-xs font-bold transition cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-primary/10 hover:bg-primary/20 text-primary dark:text-primary-hover border border-primary/20 px-5 py-3 text-xs font-bold transition cursor-pointer"
               >
                 <Eye className="h-4 w-4" />
                 <span>معاينة الصفحة الرئيسية</span>
@@ -307,7 +307,7 @@ export const SellerPromotionPanel: React.FC<SellerPromotionPanelProps> = ({
             <div className="rounded-2xl border border-border bg-surface p-4">
               <span className="text-[11px] text-foreground-secondary block mb-1">نوع المحتوى المروّج</span>
               <span className="font-bold text-sm text-foreground flex items-center gap-1.5">
-                {request.contentType === 'product' ? <Package className="h-4 w-4 text-primary" /> : <Store className="h-4 w-4 text-primary" />}
+                {request.contentType === 'product' ? <Package className="h-4 w-4 text-primary dark:text-primary-hover" /> : <Store className="h-4 w-4 text-primary dark:text-primary-hover" />}
                 {request.contentType === 'product' ? 'قطعة / منتج محدد' : 'ملف الورشة بالكامل'}
               </span>
             </div>
@@ -455,7 +455,7 @@ export const SellerPromotionPanel: React.FC<SellerPromotionPanelProps> = ({
               </p>
             </div>
           </div>
-          <span className="text-xs font-bold text-primary">جاهز لحملة جديدة ✨</span>
+          <span className="text-xs font-bold text-primary dark:text-primary-hover">جاهز لحملة جديدة ✨</span>
         </div>
       )}
 
@@ -485,7 +485,7 @@ export const SellerPromotionPanel: React.FC<SellerPromotionPanelProps> = ({
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-2.5">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary dark:text-primary-hover">
                         <Package className="h-5 w-5" />
                       </div>
                       <div>
@@ -494,7 +494,7 @@ export const SellerPromotionPanel: React.FC<SellerPromotionPanelProps> = ({
                       </div>
                     </div>
                     {contentType === 'product' && (
-                      <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
+                      <CheckCircle2 className="h-5 w-5 text-primary dark:text-primary-hover flex-shrink-0" />
                     )}
                   </div>
                 </button>
@@ -511,7 +511,7 @@ export const SellerPromotionPanel: React.FC<SellerPromotionPanelProps> = ({
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-2.5">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary dark:text-primary-hover">
                         <Store className="h-5 w-5" />
                       </div>
                       <div>
@@ -520,7 +520,7 @@ export const SellerPromotionPanel: React.FC<SellerPromotionPanelProps> = ({
                       </div>
                     </div>
                     {contentType === 'seller' && (
-                      <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
+                      <CheckCircle2 className="h-5 w-5 text-primary dark:text-primary-hover flex-shrink-0" />
                     )}
                   </div>
                 </button>
@@ -572,11 +572,11 @@ export const SellerPromotionPanel: React.FC<SellerPromotionPanelProps> = ({
                               />
                               <div className="overflow-hidden flex-1">
                                 <h5 className="font-bold text-xs text-foreground truncate">{prod.title}</h5>
-                                <span className="text-[11px] font-black text-primary font-mono block">
+                                <span className="text-[11px] font-black text-primary dark:text-primary-hover font-mono block">
                                   {prod.price} ج.م
                                 </span>
                               </div>
-                              {isSelected && <CheckCircle2 className="h-4 w-4 text-primary flex-shrink-0" />}
+                              {isSelected && <CheckCircle2 className="h-4 w-4 text-primary dark:text-primary-hover flex-shrink-0" />}
                             </button>
                           );
                         })}
@@ -619,7 +619,7 @@ export const SellerPromotionPanel: React.FC<SellerPromotionPanelProps> = ({
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
                           <h4 className="font-black text-sm text-foreground">{pkg.name}</h4>
-                          <span className="font-mono text-xs font-black text-primary">{pkg.estimatedPrice}</span>
+                          <span className="font-mono text-xs font-black text-primary dark:text-primary-hover">{pkg.estimatedPrice}</span>
                         </div>
                         <p className="text-[11px] text-foreground-secondary leading-relaxed">{pkg.description}</p>
                       </div>
@@ -663,10 +663,10 @@ export const SellerPromotionPanel: React.FC<SellerPromotionPanelProps> = ({
                     >
                       <div>
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-[10px] font-bold text-primary px-2 py-0.5 rounded-md bg-primary/10">
+                          <span className="text-[10px] font-bold text-primary dark:text-primary-hover px-2 py-0.5 rounded-md bg-primary/10">
                             {pos.badge}
                           </span>
-                          {isSelected && <CheckCircle2 className="h-4 w-4 text-primary" />}
+                          {isSelected && <CheckCircle2 className="h-4 w-4 text-primary dark:text-primary-hover" />}
                         </div>
                         <h4 className="font-bold text-xs text-foreground mt-1">{pos.label}</h4>
                       </div>
@@ -703,7 +703,7 @@ export const SellerPromotionPanel: React.FC<SellerPromotionPanelProps> = ({
             <div className="space-y-4 pt-4 border-t border-border">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Eye className="h-5 w-5 text-primary" />
+                  <Eye className="h-5 w-5 text-primary dark:text-primary-hover" />
                   <h3 className="font-black text-base text-foreground">معاينة حية لشكل إعلانك في الموقع</h3>
                 </div>
                 <span className="text-[11px] text-foreground-secondary">يحاكي ظهور الإعلان أمام الزوار</span>
@@ -723,7 +723,7 @@ export const SellerPromotionPanel: React.FC<SellerPromotionPanelProps> = ({
                       className="h-20 w-20 sm:h-24 sm:w-24 rounded-2xl object-cover border border-primary/30 shadow-md flex-shrink-0"
                     />
                     <div className="space-y-1.5 overflow-hidden">
-                      <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 px-2.5 py-0.5 text-[10px] font-black text-primary border border-primary/20">
+                      <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 px-2.5 py-0.5 text-[10px] font-black text-primary dark:text-primary-hover border border-primary/20">
                         <Sparkles className="h-3 w-3" />
                         <span>ترشيح وه المميز</span>
                       </div>
@@ -734,7 +734,7 @@ export const SellerPromotionPanel: React.FC<SellerPromotionPanelProps> = ({
                       </h4>
                       <div className="flex flex-wrap items-center gap-2 text-xs text-foreground-secondary">
                         <span className="font-bold flex items-center gap-1">
-                          <Store className="h-3.5 w-3.5 text-primary" />
+                          <Store className="h-3.5 w-3.5 text-primary dark:text-primary-hover" />
                           {workshopName}
                         </span>
                         <span>•</span>
@@ -748,7 +748,7 @@ export const SellerPromotionPanel: React.FC<SellerPromotionPanelProps> = ({
 
                   <div className="flex flex-col items-center sm:items-end gap-2 flex-shrink-0">
                     {contentType === 'product' && selectedProduct && (
-                      <span className="font-black text-xl text-primary font-mono">
+                      <span className="font-black text-xl text-primary dark:text-primary-hover font-mono">
                         {selectedProduct.price} ج.م
                       </span>
                     )}
@@ -784,7 +784,7 @@ export const SellerPromotionPanel: React.FC<SellerPromotionPanelProps> = ({
       {/* 4. FREQUENTLY ASKED QUESTIONS (FAQ) */}
       <div className="rounded-[2.5rem] border border-border bg-surface p-6 sm:p-8 shadow-sm space-y-4">
         <div className="flex items-center gap-2 mb-2">
-          <HelpCircle className="h-5 w-5 text-primary" />
+          <HelpCircle className="h-5 w-5 text-primary dark:text-primary-hover" />
           <h3 className="font-black text-base text-foreground">أسئلة شائعة حول مساحة الترشيح المدفوعة</h3>
         </div>
 
@@ -815,7 +815,7 @@ export const SellerPromotionPanel: React.FC<SellerPromotionPanelProps> = ({
                 className="w-full p-4 text-right font-bold text-xs sm:text-sm text-foreground flex items-center justify-between gap-4 cursor-pointer hover:bg-black/5 dark:hover:bg-white/5"
               >
                 <span>{item.q}</span>
-                <span className="text-primary font-black text-base">{isExpanded ? '−' : '+'}</span>
+                <span className="text-primary dark:text-primary-hover font-black text-base">{isExpanded ? '−' : '+'}</span>
               </button>
               {isExpanded && (
                 <div className="px-4 pb-4 pt-1 text-xs text-foreground-secondary leading-relaxed border-t border-border bg-black/5 dark:bg-white/5">

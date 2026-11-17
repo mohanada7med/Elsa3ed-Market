@@ -114,7 +114,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               e.stopPropagation();
               handleCardClick();
             }}
-            className="p-2.5 rounded-xl bg-white/90 dark:bg-espresso-900/90 hover:bg-white dark:hover:bg-[#20201d] text-espresso dark:text-cream hover:text-primary dark:hover:text-[#C99444] border border-black/10 dark:border-white/10 backdrop-blur-md transition-all shadow-xs opacity-0 group-hover:opacity-100 hidden sm:flex items-center justify-center min-h-[44px] min-w-[44px] cursor-pointer"
+            className="p-2.5 rounded-xl bg-white/90 dark:bg-espresso-900/90 hover:bg-white dark:hover:bg-[#20201d] text-espresso dark:text-cream hover:text-primary dark:text-primary-hover dark:hover:text-[#C99444] border border-black/10 dark:border-white/10 backdrop-blur-md transition-all shadow-xs opacity-0 group-hover:opacity-100 hidden sm:flex items-center justify-center min-h-[44px] min-w-[44px] cursor-pointer"
             title={`معاينة تفاصيل ${product.title}`}
             aria-label={`معاينة تفاصيل ${product.title}`}
           >
@@ -126,7 +126,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         {product.sellerGovernorate && (
           <div className="absolute bottom-2.5 right-2.5 z-10 pointer-events-none">
             <span className="bg-espresso/85 text-cream text-[10px] font-bold px-2.5 py-0.5 rounded-full backdrop-blur-md border border-white/10 flex items-center gap-1 shadow-xs">
-              <MapPin className="w-3 h-3 text-primary" />
+              <MapPin className="w-3 h-3 text-primary dark:text-primary-hover" />
               <span>صعيد مصر ({product.sellerGovernorate})</span>
             </span>
           </div>
@@ -146,7 +146,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 navigateToSeller(product.sellerId);
               }}
               aria-label={`زيارة ورشة الحرفي ${product.sellerName}`}
-              className="min-w-0 text-[11px] sm:text-xs font-bold text-black/60 dark:text-white/60 hover:text-primary dark:hover:text-[#C99444] transition-colors truncate text-right cursor-pointer touch-manipulation"
+              className="min-w-0 text-[11px] sm:text-xs font-bold text-black/60 dark:text-white/60 hover:text-primary dark:text-primary-hover dark:hover:text-[#C99444] transition-colors truncate text-right cursor-pointer touch-manipulation"
             >
               {product.sellerName}
             </button>
@@ -168,7 +168,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
           {/* Product Title */}
           <h3
-            className="font-bold text-espresso dark:text-cream text-[13px] sm:text-sm leading-snug hover:text-primary dark:hover:text-[#C99444] transition-colors line-clamp-2 mb-2"
+            className="font-bold text-espresso dark:text-cream text-[13px] sm:text-sm leading-snug hover:text-primary dark:text-primary-hover dark:hover:text-[#C99444] transition-colors line-clamp-2 mb-2"
           >
             {product.title}
           </h3>
@@ -178,7 +178,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <div className="pt-2.5 sm:pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between gap-1.5 sm:gap-2 mt-auto">
           <div>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-sm sm:text-base font-normal font-price text-primary dark:text-primary-hover tracking-wide whitespace-nowrap">
+              <span className="text-sm sm:text-base font-normal font-price text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover tracking-wide whitespace-nowrap">
                 {product.price} ج.م
               </span>
               {product.originalPrice && product.originalPrice > product.price && (

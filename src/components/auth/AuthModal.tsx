@@ -1143,7 +1143,7 @@ export const AuthModal: React.FC = () => {
                   sm:text-[10px]
                   font-black
                   tracking-[0.25em]
-                  text-primary
+                  text-primary dark:text-primary-hover
                 "
               >
                 WAH
@@ -1200,10 +1200,10 @@ export const AuthModal: React.FC = () => {
               <div className="mb-2 flex items-center gap-2">
                 <Sparkles
                   size={15}
-                  className="shrink-0 text-primary"
+                  className="shrink-0 text-primary dark:text-primary-hover"
                 />
 
-                <span className="text-[10px] sm:text-[11px] font-black tracking-[0.1em] text-primary">
+                <span className="text-[10px] sm:text-[11px] font-black tracking-[0.1em] text-primary dark:text-primary-hover">
                   {forgotPassword
                     ? 'ACCOUNT RECOVERY'
                     : authModalTab === 'login'
@@ -1324,7 +1324,7 @@ export const AuthModal: React.FC = () => {
                         justify-center
                         rounded-2xl
                         bg-primary/10
-                        text-primary
+                        text-primary dark:text-primary-hover
                       "
                     >
                       <KeyRound size={20} />
@@ -1412,8 +1412,8 @@ export const AuthModal: React.FC = () => {
                     text-black/60
                     dark:text-white/60
                     transition-colors
-                    hover:text-primary
-                    dark:hover:text-primary
+                    hover:text-primary dark:text-primary-hover
+                    dark:hover:text-primary dark:text-primary-hover
                     cursor-pointer
                   "
                 >
@@ -1473,9 +1473,9 @@ export const AuthModal: React.FC = () => {
                             `
                         : `
                               text-black/60
-                              hover:text-primary
+                              hover:text-primary dark:text-primary-hover
                               dark:text-white/60
-                              dark:hover:text-primary
+                              dark:hover:text-primary dark:text-primary-hover
                             `}
                     `}
                   >
@@ -1514,9 +1514,9 @@ export const AuthModal: React.FC = () => {
                             `
                         : `
                               text-black/60
-                              hover:text-primary
+                              hover:text-primary dark:text-primary-hover
                               dark:text-white/60
-                              dark:hover:text-primary
+                              dark:hover:text-primary dark:text-primary-hover
                             `}
                     `}
                   >
@@ -1592,7 +1592,7 @@ export const AuthModal: React.FC = () => {
                       {googleLoading ? (
                         <>
                           <span className="flex h-10 w-10 items-center justify-center rounded-xl border-[3px] border-espresso bg-white dark:border-cream">
-                            <Loader2 size={20} className="animate-spin text-primary" />
+                            <Loader2 size={20} className="animate-spin text-primary dark:text-primary-hover" />
                           </span>
                           <span className="flex-1 text-center">جاري الاتصال بحساب Google...</span>
                           <span className="w-10" />
@@ -1690,7 +1690,7 @@ export const AuthModal: React.FC = () => {
                         className={labelClass}
                       >
                         اسم المستخدم
-                        <span className="mr-1 text-primary">
+                        <span className="mr-1 text-primary dark:text-primary-hover">
                           *
                         </span>
                       </label>
@@ -1742,12 +1742,12 @@ export const AuthModal: React.FC = () => {
                       >
                         <Info
                           size={15}
-                          className="mt-0.5 shrink-0 text-primary"
+                          className="mt-0.5 shrink-0 text-primary dark:text-primary-hover"
                         />
 
                         <span className="min-w-0">
                           اكتب نفس اسم المستخدم اللي عملت بيه الحساب.
-                          <strong className="mr-1 text-primary">
+                          <strong className="mr-1 text-primary dark:text-primary-hover">
                             ينفع يكون بالعربي.
                           </strong>
                         </span>
@@ -1762,7 +1762,7 @@ export const AuthModal: React.FC = () => {
                         className={labelClass}
                       >
                         كلمة السر
-                        <span className="mr-1 text-primary">
+                        <span className="mr-1 text-primary dark:text-primary-hover">
                           *
                         </span>
                       </label>
@@ -1815,10 +1815,10 @@ export const AuthModal: React.FC = () => {
                             text-black/50
                             transition-all
                             hover:bg-black/5
-                            hover:text-primary
+                            hover:text-primary dark:text-primary-hover
                             dark:text-white/50
                             dark:hover:bg-white/5
-                            dark:hover:text-primary
+                            dark:hover:text-primary dark:text-primary-hover
                             cursor-pointer
                           "
                           aria-label={
@@ -1848,7 +1848,7 @@ export const AuthModal: React.FC = () => {
                           text-[12px]
                           sm:text-[13px]
                           font-bold
-                          text-primary
+                          text-primary dark:text-primary-hover
                           transition-colors
                           hover:underline
                           cursor-pointer
@@ -1896,7 +1896,7 @@ export const AuthModal: React.FC = () => {
                           className="
                             mr-1.5
                             font-black
-                            text-primary
+                            text-primary dark:text-primary-hover
                             hover:underline
                             cursor-pointer
                           "
@@ -1954,7 +1954,7 @@ export const AuthModal: React.FC = () => {
                         className={labelClass}
                       >
                         اسم الورشة أو المشروع
-                        <span className="mr-1 text-primary">*</span>
+                        <span className="mr-1 text-primary dark:text-primary-hover">*</span>
                       </label>
                       <div className="relative">
                         <Store size={20} className={iconClass} />
@@ -1977,7 +1977,7 @@ export const AuthModal: React.FC = () => {
                         className={labelClass}
                       >
                         رقم الموبايل
-                        <span className="mr-1 text-primary">*</span>
+                        <span className="mr-1 text-primary dark:text-primary-hover">*</span>
                       </label>
                       <div className="relative">
                         <Phone size={20} className={iconClass} />
@@ -2031,7 +2031,7 @@ export const AuthModal: React.FC = () => {
                         text-[13px]
                         font-black
                         text-black/60
-                        hover:text-primary
+                        hover:text-primary dark:text-primary-hover
                         dark:text-white/60
                         cursor-pointer
                       "
@@ -2083,7 +2083,7 @@ export const AuthModal: React.FC = () => {
                               ? `
                                     border-primary
                                     bg-primary/10
-                                    text-primary
+                                    text-primary dark:text-primary-hover
                                     shadow-sm
                                   `
                               : `
@@ -2239,7 +2239,7 @@ export const AuthModal: React.FC = () => {
                       {googleLoading ? (
                         <>
                           <span className="flex h-10 w-10 items-center justify-center rounded-xl border-[3px] border-espresso bg-white dark:border-cream">
-                            <Loader2 size={20} className="animate-spin text-primary" />
+                            <Loader2 size={20} className="animate-spin text-primary dark:text-primary-hover" />
                           </span>
                           <span className="flex-1 text-center">جاري التسجيل عبر Google...</span>
                           <span className="w-10" />
@@ -2450,7 +2450,7 @@ export const AuthModal: React.FC = () => {
                             text-[11px]
                             sm:text-[12px]
                             font-black
-                            text-primary
+                            text-primary dark:text-primary-hover
                             hover:underline
                             cursor-pointer
                           "
@@ -2468,7 +2468,7 @@ export const AuthModal: React.FC = () => {
                         className={labelClass}
                       >
                         اسم المستخدم
-                        <span className="mr-1 text-primary">
+                        <span className="mr-1 text-primary dark:text-primary-hover">
                           *
                         </span>
                       </label>
@@ -2512,12 +2512,12 @@ export const AuthModal: React.FC = () => {
                         <div className="flex min-w-0 items-start gap-2">
                           <Info
                             size={16}
-                            className="mt-0.5 shrink-0 text-primary"
+                            className="mt-0.5 shrink-0 text-primary dark:text-primary-hover"
                           />
 
                           <div className="min-w-0 text-[11px] leading-5 text-espresso dark:text-cream sm:text-[12px] font-medium">
                             <p>
-                              <strong className="text-primary">
+                              <strong className="text-primary dark:text-primary-hover">
                                 مهم:
                               </strong>{' '}
                               ده اسمك في وه والاسم اللي هتستخدمه لتسجيل الدخول بعد كده.
@@ -2539,7 +2539,7 @@ export const AuthModal: React.FC = () => {
                         className={labelClass}
                       >
                         الاسم بالكامل
-                        <span className="mr-1 text-primary">
+                        <span className="mr-1 text-primary dark:text-primary-hover">
                           *
                         </span>
                       </label>
@@ -2575,7 +2575,7 @@ export const AuthModal: React.FC = () => {
                           className={labelClass}
                         >
                           اسم الورشة أو المشروع
-                          <span className="mr-1 text-primary">
+                          <span className="mr-1 text-primary dark:text-primary-hover">
                             *
                           </span>
                         </label>
@@ -2611,7 +2611,7 @@ export const AuthModal: React.FC = () => {
                         className={labelClass}
                       >
                         رقم الموبايل
-                        <span className="mr-1 text-primary">
+                        <span className="mr-1 text-primary dark:text-primary-hover">
                           *
                         </span>
                       </label>
@@ -2749,7 +2749,7 @@ export const AuthModal: React.FC = () => {
                             className={labelClass}
                           >
                             اسم المحافظة
-                            <span className="mr-1 text-primary">
+                            <span className="mr-1 text-primary dark:text-primary-hover">
                               *
                             </span>
                           </label>
@@ -2791,7 +2791,7 @@ export const AuthModal: React.FC = () => {
                         className={labelClass}
                       >
                         البريد الإلكتروني
-                        <span className="mr-1 text-primary">
+                        <span className="mr-1 text-primary dark:text-primary-hover">
                           *
                         </span>
                       </label>
@@ -2831,7 +2831,7 @@ export const AuthModal: React.FC = () => {
                         className={labelClass}
                       >
                         كلمة السر
-                        <span className="mr-1 text-primary">
+                        <span className="mr-1 text-primary dark:text-primary-hover">
                           *
                         </span>
                       </label>
@@ -2884,10 +2884,10 @@ export const AuthModal: React.FC = () => {
                             text-black/50
                             transition-all
                             hover:bg-black/5
-                            hover:text-primary
+                            hover:text-primary dark:text-primary-hover
                             dark:text-white/50
                             dark:hover:bg-white/5
-                            dark:hover:text-primary
+                            dark:hover:text-primary dark:text-primary-hover
                             cursor-pointer
                           "
                           aria-label={
@@ -2952,7 +2952,7 @@ export const AuthModal: React.FC = () => {
                     >
                       <ShieldCheck
                         size={15}
-                        className="shrink-0 text-primary"
+                        className="shrink-0 text-primary dark:text-primary-hover"
                       />
 
                       <span>

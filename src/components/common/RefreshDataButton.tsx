@@ -100,7 +100,7 @@ export const RefreshDataButton: React.FC<RefreshDataButtonProps> = ({
       >
         <RefreshCw
           className={`shrink-0 transition-transform duration-500 ${size === 'sm' ? 'w-3.5 h-3.5' : 'w-4 h-4'
-            } ${isBusy ? 'animate-spin text-primary' : 'text-black/50 dark:text-white/50 group-hover:text-espresso dark:group-hover:text-white'}`}
+            } ${isBusy ? 'animate-spin text-primary dark:text-primary-hover' : 'text-black/50 dark:text-white/50 group-hover:text-espresso dark:group-hover:text-white'}`}
         />
         <span className="hidden sm:inline whitespace-nowrap">
           {isBusy ? loadingLabel : label}

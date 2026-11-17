@@ -195,7 +195,7 @@ export const IntroExperience: React.FC = () => {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
               </span>
-              <Clapperboard className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary-hover" />
+              <Clapperboard className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary dark:text-primary-hover-hover" />
               <span className="text-[11px] sm:text-xs font-black tracking-wide text-cream">
                 الصعيد بيحكى / وثائقي حي
               </span>
@@ -305,7 +305,7 @@ export const IntroExperience: React.FC = () => {
                   className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/10 hover:bg-primary flex items-center justify-center transition-all cursor-pointer text-white active:scale-95"
                   title={isMuted ? 'تشغيل الصوت' : 'كتم الصوت'}
                 >
-                  {isMuted ? <VolumeX className="w-4 h-4 text-white/60" /> : <Volume2 className="w-4 h-4 text-primary-hover" />}
+                  {isMuted ? <VolumeX className="w-4 h-4 text-white/60" /> : <Volume2 className="w-4 h-4 text-primary dark:text-primary-hover-hover" />}
                 </button>
 
                 <button
@@ -324,7 +324,7 @@ export const IntroExperience: React.FC = () => {
                   <RotateCcw className="w-4 h-4" />
                 </button>
 
-                <span dir="ltr" className="text-[11px] sm:text-xs font-black text-primary-hover font-semibold ms-1 sm:ms-2">
+                <span dir="ltr" className="text-[11px] sm:text-xs font-black text-primary dark:text-primary-hover-hover font-semibold ms-1 sm:ms-2">
                   {formatTime(currentTime)} / {formatTime(duration)}
                 </span>
               </div>

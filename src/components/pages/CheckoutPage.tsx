@@ -221,7 +221,7 @@ export const CheckoutPage: React.FC = () => {
     return (
       <div dir="rtl" className="min-h-[75vh] flex items-center justify-center max-w-4xl mx-auto px-4 py-16">
         <div className="relative w-full max-w-md p-10 text-center bg-white/90 dark:bg-espresso-900/90 backdrop-blur-2xl rounded-3xl border border-black/5 dark:border-white/10 shadow-2xl space-y-6">
-          <div className="w-20 h-20 rounded-3xl bg-primary/10 text-primary flex items-center justify-center mx-auto ring-8 ring-primary/5">
+          <div className="w-20 h-20 rounded-3xl bg-primary/10 text-primary dark:text-primary-hover flex items-center justify-center mx-auto ring-8 ring-primary/5">
             <ShoppingBag className="w-10 h-10" />
           </div>
           <div className="space-y-2">
@@ -275,7 +275,7 @@ export const CheckoutPage: React.FC = () => {
 
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-black/[0.03] dark:bg-white/[0.05] rounded-2xl border border-black/5 font-black text-sm">
                 <span className="text-espresso/60 dark:text-cream/60">رقم الطلب:</span>
-                <span className="font-bold text-primary">#{completedOrder.orderNumber || completedOrder.id}</span>
+                <span className="font-bold text-primary dark:text-primary-hover">#{completedOrder.orderNumber || completedOrder.id}</span>
               </div>
             </div>
 
@@ -305,7 +305,7 @@ export const CheckoutPage: React.FC = () => {
               <div className="p-5 bg-black/[0.02] dark:bg-white/[0.02] rounded-2xl border border-black/5 space-y-2.5 text-xs">
                 <div className="flex justify-between items-center text-espresso/70 dark:text-cream/70">
                   <span>{completedOrder.paymentFee ? 'قيمة الطلب قبل رسوم الدفع:' : 'المبلغ الإجمالي:'}</span>
-                  <span className="font-black text-base font-black text-primary">{completedOrder.total} ج.م</span>
+                  <span className="font-black text-base font-black text-primary dark:text-primary-hover">{completedOrder.total} ج.م</span>
                 </div>
                 {!!completedOrder.paymentFee && (
                   <>
@@ -315,7 +315,7 @@ export const CheckoutPage: React.FC = () => {
                     </div>
                     <div className="flex justify-between items-center border-t border-black/5 pt-2 font-bold text-espresso dark:text-cream">
                       <span>الإجمالي المطلوب سداده:</span>
-                      <span className="font-black text-base text-primary">
+                      <span className="font-black text-base text-primary dark:text-primary-hover">
                         {completedOrder.total + completedOrder.paymentFee} ج.م
                       </span>
                     </div>
@@ -324,7 +324,7 @@ export const CheckoutPage: React.FC = () => {
                 
                 <div className="flex justify-between items-center text-espresso/70 dark:text-cream/70">
                   <span>طريقة السداد:</span>
-                  <span className="font-bold flex items-center gap-1.5 text-primary">
+                  <span className="font-bold flex items-center gap-1.5 text-primary dark:text-primary-hover">
                     {completedOrder.paymentMethod === 'paymob_wallet' ? (
                       <>
                         <Smartphone className="w-3.5 h-3.5" />
@@ -498,7 +498,7 @@ export const CheckoutPage: React.FC = () => {
                 <MapPin className="w-5 h-5" />
               </div>
               <div className="text-right">
-                <span className="block text-[10px] font-black text-primary">الخطوة الحالية</span>
+                <span className="block text-[10px] font-black text-primary dark:text-primary-hover">الخطوة الحالية</span>
                 <span className="block text-xs font-bold text-espresso dark:text-cream">العنوان وتأكيد الطلب</span>
               </div>
             </div>
@@ -678,7 +678,7 @@ export const CheckoutPage: React.FC = () => {
                     </label>
                   )}
                   {tipAmount > 0 && (
-                    <p className="text-[11px] font-bold text-primary">
+                    <p className="text-[11px] font-bold text-primary dark:text-primary-hover">
                       دعمك: {tipAmount} ج.م {cartSellers.length === 1 ? `لـ${cartSellers[0].name}` : ''}
                     </p>
                   )}
@@ -689,7 +689,7 @@ export const CheckoutPage: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className="text-base font-bold font-cairo text-espresso dark:text-cream flex items-center gap-2">
-                        <Lock className="w-4 h-4 text-primary" />
+                        <Lock className="w-4 h-4 text-primary dark:text-primary-hover" />
                         <span>طريقة السداد الآمنة</span>
                       </h3>
                       <p className="text-xs text-espresso/60 dark:text-cream/60 mt-0.5">
@@ -854,17 +854,17 @@ export const CheckoutPage: React.FC = () => {
                       </>
                     ) : paymentMethod === 'paymob_card' ? (
                       <>
-                        <CreditCard className="w-5 h-5 text-primary" />
+                        <CreditCard className="w-5 h-5 text-primary dark:text-primary-hover" />
                         <span>متابعة السداد بالبطاقة البنكية ({paymentTotal} ج.م)</span>
                       </>
                     ) : paymentMethod === 'paymob_wallet' ? (
                       <>
-                        <Smartphone className="w-5 h-5 text-primary" />
+                        <Smartphone className="w-5 h-5 text-primary dark:text-primary-hover" />
                         <span>متابعة السداد بالمحفظة الذكية ({paymentTotal} ج.م)</span>
                       </>
                     ) : (
                       <>
-                        <PackageCheck className="w-5 h-5 text-primary" />
+                        <PackageCheck className="w-5 h-5 text-primary dark:text-primary-hover" />
                         <span>تأكيد الطلب والدفع عند الاستلام ({checkoutTotal} ج.م)</span>
                       </>
                     )}
@@ -891,7 +891,7 @@ export const CheckoutPage: React.FC = () => {
                 <div className="flex items-center justify-between gap-3 mb-5">
                   <div className="flex items-center gap-3">
                     <div className="w-11 h-11 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/10">
-                      <ShoppingBag className="w-5 h-5 text-primary" />
+                      <ShoppingBag className="w-5 h-5 text-primary dark:text-primary-hover" />
                     </div>
                     <div>
                       <h3 className="font-black text-base text-[#3B1E0E] dark:text-[#FFF9EE]">
@@ -1027,13 +1027,13 @@ export const CheckoutPage: React.FC = () => {
                   {tipAmount > 0 && (
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-[#81766d] dark:text-white/50">دعم اختياري للحرفي</span>
-                      <span className="font-bold text-primary"> {tipAmount} ج.م</span>
+                      <span className="font-bold text-primary dark:text-primary-hover"> {tipAmount} ج.م</span>
                     </div>
                   )}
                   {paymentFee > 0 && (
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-[#81766d] dark:text-white/50">{paymentFeeLabel}</span>
-                      <span className="font-bold text-primary"> {paymentFee} ج.م</span>
+                      <span className="font-bold text-primary dark:text-primary-hover"> {paymentFee} ج.م</span>
                     </div>
                   )}
                 </div>

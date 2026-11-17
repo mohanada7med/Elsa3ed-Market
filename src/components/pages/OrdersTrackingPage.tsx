@@ -104,7 +104,7 @@ export const OrdersTrackingPage: React.FC = () => {
         <button
           type="button"
           onClick={() => setActivePage('home')}
-          className="hover:text-primary dark:hover:text-[#C99444] transition-colors cursor-pointer"
+          className="hover:text-primary dark:text-primary-hover dark:hover:text-[#C99444] transition-colors cursor-pointer"
         >
           الرئيسية
         </button>
@@ -115,7 +115,7 @@ export const OrdersTrackingPage: React.FC = () => {
             setSelectedOrder(null);
             setActivePage('orders');
           }}
-          className="hover:text-primary dark:hover:text-[#C99444] transition-colors cursor-pointer"
+          className="hover:text-primary dark:text-primary-hover dark:hover:text-[#C99444] transition-colors cursor-pointer"
         >
           الطلبات
         </button>
@@ -165,7 +165,7 @@ export const OrdersTrackingPage: React.FC = () => {
 
       {orders.length === 0 ? (
         <div className="bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-16 text-center space-y-4 shadow-lg">
-          <div className="w-20 h-20 rounded-2xl bg-primary/10 text-primary dark:text-primary-hover flex items-center justify-center mx-auto">
+          <div className="w-20 h-20 rounded-2xl bg-primary/10 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover flex items-center justify-center mx-auto">
             <ShoppingBag className="w-10 h-10" />
           </div>
           <h3 className="text-xl font-cairo font-bold text-espresso dark:text-cream">لسه مفيش أي طلبات طلبتها لحد دلوقتي</h3>
@@ -206,7 +206,7 @@ export const OrdersTrackingPage: React.FC = () => {
                       } ${isCancelled ? 'opacity-75' : ''}`}
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <span className="font-black font-bold text-xs text-primary dark:text-primary-hover">
+                      <span className="font-black font-bold text-xs text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
                         {ord.orderNumber || ord.id}
                       </span>
                       <span
@@ -217,7 +217,7 @@ export const OrdersTrackingPage: React.FC = () => {
                             : ord.status === 'processing'
                               ? 'bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/20'
                               : ord.status === 'confirmed'
-                                ? 'bg-primary/15 text-primary dark:text-primary-hover border border-primary/30'
+                                ? 'bg-primary/15 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover border border-primary/30'
                                 : ord.status === 'cancelled'
                                   ? 'bg-rose-500/10 text-rose-800 dark:text-rose-300 border border-rose-500/20'
                                   : 'bg-black/5 text-espresso dark:bg-cream/10 dark:text-cream'
@@ -294,13 +294,13 @@ export const OrdersTrackingPage: React.FC = () => {
                     <span className="text-xs text-espresso/50 dark:text-cream/50 block">
                       {currentSelected.paymentFee ? 'قيمة الطلب قبل رسوم الدفع:' : 'الإجمالي النهائي:'}
                     </span>
-                    <span className="text-xl font-black text-primary dark:text-primary-hover">{currentSelected.total} ج.م</span>
+                    <span className="text-xl font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">{currentSelected.total} ج.م</span>
                     {!!currentSelected.paymentFee && (
                       <>
                         <span className="mt-1 block text-[10px] text-espresso/60 dark:text-cream/60">
                           رسوم الدفع الإلكتروني عبر Paymob: {currentSelected.paymentFee} ج.م
                         </span>
-                        <span className="mt-1 block text-xs font-black text-primary dark:text-primary-hover">
+                        <span className="mt-1 block text-xs font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
                           الإجمالي المطلوب سداده: {currentSelected.total + currentSelected.paymentFee} ج.م
                         </span>
                       </>
@@ -479,7 +479,7 @@ export const OrdersTrackingPage: React.FC = () => {
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="font-bold text-xs text-primary dark:text-primary-hover">
+                          <span className="font-bold text-xs text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
                             شحن مباشر بالتنسيق مع الورشة
                           </span>
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/15 text-emerald-700 dark:text-emerald-300">
@@ -531,7 +531,7 @@ export const OrdersTrackingPage: React.FC = () => {
                             <div className="flex-1">
                               <h5
                                 className={`text-xs font-bold ${isCurrent
-                                  ? 'text-primary dark:text-primary-hover'
+                                  ? 'text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover'
                                   : isPastOrCurrent
                                     ? 'text-espresso dark:text-cream'
                                     : 'text-espresso/40 dark:text-cream/40'
@@ -546,7 +546,7 @@ export const OrdersTrackingPage: React.FC = () => {
                                 </p>
                               )}
                               {currentSelected.timeline?.find((event) => event.status === step.status)?.time && (
-                                <p className="mt-1 text-[10px] font-medium text-primary dark:text-primary-hover">
+                                <p className="mt-1 text-[10px] font-medium text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
                                   {currentSelected.timeline.find((event) => event.status === step.status)?.time}
                                 </p>
                               )}
@@ -561,7 +561,7 @@ export const OrdersTrackingPage: React.FC = () => {
                 {/* Shipping Destination Box */}
                 <div className="bg-black/5 dark:bg-cream/5 p-4 rounded-[1.5rem] border border-black/10 dark:border-white/10 text-xs text-espresso dark:text-cream space-y-2">
                   <div className="flex items-center gap-2 font-bold text-espresso dark:text-cream">
-                    <MapPin className="w-4 h-4 text-primary dark:text-primary-hover" />
+                    <MapPin className="w-4 h-4 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover" />
                     <span>
                       عنوان التوصيل:{' '}
                       {currentSelected.shippingAddress?.governorate || 'المحافظة'} -{' '}
@@ -626,7 +626,7 @@ export const OrdersTrackingPage: React.FC = () => {
                           </div>
 
                           <div className="text-left">
-                            <span className="font-bold text-primary dark:text-primary-hover block">
+                            <span className="font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover block">
                               {price * qty} ج.م
                             </span>
                             <span className="text-[10px] text-espresso/50 dark:text-cream/50">الكمية: {qty}</span>
@@ -668,9 +668,9 @@ export const OrdersTrackingPage: React.FC = () => {
                           initialMessage: `السلام عليكم، أود التواصل مع إدارة المنصة بخصوص طلبي رقم (${currentSelected.orderNumber || currentSelected.id}).`
                         });
                       }}
-                      className="px-4 py-2.5 bg-primary/15 hover:bg-primary/25 text-primary dark:text-primary-hover text-xs font-bold rounded-xl border border-primary/30 transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
+                      className="px-4 py-2.5 bg-primary/15 hover:bg-primary/25 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover text-xs font-bold rounded-xl border border-primary/30 transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
                     >
-                      <MessageSquare className="w-4 h-4 text-primary dark:text-primary-hover" />
+                      <MessageSquare className="w-4 h-4 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover" />
                       <span>مراسلة إدارة المنصة</span>
                     </button>
                   </div>

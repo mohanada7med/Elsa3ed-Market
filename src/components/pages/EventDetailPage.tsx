@@ -234,9 +234,9 @@ export const EventDetailPage: React.FC = () => {
               size={26}
               className="
                 animate-pulse
-                text-primary
+                text-primary dark:text-primary-hover
 
-                dark:text-primary-hover
+                dark:text-primary dark:text-primary-hover-hover
               "
             />
           </div>
@@ -300,9 +300,9 @@ export const EventDetailPage: React.FC = () => {
             <Compass
               size={26}
               className="
-                text-primary
+                text-primary dark:text-primary-hover
 
-                dark:text-primary-hover
+                dark:text-primary dark:text-primary-hover-hover
               "
             />
           </div>
@@ -507,9 +507,9 @@ export const EventDetailPage: React.FC = () => {
               text-xs
               font-bold
               transition
-              hover:text-primary
+              hover:text-primary dark:text-primary-hover
 
-              dark:hover:text-primary-hover
+              dark:hover:text-primary dark:text-primary-hover-hover
 
               cursor-pointer
             "
@@ -569,8 +569,8 @@ export const EventDetailPage: React.FC = () => {
                 text-[9px]
                 font-black
                 tracking-[0.5em]
-                text-primary
-                dark:text-primary-hover
+                text-primary dark:text-primary-hover
+                dark:text-primary dark:text-primary-hover-hover
               "
             >
               WAH
@@ -799,7 +799,7 @@ export const EventDetailPage: React.FC = () => {
                 "
                 title="عرض صورة الغلاف بحجم كامل"
               >
-                <Maximize2 size={12} className="text-primary" />
+                <Maximize2 size={12} className="text-primary dark:text-primary-hover" />
                 <span>فتح الغلاف بحجم كامل</span>
                 {allGalleryImages.length > 1 && (
                   <span className="mr-1 text-[10px] text-white/70">
@@ -999,10 +999,10 @@ export const EventDetailPage: React.FC = () => {
                   justify-center
                   rounded-xl
                   bg-primary/10
-                  text-primary
+                  text-primary dark:text-primary-hover
 
                   dark:bg-[#C99444]/10
-                  dark:text-primary-hover
+                  dark:text-primary dark:text-primary-hover-hover
                 "
               >
                 <Clock3 size={18} />
@@ -1056,10 +1056,10 @@ export const EventDetailPage: React.FC = () => {
                   justify-center
                   rounded-xl
                   bg-primary/10
-                  text-primary
+                  text-primary dark:text-primary-hover
 
                   dark:bg-[#C99444]/10
-                  dark:text-primary-hover
+                  dark:text-primary dark:text-primary-hover-hover
                 "
               >
                 <MapPin size={18} />
@@ -1107,10 +1107,10 @@ export const EventDetailPage: React.FC = () => {
                   justify-center
                   rounded-xl
                   bg-primary/10
-                  text-primary
+                  text-primary dark:text-primary-hover
 
                   dark:bg-[#C99444]/10
-                  dark:text-primary-hover
+                  dark:text-primary dark:text-primary-hover-hover
                 "
               >
                 <Users size={18} />
@@ -1185,9 +1185,9 @@ export const EventDetailPage: React.FC = () => {
                     text-[9px]
                     font-black
                     tracking-[0.25em]
-                    text-primary
+                    text-primary dark:text-primary-hover
 
-                    dark:text-primary-hover
+                    dark:text-primary dark:text-primary-hover-hover
                   "
                 >
                   <Feather size={12} />
@@ -1303,7 +1303,7 @@ export const EventDetailPage: React.FC = () => {
               {event.rituals && event.rituals.length > 0 && (
                 <div className="mt-12 pt-10 border-t border-black/10 dark:border-white/10">
                   <div className="mb-6 flex items-center gap-3">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/20 text-primary">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/20 text-primary dark:text-primary-hover">
                       <CheckCircle2 size={18} />
                     </span>
                     <h2 className="text-xl font-black sm:text-2xl">أبرز طقوس وعادات الليلة</h2>
@@ -1330,7 +1330,7 @@ export const EventDetailPage: React.FC = () => {
               {event.famousFoods && event.famousFoods.length > 0 && (
                 <div className="mt-12 pt-10 border-t border-black/10 dark:border-white/10">
                   <div className="mb-6 flex items-center gap-3">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/20 text-primary">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/20 text-primary dark:text-primary-hover">
                       <Utensils size={18} />
                     </span>
                     <div>
@@ -1360,7 +1360,7 @@ export const EventDetailPage: React.FC = () => {
               {event.activities && event.activities.length > 0 && (
                 <div className="mt-12 pt-10 border-t border-black/10 dark:border-white/10">
                   <div className="mb-6 flex items-center gap-3">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/20 text-primary">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/20 text-primary dark:text-primary-hover">
                       <Flame size={18} />
                     </span>
                     <h2 className="text-xl font-black sm:text-2xl">أبرز المشاهد والفعاليات الحية</h2>
@@ -1371,7 +1371,7 @@ export const EventDetailPage: React.FC = () => {
                         key={aIdx}
                         className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-black/5 px-4 py-2 text-xs font-bold text-black/80 dark:border-white/10 dark:bg-white/5 dark:text-white/80"
                       >
-                        <Sparkles size={12} className="text-primary" />
+                        <Sparkles size={12} className="text-primary dark:text-primary-hover" />
                         <span>{act}</span>
                       </span>
                     ))}
@@ -1411,7 +1411,7 @@ export const EventDetailPage: React.FC = () => {
                 <div className="mt-12 pt-10 border-t border-black/10 dark:border-white/10">
                   <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
-                      <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/20 text-primary">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/20 text-primary dark:text-primary-hover">
                         <ImageIcon size={20} />
                       </span>
                       <div>
@@ -1435,7 +1435,7 @@ export const EventDetailPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => openLightbox(0)}
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 hover:bg-primary text-primary hover:text-white text-xs font-bold transition-all cursor-pointer border border-primary/20 shadow-xs hover:shadow-md"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 hover:bg-primary text-primary dark:text-primary-hover hover:text-white text-xs font-bold transition-all cursor-pointer border border-primary/20 shadow-xs hover:shadow-md"
                     >
                       <Maximize2 size={13} />
                       <span>عرض المعرض بحجم كامل</span>
@@ -1554,9 +1554,9 @@ export const EventDetailPage: React.FC = () => {
                 relative
                 mx-auto
                 mb-5
-                text-primary
+                text-primary dark:text-primary-hover
 
-                dark:text-primary-hover
+                dark:text-primary dark:text-primary-hover-hover
               "
             />
 
@@ -1656,7 +1656,7 @@ export const EventDetailPage: React.FC = () => {
                     text-[9px]
                     font-black
                     tracking-[0.25em]
-                    text-primary-hover
+                    text-primary dark:text-primary-hover-hover
                   "
                 >
                   EXPLORE THE REGION

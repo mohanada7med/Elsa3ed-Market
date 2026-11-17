@@ -21,7 +21,7 @@ export const HeritageSectionDivider: React.FC<HeritageSectionDividerProps> = ({
           <span className="w-1.5 h-1.5 rounded-full bg-[#C99444]" />
           <div className="w-2.5 h-2.5 rotate-45 bg-[#C99444] shadow-xs" />
           {label && (
-            <span className="text-[10px] font-black tracking-[0.2em] text-primary dark:text-[#E0C79B] px-1">
+            <span className="text-[10px] font-black tracking-[0.2em] text-primary dark:text-primary-hover dark:text-[#E0C79B] px-1">
               {label}
             </span>
           )}
@@ -50,7 +50,7 @@ export const HeritageSectionDivider: React.FC<HeritageSectionDividerProps> = ({
           <div className="flex-1 h-px bg-[linear-gradient(270deg,transparent,rgba(201,148,68,0.3))]" />
         </div>
         {label && (
-          <span className="text-[10px] font-bold tracking-widest text-primary dark:text-[#E0C79B]/80">
+          <span className="text-[10px] font-bold tracking-widest text-primary dark:text-primary-hover dark:text-[#E0C79B]/80">
             {label}
           </span>
         )}
@@ -67,7 +67,7 @@ export const HeritageSectionDivider: React.FC<HeritageSectionDividerProps> = ({
         <div className="shrink-0 px-5 py-1 rounded-lg border border-[#C99444]/30 bg-surface/60 backdrop-blur-xs flex items-center gap-2">
           <span className="w-1 h-3 bg-[#C99444] rounded-xs" />
           {label ? (
-            <span className="text-[10px] font-black tracking-widest text-primary dark:text-[#E0C79B]">
+            <span className="text-[10px] font-black tracking-widest text-primary dark:text-primary-hover dark:text-[#E0C79B]">
               {label}
             </span>
           ) : (
@@ -92,7 +92,7 @@ export const HeritageSectionDivider: React.FC<HeritageSectionDividerProps> = ({
       <div className="shrink-0 flex items-center gap-2 px-3.5 py-1 rounded-full border border-[#C99444]/25 bg-surface/80 shadow-xs">
         <span className="text-xs text-[#C99444]">❖</span>
         {label && (
-          <span className="text-[10px] font-black tracking-widest text-primary dark:text-[#E0C79B]">
+          <span className="text-[10px] font-black tracking-widest text-primary dark:text-primary-hover dark:text-[#E0C79B]">
             {label}
           </span>
         )}

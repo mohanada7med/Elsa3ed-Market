@@ -402,7 +402,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
               type="button"
               onClick={() => setStatusFilter(st.id as any)}
               className={`px-3 py-1 text-xs font-bold rounded-lg border transition-all cursor-pointer ${statusFilter === st.id
-                ? 'border-primary bg-primary/15 text-primary dark:text-primary-hover'
+                ? 'border-primary bg-primary/15 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover'
                 : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
                 }`}
             >
@@ -416,7 +416,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
       <div className="space-y-4">
         {isLoading ? (
           <div className="p-12 text-center text-xs text-black/50 dark:text-white/50 space-y-2 bg-white/60 dark:bg-espresso-900/60 rounded-3xl border border-black/10 dark:border-white/10">
-            <RefreshCw className="w-8 h-8 animate-spin mx-auto text-primary" />
+            <RefreshCw className="w-8 h-8 animate-spin mx-auto text-primary dark:text-primary-hover" />
             <p>جاري تحميل البلاغات من الخادم...</p>
           </div>
         ) : filteredReports.length === 0 ? (
@@ -443,7 +443,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
                 {/* Top Row: Meta Info & Status Badges */}
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-black/5 dark:border-white/5 pb-3">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-black font-black text-xs bg-black/5 dark:bg-white/10 px-2.5 py-1 rounded-lg text-primary dark:text-primary-hover">
+                    <span className="font-black font-black text-xs bg-black/5 dark:bg-white/10 px-2.5 py-1 rounded-lg text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
                       #{ticket.ticketNumber}
                     </span>
 
@@ -478,7 +478,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
                 {/* Submitter Details Banner */}
                 <div className="p-3 bg-black/[0.02] dark:bg-white/[0.02] rounded-2xl border border-black/5 dark:border-white/5 flex flex-wrap items-center justify-between gap-3 text-xs">
                   <div className="flex items-center gap-2 font-bold">
-                    <User className="w-3.5 h-3.5 text-primary" />
+                    <User className="w-3.5 h-3.5 text-primary dark:text-primary-hover" />
                     <span>الشاكي: <strong>{ticket.userName}</strong></span>
                     {ticket.userGovernorate && (
                       <span className="text-[11px] text-black/50 dark:text-white/50 font-normal">
@@ -490,7 +490,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
                   <div className="flex flex-wrap items-center gap-3">
                     <a
                       href={`tel:${ticket.userPhone}`}
-                      className="text-primary dark:text-primary-hover font-black font-bold flex items-center gap-1 hover:underline"
+                      className="text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover font-black font-bold flex items-center gap-1 hover:underline"
                     >
                       <Phone className="w-3.5 h-3.5" />
                       <span>{ticket.userPhone}</span>
@@ -508,7 +508,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
 
                     {ticket.relatedOrderNumber && (
                       <div className="flex items-center gap-1 text-[11px] font-bold text-black/70 dark:text-white/70 bg-black/5 dark:bg-white/5 px-2 py-0.5 rounded-md">
-                        <Package className="w-3.5 h-3.5 text-primary" />
+                        <Package className="w-3.5 h-3.5 text-primary dark:text-primary-hover" />
                         <span>رقم الطلب: {ticket.relatedOrderNumber}</span>
                       </div>
                     )}
@@ -535,7 +535,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
                         href={att}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-[11px] font-bold text-primary hover:underline flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-lg"
+                        className="text-[11px] font-bold text-primary dark:text-primary-hover hover:underline flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-lg"
                       >
                         <ExternalLink className="w-3 h-3" />
                         <span>معاينة الرابط المرفق #{i + 1}</span>

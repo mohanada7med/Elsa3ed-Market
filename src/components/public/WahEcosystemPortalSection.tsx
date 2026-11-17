@@ -221,7 +221,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
               <span className="block">أبواب</span>
 
               <span className="relative mt-1 inline-flex items-center gap-2 sm:gap-7">
-                <span className="relative z-10 font-main text-primary dark:text-primary-hover">
+                <span className="relative z-10 font-main text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
                   وه
                 </span>
 
@@ -256,7 +256,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
                     7 أبواب تراثية رئيسية
                   </strong>
                   . في كل باب، هتلاقي{' '}
-                  <strong className="font-black text-primary dark:text-primary-hover">
+                  <strong className="font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
                     «عم وه»
                   </strong>{' '}
                   متقمص دوراً أصيلاً وموثقاً حكايته بيده!
@@ -292,7 +292,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
                 <div className="text-[10px] font-bold text-foreground-secondary">
                   دليلك في كل حكاية
                 </div>
-                <div className="mt-1 text-sm font-black text-primary dark:text-primary-hover">
+                <div className="mt-1 text-sm font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
                   وكل مكان
                 </div>
               </div>
@@ -376,7 +376,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
                     {portal.title}
                   </h3>
 
-                  <span className="text-[10px] text-primary opacity-70 [writing-mode:vertical-rl] rotate-180">
+                  <span className="text-[10px] text-primary dark:text-primary-hover opacity-70 [writing-mode:vertical-rl] rotate-180">
                     {portal.mascot.role}
                   </span>
                 </div>
@@ -636,7 +636,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
       {/* ================= FOOTER ================= */}
 
       <div className="mt-8 flex flex-col items-center justify-center gap-3 border-t border-border/60 pt-6 text-center sm:mt-12 sm:flex-row">
-        <span className="text-xs font-bold text-primary">
+        <span className="text-xs font-bold text-primary dark:text-primary-hover">
           WAH — وه
         </span>
 

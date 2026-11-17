@@ -24,6 +24,7 @@ import {
 import { EventImageLightboxModal } from '../common/EventImageLightboxModal';
 import FloatingDock from '../common/FloatingDock';
 import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner';
+import { ArchiveStatsCard } from '../common/ArchiveStatsCard';
 
 const AdminEventsManagerComponent = React.lazy(() =>
   import('./AdminEventsManagerPage').then((m) => ({ default: m.AdminEventsManagerComponent }))
@@ -169,7 +170,7 @@ export const EventsPage: React.FC = () => {
               group flex items-center gap-3
               text-sm font-bold
               transition-all
-              hover:text-primary
+              hover:text-primary dark:text-primary-hover
               cursor-pointer
             "
           >
@@ -196,14 +197,6 @@ export const EventsPage: React.FC = () => {
             <span className="hidden sm:block">الرئيسية</span>
           </button>
 
-          <div className="absolute left-1/2 -translate-x-1/2 text-center pointer-events-none hidden xs:block">
-            <div className="text-[9px] font-bold tracking-[0.35em] text-primary">
-              WAH
-            </div>
-            <div className="mt-1 text-xs sm:text-sm font-main font-bold">
-              {showAdminManager ? 'إدارة احتفالات وليالي الصعيد' : 'مواسم وليالي الصعيد'}
-            </div>
-          </div>
 
           <div className="flex items-center gap-2 sm:gap-3">
             {isAdmin && (
@@ -272,7 +265,7 @@ export const EventsPage: React.FC = () => {
       ===================================================== */}
       {showAdminManager ? (
         <main className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-12 py-8 animate-in fade-in duration-300">
-          <React.Suspense fallback={<div className="p-12 text-center text-primary font-bold">جاري تحميل لوحة إدارة الموالد والاحتفالات...</div>}>
+          <React.Suspense fallback={<div className="p-12 text-center text-primary dark:text-primary-hover font-bold">جاري تحميل لوحة إدارة الموالد والاحتفالات...</div>}>
             <AdminEventsManagerComponent
               onNavigateBack={() => {
                 setShowAdminManager(false);
@@ -295,8 +288,8 @@ export const EventsPage: React.FC = () => {
               <div className="relative z-10 grid items-center gap-10 lg:grid-cols-[1fr_420px]">
                 <div>
                   <div className="mb-6 flex items-center gap-3">
-                    <Sparkles size={16} className="text-primary animate-pulse" />
-                    <span className="text-[10px] font-bold uppercase tracking-[0.35em] text-primary">
+                    <Sparkles size={16} className="text-primary dark:text-primary-hover animate-pulse" />
+                    <span className="text-[10px] font-bold uppercase tracking-[0.35em] text-primary dark:text-primary-hover">
                       Upper Egypt Seasons & Layali / التراث الشعبي الحي
                     </span>
                   </div>
@@ -317,7 +310,7 @@ export const EventsPage: React.FC = () => {
                     مواسم
                     <br />
                     <br />
-                    <span className="mr-[4vw] text-primary dark:text-primary-hover font-main lg:mr-8">
+                    <span className="mr-[4vw] text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover font-main lg:mr-8">
                       البهجة والليالي
                     </span>
                   </h1>
@@ -329,57 +322,15 @@ export const EventsPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Stats Card */}
-                <div className="relative">
-                  <div
-                    className="
-                  relative overflow-hidden
-                  rounded-[2rem]
-                  border border-border-subtle
-                  bg-surface
-                  p-7
-                  shadow-lg
-                "
-                  >
-                    <div className="absolute -left-10 -top-10 h-32 w-32 rounded-full border border-primary/20" />
-
-                    <div className="relative">
-                      <div className="mb-8 flex items-center justify-between">
-                        <span className="text-[10px] font-bold tracking-[0.25em] text-black/45 dark:text-white/45 uppercase">
-                          Heritage Calendar
-                        </span>
-                        <Calendar size={20} className="text-primary" />
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-6">
-                        <div className="border-l border-black/10 dark:border-white/10 pl-4">
-                          <div className="text-5xl font-black tracking-[-0.05em] font-black text-espresso dark:text-cream">
-                            {events.length}
-                          </div>
-                          <div className="mt-2 text-xs text-black/60 dark:text-white/60 font-bold">
-                            ليلة وموسم موثق
-                          </div>
-                        </div>
-
-                        <div>
-                          <div className="text-5xl font-black tracking-[-0.05em] font-black text-espresso dark:text-cream">
-                            {governorates.length || 9}
-                          </div>
-                          <div className="mt-2 text-xs text-black/60 dark:text-white/60 font-bold">
-                            محافظة صعيدية
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="mt-8 flex items-center gap-3 border-t border-black/10 pt-5 dark:border-white/10">
-                        <div className="h-2.5 w-2.5 rounded-full bg-primary animate-ping" />
-                        <span className="text-xs font-bold text-black/80 dark:text-white/80">
-                          من بركة الموالد ودفا ليالي السمر والنفحة
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <ArchiveStatsCard
+                  eyebrow="HERITAGE CALENDAR"
+                  icon={Calendar}
+                  stats={[
+                    { value: events.length, label: <>ليلة وموسم<br />موثق</> },
+                    { value: governorates.length || 9, label: <>محافظة<br />صعيدية</> },
+                  ]}
+                  footer="من بركة الموالد ودفا ليالي السمر والنفحة"
+                />
               </div>
             </div>
           </section>
@@ -457,11 +408,11 @@ export const EventsPage: React.FC = () => {
                     "
                         title="فتح صورة الغلاف بحجم كامل"
                       >
-                        <Maximize2 size={12} className="text-primary" />
+                        <Maximize2 size={12} className="text-primary dark:text-primary-hover" />
                         <span>فتح الغلاف بحجم كامل</span>
                       </button>
 
-                      <div className="flex items-center gap-2 text-xs font-bold text-primary-hover">
+                      <div className="flex items-center gap-2 text-xs font-bold text-primary dark:text-primary-hover-hover">
                         <Clock size={14} />
                         <span>{featuredEvent.timeOfYear || featuredEvent.eventDate}</span>
                       </div>
@@ -470,11 +421,11 @@ export const EventsPage: React.FC = () => {
 
                   <div className="mt-8 max-w-4xl">
                     <div className="flex items-center gap-2 text-xs font-bold text-white/70 mb-2">
-                      <MapPin size={14} className="text-primary" />
+                      <MapPin size={14} className="text-primary dark:text-primary-hover" />
                       <span>{featuredEvent.locationName || featuredEvent.governorateName}</span>
                     </div>
 
-                    <h2 className="text-2xl sm:text-4xl lg:text-5xl font-main font-black tracking-tight leading-tight group-hover:text-primary-hover transition-colors">
+                    <h2 className="text-2xl sm:text-4xl lg:text-5xl font-main font-black tracking-tight leading-tight group-hover:text-primary dark:text-primary-hover-hover transition-colors">
                       {featuredEvent.title}
                     </h2>
 
@@ -482,7 +433,7 @@ export const EventsPage: React.FC = () => {
                       {featuredEvent.description}
                     </p>
 
-                    <div className="mt-6 flex items-center gap-3 text-xs font-bold text-primary-hover">
+                    <div className="mt-6 flex items-center gap-3 text-xs font-bold text-primary dark:text-primary-hover-hover">
                       <span>تعال نقرأ حكاية الليلة وطقوسها بالعامية</span>
                       <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 group-hover:bg-primary group-hover:text-black transition-all">
                         <ArrowUpLeft size={16} />
@@ -656,7 +607,7 @@ export const EventsPage: React.FC = () => {
               "
                 >
                   <div className="flex items-center gap-2">
-                    <Calendar size={15} className="text-primary" />
+                    <Calendar size={15} className="text-primary dark:text-primary-hover" />
                     <span className="text-xs font-bold">
                       {filteredEvents.length} ليلة وموسم
                     </span>
@@ -670,7 +621,7 @@ export const EventsPage: React.FC = () => {
                         setCategoryFilter('all');
                         setGovernorateFilter('all');
                       }}
-                      className="mr-4 text-[11px] font-black underline underline-offset-4 cursor-pointer text-primary"
+                      className="mr-4 text-[11px] font-black underline underline-offset-4 cursor-pointer text-primary dark:text-primary-hover"
                     >
                       إعادة ضبط
                     </button>
@@ -710,7 +661,7 @@ export const EventsPage: React.FC = () => {
           <section className="mx-auto max-w-[1600px] px-5 pb-24 pt-12 sm:px-8 lg:px-12">
             <div className="mb-10 flex items-end justify-between">
               <div>
-                <div className="mb-2 text-[10px] font-bold tracking-[0.3em] text-primary uppercase">
+                <div className="mb-2 text-[10px] font-bold tracking-[0.3em] text-primary dark:text-primary-hover uppercase">
                   Upper Egypt Layali & Festivals
                 </div>
                 <h2 className="text-3xl font-black sm:text-4xl font-main">
@@ -719,7 +670,7 @@ export const EventsPage: React.FC = () => {
               </div>
 
               <div className="hidden items-center gap-2 text-xs text-black/50 dark:text-white/50 sm:flex">
-                <Flame size={15} className="text-primary" />
+                <Flame size={15} className="text-primary dark:text-primary-hover" />
                 <span>حكايات حقيقية بالعامية الصعيدية</span>
               </div>
             </div>
@@ -904,7 +855,7 @@ export const EventsPage: React.FC = () => {
                           {/* Bottom Info inside Image */}
                           <div className="absolute inset-x-0 bottom-0 p-4 flex items-center justify-between text-xs font-bold text-white">
                             <div className="flex items-center gap-1.5 bg-black/50 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10">
-                              <MapPin size={12} className="text-primary" />
+                              <MapPin size={12} className="text-primary dark:text-primary-hover" />
                               <span>{event.governorateName}</span>
                             </div>
 
@@ -916,13 +867,13 @@ export const EventsPage: React.FC = () => {
                         </div>
 
                         {/* Season / Time text */}
-                        <div className="mb-2 flex items-center gap-2 text-xs font-semibold text-primary">
+                        <div className="mb-2 flex items-center gap-2 text-xs font-semibold text-primary dark:text-primary-hover">
                           <Sparkles size={13} />
                           <span className="truncate">{seasonText}</span>
                         </div>
 
                         {/* Title */}
-                        <h3 className="text-xl sm:text-2xl font-black mb-3 transition-colors group-hover:text-primary font-cairo leading-snug line-clamp-2">
+                        <h3 className="text-xl sm:text-2xl font-black mb-3 transition-colors group-hover:text-primary dark:text-primary-hover font-cairo leading-snug line-clamp-2">
                           {event.title}
                         </h3>
 
@@ -939,7 +890,7 @@ export const EventsPage: React.FC = () => {
                                 key={fIdx}
                                 className="inline-flex items-center gap-1 rounded-md bg-black/5 px-2 py-1 text-[10px] font-bold text-black/60 dark:bg-white/5 dark:text-white/60"
                               >
-                                <Utensils size={10} className="text-primary" />
+                                <Utensils size={10} className="text-primary dark:text-primary-hover" />
                                 <span className="truncate max-w-[130px]">{food}</span>
                               </span>
                             ))}
@@ -949,7 +900,7 @@ export const EventsPage: React.FC = () => {
 
                       {/* Footer Action */}
                       <div className="pt-4 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs font-bold">
-                        <span className="text-black/60 dark:text-white/60 group-hover:text-primary transition-colors flex items-center gap-1">
+                        <span className="text-black/60 dark:text-white/60 group-hover:text-primary dark:text-primary-hover transition-colors flex items-center gap-1">
                           <Eye size={14} />
                           <span>حكاية الليلة وطقوسها</span>
                         </span>

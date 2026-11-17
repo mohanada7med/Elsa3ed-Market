@@ -151,7 +151,7 @@ export const HeroSection: React.FC = () => {
 
         <div className="relative z-10 flex items-center justify-between gap-2 pt-1">
           <span className="flex items-center gap-1.5 rounded-full border border-white/20 dark:border-white/10 bg-black/45 px-3 py-1 text-[11px] font-bold text-white shadow-xs backdrop-blur-md">
-            <MapPin className="h-3 w-3 text-primary" />
+            <MapPin className="h-3 w-3 text-primary dark:text-primary-hover" />
             أسيوط · قلب الصعيد
           </span>
 
@@ -275,7 +275,7 @@ export const HeroSection: React.FC = () => {
           <div className="space-y-1.5 text-right">
             <h1 className="text-4xl xs:text-4xl sm:text-5xl md:text-8xl font-black leading-tight tracking-tight text-foreground font-heading">
               الصعيد{' '}
-              <span className="text-primary dark:text-primary-hover">
+              <span className="text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
                 بيحكي
               </span>
             </h1>
@@ -308,7 +308,7 @@ export const HeroSection: React.FC = () => {
               onClick={() => setActivePage('reels')}
               className="flex items-center justify-center gap-1.5 rounded-xl border border-primary/25 dark:border-white/10 bg-surface dark:bg-espresso-800/90 py-2 px-1 sm:py-2.5 max-[380px]:py-1.5 text-xs font-bold text-foreground hover:border-primary shadow-xs transition-all active:scale-95 cursor-pointer"
             >
-              <Film className="h-3.5 w-3.5 text-primary shrink-0" />
+              <Film className="h-3.5 w-3.5 text-primary dark:text-primary-hover shrink-0" />
               <span className="truncate">ريلز وه</span>
             </button>
 
@@ -317,7 +317,7 @@ export const HeroSection: React.FC = () => {
               onClick={() => setActivePage('places')}
               className="flex items-center justify-center gap-1.5 rounded-xl border border-primary/25 dark:border-white/10 bg-surface dark:bg-espresso-800/90 py-2 px-1 sm:py-2.5 max-[380px]:py-1.5 text-xs font-bold text-foreground hover:border-primary shadow-xs transition-all active:scale-95 cursor-pointer"
             >
-              <Landmark className="h-3.5 w-3.5 text-primary shrink-0" />
+              <Landmark className="h-3.5 w-3.5 text-primary dark:text-primary-hover shrink-0" />
               <span className="truncate">أماكن وه</span>
             </button>
 
@@ -326,7 +326,7 @@ export const HeroSection: React.FC = () => {
               onClick={() => setActivePage('map')}
               className="flex items-center justify-center gap-1.5 rounded-xl border border-primary/25 dark:border-white/10 bg-surface dark:bg-espresso-800/90 py-2 px-1 sm:py-2.5 max-[380px]:py-1.5 text-xs font-bold text-foreground hover:border-primary shadow-xs transition-all active:scale-95 cursor-pointer"
             >
-              <MapPin className="h-3.5 w-3.5 text-primary shrink-0" />
+              <MapPin className="h-3.5 w-3.5 text-primary dark:text-primary-hover shrink-0" />
               <span className="truncate">خريطة الصعيد</span>
             </button>
           </div>
@@ -334,7 +334,7 @@ export const HeroSection: React.FC = () => {
           {/* MOBILE STATS */}
           <div className="flex items-center justify-between border-t border-foreground/15 pt-2 sm:pt-2.5 max-[380px]:pt-1.5 text-center text-foreground">
             <div>
-              <span className="block text-sm font-black text-primary dark:text-primary-hover">
+              <span className="block text-sm font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
                 {wahStats?.governoratesCount || 10}
               </span>
               <span className="text-[10px] text-foreground-muted">
@@ -345,7 +345,7 @@ export const HeroSection: React.FC = () => {
             <div className="h-3.5 w-px bg-foreground/15" />
 
             <div>
-              <span className="block text-sm font-black text-primary dark:text-primary-hover">
+              <span className="block text-sm font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
                 +{wahStats?.placesCount || 45}
               </span>
               <span className="text-[10px] text-foreground-muted">
@@ -356,7 +356,7 @@ export const HeroSection: React.FC = () => {
             <div className="h-3.5 w-px bg-foreground/15" />
 
             <div>
-              <span className="block text-sm font-black text-primary dark:text-primary-hover">
+              <span className="block text-sm font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
                 {wahStats?.productsCount || 250}
               </span>
               <span className="text-[10px] text-foreground-muted">
@@ -607,7 +607,7 @@ export const HeroSection: React.FC = () => {
                 gap-2
               "
             >
-              <MapPin className="h-3.5 w-3.5 text-primary" />
+              <MapPin className="h-3.5 w-3.5 text-primary dark:text-primary-hover" />
 
               <span
                 className="
@@ -650,7 +650,7 @@ export const HeroSection: React.FC = () => {
                 variant="terracotta"
                 size="md"
                 icon={
-                  <Sparkles className="h-3.5 w-3.5 text-primary" />
+                  <Sparkles className="h-3.5 w-3.5 text-primary dark:text-primary-hover" />
                 }
               >
                 «كل الصعيد في وه: شغل يدوي أصيل · ريلز · حكاوي زمان»
@@ -684,7 +684,7 @@ export const HeroSection: React.FC = () => {
   drop-shadow-sm
 ">
               الصعيد
-              <span className="mr-5 inline text-primary dark:text-primary-hover">
+              <span className="mr-5 inline text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
                 بيحكي
               </span>
             </motion.h1>
@@ -857,7 +857,7 @@ export const HeroSection: React.FC = () => {
                   hover:border-primary
                 "
               >
-                <Film className="h-5 w-5 text-primary" />
+                <Film className="h-5 w-5 text-primary dark:text-primary-hover" />
 
                 <span>
                   فيديوهات وه
@@ -899,7 +899,7 @@ export const HeroSection: React.FC = () => {
                   hover:border-primary
                 "
               >
-                <Landmark className="h-5 w-5 text-primary" />
+                <Landmark className="h-5 w-5 text-primary dark:text-primary-hover" />
 
                 <span>
                   أماكن وه
@@ -942,7 +942,7 @@ export const HeroSection: React.FC = () => {
                   
                 "
               >
-                <MapPin className="h-5 w-5 text-primary" />
+                <MapPin className="h-5 w-5 text-primary dark:text-primary-hover" />
 
                 <span>
                   خريطة الصعيد
@@ -984,7 +984,7 @@ export const HeroSection: React.FC = () => {
                     block
                     text-2xl
                     font-black
-                    text-primary dark:text-primary-hover
+                    text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover
                   "
                 >
                   {wahStats?.governoratesCount}
@@ -1015,7 +1015,7 @@ export const HeroSection: React.FC = () => {
                     block
                     text-2xl
                     font-black
-                    text-primary dark:text-primary-hover
+                    text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover
                   "
                 >
                   {wahStats?.placesCount}+
@@ -1045,7 +1045,7 @@ export const HeroSection: React.FC = () => {
                     block
                     text-2xl
                     font-black
-                    text-primary dark:text-primary-hover
+                    text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover
                   "
                 >
                   {wahStats?.productsCount}

@@ -442,12 +442,12 @@ export const AdminEventsManagerComponent: React.FC<AdminEventsManagerProps> = ({
       {/* Events Grid */}
       {isLoading ? (
         <div className="text-center py-24 space-y-4">
-          <RefreshCw className="w-8 h-8 text-primary animate-spin mx-auto" />
+          <RefreshCw className="w-8 h-8 text-primary dark:text-primary-hover animate-spin mx-auto" />
           <p className="text-sm text-black/60 dark:text-white/60 font-cairo">جاري تحميل بيانات المواسم والموالد من قاعدة البيانات...</p>
         </div>
       ) : filteredEvents.length === 0 ? (
         <div className="text-center py-20 bg-white dark:bg-espresso-900/50 rounded-3xl border border-dashed border-black/20 dark:border-white/20 p-8 space-y-4">
-          <Calendar className="w-12 h-12 text-primary/40 mx-auto" />
+          <Calendar className="w-12 h-12 text-primary dark:text-primary-hover/40 mx-auto" />
           <h3 className="text-lg font-bold font-cairo">لا توجد احتفالات مطابقة للبحث</h3>
           <p className="text-xs text-black/60 dark:text-white/60 max-w-md mx-auto">
             لم نجد مواسم أو موالد تطابق معايير التصفية المحددة. يمكنك إضافة موسم جديد أو إعادة ضبط المرشحات.
@@ -545,13 +545,13 @@ export const AdminEventsManagerComponent: React.FC<AdminEventsManagerProps> = ({
                 {/* Content Details */}
                 <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                   <div className="space-y-2.5">
-                    <h3 className="font-cairo font-bold text-lg text-black dark:text-cream group-hover:text-primary transition-colors line-clamp-2">
+                    <h3 className="font-cairo font-bold text-lg text-black dark:text-cream group-hover:text-primary dark:text-primary-hover transition-colors line-clamp-2">
                       {event.title}
                     </h3>
 
                     {/* Location */}
                     <div className="flex items-center gap-1.5 text-xs text-black/60 dark:text-white/60">
-                      <Building2 className="w-3.5 h-3.5 text-primary shrink-0" />
+                      <Building2 className="w-3.5 h-3.5 text-primary dark:text-primary-hover shrink-0" />
                       <span className="line-clamp-1">{event.locationName || event.cityName || event.governorateName}</span>
                     </div>
 
@@ -726,7 +726,7 @@ export const AdminEventsManagerPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setActivePage('cultural-cms')}
-              className="hover:text-primary transition-colors cursor-pointer font-bold"
+              className="hover:text-primary dark:text-primary-hover transition-colors cursor-pointer font-bold"
             >
               لوحة التوثيق وإدارة التراث
             </button>
@@ -734,12 +734,12 @@ export const AdminEventsManagerPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setActivePage('events')}
-              className="hover:text-primary transition-colors cursor-pointer"
+              className="hover:text-primary dark:text-primary-hover transition-colors cursor-pointer"
             >
               المواسم والليالي
             </button>
             <ChevronRight className="w-3.5 h-3.5 rotate-180" />
-            <span className="text-primary font-bold">إدارة الموالد والمواسم والصور والفيديوهات</span>
+            <span className="text-primary dark:text-primary-hover font-bold">إدارة الموالد والمواسم والصور والفيديوهات</span>
           </div>
 
           <button
@@ -997,7 +997,7 @@ export const EventEditorModal: React.FC<EventEditorModalProps> = ({
         {/* Modal Header */}
         <div className="px-6 py-4 sm:py-5 border-b border-black/10 dark:border-white/10 flex items-center justify-between bg-black/[0.02] dark:bg-white/[0.02] shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-primary/20 text-primary flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-2xl bg-primary/20 text-primary dark:text-primary-hover flex items-center justify-center shrink-0">
               <Calendar className="w-5 h-5" />
             </div>
             <div>
@@ -1025,7 +1025,7 @@ export const EventEditorModal: React.FC<EventEditorModalProps> = ({
             type="button"
             onClick={() => setActiveTab('basic')}
             className={`py-3.5 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${activeTab === 'basic'
-              ? 'border-primary text-primary font-black'
+              ? 'border-primary text-primary dark:text-primary-hover font-black'
               : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
               }`}
           >
@@ -1037,7 +1037,7 @@ export const EventEditorModal: React.FC<EventEditorModalProps> = ({
             type="button"
             onClick={() => setActiveTab('dialect_content')}
             className={`py-3.5 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${activeTab === 'dialect_content'
-              ? 'border-primary text-primary font-black'
+              ? 'border-primary text-primary dark:text-primary-hover font-black'
               : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
               }`}
           >
@@ -1049,7 +1049,7 @@ export const EventEditorModal: React.FC<EventEditorModalProps> = ({
             type="button"
             onClick={() => setActiveTab('media')}
             className={`py-3.5 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${activeTab === 'media'
-              ? 'border-primary text-primary font-black'
+              ? 'border-primary text-primary dark:text-primary-hover font-black'
               : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
               }`}
           >
@@ -1064,7 +1064,7 @@ export const EventEditorModal: React.FC<EventEditorModalProps> = ({
             type="button"
             onClick={() => setActiveTab('preview')}
             className={`py-3.5 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${activeTab === 'preview'
-              ? 'border-primary text-primary font-black'
+              ? 'border-primary text-primary dark:text-primary-hover font-black'
               : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
               }`}
           >
@@ -1284,7 +1284,7 @@ export const EventEditorModal: React.FC<EventEditorModalProps> = ({
                         key={sIdx}
                         type="button"
                         onClick={() => addRitualSuggestion(sug)}
-                        className="text-[10px] px-2 py-0.5 rounded-lg bg-black/5 dark:bg-cream/10 hover:bg-primary/20 hover:text-primary transition-all cursor-pointer"
+                        className="text-[10px] px-2 py-0.5 rounded-lg bg-black/5 dark:bg-cream/10 hover:bg-primary/20 hover:text-primary dark:text-primary-hover transition-all cursor-pointer"
                       >
                         + {sug}
                       </button>
@@ -1345,7 +1345,7 @@ export const EventEditorModal: React.FC<EventEditorModalProps> = ({
                 <div className="space-y-3 bg-black/[0.02] dark:bg-white/[0.02] p-5 rounded-3xl border border-black/10 dark:border-white/10">
                   <div className="flex items-center justify-between">
                     <label className="text-xs font-bold text-black/80 dark:text-white/80 flex items-center gap-2">
-                      <ImageIcon className="w-4 h-4 text-primary" />
+                      <ImageIcon className="w-4 h-4 text-primary dark:text-primary-hover" />
                       <span>صورة الغلاف الرئيسية للاحتفال *</span>
                     </label>
                   </div>
@@ -1482,7 +1482,7 @@ export const EventEditorModal: React.FC<EventEditorModalProps> = ({
                 {/* Additional Videos List */}
                 <div className="space-y-3 bg-black/[0.02] dark:bg-white/[0.02] p-5 rounded-3xl border border-black/10 dark:border-white/10">
                   <label className="text-xs font-bold text-black/80 dark:text-white/80 flex items-center gap-2">
-                    <Film className="w-4 h-4 text-primary" />
+                    <Film className="w-4 h-4 text-primary dark:text-primary-hover" />
                     <span>فيديوهات ومقاطع إضافية (مرماح، مداحين، زفة المحمل)</span>
                   </label>
 

@@ -176,7 +176,6 @@ export const HelpAndContactPage: React.FC = () => {
           aria-hidden="true"
         />
         <div className="absolute top-0 right-1/4 w-96 h-96 rounded-full bg-[#C99444]/15 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/4 w-80 h-80 rounded-full bg-primary /15 blur-3xl pointer-events-none" />
 
         <div className="relative max-w-5xl mx-auto text-center space-y-6">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#C99444]/20 border border-[#C99444]/40 text-[#E0C79B] text-xs font-bold backdrop-blur-md">
@@ -248,7 +247,7 @@ export const HelpAndContactPage: React.FC = () => {
           >
             <div>
               <div className="flex items-center justify-between mb-3">
-                <div className="w-12 h-12 rounded-xl bg-primary/15 text-primary dark:text-primary-hover flex items-center justify-center group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 rounded-xl bg-primary/15 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover flex items-center justify-center group-hover:scale-110 transition-transform">
                   <Headphones className="w-6 h-6" />
                 </div>
                 <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold">
@@ -266,7 +265,7 @@ export const HelpAndContactPage: React.FC = () => {
                 محادثة كتابية حية ومباشرة مع مسؤولي الدعم الفني لحل مشكلتك وتتبع طلبك فوراً داخل المنصة.
               </p>
             </div>
-            <div className="mt-4 pt-3 border-t border-black/5 dark:border-white/10 flex items-center justify-between text-xs font-bold text-primary dark:text-primary-hover">
+            <div className="mt-4 pt-3 border-t border-black/5 dark:border-white/10 flex items-center justify-between text-xs font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
               <span>{isStartingChat ? 'جاري فتح المحادثة...' : 'افتح شات الدعم الفني'}</span>
               {isStartingChat ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <MessageSquare className="w-3.5 h-3.5" />}
             </div>
@@ -300,7 +299,7 @@ export const HelpAndContactPage: React.FC = () => {
             className="group relative p-5 rounded-2xl bg-white dark:bg-[#26160D] border border-[#C99444]/30 shadow-md hover:shadow-xl hover:border-[#C99444] transition-all duration-300 cursor-pointer flex flex-col justify-between"
           >
             <div>
-              <div className="w-12 h-12 rounded-xl bg-primary/15 text-primary dark:text-primary-hover flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+              <div className="w-12 h-12 rounded-xl bg-primary/15 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                 <Phone className="w-6 h-6" />
               </div>
               <h3 className="font-cairo font-bold text-lg text-[#3B1E0E] dark:text-[#FFF9EE]">اتصل بالدعم</h3>
@@ -308,7 +307,7 @@ export const HelpAndContactPage: React.FC = () => {
                 متاحين يومياً من 9 صباحاً لحد 10 مساءً للرد على مكالماتكم الكريمة.
               </p>
             </div>
-            <div className="mt-4 pt-3 border-t border-black/5 dark:border-white/10 flex items-center justify-between text-xs font-bold text-primary dark:text-primary-hover">
+            <div className="mt-4 pt-3 border-t border-black/5 dark:border-white/10 flex items-center justify-between text-xs font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
               <span dir="ltr">+20 115 896 9931</span>
               <Phone className="w-3.5 h-3.5" />
             </div>
@@ -368,7 +367,7 @@ export const HelpAndContactPage: React.FC = () => {
             </div>
             <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#26160D] border border-[#C99444]/35 shadow-lg relative overflow-hidden">
               <div className="relative z-10 space-y-2">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary dark:text-primary-hover text-xs font-bold">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover text-xs font-bold">
                   <Send className="w-3 h-3" />
                   <span>رسالة لديوان وه</span>
                 </div>
@@ -532,7 +531,7 @@ export const HelpAndContactPage: React.FC = () => {
           <div className="lg:col-span-7 space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-black/10 dark:border-white/10">
               <div>
-                <div className="inline-flex items-center gap-1 text-xs font-bold text-primary dark:text-primary-hover">
+                <div className="inline-flex items-center gap-1 text-xs font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
                   <HelpCircle className="w-3.5 h-3.5" />
                   <span>إجابات سريعة وواضحة</span>
                 </div>
@@ -583,7 +582,7 @@ export const HelpAndContactPage: React.FC = () => {
                       className="w-full p-4 sm:p-5 text-right flex items-center justify-between gap-4 cursor-pointer"
                     >
                       <div className="flex items-center gap-3">
-                        <span className="w-7 h-7 rounded-lg bg-primary/10 text-primary dark:text-primary-hover flex items-center justify-center font-bold text-xs shrink-0">
+                        <span className="w-7 h-7 rounded-lg bg-primary/10 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover flex items-center justify-center font-bold text-xs shrink-0">
                           ؟
                         </span>
                         <div className="text-right">
@@ -591,14 +590,14 @@ export const HelpAndContactPage: React.FC = () => {
                             {faq.question}
                           </h3>
                           {faq.badge && (
-                            <span className="inline-block mt-1 text-[10px] font-bold text-primary dark:text-primary-hover">
+                            <span className="inline-block mt-1 text-[10px] font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
                               {faq.badge}
                             </span>
                           )}
                         </div>
                       </div>
                       <ChevronDown
-                        className={`w-5 h-5 text-[#8C6F53] dark:text-[#D6C6B1] transition-transform duration-300 shrink-0 ${isOpen ? 'rotate-180 text-primary' : ''
+                        className={`w-5 h-5 text-[#8C6F53] dark:text-[#D6C6B1] transition-transform duration-300 shrink-0 ${isOpen ? 'rotate-180 text-primary dark:text-primary-hover' : ''
                           }`}
                       />
                     </button>

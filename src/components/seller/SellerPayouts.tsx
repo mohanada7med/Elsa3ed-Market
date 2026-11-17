@@ -278,11 +278,11 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
 
       {/* Payout Info Notice if missing */}
       {!loading && summary && !summary.hasPayoutInfo && (
-        <div className="p-5 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-amber-900 dark:text-primary-hover">
+        <div className="p-5 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-amber-900 dark:text-primary dark:text-primary-hover-hover">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="w-6 h-6 text-amber-600 dark:text-primary-hover shrink-0 mt-0.5" />
+            <AlertTriangle className="w-6 h-6 text-amber-600 dark:text-primary dark:text-primary-hover-hover shrink-0 mt-0.5" />
             <div>
-              <h4 className="font-bold text-amber-900 dark:text-primary-hover text-base">كمّل بيانات استلام فلوسك</h4>
+              <h4 className="font-bold text-amber-900 dark:text-primary dark:text-primary-hover-hover text-base">كمّل بيانات استلام فلوسك</h4>
               <p className="text-sm text-amber-800 dark:text-amber-300/80 mt-1">
                 سجّل محفظة فودافون كاش أو إنستاباي أو حسابك البنكي الأول، عشان تقدر تسحب أرباحك.
               </p>
@@ -351,7 +351,7 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
         <div className="bg-white dark:bg-[#1E1917] p-5 rounded-2xl border border-gray-100 dark:border-[#352B24] shadow-xs relative overflow-hidden">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-gray-500 dark:text-[#A89C90]">طلبات سحب بتتراجع</span>
-            <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-primary-hover flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-primary dark:text-primary-hover-hover flex items-center justify-center">
               <Clock className="w-5 h-5" />
             </div>
           </div>
@@ -412,7 +412,7 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
           {onNavigateToAccount && (
             <button
               onClick={onNavigateToAccount}
-              className="text-xs text-amber-700 hover:text-amber-800 dark:text-primary-hover dark:hover:text-amber-300 font-medium underline cursor-pointer"
+              className="text-xs text-amber-700 hover:text-amber-800 dark:text-primary dark:text-primary-hover-hover dark:hover:text-amber-300 font-medium underline cursor-pointer"
             >
               تعديل بيانات الحساب البنكي / المحفظة
             </button>
@@ -439,7 +439,7 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
           </div>
         ) : payouts.length === 0 ? (
           <div className="p-12 text-center">
-            <div className="w-16 h-16 bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-primary-hover rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-primary dark:text-primary-hover-hover rounded-full flex items-center justify-center mx-auto mb-4">
               <Wallet className="w-8 h-8" />
             </div>
             <h3 className="text-base font-bold text-gray-900 dark:text-[#FAF6F2] mb-1">لا توجد طلبات صرف حتى الآن</h3>
@@ -576,8 +576,8 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
               <form onSubmit={handleSubmitPayout} className="space-y-4">
                 {/* Available balance highlight */}
                 <div className="p-4 bg-amber-50 dark:bg-amber-950/40 rounded-xl border border-amber-200 dark:border-amber-800/60 flex items-center justify-between">
-                  <span className="text-xs font-medium text-amber-900 dark:text-primary-hover">الرصيد المتاح للسحب حالياً:</span>
-                  <span className="text-lg font-extrabold text-amber-900 dark:text-primary-hover">
+                  <span className="text-xs font-medium text-amber-900 dark:text-primary dark:text-primary-hover-hover">الرصيد المتاح للسحب حالياً:</span>
+                  <span className="text-lg font-extrabold text-amber-900 dark:text-primary dark:text-primary-hover-hover">
                     {(summary?.availableBalance || 0).toLocaleString('ar-EG')} ج.م
                   </span>
                 </div>

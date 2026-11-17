@@ -164,12 +164,12 @@ export const AdminMapEditorPage: React.FC = () => {
           <div className="flex items-center gap-2 text-xs sm:text-sm text-black/60 dark:text-white/60 dark:text-[#D6C6B1]">
             <button
               onClick={() => setActivePage('admin-dashboard')}
-              className="hover:text-primary transition-colors cursor-pointer"
+              className="hover:text-primary dark:text-primary-hover transition-colors cursor-pointer"
             >
               لوحة الإدارة
             </button>
             <span>/</span>
-            <span className="text-primary font-bold">محرر وضبط إحداثيات الخريطة (GIS)</span>
+            <span className="text-primary dark:text-primary-hover font-bold">محرر وضبط إحداثيات الخريطة (GIS)</span>
           </div>
 
           <div className="flex items-center gap-2">
@@ -190,7 +190,7 @@ export const AdminMapEditorPage: React.FC = () => {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 dark:border-[#6B3A1F] pb-6 mb-6">
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 text-xs font-bold mb-2">
-              <Compass className="w-3.5 h-3.5 text-primary" />
+              <Compass className="w-3.5 h-3.5 text-primary dark:text-primary-hover" />
               <span>نظام إدارة الإحداثيات الجغرافية لموسوعة صعيد مصر</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-main text-[#3B1E0E] dark:text-[#FFF9EE]">
@@ -204,7 +204,7 @@ export const AdminMapEditorPage: React.FC = () => {
           {/* KPI Counters */}
           <div className="flex items-center gap-3">
             <div className="p-3 rounded-2xl bg-white dark:bg-[#26160D] border border-black/10 dark:border-white/10 dark:border-[#6B3A1F] text-center min-w-[80px]">
-              <span className="text-lg font-black text-primary block">
+              <span className="text-lg font-black text-primary dark:text-primary-hover block">
                 {mapPayload?.governorates.length || 0}
               </span>
               <span className="text-[10px] text-black/60 dark:text-white/60 dark:text-[#D6C6B1] font-semibold">محافظات</span>
@@ -271,7 +271,7 @@ export const AdminMapEditorPage: React.FC = () => {
 
             <button
               onClick={loadData}
-              className="p-2 rounded-xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-black/60 dark:text-white/60 hover:text-primary transition-colors cursor-pointer"
+              className="p-2 rounded-xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-black/60 dark:text-white/60 hover:text-primary dark:text-primary-hover transition-colors cursor-pointer"
               title="تحديث البيانات"
             >
               <RefreshCw className="w-4 h-4" />
@@ -285,7 +285,7 @@ export const AdminMapEditorPage: React.FC = () => {
           <div className="block md:hidden divide-y divide-[#E0C79B] dark:divide-[#6B3A1F]">
             {isLoading ? (
               <div className="p-8 text-center text-black/60 dark:text-white/60">
-                <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-primary" />
+                <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-primary dark:text-primary-hover" />
                 <span className="text-xs">جاري تحميل بيانات المواقع من قاعدة البيانات...</span>
               </div>
             ) : filteredItems.length === 0 ? (
@@ -304,7 +304,7 @@ export const AdminMapEditorPage: React.FC = () => {
                           className="w-11 h-11 rounded-xl object-cover bg-gray-200 shrink-0"
                         />
                       ) : (
-                        <div className="w-11 h-11 rounded-xl bg-black/5 dark:bg-cream/5 flex items-center justify-center text-primary shrink-0 border border-black/10 dark:border-white/10">
+                        <div className="w-11 h-11 rounded-xl bg-black/5 dark:bg-cream/5 flex items-center justify-center text-primary dark:text-primary-hover shrink-0 border border-black/10 dark:border-white/10">
                           <MapPin className="w-5 h-5" />
                         </div>
                       )}
@@ -343,7 +343,7 @@ export const AdminMapEditorPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setEditingItem({ ...item })}
-                      className="min-h-[40px] px-3.5 py-1.5 rounded-xl bg-primary/10 hover:bg-primary text-primary hover:text-white font-bold text-xs transition-colors cursor-pointer inline-flex items-center gap-1.5 shrink-0"
+                      className="min-h-[40px] px-3.5 py-1.5 rounded-xl bg-primary/10 hover:bg-primary text-primary dark:text-primary-hover hover:text-white font-bold text-xs transition-colors cursor-pointer inline-flex items-center gap-1.5 shrink-0"
                     >
                       <Edit3 className="w-4 h-4" />
                       <span>تعديل</span>
@@ -372,7 +372,7 @@ export const AdminMapEditorPage: React.FC = () => {
                 {isLoading ? (
                   <tr>
                     <td colSpan={7} className="p-8 text-center text-black/60 dark:text-white/60">
-                      <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-primary" />
+                      <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-primary dark:text-primary-hover" />
                       <span>جاري تحميل بيانات المواقع من قاعدة البيانات...</span>
                     </td>
                   </tr>
@@ -396,7 +396,7 @@ export const AdminMapEditorPage: React.FC = () => {
                             className="w-8 h-8 rounded-lg object-cover bg-gray-200"
                           />
                         ) : (
-                          <div className="w-8 h-8 rounded-lg bg-black/5 dark:bg-cream/5 flex items-center justify-center text-primary">
+                          <div className="w-8 h-8 rounded-lg bg-black/5 dark:bg-cream/5 flex items-center justify-center text-primary dark:text-primary-hover">
                             <MapPin className="w-4 h-4" />
                           </div>
                         )}
@@ -431,7 +431,7 @@ export const AdminMapEditorPage: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => setEditingItem({ ...item })}
-                          className="px-3 py-1.5 rounded-lg bg-primary/10 hover:bg-primary text-primary hover:text-white font-bold text-xs transition-colors cursor-pointer inline-flex items-center gap-1"
+                          className="px-3 py-1.5 rounded-lg bg-primary/10 hover:bg-primary text-primary dark:text-primary-hover hover:text-white font-bold text-xs transition-colors cursor-pointer inline-flex items-center gap-1"
                         >
                           <Edit3 className="w-3.5 h-3.5" />
                           <span>تعديل</span>

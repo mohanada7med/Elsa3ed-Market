@@ -19,6 +19,7 @@ import { WAHEmptyState } from '../../design-system/WAHEmptyState';
 import { PlaceEditorModal } from './PlaceEditorModal';
 import FloatingDock from '../common/FloatingDock';
 import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner';
+import { ArchiveStatsCard } from '../common/ArchiveStatsCard';
 
 const CATEGORY_MAP: Record<string, string[]> = {
   فرعوني: ['temple', 'tomb', 'pharaonic', 'فرعوني'],
@@ -230,7 +231,7 @@ const PlaceTimelineCard: React.FC<PlaceTimelineCardProps> = ({
         `}
       >
         <div className="mb-4 flex items-center gap-3">
-          <span className="text-[10px] font-black tracking-[0.25em] text-primary">
+          <span className="text-[10px] font-black tracking-[0.25em] text-primary dark:text-primary-hover">
             {String(index + 1).padStart(2, '0')}
           </span>
 
@@ -238,7 +239,7 @@ const PlaceTimelineCard: React.FC<PlaceTimelineCardProps> = ({
 
           {place.governorateName && (
             <span className="flex items-center gap-1.5 text-[10px] font-bold text-black/60 dark:text-white/60">
-              <MapPin className="h-3 w-3 text-primary" />
+              <MapPin className="h-3 w-3 text-primary dark:text-primary-hover" />
               {place.governorateName}
             </span>
           )}
@@ -249,12 +250,12 @@ const PlaceTimelineCard: React.FC<PlaceTimelineCardProps> = ({
           onClick={() => onNavigate(place.slug)}
           className="group text-right cursor-pointer"
         >
-          <h3 className="text-3xl font-black leading-tight tracking-tight transition-colors group-hover:text-primary sm:text-4xl">
+          <h3 className="text-3xl font-black leading-tight tracking-tight transition-colors group-hover:text-primary dark:text-primary-hover sm:text-4xl">
             {place.title}
           </h3>
 
           {place.historicalEra && (
-            <p className="mt-3 text-xs font-bold text-primary">
+            <p className="mt-3 text-xs font-bold text-primary dark:text-primary-hover">
               {place.historicalEra}
             </p>
           )}
@@ -272,7 +273,7 @@ const PlaceTimelineCard: React.FC<PlaceTimelineCardProps> = ({
             onClick={() => onNavigate(place.slug)}
             className="
               flex w-fit items-center gap-3 text-xs font-black
-              transition-colors hover:text-primary cursor-pointer
+              transition-colors hover:text-primary dark:text-primary-hover cursor-pointer
             "
           >
             اعرف الحكاية
@@ -487,7 +488,7 @@ export const PlacesHeritagePage: React.FC = () => {
               group flex items-center gap-3
               text-sm font-bold
               transition-all
-              hover:text-primary
+              hover:text-primary dark:text-primary-hover
               cursor-pointer
             "
           >
@@ -514,12 +515,6 @@ export const PlacesHeritagePage: React.FC = () => {
             <span className="hidden sm:block">الرئيسية</span>
           </button>
 
-          <div className="absolute left-1/2 -translate-x-1/2 text-center">
-            <div className="text-[9px] font-bold tracking-[0.35em] text-primary">
-              WAH
-            </div>
-            <div className="mt-1 text-sm font-black">أماكن التراث</div>
-          </div>
 
           <button
             onClick={() => setActivePage('map')}
@@ -553,8 +548,8 @@ export const PlacesHeritagePage: React.FC = () => {
           <div className="relative z-10 grid items-center gap-10 lg:grid-cols-[1fr_420px]">
             <div>
               <div className="mb-8 flex items-center gap-3">
-                <Sparkles size={16} className="text-primary" />
-                <span className="text-[10px] font-bold uppercase tracking-[0.35em] text-primary">
+                <Sparkles size={16} className="text-primary dark:text-primary-hover" />
+                <span className="text-[10px] font-bold uppercase tracking-[0.35em] text-primary dark:text-primary-hover">
                   Digital Heritage Archive / Places
                 </span>
               </div>
@@ -574,7 +569,7 @@ export const PlacesHeritagePage: React.FC = () => {
               >
                 أماكن
                 <br />
-                <span className="mr-[8vw] text-primary dark:text-primary-hover lg:mr-28">بتحكى</span>
+                <span className="mr-[8vw] text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover lg:mr-28">بتحكى</span>
               </h1>
               <br />
               <br />
@@ -588,56 +583,15 @@ export const PlacesHeritagePage: React.FC = () => {
             </div>
 
             {/* Stats Card */}
-            <div className="relative">
-              <div
-                className="
-                  relative overflow-hidden
-                  rounded-[2rem]
-                  border border-border-subtle
-                  bg-surface
-                  p-7
-                  shadow-lg
-                "
-              >
-                <div className="absolute -left-10 -top-10 h-32 w-32 rounded-full border border-primary/20" />
-
-                <div className="relative">
-                  <div className="mb-10 flex items-center justify-between">
-                    <span className="text-[10px] font-bold tracking-[0.25em] text-black/40 dark:text-white/40">
-                      ARCHIVE STATS
-                    </span>
-                    <Landmark size={18} className="text-primary" />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-8">
-                    <div>
-                      <div className="text-5xl font-black tracking-[-0.05em]">
-                        {places.length}
-                      </div>
-                      <div className="mt-2 text-xs text-black/45 dark:text-white/45">
-                        مكان متوثق
-                      </div>
-                    </div>
-
-                    <div>
-                      <div className="text-5xl font-black tracking-[-0.05em]">
-                        {governorates.length}
-                      </div>
-                      <div className="mt-2 text-xs text-black/45 dark:text-white/45">
-                        محافظة
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-10 flex items-center gap-3 border-t border-black/10 pt-5 dark:border-white/10">
-                    <div className="h-2 w-2 rounded-full bg-primary" />
-                    <span className="text-xs font-bold">
-                      توثيق بصري لمعالم الصعيد
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <ArchiveStatsCard
+              eyebrow="ARCHIVE STATS"
+              icon={Landmark}
+              stats={[
+                { value: places.length, label: <>مكان<br />متوثق</> },
+                { value: governorates.length, label: <>محافظة<br />صعيدية</> },
+              ]}
+              footer="توثيق بصري لمعالم الصعيد"
+            />
           </div>
         </div>
       </section>
@@ -833,7 +787,7 @@ export const PlacesHeritagePage: React.FC = () => {
         <div className="mx-auto max-w-[1200px]">
           <div className="mb-16 flex flex-col justify-between gap-6 md:flex-row md:items-end">
             <div>
-              <p className="mb-3 text-[10px] font-black uppercase tracking-[0.3em] text-primary">
+              <p className="mb-3 text-[10px] font-black uppercase tracking-[0.3em] text-primary dark:text-primary-hover">
                 THE ARCHIVE
               </p>
               <h2 className="text-3xl font-black sm:text-5xl">
@@ -874,7 +828,7 @@ export const PlacesHeritagePage: React.FC = () => {
           ) : filteredPlaces.length === 0 ? (
             <div className="rounded-[32px] border border-black/10 bg-white/70 p-5 dark:border-white/10 dark:bg-espresso-900">
               <WAHEmptyState
-                icon={<Landmark className="h-9 w-9 text-primary" />}
+                icon={<Landmark className="h-9 w-9 text-primary dark:text-primary-hover" />}
                 title="ملقيناش المكان ده"
                 description="جرب كلمة بحث تانية أو غير الفلاتر."
                 actionLabel="فضّي الفلاتر"

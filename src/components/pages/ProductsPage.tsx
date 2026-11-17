@@ -14,10 +14,10 @@ import {
   MoveUpLeft,
   Gem,
   ScrollText,
-  CircleDot,
 } from 'lucide-react';
 import FloatingDock from '../common/FloatingDock';
 import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner';
+import { ArchiveStatsCard } from '../common/ArchiveStatsCard';
 
 export const ProductsPage: React.FC = () => {
   const {
@@ -146,8 +146,8 @@ export const ProductsPage: React.FC = () => {
               text-xs
               font-bold
               transition-colors
-              hover:text-primary
-              dark:hover:text-primary-hover
+              hover:text-primary dark:text-primary-hover
+              dark:hover:text-primary dark:text-primary-hover-hover
               cursor-pointer
               min-h-[38px]
             "
@@ -178,11 +178,7 @@ export const ProductsPage: React.FC = () => {
             <span className="text-[11px] sm:text-xs">الرئيسية</span>
           </button>
 
-          {/* Subtitle */}
-          <div className="flex items-center gap-1.5 text-[11px] sm:text-xs font-bold text-[#7c7164] dark:text-[#bcae9c]">
-            <ShoppingBag size={13} className="text-primary dark:text-primary-hover" />
-            <span>السوق التراثي</span>
-          </div>
+
 
           {/* Categories */}
           <button
@@ -268,9 +264,9 @@ export const ProductsPage: React.FC = () => {
                   text-[9px]
                   font-black
                   tracking-[0.28em]
-                  text-primary
+                  text-primary dark:text-primary-hover
 
-                  dark:text-primary-hover
+                  dark:text-primary dark:text-primary-hover-hover
                 "
               >
                 <span
@@ -312,9 +308,9 @@ export const ProductsPage: React.FC = () => {
                     mr-3
                     sm:mr-6
                     lg:mr-16
-                    text-primary
+                    text-primary dark:text-primary-hover
 
-                    dark:text-primary-hover
+                    dark:text-primary dark:text-primary-hover-hover
                   "
                 >
                   الصعيد
@@ -380,145 +376,15 @@ export const ProductsPage: React.FC = () => {
 
             {/* Side information */}
 
-            <div className="relative">
-              <div
-                className="
-                  relative overflow-hidden
-                  rounded-[2rem]
-                  border border-border-subtle
-                  bg-surface
-                  p-5
-                  shadow-lg
-                "
-              >
-                {/* corner decoration */}
-
-                <div
-                  className="
-                    absolute
-                    -left-20
-                    -top-20
-                    h-48
-                    w-48
-                    rounded-full
-                    border
-                    border-primary/15
-                    dark:border-[#C99444]/10
-                  "
-                />
-
-                <div className="relative">
-                  <div className="mb-7 flex items-center justify-between">
-                    <div
-                      className="
-                        text-[8px]
-                        font-black
-                        tracking-[0.3em]
-                        text-black/35
-
-                        dark:text-white/35
-                      "
-                    >
-                      THE COLLECTION
-                    </div>
-
-                    <Gem
-                      size={18}
-                      className="
-                        text-primary
-
-                        dark:text-primary-hover
-                      "
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-8">
-                    <div>
-                      <div
-                        className="
-                          text-4xl
-                          font-black
-                          tracking-[-0.07em]
-                        "
-                      >
-                        {approvedCount}
-                      </div>
-
-                      <div
-                        className="
-                          mt-2
-                          text-[10px]
-                          font-medium
-                          leading-5
-                          text-black/45
-
-                          dark:text-white/40
-                        "
-                      >
-                        قطعة متاحة
-                        <br />
-                        ومعتمدة
-                      </div>
-                    </div>
-
-                    <div>
-                      <div
-                        className="
-                          text-4xl
-                          font-black
-                          tracking-[-0.07em]
-                        "
-                      >
-                        {categories.length}
-                      </div>
-
-                      <div
-                        className="
-                          mt-2
-                          text-[10px]
-                          font-medium
-                          leading-5
-                          text-black/45
-
-                          dark:text-white/40
-                        "
-                      >
-                        تصنيف
-                        <br />
-                        تراثي
-                      </div>
-                    </div>
-                  </div>
-
-                  <div
-                    className="
-                      mt-6
-                      flex
-                      items-center
-                      gap-3
-                      border-t
-                      border-black/10
-                      pt-5
-
-                      dark:border-white/10
-                    "
-                  >
-                    <CircleDot
-                      size={13}
-                      className="
-                        text-primary
-
-                        dark:text-primary-hover
-                      "
-                    />
-
-                    <span className="text-[10px] font-bold">
-                      أصالة • حرفة • حكاية
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <ArchiveStatsCard
+              eyebrow="THE COLLECTION"
+              icon={Gem}
+              stats={[
+                { value: approvedCount, label: <>قطعة متاحة<br />ومعتمدة</> },
+                { value: categories.length, label: <>تصنيف<br />تراثي</> },
+              ]}
+              footer="أصالة • حرفة • حكاية"
+            />
           </div>
         </div>
       </section>
@@ -776,9 +642,9 @@ export const ProductsPage: React.FC = () => {
             <ScrollText
               size={16}
               className="
-                text-primary
+                text-primary dark:text-primary-hover
 
-                dark:text-primary-hover
+                dark:text-primary dark:text-primary-hover-hover
               "
             />
 
@@ -804,9 +670,9 @@ export const ProductsPage: React.FC = () => {
             <MapPin
               size={12}
               className="
-                text-primary
+                text-primary dark:text-primary-hover
 
-                dark:text-primary-hover
+                dark:text-primary dark:text-primary-hover-hover
               "
             />
 
@@ -864,9 +730,9 @@ export const ProductsPage: React.FC = () => {
                 text-[9px]
                 font-black
                 tracking-[0.25em]
-                text-primary
+                text-primary dark:text-primary-hover
 
-                dark:text-primary-hover
+                dark:text-primary dark:text-primary-hover-hover
               "
             >
               HANDPICKED COLLECTION

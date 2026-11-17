@@ -185,7 +185,7 @@ export const EventImageLightboxModal: React.FC<EventImageLightboxProps> = ({
         <div className="flex items-center gap-3 min-w-0">
           <div className="flex items-center gap-2">
             <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-xs font-black font-bold backdrop-blur-md">
-              <ImageIcon size={13} className="text-primary" />
+              <ImageIcon size={13} className="text-primary dark:text-primary-hover" />
               <span>{currentIndex + 1} / {images.length}</span>
             </span>
 

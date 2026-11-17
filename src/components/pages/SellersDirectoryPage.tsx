@@ -101,7 +101,7 @@ export const SellersDirectoryPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setActivePage('home')}
-            className="hover:text-primary transition-colors cursor-pointer"
+            className="hover:text-primary dark:text-primary-hover transition-colors cursor-pointer"
           >
             الرئيسية
           </button>
@@ -135,7 +135,7 @@ export const SellersDirectoryPage: React.FC = () => {
 
           {/* Title */}
           <div className="max-w-4xl">
-            <div className="inline-flex items-center gap-2 mb-4 text-primary">
+            <div className="inline-flex items-center gap-2 mb-4 text-primary dark:text-primary-hover">
               <span className="w-8 h-px bg-primary" />
               <span className="text-[11px] sm:text-xs font-black tracking-wide">
                 من قلب الصعيد
@@ -171,55 +171,6 @@ export const SellersDirectoryPage: React.FC = () => {
             </p>
           </div>
 
-          {/* Stats */}
-          <div className="flex lg:justify-end items-center gap-3">
-            <div
-              className="
-                min-w-[150px]
-                px-5
-                py-4
-                rounded-2xl
-                bg-surface-subtle
-                border
-                border-border-subtle
-                shadow-sm
-              "
-            >
-              <div className="flex items-center gap-2 text-primary mb-1">
-                <Store className="w-4 h-4" />
-                <span className="text-[11px] font-bold">
-                  شيوخ الصنعة
-                </span>
-              </div>
-              <div className="text-2xl font-black text-foreground">
-                {filteredSellers.length}
-              </div>
-            </div>
-
-            <div
-              className="
-                hidden
-                sm:block
-                min-w-[150px]
-                px-5
-                py-4
-                rounded-2xl
-                bg-foreground
-                text-background
-                shadow-sm
-              "
-            >
-              <div className="flex items-center gap-2 opacity-75 mb-1">
-                <MapPin className="w-4 h-4 text-primary" />
-                <span className="text-[11px] font-bold">
-                  محافظات
-                </span>
-              </div>
-              <div className="text-2xl font-black">
-                {GOVERNORATES.length - 1}
-              </div>
-            </div>
-          </div>
         </section>
 
         {/* =========================================================
@@ -371,7 +322,7 @@ export const SellersDirectoryPage: React.FC = () => {
                 h-16
                 rounded-2xl
                 bg-primary/10
-                text-primary
+                text-primary dark:text-primary-hover
                 flex
                 items-center
                 justify-center
@@ -496,7 +447,7 @@ export const SellersDirectoryPage: React.FC = () => {
                         border-white/15
                       "
                     >
-                      <MapPin className="w-3 h-3 text-primary" />
+                      <MapPin className="w-3 h-3 text-primary dark:text-primary-hover" />
                       <span>{seller.governorate}</span>
                     </span>
                   </div>
@@ -594,7 +545,7 @@ export const SellersDirectoryPage: React.FC = () => {
                           items-center
                           justify-center
                           text-foreground-disabled
-                          group-hover:text-primary
+                          group-hover:text-primary dark:text-primary-hover
                           group-hover:border-primary/30
                           group-hover:-translate-x-1
                           group-hover:-translate-y-1
@@ -615,7 +566,7 @@ export const SellersDirectoryPage: React.FC = () => {
                         font-cairo
                         leading-tight
                         text-foreground
-                        group-hover:text-primary
+                        group-hover:text-primary dark:text-primary-hover
                         transition-colors
                       "
                     >
@@ -660,7 +611,7 @@ export const SellersDirectoryPage: React.FC = () => {
                           py-1
                           rounded-lg
                           bg-primary/10
-                          text-primary
+                          text-primary dark:text-primary-hover
                           border
                           border-primary/20
                           text-[10px]
@@ -684,7 +635,7 @@ export const SellersDirectoryPage: React.FC = () => {
                           whitespace-nowrap
                         "
                       >
-                        <Package className="w-3.5 h-3.5 text-primary" />
+                        <Package className="w-3.5 h-3.5 text-primary dark:text-primary-hover" />
                         <span>{getSellerProductsCount(seller)} قطعة</span>
                       </span>
                     </div>

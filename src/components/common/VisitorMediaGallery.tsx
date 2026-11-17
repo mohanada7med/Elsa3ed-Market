@@ -569,7 +569,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
       {/* Header Bar */}
       <header className="relative z-10 mb-7 flex flex-col gap-4 border-b border-primary/15 pb-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="flex items-center gap-2 mb-1.5 text-primary font-black text-xs sm:text-sm">
+          <div className="flex items-center gap-2 mb-1.5 text-primary dark:text-primary-hover font-black text-xs sm:text-sm">
             <Sparkles className="w-4 h-4" />
             <span>معرض وسائط التوثيق</span>
           </div>
@@ -618,7 +618,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                 border border-primary/30
                 bg-primary/10
                 hover:bg-primary hover:text-white
-                text-primary
+                text-primary dark:text-primary-hover
                 px-3.5 py-2
                 text-xs font-black
                 transition-all
@@ -641,7 +641,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
         <div>
           {localGallery.length === 0 ? (
             <div className="flex min-h-[260px] flex-col items-center justify-center rounded-2xl border border-dashed border-primary/30 bg-primary/5 py-12 text-center">
-              <Images className="h-10 w-10 text-primary/40" />
+              <Images className="h-10 w-10 text-primary dark:text-primary-hover/40" />
               <p className="mt-3 text-sm font-bold text-black/60 dark:text-white/60">
                 لا توجد صور موثقة في هذا القسم حالياً
               </p>
@@ -707,7 +707,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
 
                     {/* Bottom Document Bar */}
                     <div className="flex items-center justify-between border-t border-primary/15 bg-primary/5 px-3.5 py-2.5">
-                      <div className="flex items-center gap-2 text-xs font-black font-bold text-primary">
+                      <div className="flex items-center gap-2 text-xs font-black font-bold text-primary dark:text-primary-hover">
                         <Compass className="h-3.5 w-3.5" />
                         <span>توثيق #{idx + 1}</span>
                       </div>
@@ -716,7 +716,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                         <button
                           type="button"
                           onClick={() => openLightbox(idx)}
-                          className="flex items-center gap-1 text-[11px] font-bold text-black/70 hover:text-primary transition dark:text-white/70 cursor-pointer"
+                          className="flex items-center gap-1 text-[11px] font-bold text-black/70 hover:text-primary dark:text-primary-hover transition dark:text-white/70 cursor-pointer"
                         >
                           <Eye className="h-3.5 w-3.5" />
                           <span>معاينة</span>
@@ -732,7 +732,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                               }}
                               disabled={isProcessing}
                               title="استبدال الصورة"
-                              className="rounded-lg p-1 text-primary hover:bg-primary/15 transition cursor-pointer disabled:opacity-50"
+                              className="rounded-lg p-1 text-primary dark:text-primary-hover hover:bg-primary/15 transition cursor-pointer disabled:opacity-50"
                             >
                               <Pencil className="h-3.5 w-3.5" />
                             </button>
@@ -742,7 +742,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                                 onClick={() => handleSetCover(url)}
                                 disabled={isProcessing}
                                 title="تعيين كغلاف"
-                                className="rounded-lg p-1 text-primary hover:bg-primary/15 transition cursor-pointer"
+                                className="rounded-lg p-1 text-primary dark:text-primary-hover hover:bg-primary/15 transition cursor-pointer"
                               >
                                 <Star className="h-3.5 w-3.5" />
                               </button>
@@ -795,7 +795,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
         <div>
           {allVideos.length === 0 ? (
             <div className="flex min-h-[260px] flex-col items-center justify-center rounded-2xl border border-dashed border-primary/30 bg-primary/5 py-12 text-center">
-              <Film className="h-10 w-10 text-primary/40" />
+              <Film className="h-10 w-10 text-primary dark:text-primary-hover/40" />
               <p className="mt-3 text-sm font-bold text-black/60 dark:text-white/60">
                 لا توجد تسجيلات مرئية متاحة
               </p>
@@ -853,7 +853,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
 
               <div className="lg:col-span-4 space-y-2.5">
                 <div className="flex items-center justify-between px-1">
-                  <h4 className="text-xs font-bold text-primary">
+                  <h4 className="text-xs font-bold text-primary dark:text-primary-hover">
                     المقاطع المسجلة ({allVideos.length})
                   </h4>
                   {isAdmin && (
@@ -863,7 +863,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                         setAdminTab('video');
                         setAdminModalOpen(true);
                       }}
-                      className="text-xs font-bold text-primary hover:underline cursor-pointer"
+                      className="text-xs font-bold text-primary dark:text-primary-hover hover:underline cursor-pointer"
                     >
                       + رفع مقطع
                     </button>
@@ -913,7 +913,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                                 setVideoToEdit(vidUrl);
                                 setVideoUrlInput(vidUrl);
                               }}
-                              className="rounded-lg p-1.5 text-primary hover:bg-primary/10 transition cursor-pointer"
+                              className="rounded-lg p-1.5 text-primary dark:text-primary-hover hover:bg-primary/10 transition cursor-pointer"
                               title="تعديل رابط الفيديو"
                             >
                               <Pencil className="h-4 w-4" />
@@ -1081,7 +1081,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
         <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm">
           <div className="flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-primary/25 bg-[#FAF7F2] shadow-2xl dark:border-white/10 dark:bg-[#181614]">
             <div className="flex items-center justify-between border-b border-black/10 bg-white/80 p-5 dark:border-white/10 dark:bg-white/5">
-              <div className="flex items-center gap-2 text-primary font-bold">
+              <div className="flex items-center gap-2 text-primary dark:text-primary-hover font-bold">
                 <Sliders className="h-4 w-4" />
                 <h3 className="font-cairo text-base font-bold text-black/85 dark:text-white/85">
                   إدارة وسائط المعرض
@@ -1101,7 +1101,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                 type="button"
                 onClick={() => setAdminTab('images')}
                 className={`pb-3 text-xs font-bold transition border-b-2 ${adminTab === 'images'
-                  ? 'border-primary text-primary'
+                  ? 'border-primary text-primary dark:text-primary-hover'
                   : 'border-transparent text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white'
                   }`}
               >
@@ -1111,7 +1111,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                 type="button"
                 onClick={() => setAdminTab('video')}
                 className={`mr-6 pb-3 text-xs font-bold transition border-b-2 ${adminTab === 'video'
-                  ? 'border-primary text-primary'
+                  ? 'border-primary text-primary dark:text-primary-hover'
                   : 'border-transparent text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white'
                   }`}
               >
@@ -1193,7 +1193,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
       {videoToEdit && isAdmin && (
         <div className="fixed inset-0 z-[10002] flex items-center justify-center bg-black/75 p-4">
           <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl dark:bg-[#1c1a18]">
-            <div className="mb-4 flex items-center gap-2 text-primary">
+            <div className="mb-4 flex items-center gap-2 text-primary dark:text-primary-hover">
               <Pencil className="h-5 w-5" />
               <h4 className="text-sm font-bold">تعديل رابط الفيديو</h4>
             </div>
