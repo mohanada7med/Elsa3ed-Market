@@ -19,7 +19,8 @@ interface ReelActionButtonsProps {
   isMuted: boolean;
   copiedLink: boolean;
   canDelete: boolean;
-  isAdmin: boolean;
+  canEdit?: boolean;
+  isAdmin?: boolean;
   onLike: () => void;
   onOpenComments: () => void;
   onShare: () => void;
@@ -35,6 +36,7 @@ export const ReelActionButtons: React.FC<ReelActionButtonsProps> = ({
   isMuted,
   copiedLink,
   canDelete,
+  canEdit,
   isAdmin,
   onLike,
   onOpenComments,
@@ -143,14 +145,14 @@ export const ReelActionButtons: React.FC<ReelActionButtonsProps> = ({
         </button>
       </div>
 
-      {isAdmin && (
+      {(canEdit || isAdmin) && (
         <button
           type="button"
           id={`reel-edit-btn-${reel.id}`}
           onClick={onRequestEdit}
           className="w-11 h-11 rounded-full bg-amber-500/90 hover:bg-amber-600 sm:backdrop-blur-md border border-amber-300/50 text-white flex items-center justify-center transition-all duration-200 active:scale-75 cursor-pointer shadow-md"
-          title="تعديل كل بيانات الفيديو"
-          aria-label="تعديل كل بيانات الفيديو"
+          title="تعديل بيانات الفيديو"
+          aria-label="تعديل بيانات الفيديو"
         >
           <Pencil className="w-4 h-4 text-white" />
         </button>

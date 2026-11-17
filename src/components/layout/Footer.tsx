@@ -131,6 +131,7 @@ export const Footer: React.FC = () => {
     { label: 'فعاليات ومواسم الصعيد', page: 'events' },
     { label: 'سوق وه الحرفي (المتجر)', page: 'products' },
     { label: 'شيوخ الصنعة والورش', page: 'sellers' },
+    { label: 'صنّاع المحتوى والمعارض', page: 'creators' },
     { label: 'التصنيفات التراثية', page: 'categories' },
     { label: 'توريدات المؤسسات (B2B)', page: 'wholesale' },
   ];
@@ -253,6 +254,7 @@ export const Footer: React.FC = () => {
                 src="https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png"
                 alt="شعار منصة وه"
                 width={130}
+                referrerPolicy="no-referrer"
                 className="relative z-10 brightness-110 drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)] transition-transform duration-500 group-hover:scale-105"
               />
             </div>            <p className="text-xs sm:text-sm leading-relaxed text-white/70 font-normal">
@@ -380,6 +382,7 @@ export const Footer: React.FC = () => {
               width={56}
               height={56}
               loading="lazy"
+              referrerPolicy="no-referrer"
               className="h-14 w-14 shrink-0 object-contain"
             />
             <div className="min-w-0">

@@ -141,10 +141,12 @@ interface AppContextType {
     role?: 'buyer' | 'seller' | 'creator';
     phone?: string;
     governorate?: string;
+    city?: string;
     workshopName?: string;
     specialty?: string;
     bio?: string;
     specialties?: string[];
+    socialLinks?: Record<string, string>;
   }) => Promise<{ isNewUser?: boolean }>;
   register: (params: {
     username: string;
@@ -172,6 +174,8 @@ interface AppContextType {
   setAuthModalTab: (tab: 'login' | 'register') => void;
   postLoginRedirect: ActivePage | null;
   setPostLoginRedirect: (page: ActivePage | null) => void;
+  isCreatorApplyModalOpen: boolean;
+  setIsCreatorApplyModalOpen: (open: boolean) => void;
 
   // Data & Entities
   products: Product[];
@@ -498,6 +502,7 @@ export const PAGE_ROUTES: Record<ActivePage, string> = {
   crafts: '/crafts',
 
   reels: '/reels',
+  creators: '/creators',
 
   sellers: '/sellers',
   'seller-details': '/sellers/:id',
@@ -565,6 +570,7 @@ function getInitialNavigationState(): {
   productId: string | null;
   categoryId: string | null;
   sellerId: string | null;
+  creatorId?: string | null;
   orderId: string | null;
   searchQuery: string;
   governorateSlug?: string | null;
@@ -576,7 +582,7 @@ function getInitialNavigationState(): {
   eventSlug?: string | null;
 } {
   if (typeof window === 'undefined') {
-    return { page: 'home', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: '' };
+    return { page: 'home', productId: null, categoryId: null, sellerId: null, creatorId: null, orderId: null, searchQuery: '' };
   }
 
   const rawPath = window.location.pathname.replace(/\/+$/, '') || '/';
@@ -611,7 +617,12 @@ function getInitialNavigationState(): {
 
   const sellerId = params.get('seller') || params.get('sellerId') || (pageParam === 'seller-details' ? idFromQuery : null);
   if (sellerId) {
-    return { page: 'seller-details', productId: null, categoryId: null, sellerId, orderId: null, searchQuery: queryTerm };
+    return { page: 'seller-details', productId: null, categoryId: null, sellerId, creatorId: null, orderId: null, searchQuery: queryTerm };
+  }
+
+  const creatorIdParam = params.get('creator') || params.get('creatorId') || (pageParam === 'creator-public-profile' ? idFromQuery : null);
+  if (creatorIdParam) {
+    return { page: 'creator-public-profile', productId: null, categoryId: null, sellerId: null, creatorId: creatorIdParam, orderId: null, searchQuery: queryTerm };
   }
 
   const orderId = params.get('order') || params.get('orderId') || (pageParam === 'order-details' ? idFromQuery : null);
@@ -774,6 +785,15 @@ function getInitialNavigationState(): {
     return { page: 'sellers', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
+  // Creators: /creators or /creators/:id
+  if (rawPath === '/creators' || rawPath.startsWith('/creators/')) {
+    const crId = idFromQuery || (rawPath.startsWith('/creators/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
+    if (isValidRouteIdentifier(crId)) {
+      return { page: 'creator-public-profile', productId: null, categoryId: null, sellerId: null, creatorId: crId!.trim(), orderId: null, searchQuery: queryTerm };
+    }
+    return { page: 'creators', productId: null, categoryId: null, sellerId: null, creatorId: null, orderId: null, searchQuery: queryTerm };
+  }
+
   // Orders: /orders or /orders/:id
   if (rawPath === '/orders' || rawPath.startsWith('/orders/')) {
     const ordId = idFromQuery || (rawPath.startsWith('/orders/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
@@ -801,6 +821,7 @@ function getInitialNavigationState(): {
         productId: sanitizeStoredSlug(sessionStorage.getItem('elsa3ed_selected_product_id')),
         categoryId: sanitizeStoredSlug(sessionStorage.getItem('elsa3ed_selected_category_id')),
         sellerId: sanitizeStoredSlug(sessionStorage.getItem('elsa3ed_selected_seller_id')),
+        creatorId: sanitizeStoredSlug(sessionStorage.getItem('elsa3ed_selected_creator_id')),
         orderId: sanitizeStoredSlug(sessionStorage.getItem('elsa3ed_selected_order_id')),
         searchQuery: queryTerm,
         governorateSlug: sanitizeStoredSlug(sessionStorage.getItem('wah_selected_governorate_slug')),
@@ -846,6 +867,7 @@ function getInitialNavigationState(): {
       productId: sessionStorage.getItem('elsa3ed_selected_product_id'),
       categoryId: sessionStorage.getItem('elsa3ed_selected_category_id'),
       sellerId: sessionStorage.getItem('elsa3ed_selected_seller_id'),
+      creatorId: sessionStorage.getItem('elsa3ed_selected_creator_id'),
       orderId: sessionStorage.getItem('elsa3ed_selected_order_id'),
       searchQuery: queryTerm,
       governorateSlug: sessionStorage.getItem('wah_selected_governorate_slug'),
@@ -868,7 +890,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [selectedProductId, setSelectedProductId] = useState<string | null>(initialNav.productId);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(initialNav.categoryId);
   const [selectedSellerId, setSelectedSellerId] = useState<string | null>(initialNav.sellerId);
-  const [selectedCreatorId, setSelectedCreatorId] = useState<string | null>(null);
+  const [selectedCreatorId, setSelectedCreatorId] = useState<string | null>(initialNav.creatorId || null);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(initialNav.orderId);
 
   // WAH Cultural Ecosystem Selected Slugs
@@ -908,6 +930,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setSelectedCategoryFilter(nav.categoryId || 'all');
       }
       if (nav.sellerId !== undefined) setSelectedSellerId(nav.sellerId);
+      if (nav.creatorId !== undefined) setSelectedCreatorId(nav.creatorId);
       if (nav.orderId !== undefined) setSelectedOrderId(nav.orderId);
       if (nav.governorateSlug !== undefined) setSelectedGovernorateSlug(nav.governorateSlug);
       if (nav.placeSlug !== undefined) setSelectedPlaceSlug(nav.placeSlug);
@@ -927,7 +950,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     try {
       sessionStorage.setItem('elsa3ed_active_page', activePage);
       const isDynamicRoute = [
-        'product-details', 'product-detail', 'category-details', 'seller-details', 'order-details',
+        'product-details', 'product-detail', 'category-details', 'seller-details', 'creator-public-profile', 'order-details',
         'governorate-details', 'place-details',
         'person-details', 'food-details', 'event-details'
       ].includes(activePage);
@@ -1064,6 +1087,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalTab, setAuthModalTab] = useState<'login' | 'register'>('login');
   const [postLoginRedirect, setPostLoginRedirect] = useState<ActivePage | null>(null);
+  const [isCreatorApplyModalOpen, setIsCreatorApplyModalOpen] = useState(false);
 
   // Master Data - Initialized to empty state and fetched directly from real MongoDB Database
   const [products, setProducts] = useState<Product[]>([]);
@@ -1437,10 +1461,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           role: 'seller',
           sellerId: currentUser.id
         });
-      } else if (currentRole === 'buyer' && currentUser.id && currentUser.id !== 'guest-visitor') {
+      } else if ((currentRole === 'buyer' || currentRole === 'creator') && currentUser.id && currentUser.id !== 'guest-visitor') {
         fetchedOrders = await api.getBuyerOrders({
           id: currentUser.id,
-          role: 'buyer'
+          role: currentRole
         });
       } else {
         // Guest or unauthenticated visitors have no orders — do NOT call /api/orders
@@ -1551,11 +1575,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, [currentUser.id, currentRole]);
 
-  // Fetch Buyer Cart from backend
+  // Fetch Buyer/Creator Cart from backend
   const refreshCart = useCallback(async () => {
-    if (currentRole === 'buyer' && currentUser.id && currentUser.id !== 'guest-visitor') {
+    if ((currentRole === 'buyer' || currentRole === 'creator') && currentUser.id && currentUser.id !== 'guest-visitor') {
       try {
-        const remoteCart = await api.getCart({ id: currentUser.id, role: 'buyer' });
+        const remoteCart = await api.getCart({ id: currentUser.id, role: currentRole });
         if (remoteCart && Array.isArray(remoteCart.items)) {
           const mappedItems: CartItem[] = remoteCart.items
             .filter((it: any) => it && (it.product || it.productId))
@@ -1575,7 +1599,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
                   selectedColor: it.selectedColor,
                   customNote: it.customNote
                 }));
-                api.syncCart({ id: currentUser.id, role: 'buyer' }, payload).catch((err) => {
+                api.syncCart({ id: currentUser.id, role: currentRole }, payload).catch((err) => {
                   console.warn('[AppContext] Failed to sync local cart to remote:', err);
                 });
               }
@@ -1602,7 +1626,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
                 selectedColor: it.selectedColor,
                 customNote: it.customNote
               }));
-              api.syncCart({ id: currentUser.id, role: 'buyer' }, payload).catch((err) => {
+              api.syncCart({ id: currentUser.id, role: currentRole }, payload).catch((err) => {
                 console.warn('[AppContext] Failed to sync merged cart to remote:', err);
               });
             }
@@ -1624,11 +1648,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, [currentRole, currentUser.id]);
 
-  // Fetch Buyer Favorites from backend
+  // Fetch Buyer/Creator Favorites from backend
   const refreshFavorites = useCallback(async () => {
-    if (currentRole === 'buyer' && currentUser.id && currentUser.id !== 'guest-visitor') {
+    if ((currentRole === 'buyer' || currentRole === 'creator') && currentUser.id && currentUser.id !== 'guest-visitor') {
       try {
-        const remoteFavs = await api.getFavorites({ id: currentUser.id, role: 'buyer' });
+        const remoteFavs = await api.getFavorites({ id: currentUser.id, role: currentRole });
         if (remoteFavs && Array.isArray(remoteFavs)) {
           setFavorites((prev) => {
             const merged = Array.from(new Set([...prev, ...remoteFavs]));
@@ -1679,7 +1703,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       refreshAdminProducts();
       refreshAuditLogs();
       refreshReviews();
-    } else if (currentRole === 'buyer') {
+    } else if (currentRole === 'buyer' || currentRole === 'creator') {
       refreshOrders();
       refreshCart();
       refreshFavorites();
@@ -1965,15 +1989,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setIsAuthModalOpen(false);
       addToast('تسجيل الدخول', `مرحباً بك يا ${data.user.username || data.user.name} في وه!`, 'success');
 
-      // Sync any local cart items to backend if buyer
-      if (role === 'buyer' && cart.length > 0) {
+      // Sync any local cart items to backend if buyer or creator
+      if ((role === 'buyer' || role === 'creator') && cart.length > 0) {
         const payload = cart.map((it) => ({
           productId: it.product.id,
           quantity: it.quantity,
           selectedColor: it.selectedColor,
           customNote: it.customNote
         }));
-        api.syncCart({ id: data.user.id, role: 'buyer' }, payload).catch((err) => {
+        api.syncCart({ id: data.user.id, role }, payload).catch((err) => {
           console.warn('[AppContext] Failed to sync local cart upon login:', err);
         });
       }
@@ -2006,10 +2030,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     role?: 'buyer' | 'seller' | 'creator';
     phone?: string;
     governorate?: string;
+    city?: string;
     workshopName?: string;
     specialty?: string;
     bio?: string;
     specialties?: string[];
+    socialLinks?: Record<string, string>;
   }) => {
     const data = await api.googleAuth(params);
     if (data && data.user) {
@@ -2039,14 +2065,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         );
       }
 
-      if (role === 'buyer' && cart.length > 0) {
+      if ((role === 'buyer' || role === 'creator') && cart.length > 0) {
         const payload = cart.map((it) => ({
           productId: it.product.id,
           quantity: it.quantity,
           selectedColor: it.selectedColor,
           customNote: it.customNote
         }));
-        api.syncCart({ id: data.user.id, role: 'buyer' }, payload).catch((err) => {
+        api.syncCart({ id: data.user.id, role }, payload).catch((err) => {
           console.warn('[AppContext] Failed to sync local cart upon Google auth:', err);
         });
       }
@@ -2127,15 +2153,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setAuthState('AUTHENTICATED');
       setIsAuthModalOpen(false);
 
-      // Sync any local cart items to backend if buyer
-      if (role === 'buyer' && cart.length > 0) {
+      // Sync any local cart items to backend if buyer or creator
+      if ((role === 'buyer' || role === 'creator') && cart.length > 0) {
         const payload = cart.map((it) => ({
           productId: it.product.id,
           quantity: it.quantity,
           selectedColor: it.selectedColor,
           customNote: it.customNote
         }));
-        api.syncCart({ id: data.user.id, role: 'buyer' }, payload).catch((err) => {
+        api.syncCart({ id: data.user.id, role }, payload).catch((err) => {
           console.warn('[AppContext] Failed to sync local cart upon registration:', err);
         });
       }
@@ -2313,9 +2339,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     addToast('تمت الإضافة إلى سلة المشتريات', `${product.title} (${safeQty} قطعة)`, 'success');
 
-    if (isAuthenticated && currentRole === 'buyer') {
+    if (isAuthenticated && (currentRole === 'buyer' || currentRole === 'creator')) {
       try {
-        await api.addToCart({ id: currentUser.id, role: 'buyer' }, product.id, safeQty);
+        await api.addToCart({ id: currentUser.id, role: currentRole }, product.id, safeQty);
       } catch (err: any) {
         console.warn('[AppContext] Could not sync addToCart to backend:', err?.message);
       }
@@ -2330,9 +2356,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setCart((prev) => prev.filter((item) => item.product.id !== productId));
     addToast('تم الحذف', 'تم حذف المنتج من سلة المشتريات', 'info');
 
-    if (isAuthenticated && currentRole === 'buyer') {
+    if (isAuthenticated && (currentRole === 'buyer' || currentRole === 'creator')) {
       try {
-        await api.removeCartItem({ id: currentUser.id, role: 'buyer' }, productId);
+        await api.removeCartItem({ id: currentUser.id, role: currentRole }, productId);
       } catch (err: any) {
         console.warn('[AppContext] Could not sync removeCartItem to backend:', err?.message);
       }
@@ -2360,9 +2386,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       prev.map((it) => (it.product.id === productId ? { ...it, quantity: safeQty } : it))
     );
 
-    if (isAuthenticated && currentRole === 'buyer') {
+    if (isAuthenticated && (currentRole === 'buyer' || currentRole === 'creator')) {
       try {
-        await api.updateCartItem({ id: currentUser.id, role: 'buyer' }, productId, safeQty);
+        await api.updateCartItem({ id: currentUser.id, role: currentRole }, productId, safeQty);
       } catch (err: any) {
         console.warn('[AppContext] Could not sync updateCartItem to backend:', err?.message);
       }
@@ -2376,9 +2402,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       localStorage.removeItem('saeed_cart');
     } catch { }
 
-    if (isAuthenticated && currentRole === 'buyer') {
+    if (isAuthenticated && (currentRole === 'buyer' || currentRole === 'creator')) {
       try {
-        await api.clearCart({ id: currentUser.id, role: 'buyer' });
+        await api.clearCart({ id: currentUser.id, role: currentRole });
       } catch (err: any) {
         console.warn('[AppContext] Could not sync clearCart to backend:', err?.message);
       }
@@ -2432,7 +2458,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       addToast('المفضلة', `تمت إضافة "${prod?.title || 'المنتج'}" إلى المفضلة ❤️`, 'success');
     }
 
-    if (isAuthenticated && currentRole === 'buyer' && currentUser?.id && currentUser.id !== 'guest-visitor') {
+    if (isAuthenticated && (currentRole === 'buyer' || currentRole === 'creator') && currentUser?.id && currentUser.id !== 'guest-visitor') {
       try {
         const updatedFavs = await api.toggleFavorite(
           { id: currentUser.id, role: currentRole },
@@ -3164,9 +3190,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }));
 
     // Pre-sync cart to server so persistent cart session matches frontend state
-    if (isAuthenticated && currentRole === 'buyer' && currentUser.id) {
+    if (isAuthenticated && (currentRole === 'buyer' || currentRole === 'creator') && currentUser.id) {
       try {
-        await api.syncCart({ id: currentUser.id, role: 'buyer' }, cartPayloadItems);
+        await api.syncCart({ id: currentUser.id, role: currentRole }, cartPayloadItems);
       } catch (syncErr) {
         console.warn('[AppContext] Pre-sync cart before order creation notice:', syncErr);
       }
@@ -3538,6 +3564,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setAuthModalTab,
         postLoginRedirect,
         setPostLoginRedirect,
+        isCreatorApplyModalOpen,
+        setIsCreatorApplyModalOpen,
 
         products,
         sellerProducts,

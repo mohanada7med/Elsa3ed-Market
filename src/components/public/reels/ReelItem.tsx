@@ -37,6 +37,7 @@ interface ReelItemProps {
   onToggleMute: () => void;
   onSelectProduct?: (productId: string) => void;
   onSelectSeller?: (sellerId: string) => void;
+  onSelectCreator?: (creatorId: string) => void;
   onEditReel?: (reel: CraftReel) => void;
   onDeleteReel?: (reelId: string) => void;
   onClose?: () => void;
@@ -53,6 +54,7 @@ export const ReelItem: React.FC<ReelItemProps> = ({
   onToggleMute,
   onSelectProduct,
   onSelectSeller,
+  onSelectCreator,
   onEditReel,
   onDeleteReel,
   onClose,
@@ -592,6 +594,12 @@ export const ReelItem: React.FC<ReelItemProps> = ({
      DELETE
   ------------------------------------------------------- */
 
+  const isCreatorOwner = Boolean(
+    currentUser?.role === 'creator' &&
+    reel.creatorId &&
+    (currentUser.id === reel.creatorId || (currentUser as any).creatorId === reel.creatorId)
+  );
+
   const canDelete = Boolean(
     currentUser?.role === 'admin' ||
     (
@@ -601,6 +609,14 @@ export const ReelItem: React.FC<ReelItemProps> = ({
         currentUser.id === reel.sellerId ||
         currentUser.sellerId === reel.sellerId
       )
+    ) ||
+    isCreatorOwner
+  );
+
+  const canEdit = Boolean(
+    onEditReel && (
+      currentUser?.role === 'admin' ||
+      (isCreatorOwner && currentUser?.creatorStatus === 'approved')
     )
   );
 
@@ -672,6 +688,7 @@ export const ReelItem: React.FC<ReelItemProps> = ({
           alt=""
           aria-hidden="true"
           loading="lazy"
+          referrerPolicy="no-referrer"
           className="
             absolute
             inset-0
@@ -1382,6 +1399,7 @@ export const ReelItem: React.FC<ReelItemProps> = ({
             <ReelInfoSection
               reel={reel}
               onSelectSeller={onSelectSeller}
+              onSelectCreator={onSelectCreator}
               onSelectProduct={onSelectProduct}
               onCloseParent={onClose}
             />
@@ -1417,6 +1435,7 @@ export const ReelItem: React.FC<ReelItemProps> = ({
               isMuted={isMuted}
               copiedLink={copiedLink}
               canDelete={canDelete}
+              canEdit={canEdit}
               isAdmin={currentUser?.role === 'admin' && Boolean(onEditReel)}
               onLike={handleLike}
               onOpenComments={() =>

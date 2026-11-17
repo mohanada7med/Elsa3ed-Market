@@ -3,7 +3,7 @@ dotenv.config();
 import { getDatabase } from '../server/db/mongodb.ts';
 import { register } from '../server/services/authService.ts';
 import * as creatorService from '../server/services/creatorService.ts';
-import type { AuthenticatedUser } from '../server/models/types.ts';
+import type { AuthenticatedUser } from '../server/middleware/auth.ts';
 
 async function runTests() {
   console.log('--- Starting Creator Workflow Integration Tests ---');
@@ -21,6 +21,7 @@ async function runTests() {
     id: 'admin-system-test-user',
     username: 'admin',
     name: 'مدير المنصة',
+    email: 'admin@example.com',
     role: 'admin'
   };
 
@@ -69,6 +70,7 @@ async function runTests() {
       id: session.user.id,
       username: session.user.username,
       name: session.user.name,
+      email: session.user.email || testEmail,
       role: 'creator',
       creatorId: creator.id,
       creatorStatus: 'pending'
@@ -105,6 +107,7 @@ async function runTests() {
       id: session.user.id,
       username: session.user.username,
       name: session.user.name,
+      email: session.user.email || testEmail,
       role: 'creator',
       creatorId: creator.id,
       creatorStatus: 'approved'
@@ -131,7 +134,7 @@ async function runTests() {
     // 6. Verify Isolation: Pending content must NOT appear in public feeds
     console.log('\n[6] Verifying Public Feed Isolation (Pending photo must not be visible)...');
     const publicPhotosBefore = await creatorService.getPublicPhotos();
-    const foundInPublicBefore = publicPhotosBefore.photos.find((p) => p.id === photoPost.id);
+    const foundInPublicBefore = publicPhotosBefore.find((p) => p.id === photoPost.id);
     if (foundInPublicBefore) {
       throw new Error('Security Breach: Pending photo found in public photos feed!');
     }
@@ -157,7 +160,7 @@ async function runTests() {
     // 8. Verify Public Feed Visibility after Approval
     console.log('\n[8] Verifying Public Feed Visibility (Approved photo must be visible)...');
     const publicPhotosAfter = await creatorService.getPublicPhotos();
-    const foundInPublicAfter = publicPhotosAfter.photos.find((p) => p.id === photoPost.id);
+    const foundInPublicAfter = publicPhotosAfter.find((p) => p.id === photoPost.id);
     if (!foundInPublicAfter) {
       throw new Error('Approved photo not found in public feed');
     }
@@ -180,7 +183,7 @@ async function runTests() {
 
     // Verify it disappeared again from public feed
     const publicPhotosAfterEdit = await creatorService.getPublicPhotos();
-    const foundAfterEdit = publicPhotosAfterEdit.photos.find((p) => p.id === photoPost.id);
+    const foundAfterEdit = publicPhotosAfterEdit.find((p) => p.id === photoPost.id);
     if (foundAfterEdit) {
       throw new Error('Security Breach: Edited photo with status pending visible in public feed!');
     }

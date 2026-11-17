@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
 import {
   X,
@@ -55,7 +55,7 @@ export const PhotoEditModal: React.FC<PhotoEditModalProps> = ({
   photo,
   onSuccess
 }) => {
-  const { currentUser } = useApp();
+  const { currentUser, addToast } = useApp();
 
   const [title, setTitle] = useState('');
   const [caption, setCaption] = useState('');
@@ -66,7 +66,9 @@ export const PhotoEditModal: React.FC<PhotoEditModalProps> = ({
   const [images, setImages] = useState<string[]>([]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploadingNew, setIsUploadingNew] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     if (photo) {
@@ -89,6 +91,58 @@ export const PhotoEditModal: React.FC<PhotoEditModalProps> = ({
       return;
     }
     setImages((prev) => prev.filter((_, idx) => idx !== index));
+  };
+
+  const handleAddImages = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    if (images.length + files.length > 10) {
+      setErrorMsg('الحد الأقصى لكل ألبوم هو 10 صور فقط');
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
+
+    const validFiles = files.filter((f) => {
+      if (!f.type.startsWith('image/')) return false;
+      if (f.size > 8 * 1024 * 1024) {
+        setErrorMsg(`الصورة "${f.name}" تتجاوز الحد الأقصى (8 ميجابايت)`);
+        return false;
+      }
+      return true;
+    });
+
+    if (validFiles.length === 0) {
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
+
+    setIsUploadingNew(true);
+    setErrorMsg(null);
+
+    try {
+      const base64List = await Promise.all(
+        validFiles.map(
+          (file) =>
+            new Promise<string>((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = (evt) => resolve(evt.target?.result as string);
+              reader.onerror = () => reject(new Error('فشل قراءة الصورة'));
+              reader.readAsDataURL(file);
+            })
+        )
+      );
+
+      const uploadRes = await creatorApi.uploadCreatorImages(currentUser, base64List);
+      if (uploadRes.urls && uploadRes.urls.length > 0) {
+        setImages((prev) => [...prev, ...uploadRes.urls].slice(0, 10));
+      }
+    } catch (err: any) {
+      setErrorMsg(err.message || 'فشل رفع الصور الإضافية');
+    } finally {
+      setIsUploadingNew(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -129,6 +183,7 @@ export const PhotoEditModal: React.FC<PhotoEditModalProps> = ({
         images
       });
 
+      addToast('تم حفظ التعديلات', 'تم إرسال التعديلات للمراجعة الإدارية بنجاح', 'success');
       onSuccess(updated);
       onClose();
     } catch (err: any) {
@@ -149,7 +204,7 @@ export const PhotoEditModal: React.FC<PhotoEditModalProps> = ({
         {/* Header */}
         <div className="p-4 sm:p-6 border-b border-sand-200 dark:border-[#2C1A10] flex items-center justify-between bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent dark:from-[#2A160C] dark:via-[#1E110A] dark:to-[#1E110A]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-primary /10 dark:bg-primary /20 bg-primary hover:bg-primary-hover text-white flex items-center justify-center shadow-inner">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-primary/10 dark:bg-primary/20 text-primary flex items-center justify-center shadow-inner">
               <ImageIcon className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div>
@@ -165,7 +220,7 @@ export const PhotoEditModal: React.FC<PhotoEditModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 rounded-full hover:bg-stone-100 dark:hover:bg-[#2C1A10] transition-colors"
+            className="p-2 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 rounded-full hover:bg-stone-100 dark:hover:bg-[#2C1A10] transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -199,9 +254,16 @@ export const PhotoEditModal: React.FC<PhotoEditModalProps> = ({
 
           {/* Current Images */}
           <div>
-            <label className="block text-xs font-bold text-espresso dark:text-cream mb-2">
-              الصور الحالية ({images.length} صور)
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-xs font-bold text-espresso dark:text-cream">
+                الصور الحالية ({images.length} / 10 صور)
+              </label>
+              {isUploadingNew && (
+                <span className="text-[11px] text-primary font-bold animate-pulse">
+                  جاري رفع الصور الإضافية...
+                </span>
+              )}
+            </div>
             <div className="grid grid-cols-3 sm:grid-cols-5 gap-2.5">
               {images.map((imgUrl, idx) => (
                 <div
@@ -211,24 +273,45 @@ export const PhotoEditModal: React.FC<PhotoEditModalProps> = ({
                   <img
                     src={imgUrl}
                     alt={`Image ${idx + 1}`}
+                    referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"
                   />
                   {idx === 0 && (
-                    <span className="absolute top-1 right-1 px-1.5 py-0.5 rounded bg-primary  text-white text-[8px] font-bold">
+                    <span className="absolute top-1 right-1 px-1.5 py-0.5 rounded bg-primary text-white text-[8px] font-bold">
                       الغلاف
                     </span>
                   )}
                   <button
                     type="button"
                     onClick={() => handleRemoveImage(idx)}
-                    className="absolute bottom-1 left-1 p-1 rounded-md bg-black/60 text-white hover:bg-red-600 transition-colors opacity-90 group-hover:opacity-100"
+                    className="absolute bottom-1 left-1 p-1 rounded-md bg-black/60 text-white hover:bg-red-600 transition-colors opacity-90 group-hover:opacity-100 cursor-pointer"
                     title="حذف الصورة"
                   >
                     <Trash2 className="w-3 h-3" />
                   </button>
                 </div>
               ))}
+
+              {images.length < 10 && (
+                <button
+                  type="button"
+                  disabled={isUploadingNew}
+                  onClick={() => fileInputRef.current?.click()}
+                  className="aspect-square rounded-xl border-2 border-dashed border-stone-300 dark:border-[#382317] hover:border-primary flex flex-col items-center justify-center gap-1 text-stone-500 hover:text-primary bg-stone-50 dark:bg-[#160B05] transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  <Upload className="w-4 h-4" />
+                  <span className="text-[10px] font-bold">إضافة</span>
+                </button>
+              )}
             </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={handleAddImages}
+              className="hidden"
+            />
           </div>
 
           {/* Title & Category */}

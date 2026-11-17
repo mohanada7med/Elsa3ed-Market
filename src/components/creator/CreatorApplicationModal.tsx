@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   X,
@@ -14,8 +14,7 @@ import {
   Phone,
   Mail,
   User,
-  Film,
-  Compass
+  Film
 } from 'lucide-react';
 import { Governorate } from '../../types.ts';
 import { creatorApi } from '../../services/api.ts';
@@ -59,7 +58,7 @@ export const CreatorApplicationModal: React.FC<CreatorApplicationModalProps> = (
   onClose,
   onSuccess
 }) => {
-  const { currentUser, setCurrentUser } = useApp();
+  const { currentUser, setCurrentUser, addToast } = useApp();
 
   const [name, setName] = useState(currentUser?.name || '');
   const [bio, setBio] = useState('');
@@ -70,6 +69,7 @@ export const CreatorApplicationModal: React.FC<CreatorApplicationModalProps> = (
   const [avatar, setAvatar] = useState(currentUser?.avatar || '');
   const [specialties, setSpecialties] = useState<string[]>(['معالم وآثار الصعيد']);
   const [customSpecialty, setCustomSpecialty] = useState('');
+  const [previousRejectionReason, setPreviousRejectionReason] = useState<string | null>(null);
 
   // Social links
   const [instagram, setInstagram] = useState('');
@@ -81,6 +81,46 @@ export const CreatorApplicationModal: React.FC<CreatorApplicationModalProps> = (
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    setErrorMsg(null);
+    setSuccessMsg(null);
+    setName(currentUser?.name || '');
+    setGovernorate((currentUser?.governorate as Governorate) || 'قنا');
+    setPhone(currentUser?.phone || '');
+    setEmail(currentUser?.email || '');
+    setAvatar(currentUser?.avatar || '');
+    setPreviousRejectionReason(null);
+
+    if (currentUser?.id && currentUser.id !== 'guest-visitor') {
+      creatorApi
+        .getCreatorStatus(currentUser)
+        .then((res) => {
+          if (res?.creator) {
+            const c = res.creator;
+            setName(c.name || currentUser?.name || '');
+            setBio(c.bio || '');
+            setGovernorate((c.governorate as Governorate) || (currentUser?.governorate as Governorate) || 'قنا');
+            setCity(c.city || '');
+            setPhone(c.phone || currentUser?.phone || '');
+            setEmail(c.email || currentUser?.email || '');
+            setAvatar(c.avatar || currentUser?.avatar || '');
+            if (Array.isArray(c.specialties) && c.specialties.length > 0) {
+              setSpecialties(c.specialties);
+            }
+            setInstagram(c.socialLinks?.instagram || '');
+            setYoutube(c.socialLinks?.youtube || '');
+            setTiktok(c.socialLinks?.tiktok || '');
+            setFacebook(c.socialLinks?.facebook || '');
+            if (c.status === 'rejected' && c.rejectionReason) {
+              setPreviousRejectionReason(c.rejectionReason);
+            }
+          }
+        })
+        .catch(() => {});
+    }
+  }, [isOpen, currentUser?.id]);
 
   if (!isOpen) return null;
 
@@ -105,7 +145,7 @@ export const CreatorApplicationModal: React.FC<CreatorApplicationModalProps> = (
     reader.onload = async (evt) => {
       try {
         const base64 = evt.target?.result as string;
-        const uploadRes = await creatorApi.uploadCreatorImage(currentUser, base64, file.name);
+        const uploadRes = await creatorApi.uploadCreatorImage(currentUser, base64, file.name, 'users');
         setAvatar(uploadRes.url);
       } catch (err: any) {
         setErrorMsg(err.message || 'فشل رفع الصورة الشخصية');
@@ -170,10 +210,14 @@ export const CreatorApplicationModal: React.FC<CreatorApplicationModalProps> = (
         email: email.trim() || currentUser?.email
       });
 
-      setSuccessMsg('تم تقديم طلبك بنجاح! سيتم مراجعة طلبك وتدقيقه من قبل فريق إدارة منصة وه، وستتلقى إشعاراً بنتيجة الاعتماد.');
+      const msg = 'تم تقديم طلبك بنجاح! سيتم مراجعة طلبك وتدقيقه من قبل فريق إدارة منصة وه، وستتلقى إشعاراً بنتيجة الاعتماد.';
+      setSuccessMsg(msg);
+      addToast('تم إرسال طلب صانع المحتوى', 'سيتلقى فريق الإدارة طلبك ويخطرك فور المراجعة', 'success');
+
       if (setCurrentUser) {
         setCurrentUser((prev) => ({
           ...prev,
+          role: 'creator',
           creatorId: created.id,
           creatorStatus: 'pending'
         }));
@@ -181,7 +225,7 @@ export const CreatorApplicationModal: React.FC<CreatorApplicationModalProps> = (
       setTimeout(() => {
         if (onSuccess) onSuccess();
         onClose();
-      }, 2500);
+      }, 2000);
     } catch (err: any) {
       setErrorMsg(err.message || 'حدث خطأ أثناء تقديم الطلب، يرجى المحاولة مرة أخرى');
     } finally {
@@ -200,7 +244,7 @@ export const CreatorApplicationModal: React.FC<CreatorApplicationModalProps> = (
         {/* Header */}
         <div className="p-4 sm:p-6 border-b border-sand-200 dark:border-[#2C1A10] flex items-center justify-between bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent dark:from-[#2A160C] dark:via-[#1E110A] dark:to-[#1E110A]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-primary /10 dark:bg-primary /20 bg-primary hover:bg-primary-hover text-white flex items-center justify-center shadow-inner">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-primary/10 dark:bg-primary/20 text-primary flex items-center justify-center shadow-inner">
               <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div>
@@ -208,8 +252,8 @@ export const CreatorApplicationModal: React.FC<CreatorApplicationModalProps> = (
                 <h2 className="text-base sm:text-lg font-black text-espresso dark:text-cream font-cairo">
                   انضم كصانع محتوى في منصة وه
                 </h2>
-                <span className="px-2 py-0.5 rounded-full bg-primary  text-white text-[10px] font-bold">
-                  CREATOR
+                <span className="px-2 py-0.5 rounded-full bg-primary text-white text-[10px] font-bold">
+                  صانع محتوى
                 </span>
               </div>
               <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5 font-cairo">
@@ -221,7 +265,7 @@ export const CreatorApplicationModal: React.FC<CreatorApplicationModalProps> = (
           <button
             type="button"
             onClick={onClose}
-            className="p-2 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 rounded-full hover:bg-stone-100 dark:hover:bg-[#2C1A10] transition-colors"
+            className="p-2 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 rounded-full hover:bg-stone-100 dark:hover:bg-[#2C1A10] transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -229,6 +273,16 @@ export const CreatorApplicationModal: React.FC<CreatorApplicationModalProps> = (
 
         {/* Content */}
         <form onSubmit={handleSubmit} className="p-4 sm:p-6 overflow-y-auto space-y-5 font-cairo">
+          {previousRejectionReason && !errorMsg && (
+            <div className="p-3.5 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-xl space-y-1 text-xs text-amber-800 dark:text-amber-300">
+              <div className="font-bold flex items-center gap-1.5">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>ملاحظات الإدارة على طلبك السابق (يمكنك التعديل وإعادة التقديم):</span>
+              </div>
+              <p className="leading-relaxed pr-5">{previousRejectionReason}</p>
+            </div>
+          )}
+
           {errorMsg && (
             <div className="p-3.5 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-xl flex items-start gap-2.5 text-xs text-red-700 dark:text-red-300">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
@@ -254,6 +308,7 @@ export const CreatorApplicationModal: React.FC<CreatorApplicationModalProps> = (
                   <img
                     src={avatar || currentUser?.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1788710904/user.jpg'}
                     alt="Avatar"
+                    referrerPolicy="no-referrer"
                     className="w-20 h-20 rounded-2xl object-cover border-2 border-white dark:border-[#382317] shadow-md"
                   />
                   <label className="absolute inset-0 rounded-2xl bg-black/40 text-white flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
@@ -275,7 +330,7 @@ export const CreatorApplicationModal: React.FC<CreatorApplicationModalProps> = (
                     الصورة ستظهر في حسابك العام ومع كل فيديو وصورة تنشرها. اضغط على الصورة لتحديثها.
                   </p>
                   {isUploadingAvatar && (
-                    <span className="text-[11px] bg-primary hover:bg-primary-hover text-white font-medium block animate-pulse">
+                    <span className="text-[11px] text-primary font-bold block animate-pulse">
                       جاري رفع الصورة إلى السحابة...
                     </span>
                   )}
@@ -369,8 +424,8 @@ export const CreatorApplicationModal: React.FC<CreatorApplicationModalProps> = (
                         type="button"
                         key={spec}
                         onClick={() => toggleSpecialty(spec)}
-                        className={`text-xs px-3 py-1.5 rounded-xl font-medium transition-all ${isSelected
-                          ? 'bg-primary  text-white shadow-sm'
+                        className={`text-xs px-3 py-1.5 rounded-xl font-medium transition-all cursor-pointer ${isSelected
+                          ? 'bg-primary text-white shadow-sm'
                           : 'bg-stone-100 dark:bg-[#25150C] text-stone-600 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-[#2F1C10]'
                           }`}
                       >

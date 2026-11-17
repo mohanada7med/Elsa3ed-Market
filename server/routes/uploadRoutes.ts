@@ -58,8 +58,46 @@ router.post('/', uploadLimiter, requireAuth, async (req: AuthenticatedRequest, r
       }
     }
 
+    if (folder === 'creators') {
+      if (req.user!.role !== 'creator' && req.user!.role !== 'admin') {
+        return res.status(403).json({
+          success: false,
+          error: 'رفع صور المعارض مخصص لصناع المحتوى المعتمدين وإدارة المنصة فقط',
+          code: 'FORBIDDEN_CREATOR_ONLY'
+        });
+      }
+
+      if (req.user!.role === 'creator') {
+        let creatorStatus = req.user!.creatorStatus;
+        if (!creatorStatus) {
+          const { db, isMongo } = await getDatabase();
+          const cId = req.user!.creatorId || req.user!.id;
+          if (isMongo && db) {
+            const creatorDoc = await db.collection('creators').findOne({
+              $or: [{ id: cId }, { userId: req.user!.id }]
+            });
+            creatorStatus = creatorDoc?.status;
+          }
+          if (!creatorStatus) {
+            const memCreator = memoryDb.creators.find((c: any) => c.id === cId || c.userId === req.user!.id);
+            creatorStatus = memCreator?.status;
+          }
+        }
+
+        if (creatorStatus !== 'approved') {
+          return res.status(403).json({
+            success: false,
+            error: 'حسابك كصانع محتوى غير معتمد لنشر المعارض حالياً',
+            code: 'CREATOR_NOT_APPROVED'
+          });
+        }
+      }
+    }
+
     // 2. Server-Determined Ownership (never trust client-supplied ownerId)
-    const ownerId = req.user!.role === 'seller' ? (req.user!.sellerId || req.user!.id) : req.user!.id;
+    const creatorId = req.user!.role === 'creator' ? (req.user!.creatorId || req.user!.id) : undefined;
+    const sellerId = req.user!.role === 'seller' ? (req.user!.sellerId || req.user!.id) : undefined;
+    const ownerId = sellerId || creatorId || req.user!.id;
 
     // 3. Product ID Resolution for Cloudinary Folder: WAH/products/{productId}/
     let targetProductId = productId;
@@ -94,7 +132,11 @@ router.post('/', uploadLimiter, requireAuth, async (req: AuthenticatedRequest, r
         mimeType,
         folder: folder as any,
         productId: targetProductId,
-        ownerId
+        ownerId,
+        sellerId,
+        creatorId,
+        userId: req.user!.id,
+        role: req.user!.role
       });
 
       return res.status(201).json({
@@ -126,7 +168,11 @@ router.post('/', uploadLimiter, requireAuth, async (req: AuthenticatedRequest, r
         filename: `image_${i + 1}`,
         folder: folder as any,
         productId: targetProductId,
-        ownerId
+        ownerId,
+        sellerId,
+        creatorId,
+        userId: req.user!.id,
+        role: req.user!.role
       });
       uploadedResults.push(result);
     }

@@ -155,6 +155,7 @@ export const AdminDashboard: React.FC = () => {
     currentUser,
     activePage,
     setActivePage,
+    navigateToCreator,
     confirmModal
   } = useApp();
 
@@ -3542,7 +3543,7 @@ export const AdminDashboard: React.FC = () => {
               <div className="animate-in fade-in">
                 <AdminCreatorsManager
                   onNavigateToPublicProfile={(creatorId) => {
-                    setActivePage('creator-public-profile');
+                    navigateToCreator(creatorId);
                   }}
                 />
               </div>

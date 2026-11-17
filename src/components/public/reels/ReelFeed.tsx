@@ -9,6 +9,7 @@ interface ReelFeedProps {
   initialReelId?: string;
   onSelectProduct?: (productId: string) => void;
   onSelectSeller?: (sellerId: string) => void;
+  onSelectCreator?: (creatorId: string) => void;
   onEditReel?: (reel: CraftReel) => void;
   onDeleteReel?: (reelId: string) => void;
   onClose?: () => void;
@@ -21,6 +22,7 @@ export const ReelFeed: React.FC<ReelFeedProps> = ({
   initialReelId,
   onSelectProduct,
   onSelectSeller,
+  onSelectCreator,
   onEditReel,
   onDeleteReel,
   onClose,
@@ -231,6 +233,7 @@ export const ReelFeed: React.FC<ReelFeedProps> = ({
                     onToggleMute={() => setIsMuted((prev) => !prev)}
                     onSelectProduct={onSelectProduct}
                     onSelectSeller={onSelectSeller}
+                    onSelectCreator={onSelectCreator}
                     onEditReel={onEditReel}
                     onDeleteReel={handleDeleteReel}
                     onClose={onClose}
@@ -244,6 +247,7 @@ export const ReelFeed: React.FC<ReelFeedProps> = ({
                   <img
                     src={getOptimizedVideoPoster(reel.videoUrl, reel.posterUrl || reel.productImage, 600)}
                     alt={reel.title}
+                    referrerPolicy="no-referrer"
                     className="w-full h-full object-cover opacity-60 filter blur-xs"
                     loading="lazy"
                   />

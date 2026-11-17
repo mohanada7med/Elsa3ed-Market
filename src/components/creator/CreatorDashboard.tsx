@@ -29,7 +29,8 @@ import {
   Compass,
   LayoutDashboard,
   User as UserIcon,
-  FolderOpen
+  FolderOpen,
+  X
 } from 'lucide-react';
 import {
   Creator,
@@ -37,10 +38,9 @@ import {
   CreatorPhoto,
   Governorate,
   CreatorStatus,
-  ContentStatus,
-  PhotoCategory
+  ContentStatus
 } from '../../types.ts';
-import { creatorApi, api } from '../../services/api.ts';
+import { creatorApi } from '../../services/api.ts';
 import { craftReelsService } from '../../services/craftReelsService.ts';
 import { useApp } from '../../context/AppContext.tsx';
 import { ReelUploadModal } from '../common/ReelUploadModal.tsx';
@@ -73,13 +73,22 @@ export const CreatorDashboard: React.FC<CreatorDashboardProps> = ({
   initialTab = 'overview',
   onNavigateToPublic
 }) => {
-  const { currentUser, setCurrentUser, setActivePage, confirmModal } = useApp();
+  const {
+    currentUser,
+    setCurrentUser,
+    navigateToCreator,
+    setIsCreatorApplyModalOpen,
+    confirmModal,
+    addToast
+  } = useApp();
 
   const [activeTab, setActiveTab] = useState<'overview' | 'reels' | 'photos' | 'profile' | 'content'>(initialTab);
 
   // Creator profile state
   const [creator, setCreator] = useState<Creator | null>(null);
-  const [creatorStatus, setCreatorStatus] = useState<CreatorStatus | 'none'>('pending');
+  const [creatorStatus, setCreatorStatus] = useState<CreatorStatus | 'none'>(
+    (currentUser?.creatorStatus as CreatorStatus | 'none') || 'pending'
+  );
   const [isLoading, setIsLoading] = useState(true);
 
   // Reels & Photos state
@@ -93,10 +102,6 @@ export const CreatorDashboard: React.FC<CreatorDashboardProps> = ({
   const [editingReel, setEditingReel] = useState<CraftReel | null>(null);
   const [editingPhoto, setEditingPhoto] = useState<CreatorPhoto | null>(null);
   const [previewVideoReel, setPreviewVideoReel] = useState<CraftReel | null>(null);
-
-  // Delete Confirm State
-  const [deleteTarget, setDeleteTarget] = useState<{ type: 'reel' | 'photo'; id: string; title: string } | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
 
   // Profile Edit State
   const [profileName, setProfileName] = useState('');
@@ -134,8 +139,8 @@ export const CreatorDashboard: React.FC<CreatorDashboardProps> = ({
         setProfileFacebook(statusRes.creator.socialLinks?.facebook || '');
       }
 
-      // 2. Fetch Creator's Reels & Photos if approved or pending
-      if (statusRes.status === 'approved' || statusRes.status === 'pending') {
+      // 2. Fetch Creator's Reels & Photos for any active/existing creator profile
+      if (statusRes.status && statusRes.status !== 'none') {
         const [userReels, userPhotos] = await Promise.all([
           creatorApi.getCreatorOwnReels(currentUser).catch(() => []),
           creatorApi.getCreatorOwnPhotos(currentUser).catch(() => [])
@@ -183,9 +188,11 @@ export const CreatorDashboard: React.FC<CreatorDashboardProps> = ({
         if (target.type === 'reel') {
           await craftReelsService.deleteReelAsync(currentUser || { role: 'creator' }, target.id);
           setReels((prev) => prev.filter((r) => r.id !== target.id));
+          addToast('تم حذف الريل', `تم حذف "${target.title}" بنجاح`, 'info');
         } else {
           await creatorApi.deleteCreatorPhoto(currentUser, target.id);
           setPhotos((prev) => prev.filter((p) => p.id !== target.id));
+          addToast('تم حذف الألبوم', `تم حذف "${target.title}" بنجاح`, 'info');
         }
       }
     });
@@ -236,10 +243,12 @@ export const CreatorDashboard: React.FC<CreatorDashboardProps> = ({
     reader.onload = async (evt) => {
       try {
         const base64 = evt.target?.result as string;
-        const res = await creatorApi.uploadCreatorImage(currentUser, base64, file.name);
+        const folder = creatorStatus === 'approved' ? 'creators' : 'users';
+        const res = await creatorApi.uploadCreatorImage(currentUser, base64, file.name, folder);
         setProfileAvatar(res.url);
+        addToast('تم رفع الصورة', 'لا تنس الضغط على حفظ التعديلات لاعتمادها', 'success');
       } catch (err: any) {
-        setProfileNotice({ type: 'error', message: 'فشل في رفع الصورة' });
+        setProfileNotice({ type: 'error', message: err.message || 'فشل في رفع الصورة' });
       }
     };
     reader.readAsDataURL(file);
@@ -323,7 +332,7 @@ export const CreatorDashboard: React.FC<CreatorDashboardProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsUploadReelOpen(true)}
-                  className="px-4 py-2 bg-primary  hover:bg-primary-hover text-white rounded-xl text-xs font-bold shadow flex items-center gap-1.5 transition-all cursor-pointer"
+                  className="px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-xl text-xs font-bold shadow flex items-center gap-1.5 transition-all cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
                   <span>نشر ريل جديد</span>
@@ -346,10 +355,10 @@ export const CreatorDashboard: React.FC<CreatorDashboardProps> = ({
                   if (onNavigateToPublic) {
                     onNavigateToPublic(creator.id);
                   } else {
-                    setActivePage('creator-public-profile');
+                    navigateToCreator(creator.id);
                   }
                 }}
-                className="p-2 rounded-xl border border-sand-300 dark:border-[#382317] hover:bg-stone-100 dark:hover:bg-[#25150C] text-stone-600 dark:text-stone-300 transition-colors"
+                className="p-2 rounded-xl border border-sand-300 dark:border-[#382317] hover:bg-stone-100 dark:hover:bg-[#25150C] text-stone-600 dark:text-stone-300 transition-colors cursor-pointer"
                 title="معاينة الملف الشخصي العام"
               >
                 <ExternalLink className="w-4 h-4" />
@@ -375,7 +384,7 @@ export const CreatorDashboard: React.FC<CreatorDashboardProps> = ({
                 type="button"
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`flex items-center gap-2 px-4 py-2.5 border-b-2 text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${isActive
-                  ? 'border-[#E66A2E] bg-primary hover:bg-primary-hover text-white'
+                  ? 'border-primary text-primary bg-primary/5 rounded-t-xl'
                   : 'border-transparent text-stone-500 hover:text-stone-800 dark:hover:text-stone-200'
                   }`}
               >
@@ -404,21 +413,31 @@ export const CreatorDashboard: React.FC<CreatorDashboardProps> = ({
         )}
 
         {creatorStatus === 'rejected' && (
-          <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-700/60 flex items-start gap-3">
-            <XCircle className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
-            <div className="space-y-1">
-              <h4 className="text-xs sm:text-sm font-bold text-rose-900 dark:text-rose-200">
-                تم رفض طلب صانع المحتوى
-              </h4>
-              {creator?.rejectionReason && (
-                <p className="text-xs text-rose-800/90 dark:text-rose-300/80 leading-relaxed font-semibold">
-                  سبب الرفض: {creator.rejectionReason}
+          <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-700/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-start gap-3">
+              <XCircle className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <h4 className="text-xs sm:text-sm font-bold text-rose-900 dark:text-rose-200">
+                  تم رفض طلب صانع المحتوى
+                </h4>
+                {creator?.rejectionReason && (
+                  <p className="text-xs text-rose-800/90 dark:text-rose-300/80 leading-relaxed font-semibold">
+                    سبب الرفض: {creator.rejectionReason}
+                  </p>
+                )}
+                <p className="text-xs text-rose-700 dark:text-rose-400">
+                  يمكنك تحديث بياناتك والتخصصات وروابط أعمالك وإعادة تقديم الطلب للمراجعة من جديد.
                 </p>
-              )}
-              <p className="text-xs text-rose-700 dark:text-rose-400">
-                يمكنك تحديث بياناتك والتخصصات وروابط أعمالك في تبويب "الملف الشخصي" وإعادة تقديم الطلب.
-              </p>
+              </div>
             </div>
+            <button
+              type="button"
+              onClick={() => setIsCreatorApplyModalOpen(true)}
+              className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shrink-0 flex items-center gap-1.5 shadow-sm transition-colors cursor-pointer self-start sm:self-center"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>تعديل وإعادة التقديم</span>
+            </button>
           </div>
         )}
 
@@ -527,6 +546,7 @@ export const CreatorDashboard: React.FC<CreatorDashboardProps> = ({
                   <img
                     src={creator?.avatar || currentUser?.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1788710904/user.jpg'}
                     alt={creator?.name}
+                    referrerPolicy="no-referrer"
                     className="w-16 h-16 rounded-2xl object-cover border-2 border-[#E66A2E] shadow"
                   />
                   <div>
@@ -550,15 +570,15 @@ export const CreatorDashboard: React.FC<CreatorDashboardProps> = ({
                   <button
                     type="button"
                     onClick={() => setActiveTab('profile')}
-                    className="w-full py-2.5 px-3 rounded-xl bg-stone-100 dark:bg-[#25150C] hover:bg-stone-200 text-stone-700 dark:text-stone-200 text-xs font-bold transition-colors text-center"
+                    className="w-full py-2.5 px-3 rounded-xl bg-stone-100 dark:bg-[#25150C] hover:bg-stone-200 text-stone-700 dark:text-stone-200 text-xs font-bold transition-colors text-center cursor-pointer"
                   >
                     تعديل الملف الشخصي
                   </button>
                   {creator?.id && (
                     <button
                       type="button"
-                      onClick={() => onNavigateToPublic ? onNavigateToPublic(creator.id) : setActivePage('creator-public-profile')}
-                      className="w-full py-2.5 px-3 rounded-xl border border-sand-300 dark:border-[#382317] hover:bg-stone-50 dark:hover:bg-[#25150C] bg-primary hover:bg-primary-hover text-white text-xs font-bold transition-colors flex items-center justify-center gap-1.5"
+                      onClick={() => onNavigateToPublic ? onNavigateToPublic(creator.id) : navigateToCreator(creator.id)}
+                      className="w-full py-2.5 px-3 rounded-xl border border-primary/30 bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                     >
                       <ExternalLink className="w-3.5 h-3.5" />
                       <span>معاينة صفحتك العامة</span>
@@ -571,13 +591,13 @@ export const CreatorDashboard: React.FC<CreatorDashboardProps> = ({
               <div className="lg:col-span-2 rounded-3xl bg-white dark:bg-[#1C0E07] border border-sand-200 dark:border-[#382317] p-6 shadow-sm space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-bold text-espresso dark:text-cream flex items-center gap-2">
-                    <FolderOpen className="w-4 h-4 bg-primary hover:bg-primary-hover text-white" />
+                    <FolderOpen className="w-4 h-4 text-primary" />
                     <span>آخر المنشورات والمشاركات</span>
                   </h3>
                   <button
                     type="button"
                     onClick={() => setActiveTab('content')}
-                    className="text-xs font-bold bg-primary hover:bg-primary-hover text-white hover:underline"
+                    className="text-xs font-bold text-primary hover:underline cursor-pointer"
                   >
                     عرض الكل
                   </button>
@@ -607,6 +627,7 @@ export const CreatorDashboard: React.FC<CreatorDashboardProps> = ({
                               <img
                                 src={item._type === 'reel' ? (item as any).posterUrl : (item as any).images?.[0]}
                                 alt={item.title}
+                                referrerPolicy="no-referrer"
                                 className="w-full h-full object-cover"
                               />
                               <span className="absolute bottom-1 right-1 p-0.5 rounded bg-black/60 text-white">
@@ -658,7 +679,7 @@ export const CreatorDashboard: React.FC<CreatorDashboardProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsUploadReelOpen(true)}
-                  className="px-4 py-2 bg-primary  hover:bg-primary-hover text-white rounded-xl text-xs font-bold shadow flex items-center gap-1.5 transition-all cursor-pointer"
+                  className="px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-xl text-xs font-bold shadow flex items-center gap-1.5 transition-all cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
                   <span>رفع ريل جديد</span>
@@ -686,6 +707,7 @@ export const CreatorDashboard: React.FC<CreatorDashboardProps> = ({
                       <img
                         src={reel.posterUrl || 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=800&q=80'}
                         alt={reel.title}
+                        referrerPolicy="no-referrer"
                         className="w-full h-full object-cover"
                       />
                       <div className="absolute top-2 right-2">
@@ -699,9 +721,9 @@ export const CreatorDashboard: React.FC<CreatorDashboardProps> = ({
                       <button
                         type="button"
                         onClick={() => setPreviewVideoReel(reel)}
-                        className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity text-white"
+                        className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity text-white cursor-pointer"
                       >
-                        <div className="w-12 h-12 rounded-full bg-primary  flex items-center justify-center shadow-lg">
+                        <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center shadow-lg">
                           <Play className="w-5 h-5 fill-current ml-0.5" />
                         </div>
                       </button>
@@ -773,7 +795,7 @@ export const CreatorDashboard: React.FC<CreatorDashboardProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsUploadPhotoOpen(true)}
-                  className="px-4 py-2 bg-primary  hover:bg-primary-hover text-white rounded-xl text-xs font-bold shadow flex items-center gap-1.5 transition-all cursor-pointer"
+                  className="px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-xl text-xs font-bold shadow flex items-center gap-1.5 transition-all cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
                   <span>نشر ألبوم صور جديد</span>
@@ -801,6 +823,7 @@ export const CreatorDashboard: React.FC<CreatorDashboardProps> = ({
                       <img
                         src={item.images[0]}
                         alt={item.title}
+                        referrerPolicy="no-referrer"
                         className="w-full h-full object-cover"
                       />
                       <div className="absolute top-2 right-2">
@@ -892,7 +915,7 @@ export const CreatorDashboard: React.FC<CreatorDashboardProps> = ({
                     type="button"
                     onClick={() => setContentFilter(f.id as any)}
                     className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors cursor-pointer ${contentFilter === f.id
-                      ? 'bg-primary  text-white shadow-sm'
+                      ? 'bg-primary text-white shadow-sm'
                       : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
                       }`}
                   >
@@ -932,6 +955,7 @@ export const CreatorDashboard: React.FC<CreatorDashboardProps> = ({
                               <img
                                 src={item._type === 'reel' ? (item as any).posterUrl : (item as any).images?.[0]}
                                 alt={item.title}
+                                referrerPolicy="no-referrer"
                                 className="w-10 h-10 rounded-lg object-cover bg-black shrink-0"
                               />
                               <div className="min-w-0">
@@ -1041,6 +1065,7 @@ export const CreatorDashboard: React.FC<CreatorDashboardProps> = ({
                 <img
                   src={profileAvatar || currentUser?.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1788710904/user.jpg'}
                   alt="Avatar"
+                  referrerPolicy="no-referrer"
                   className="w-24 h-24 rounded-2xl object-cover border-2 border-white dark:border-[#382317] shadow-md"
                 />
                 <label className="absolute inset-0 rounded-2xl bg-black/40 text-white flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
@@ -1241,7 +1266,7 @@ export const CreatorDashboard: React.FC<CreatorDashboardProps> = ({
               <button
                 type="submit"
                 disabled={isSavingProfile}
-                className="px-6 py-2.5 bg-primary  hover:bg-primary-hover text-white rounded-xl text-xs font-bold shadow flex items-center gap-2 disabled:opacity-50 cursor-pointer"
+                className="px-6 py-2.5 bg-primary hover:bg-primary-hover text-white rounded-xl text-xs font-bold shadow flex items-center gap-2 disabled:opacity-50 cursor-pointer"
               >
                 {isSavingProfile ? (
                   <>
@@ -1332,7 +1357,7 @@ export const CreatorDashboard: React.FC<CreatorDashboardProps> = ({
                 onClick={() => setPreviewVideoReel(null)}
                 className="absolute top-3 right-3 z-20 p-2 rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors cursor-pointer"
               >
-                ✕
+                <X className="w-5 h-5" />
               </button>
               <video
                 src={previewVideoReel.videoUrl}

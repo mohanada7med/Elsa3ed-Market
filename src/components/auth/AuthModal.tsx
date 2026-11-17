@@ -67,6 +67,10 @@ export const AuthModal: React.FC = () => {
     useState<'buyer' | 'seller' | 'creator'>('buyer');
   const [creatorBio, setCreatorBio] =
     useState('');
+  const [creatorCity, setCreatorCity] =
+    useState('');
+  const [creatorSpecialties, setCreatorSpecialties] =
+    useState<string[]>([]);
 
   const [username, setUsername] =
     useState('');
@@ -126,6 +130,31 @@ export const AuthModal: React.FC = () => {
       email: string;
       picture: string;
     } | null>(null);
+
+  const [pendingGoogleCreator, setPendingGoogleCreator] =
+    useState<{
+      idToken: string;
+      name: string;
+      email: string;
+      picture: string;
+    } | null>(null);
+
+  const CREATOR_SPECIALTY_OPTIONS = [
+    'التوثيق المرئي',
+    'الفخار والخزف',
+    'النسيج والتطريز',
+    'المعالم والآثار',
+    'الأكلات والتراث',
+    'الحكايات الشعبية',
+    'الحرف اليدوية',
+    'الطبيعة والنيل'
+  ];
+
+  const toggleCreatorSpecialty = (item: string) => {
+    setCreatorSpecialties((prev) =>
+      prev.includes(item) ? prev.filter((x) => x !== item) : [...prev, item]
+    );
+  };
 
   const [error, setError] =
     useState('');
@@ -275,6 +304,7 @@ export const AuthModal: React.FC = () => {
 
     setForgotPassword(false);
     setPendingGoogleSeller(null);
+    setPendingGoogleCreator(null);
     setError('');
 
     setShowPassword(false);
@@ -296,6 +326,7 @@ export const AuthModal: React.FC = () => {
 
     setForgotPassword(false);
     setPendingGoogleSeller(null);
+    setPendingGoogleCreator(null);
     setError('');
 
     if (tab === 'register') {
@@ -626,12 +657,25 @@ export const AuthModal: React.FC = () => {
             ? creatorBio.trim()
             : undefined,
 
+        city:
+          roleType === 'creator' && creatorCity.trim()
+            ? creatorCity.trim()
+            : undefined,
+
+        specialties:
+          roleType === 'creator' && creatorSpecialties.length > 0
+            ? creatorSpecialties
+            : undefined,
+
         avatar:
           avatarPreview ||
           DEFAULT_AVATAR,
       });
 
       addToast(
+        roleType === 'creator'
+          ? 'طلب الانضمام كصانع محتوى'
+          : 'إنشاء الحساب',
         roleType === 'creator'
           ? 'تم تقديم طلب الانضمام كصانع محتوى بنجاح 🎉'
           : 'تم إنشاء الحساب بنجاح 🎉',
@@ -649,6 +693,8 @@ export const AuthModal: React.FC = () => {
       setCustomGovernorate('');
       setWorkshopName('');
       setCreatorBio('');
+      setCreatorCity('');
+      setCreatorSpecialties([]);
 
       setRoleType('buyer');
 
@@ -716,6 +762,10 @@ export const AuthModal: React.FC = () => {
         role: mode === 'register' ? roleType : 'buyer',
         phone: mode === 'register' && phone.trim() ? phone.trim() : undefined,
         governorate: normalizedGovernorate || undefined,
+        city:
+          mode === 'register' && roleType === 'creator' && creatorCity.trim()
+            ? creatorCity.trim()
+            : undefined,
         workshopName:
           mode === 'register' && roleType === 'seller' && workshopName.trim()
             ? workshopName.trim()
@@ -724,9 +774,14 @@ export const AuthModal: React.FC = () => {
           mode === 'register' && roleType === 'creator' && creatorBio.trim()
             ? creatorBio.trim()
             : undefined,
+        specialties:
+          mode === 'register' && roleType === 'creator' && creatorSpecialties.length > 0
+            ? creatorSpecialties
+            : undefined,
       });
 
       setPendingGoogleSeller(null);
+      setPendingGoogleCreator(null);
       setIsAuthModalOpen(false);
       setUsername('');
       setPassword('');
@@ -737,11 +792,24 @@ export const AuthModal: React.FC = () => {
       setCustomGovernorate('');
       setWorkshopName('');
       setCreatorBio('');
+      setCreatorCity('');
+      setCreatorSpecialties([]);
       setRoleType('buyer');
       setError('');
     } catch (err: any) {
       if (err?.code === 'SELLER_DETAILS_REQUIRED' && obtainedIdToken) {
         setPendingGoogleSeller({
+          idToken: obtainedIdToken,
+          name: err?.googleProfile?.name || obtainedProfile?.name || '',
+          email: err?.googleProfile?.email || obtainedProfile?.email || '',
+          picture: err?.googleProfile?.picture || obtainedProfile?.picture || '',
+        });
+        setError('');
+        return;
+      }
+
+      if (err?.code === 'CREATOR_DETAILS_REQUIRED' && obtainedIdToken) {
+        setPendingGoogleCreator({
           idToken: obtainedIdToken,
           name: err?.googleProfile?.name || obtainedProfile?.name || '',
           email: err?.googleProfile?.email || obtainedProfile?.email || '',
@@ -812,6 +880,68 @@ export const AuthModal: React.FC = () => {
       setError(
         err?.message ||
         'تعذر إكمال تسجيل الورشة عبر Google. حاول مرة أخرى.'
+      );
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
+
+  const handleCompleteGoogleCreator = async (
+    event: React.FormEvent
+  ) => {
+    event.preventDefault();
+    if (!pendingGoogleCreator || isBusy) return;
+
+    setError('');
+    const cleanBio = creatorBio.trim();
+    const cleanPhone = phone.trim();
+    const normalizedGovernorate =
+      governorate === 'أخرى'
+        ? customGovernorate.trim()
+        : governorate.trim();
+
+    if (cleanBio.length < 5) {
+      setError('من فضلك اكتب نبذة عن محتواك التوثيقي (5 أحرف على الأقل).');
+      return;
+    }
+
+    if (cleanPhone.length < 8) {
+      setError('من فضلك اكتب رقم موبايل صحيح للتواصل معك.');
+      return;
+    }
+
+    if (governorate === 'أخرى' && !normalizedGovernorate) {
+      setError('من فضلك اكتب اسم المحافظة.');
+      return;
+    }
+
+    try {
+      setGoogleLoading(true);
+      await loginWithGoogle({
+        idToken: pendingGoogleCreator.idToken,
+        mode: 'register',
+        role: 'creator',
+        bio: cleanBio,
+        phone: cleanPhone,
+        governorate: normalizedGovernorate || undefined,
+        city: creatorCity.trim() || undefined,
+        specialties: creatorSpecialties.length > 0 ? creatorSpecialties : undefined,
+      });
+
+      setPendingGoogleCreator(null);
+      setIsAuthModalOpen(false);
+      setCreatorBio('');
+      setCreatorCity('');
+      setCreatorSpecialties([]);
+      setPhone('');
+      setGovernorate('');
+      setCustomGovernorate('');
+      setRoleType('buyer');
+      setError('');
+    } catch (err: any) {
+      setError(
+        err?.message ||
+        'تعذر إكمال تسجيل حساب صانع المحتوى عبر Google. حاول مرة أخرى.'
       );
     } finally {
       setGoogleLoading(false);
@@ -1150,6 +1280,7 @@ export const AuthModal: React.FC = () => {
               <img
                 src="https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png"
                 alt="WAH"
+                referrerPolicy="no-referrer"
                 className="
                   h-full
                   w-full
@@ -2065,7 +2196,204 @@ export const AuthModal: React.FC = () => {
                   </form>
                 )}
 
-                {authModalTab === 'register' && !pendingGoogleSeller && (
+                {authModalTab === 'register' && pendingGoogleCreator && (
+                  <form
+                    onSubmit={handleCompleteGoogleCreator}
+                    className="space-y-4 sm:space-y-5"
+                  >
+                    <div
+                      className="
+                        rounded-2xl
+                        border
+                        border-primary/25
+                        bg-primary/10
+                        p-4
+                        dark:border-primary/35
+                      "
+                    >
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={pendingGoogleCreator.picture || DEFAULT_AVATAR}
+                          alt={pendingGoogleCreator.name || 'Google'}
+                          className="h-11 w-11 rounded-xl object-cover border border-black/10 dark:border-white/10"
+                          referrerPolicy="no-referrer"
+                        />
+                        <div className="min-w-0">
+                          <p className="truncate text-[14px] font-black text-espresso dark:text-cream">
+                            أهلاً {pendingGoogleCreator.name}
+                          </p>
+                          <p className="truncate text-[11px] font-medium text-black/60 dark:text-white/60" dir="ltr">
+                            {pendingGoogleCreator.email}
+                          </p>
+                        </div>
+                      </div>
+                      <p className="mt-2.5 text-[12px] font-bold leading-5 text-espresso dark:text-cream">
+                        تم توثيق حسابك عبر Google. أكمل بيانات صانع المحتوى لإرسال طلب الانضمام والمراجعة:
+                      </p>
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="google-creator-bio-input"
+                        className={labelClass}
+                      >
+                        نبذة عن محتواك التوثيقي في وه
+                        <span className="mr-1 text-primary">*</span>
+                      </label>
+                      <div className="relative">
+                        <Sparkles size={20} className={`${iconClass} top-3.5`} />
+                        <textarea
+                          id="google-creator-bio-input"
+                          rows={3}
+                          required
+                          value={creatorBio}
+                          onChange={(e) => setCreatorBio(e.target.value)}
+                          placeholder="احكِ لنا باختصار عن المحتوى التراثي أو الحرفي أو المعالم التي توثقها في صعيد مصر..."
+                          className={`${inputClass} !h-auto py-2.5 resize-none`}
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="google-creator-phone-input"
+                        className={labelClass}
+                      >
+                        رقم الموبايل
+                        <span className="mr-1 text-primary">*</span>
+                      </label>
+                      <div className="relative">
+                        <Phone size={20} className={iconClass} />
+                        <input
+                          id="google-creator-phone-input"
+                          type="tel"
+                          required
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          placeholder="01xxxxxxxxx"
+                          className={inputClass}
+                          autoComplete="tel"
+                          inputMode="tel"
+                          dir="ltr"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label htmlFor="google-creator-gov-select" className={labelClass}>
+                          المحافظة
+                        </label>
+                        <div className="relative">
+                          <MapPin size={18} className={iconClass} />
+                          <select
+                            id="google-creator-gov-select"
+                            value={governorate}
+                            onChange={(e) => {
+                              setGovernorate(e.target.value);
+                              if (e.target.value !== 'أخرى') setCustomGovernorate('');
+                            }}
+                            className={`${inputClass} cursor-pointer appearance-none`}
+                          >
+                            <option value="">اختار المحافظة</option>
+                            <option value="أسوان">أسوان</option>
+                            <option value="الأقصر">الأقصر</option>
+                            <option value="قنا">قنا</option>
+                            <option value="سوهاج">سوهاج</option>
+                            <option value="أسيوط">أسيوط</option>
+                            <option value="المنيا">المنيا</option>
+                            <option value="بني سويف">بني سويف</option>
+                            <option value="الفيوم">الفيوم</option>
+                            <option value="الوادي الجديد">الوادي الجديد</option>
+                            <option value="أخرى">محافظة أخرى</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div>
+                        <label htmlFor="google-creator-city-input" className={labelClass}>
+                          المدينة / المركز (اختياري)
+                        </label>
+                        <input
+                          id="google-creator-city-input"
+                          type="text"
+                          value={creatorCity}
+                          onChange={(e) => setCreatorCity(e.target.value)}
+                          placeholder="مثال: أخميم، الكرنك..."
+                          className={`${inputClass} pr-4`}
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <p className={labelClass}>تخصصات المحتوى (اختياري)</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {CREATOR_SPECIALTY_OPTIONS.map((sp) => {
+                          const selected = creatorSpecialties.includes(sp);
+                          return (
+                            <button
+                              key={sp}
+                              type="button"
+                              onClick={() => toggleCreatorSpecialty(sp)}
+                              className={`px-3 py-1.5 rounded-xl text-[11px] font-bold border transition-all cursor-pointer ${
+                                selected
+                                  ? 'bg-primary text-white border-primary shadow-sm'
+                                  : 'bg-white/60 dark:bg-cream/5 text-black/70 dark:text-white/70 border-black/10 dark:border-white/10 hover:border-primary/40'
+                              }`}
+                            >
+                              {sp}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={isBusy}
+                      className={primaryButton}
+                    >
+                      {googleLoading ? (
+                        <>
+                          <Loader2 size={21} className="animate-spin" />
+                          جاري إرسال طلب الانضمام...
+                        </>
+                      ) : (
+                        <>
+                          إتمام التسجيل كصانع محتوى
+                          <ArrowLeft size={19} />
+                        </>
+                      )}
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={isBusy}
+                      onClick={() => {
+                        setPendingGoogleCreator(null);
+                        setError('');
+                      }}
+                      className="
+                        flex
+                        min-h-[44px]
+                        w-full
+                        items-center
+                        justify-center
+                        gap-2
+                        text-[13px]
+                        font-black
+                        text-black/60
+                        hover:text-primary
+                        dark:text-white/60
+                        cursor-pointer
+                      "
+                    >
+                      <ArrowRight size={16} />
+                      الرجوع لخيارات التسجيل
+                    </button>
+                  </form>
+                )}
+
+                {authModalTab === 'register' && !pendingGoogleSeller && !pendingGoogleCreator && (
                   <form
                     onSubmit={handleRegister}
                     className="space-y-4 sm:space-y-5"
@@ -2689,40 +3017,86 @@ export const AuthModal: React.FC = () => {
                       </div>
                     )}
 
-                    {/* Creator Bio */}
+                    {/* Creator Bio & Specialties */}
 
                     {roleType === 'creator' && (
-                      <div>
-                        <label
-                          htmlFor="register-creator-bio-input"
-                          className={labelClass}
-                        >
-                          نبذة عن محتواك أو نشاطك التوثيقي
-                          <span className="mr-1 text-primary">
-                            *
-                          </span>
-                        </label>
+                      <div className="space-y-3 rounded-2xl border border-primary/20 bg-primary/5 p-3.5 sm:p-4 dark:border-primary/25 dark:bg-primary/10">
+                        <div>
+                          <label
+                            htmlFor="register-creator-bio-input"
+                            className={labelClass}
+                          >
+                            نبذة عن محتواك أو نشاطك التوثيقي
+                            <span className="mr-1 text-primary">
+                              *
+                            </span>
+                          </label>
 
-                        <div className="relative">
-                          <Sparkles
-                            size={20}
-                            className={`${iconClass} top-3.5`}
-                          />
+                          <div className="relative">
+                            <Sparkles
+                              size={20}
+                              className={`${iconClass} top-3.5`}
+                            />
 
-                          <textarea
-                            id="register-creator-bio-input"
-                            rows={3}
-                            value={creatorBio}
-                            onChange={(e) =>
-                              setCreatorBio(
-                                e.target.value
-                              )
-                            }
-                            placeholder="احكِ لنا باختصار عن المحتوى التراثي أو الحرفي أو المعالم التي توثقها في صعيد مصر..."
-                            className={`${inputClass} !h-auto py-2.5 resize-none`}
-                          />
+                            <textarea
+                              id="register-creator-bio-input"
+                              rows={3}
+                              value={creatorBio}
+                              onChange={(e) =>
+                                setCreatorBio(
+                                  e.target.value
+                                )
+                              }
+                              placeholder="احكِ لنا باختصار عن المحتوى التراثي أو الحرفي أو المعالم التي توثقها في صعيد مصر..."
+                              className={`${inputClass} !h-auto py-2.5 resize-none`}
+                            />
+                          </div>
                         </div>
-                        <p className="mt-1 text-[11px] text-black/50 dark:text-white/50">
+
+                        <div>
+                          <label
+                            htmlFor="register-creator-city-input"
+                            className={labelClass}
+                          >
+                            المدينة / القرية (اختياري)
+                          </label>
+                          <div className="relative">
+                            <MapPin size={18} className={iconClass} />
+                            <input
+                              id="register-creator-city-input"
+                              type="text"
+                              value={creatorCity}
+                              onChange={(e) => setCreatorCity(e.target.value)}
+                              placeholder="مثال: أخميم، الكرنك، النوبة..."
+                              className={inputClass}
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <span className={labelClass}>تخصصات المحتوى (اختياري)</span>
+                          <div className="flex flex-wrap gap-1.5">
+                            {CREATOR_SPECIALTY_OPTIONS.map((sp) => {
+                              const selected = creatorSpecialties.includes(sp);
+                              return (
+                                <button
+                                  key={sp}
+                                  type="button"
+                                  onClick={() => toggleCreatorSpecialty(sp)}
+                                  className={`px-2.5 py-1.5 rounded-xl text-[11px] font-bold border transition-all cursor-pointer ${
+                                    selected
+                                      ? 'bg-primary text-white border-primary shadow-sm'
+                                      : 'bg-white/75 dark:bg-cream/5 text-black/70 dark:text-white/70 border-black/10 dark:border-white/10 hover:border-primary/40'
+                                  }`}
+                                >
+                                  {sp}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        <p className="text-[11px] text-black/55 dark:text-white/55 font-medium">
                           سيتم مراجعة طلبك واعتماده من قبل إدارة منصة وه قبل إتاحة النشر العام.
                         </p>
                       </div>

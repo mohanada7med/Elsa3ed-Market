@@ -269,6 +269,8 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
               <p className="text-xs text-black/60 dark:text-white/60 dark:text-[#D6C6B1]">
                 {isAdmin
                   ? 'تحكم إداري كامل بمحتوى الفيديو، رابط الكلاود، الحرفي، والمنتج المرتبط'
+                  : currentUser?.role === 'creator'
+                  ? 'تحديث تفاصيل الريل والمحتوى التراثي الخاص بك'
                   : 'تحديث تفاصيل الفيديو والمنتج الخاص بورشة عملك'}
               </p>
             </div>
@@ -277,11 +279,24 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-white rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-white rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
+
+        {reel.status === 'rejected' && reel.rejectionReason && (
+          <div className="mx-6 mt-4 p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/50 rounded-2xl text-xs text-rose-800 dark:text-rose-200">
+            <span className="font-bold">سبب الرفض السابق: </span>
+            <span>{reel.rejectionReason}</span>
+          </div>
+        )}
+
+        {!isAdmin && currentUser?.role === 'creator' && (
+          <div className="mx-6 mt-4 p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-2xl text-[11px] text-amber-800 dark:text-amber-300">
+            ⚠️ تنبيه: حفظ أي تعديل على الريل سيعيد إرساله تلقائياً للمراجعة الإدارية (قيد المراجعة) قبل ظهوره للجمهور.
+          </div>
+        )}
 
         {errorMsg && (
           <div className="mx-6 mt-4 p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/50 rounded-2xl flex items-center gap-2 text-xs text-red-700 dark:text-red-300">

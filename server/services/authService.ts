@@ -18,6 +18,7 @@ import type { UserDocument, UserRole, SellerStatus, CreatorStatus } from '../mod
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
 import { createAuditLog } from './auditService.ts';
 import { notifyAdminsOnSellerRequest } from './sellerService.ts';
+import { notifyAdminsOnCreatorRequest } from './creatorService.ts';
 import { Logger } from '../utils/logger.ts';
 
 const JWT_SECRET = process.env.AUTH_SECRET || process.env.JWT_SECRET || (process.env.NODE_ENV !== 'production' ? 'elsa3ed-dev-jwt-key' : '');
@@ -286,6 +287,13 @@ export async function register(params: {
       userId,
       userName: params.name,
       workshopName: params.workshopName || `ورشة ${params.name}`,
+      governorate: params.governorate || 'قنا',
+      isReapply: false
+    });
+  } else if (params.role === 'creator') {
+    await notifyAdminsOnCreatorRequest({
+      userId,
+      userName: params.name,
       governorate: params.governorate || 'قنا',
       isReapply: false
     });
@@ -665,11 +673,15 @@ async function generateUniqueUsername(displayName?: string, email?: string): Pro
 export async function authenticateWithGoogle(params: {
   idToken: string;
   mode?: 'login' | 'register';
-  role?: 'buyer' | 'seller';
+  role?: 'buyer' | 'seller' | 'creator';
   phone?: string;
   governorate?: string;
   workshopName?: string;
   specialty?: string;
+  bio?: string;
+  city?: string;
+  specialties?: string[];
+  socialLinks?: Record<string, string>;
 }): Promise<{ session: AuthSession; isNewUser: boolean }> {
   const verifiedGoogle = await verifyFirebaseGoogleIdToken(params.idToken);
 
@@ -806,10 +818,14 @@ export async function authenticateWithGoogle(params: {
   }
 
   // 2. New User Creation via Google
-  const requestedRole: 'buyer' | 'seller' = params.role === 'seller' ? 'seller' : 'buyer';
+  const requestedRole: 'buyer' | 'seller' | 'creator' =
+    params.role === 'seller' ? 'seller' : params.role === 'creator' ? 'creator' : 'buyer';
   const cleanPhone = (params.phone || '').trim();
   const cleanWorkshop = (params.workshopName || '').trim();
   const cleanGovernorate = (params.governorate || '').trim() || 'قنا';
+  const cleanBio = (params.bio || '').trim();
+  const cleanCity = (params.city || '').trim() || cleanGovernorate;
+  const cleanSpecialties = Array.isArray(params.specialties) ? params.specialties.filter(Boolean) : [];
 
   if (requestedRole === 'seller') {
     if (cleanWorkshop.length < 2 || cleanPhone.length < 8) {
@@ -824,10 +840,25 @@ export async function authenticateWithGoogle(params: {
     }
   }
 
+  if (requestedRole === 'creator') {
+    if (cleanBio.length < 5 || cleanPhone.length < 8 || cleanSpecialties.length === 0) {
+      const err: any = new Error('للتسجيل كصانع محتوى عبر Google، يرجى إكمال النبذة التعريفية ورقم الموبايل والتخصصات أولاً.');
+      err.code = 'CREATOR_DETAILS_REQUIRED';
+      err.googleProfile = {
+        name: verifiedGoogle.name,
+        email: verifiedGoogle.email,
+        picture: verifiedGoogle.picture
+      };
+      throw err;
+    }
+  }
+
   const generatedUsername = await generateUniqueUsername(verifiedGoogle.name, verifiedGoogle.email);
   const userId = `user-${requestedRole}-${Date.now()}`;
   const finalAvatar = verifiedGoogle.picture || DEFAULT_USER_AVATAR;
   let sellerId: string | undefined = undefined;
+  let creatorId: string | undefined = undefined;
+  let createdCreatorObj: any = null;
 
   if (requestedRole === 'seller') {
     sellerId = `seller-${Date.now()}`;
@@ -853,7 +884,7 @@ export async function authenticateWithGoogle(params: {
       payoutMethod: 'vodafone_cash',
       payoutAccount: cleanPhone,
       status: 'pending' as SellerStatus,
-      specialty: params.specialty?.trim() || 'مشغولات وحرف صعيدية على أصولها'
+      specialty: params.specialty?.trim() || 'مشغولات وحرف تراثية'
     };
 
     if (isMongo && db) {
@@ -861,6 +892,35 @@ export async function authenticateWithGoogle(params: {
     } else {
       throw new Error('قاعدة البيانات غير متوفرة حالياً، تعذر تسجيل حساب البائع.');
     }
+  }
+
+  if (requestedRole === 'creator') {
+    creatorId = `creator-${Date.now()}`;
+    const { db, isMongo } = await getDatabase();
+    const now = new Date().toISOString();
+    createdCreatorObj = {
+      id: creatorId,
+      userId,
+      name: verifiedGoogle.name,
+      avatar: finalAvatar,
+      bio: cleanBio,
+      governorate: cleanGovernorate,
+      city: cleanCity,
+      specialties: cleanSpecialties,
+      socialLinks: params.socialLinks || {},
+      phone: cleanPhone,
+      email: verifiedGoogle.email,
+      status: 'pending' as CreatorStatus,
+      verified: false,
+      stats: { reelsCount: 0, photosCount: 0, viewsCount: 0, likesCount: 0 },
+      createdAt: now,
+      updatedAt: now
+    };
+
+    if (isMongo && db) {
+      await db.collection('creators').insertOne(createdCreatorObj as any);
+    }
+    memoryDb.creators.push(createdCreatorObj as any);
   }
 
   const createdUser = await createUser({
@@ -872,12 +932,14 @@ export async function authenticateWithGoogle(params: {
     googleUid: verifiedGoogle.uid,
     authProvider: 'google',
     phone: cleanPhone,
-    role: 'buyer',
+    role: requestedRole === 'creator' ? 'creator' : 'buyer',
     avatar: finalAvatar,
     profileImage: null,
     governorate: cleanGovernorate,
     sellerId,
     sellerStatus: requestedRole === 'seller' ? 'pending' : undefined,
+    creatorId,
+    creatorStatus: requestedRole === 'creator' ? 'pending' : undefined,
     savedAddresses: []
   });
 
@@ -896,6 +958,13 @@ export async function authenticateWithGoogle(params: {
       userId,
       userName: verifiedGoogle.name,
       workshopName: cleanWorkshop,
+      governorate: cleanGovernorate,
+      isReapply: false
+    });
+  } else if (requestedRole === 'creator') {
+    await notifyAdminsOnCreatorRequest({
+      userId,
+      userName: verifiedGoogle.name,
       governorate: cleanGovernorate,
       isReapply: false
     });
@@ -920,6 +989,9 @@ export async function authenticateWithGoogle(params: {
         governorate: createdUser.governorate,
         sellerId: createdUser.sellerId,
         sellerStatus: createdUser.sellerStatus,
+        creatorId: createdUser.creatorId,
+        creatorStatus: createdUser.creatorStatus,
+        creator: createdCreatorObj,
         savedAddresses: createdUser.savedAddresses
       }
     }

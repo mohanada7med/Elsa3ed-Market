@@ -12,7 +12,8 @@ export interface UploadFileOptions {
   productId?: string;
   userId?: string;
   sellerId?: string;
-  role?: 'admin' | 'seller' | 'buyer' | string;
+  creatorId?: string;
+  role?: 'admin' | 'seller' | 'buyer' | 'creator' | string;
   ownerId?: string;
   customPublicId?: string;
   overwrite?: boolean;
@@ -30,7 +31,7 @@ export interface UploadResult {
 
 export interface IStorageProvider {
   upload(options: UploadFileOptions): Promise<UploadResult>;
-  delete(fileKey: string, requestingUser?: { id: string; role: string }): Promise<boolean>;
+  delete(fileKey: string, requestingUser?: { id: string; role: string; sellerId?: string; creatorId?: string }): Promise<boolean>;
   getUrl(fileKey: string): string;
 }
 
@@ -144,7 +145,7 @@ export class LocalStorageProvider implements IStorageProvider {
     }
   }
 
-  async delete(fileKey: string, requestingUser?: { id: string; role: string }): Promise<boolean> {
+  async delete(fileKey: string, requestingUser?: { id: string; role: string; sellerId?: string; creatorId?: string }): Promise<boolean> {
     // Sanitization against path traversal
     const sanitizedKey = path.normalize(fileKey).replace(/^(\.\.[\/\\])+/, '');
     if (sanitizedKey.includes('..')) {
@@ -155,8 +156,11 @@ export class LocalStorageProvider implements IStorageProvider {
     if (requestingUser && requestingUser.role !== 'admin') {
       const parts = sanitizedKey.split('/');
       const filename = parts[parts.length - 1];
-      if (!filename.startsWith(requestingUser.id)) {
-        throw new Error('غير مصرح لك بحذف ملفات لا تخص متجرك');
+      const allowedOwners = [requestingUser.id, requestingUser.sellerId, requestingUser.creatorId]
+        .filter(Boolean)
+        .map((id) => id!.replace(/[^a-zA-Z0-9_-]/g, ''));
+      if (!allowedOwners.some((ownerPrefix) => filename.startsWith(ownerPrefix) || sanitizedKey.includes(ownerPrefix))) {
+        throw new Error('غير مصرح لك بحذف ملفات لا تخص حسابك');
       }
     }
 
@@ -213,7 +217,7 @@ class DelegatingStorageProvider implements IStorageProvider {
     return await localStorageProvider.upload(options);
   }
 
-  async delete(fileKey: string, requestingUser?: { id: string; role: string }): Promise<boolean> {
+  async delete(fileKey: string, requestingUser?: { id: string; role: string; sellerId?: string; creatorId?: string }): Promise<boolean> {
     if (!fileKey) return false;
 
     if (fileKey.startsWith('WAH/') && isCloudinaryAvailable()) {

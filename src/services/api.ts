@@ -1032,6 +1032,7 @@ export const creatorApi = {
   }): Promise<Creator> {
     const res = await fetch(`${API_BASE}/creators/apply`, {
       method: 'POST',
+      credentials: 'include',
       headers: getAuthHeaders(user),
       body: JSON.stringify(data)
     });
@@ -1268,15 +1269,21 @@ export const creatorApi = {
     return true;
   },
 
-  // 23. Upload single image for Creator
-  async uploadCreatorImage(user: any, imageDataUri: string, filename?: string): Promise<{ url: string; fileKey: string }> {
+  // 23. Upload single image for Creator (defaults to creators folder, allows 'users' for applicant avatar)
+  async uploadCreatorImage(
+    user: any,
+    imageDataUri: string,
+    filename?: string,
+    folder: 'creators' | 'users' = 'creators'
+  ): Promise<{ url: string; fileKey: string }> {
     const res = await fetch(`${API_BASE}/upload`, {
       method: 'POST',
+      credentials: 'include',
       headers: getAuthHeaders(user),
       body: JSON.stringify({
         image: imageDataUri,
         filename,
-        folder: 'creators'
+        folder
       })
     });
     const json = await res.json();
@@ -3391,10 +3398,12 @@ export const api = {
     role?: 'buyer' | 'seller' | 'creator';
     phone?: string;
     governorate?: string;
+    city?: string;
     workshopName?: string;
     specialty?: string;
     bio?: string;
     specialties?: string[];
+    socialLinks?: Record<string, string>;
   }): Promise<{ user: any; token?: string; isNewUser?: boolean }> {
     const res = await fetch(`${API_BASE}/auth/google`, {
       method: 'POST',

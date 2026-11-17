@@ -56,7 +56,7 @@ export const PhotoUploadModal: React.FC<PhotoUploadModalProps> = ({
   onClose,
   onSuccess
 }) => {
-  const { currentUser } = useApp();
+  const { currentUser, addToast } = useApp();
 
   const [title, setTitle] = useState('');
   const [caption, setCaption] = useState('');
@@ -170,6 +170,7 @@ export const PhotoUploadModal: React.FC<PhotoUploadModalProps> = ({
       });
 
       setUploadProgress(100);
+      addToast('تم رفع الألبوم للمراجعة', 'سيظهر ألبوم الصور في المعرض العام فور اعتماده من الإدارة', 'success');
       onSuccess(newPhoto);
       onClose();
     } catch (err: any) {
@@ -191,7 +192,7 @@ export const PhotoUploadModal: React.FC<PhotoUploadModalProps> = ({
         {/* Header */}
         <div className="p-4 sm:p-6 border-b border-sand-200 dark:border-[#2C1A10] flex items-center justify-between bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent dark:from-[#2A160C] dark:via-[#1E110A] dark:to-[#1E110A]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-primary /10 dark:bg-primary /20 bg-primary hover:bg-primary-hover text-white flex items-center justify-center shadow-inner">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-primary/10 dark:bg-primary/20 text-primary flex items-center justify-center shadow-inner">
               <ImageIcon className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div>
@@ -199,8 +200,8 @@ export const PhotoUploadModal: React.FC<PhotoUploadModalProps> = ({
                 <h2 className="text-base sm:text-lg font-black text-espresso dark:text-cream">
                   نشر صور ومعارض تراثية جديدة
                 </h2>
-                <span className="px-2 py-0.5 rounded-full bg-primary  text-white text-[10px] font-bold">
-                  وه Gallery
+                <span className="px-2 py-0.5 rounded-full bg-primary text-white text-[10px] font-bold">
+                  معرض وه
                 </span>
               </div>
               <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
@@ -212,7 +213,7 @@ export const PhotoUploadModal: React.FC<PhotoUploadModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 rounded-full hover:bg-stone-100 dark:hover:bg-[#2C1A10] transition-colors"
+            className="p-2 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 rounded-full hover:bg-stone-100 dark:hover:bg-[#2C1A10] transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -236,7 +237,7 @@ export const PhotoUploadModal: React.FC<PhotoUploadModalProps> = ({
               </div>
               <div className="w-full bg-amber-200 dark:bg-amber-900 rounded-full h-2 overflow-hidden">
                 <div
-                  className="bg-primary  h-full transition-all duration-300 rounded-full"
+                  className="bg-primary h-full transition-all duration-300 rounded-full"
                   style={{ width: `${uploadProgress}%` }}
                 />
               </div>
@@ -254,7 +255,7 @@ export const PhotoUploadModal: React.FC<PhotoUploadModalProps> = ({
                 onClick={() => fileInputRef.current?.click()}
                 className="border-2 border-dashed border-stone-300 dark:border-[#382317] hover:border-[#E66A2E] dark:hover:border-[#E66A2E] rounded-2xl p-8 text-center cursor-pointer transition-colors bg-stone-50 dark:bg-[#160B05] hover:bg-stone-100/50 dark:hover:bg-[#201007]"
               >
-                <div className="w-14 h-14 rounded-2xl bg-amber-100 dark:bg-amber-950/60 bg-primary hover:bg-primary-hover text-white flex items-center justify-center mx-auto mb-3 shadow-sm">
+                <div className="w-14 h-14 rounded-2xl bg-amber-100 dark:bg-amber-950/60 text-primary flex items-center justify-center mx-auto mb-3 shadow-sm">
                   <Upload className="w-7 h-7" />
                 </div>
                 <div className="text-sm font-bold text-espresso dark:text-cream mb-1">
@@ -275,17 +276,18 @@ export const PhotoUploadModal: React.FC<PhotoUploadModalProps> = ({
                       <img
                         src={img.preview}
                         alt={`Preview ${idx + 1}`}
+                        referrerPolicy="no-referrer"
                         className="w-full h-full object-cover"
                       />
                       {idx === 0 && (
-                        <span className="absolute top-1.5 right-1.5 px-2 py-0.5 rounded-md bg-primary  text-white text-[9px] font-bold shadow">
+                        <span className="absolute top-1.5 right-1.5 px-2 py-0.5 rounded-md bg-primary text-white text-[9px] font-bold shadow">
                           الغلاف
                         </span>
                       )}
                       <button
                         type="button"
                         onClick={() => handleRemoveImage(idx)}
-                        className="absolute bottom-1.5 left-1.5 p-1.5 rounded-lg bg-black/60 text-white hover:bg-red-600 transition-colors opacity-90 group-hover:opacity-100"
+                        className="absolute bottom-1.5 left-1.5 p-1.5 rounded-lg bg-black/60 text-white hover:bg-red-600 transition-colors opacity-90 group-hover:opacity-100 cursor-pointer"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -296,7 +298,7 @@ export const PhotoUploadModal: React.FC<PhotoUploadModalProps> = ({
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="aspect-square rounded-xl border-2 border-dashed border-stone-300 dark:border-[#382317] hover:border-[#E66A2E] flex flex-col items-center justify-center gap-1.5 text-stone-500 hover:bg-primary hover:bg-primary-hover text-white bg-stone-50 dark:bg-[#160B05] transition-colors cursor-pointer"
+                      className="aspect-square rounded-xl border-2 border-dashed border-stone-300 dark:border-[#382317] hover:border-primary flex flex-col items-center justify-center gap-1.5 text-stone-500 hover:text-primary bg-stone-50 dark:bg-[#160B05] transition-colors cursor-pointer"
                     >
                       <Upload className="w-5 h-5" />
                       <span className="text-[11px] font-bold">إضافة صورة</span>

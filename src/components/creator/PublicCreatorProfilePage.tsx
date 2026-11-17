@@ -165,6 +165,16 @@ export const PublicCreatorProfilePage: React.FC<PublicCreatorProfilePageProps> =
     setTimeout(() => setIsCopiedShare(false), 2000);
   };
 
+  const handleOpenPhotoLightbox = (item: CreatorPhoto) => {
+    setSelectedPhoto(item);
+    setActivePhotoIdx(0);
+    creatorApi.viewCreatorPhoto(item.id).catch(() => {});
+    setPhotos((prev) =>
+      prev.map((p) => (p.id === item.id ? { ...p, viewsCount: (p.viewsCount || 0) + 1 } : p))
+    );
+    setStats((prev) => ({ ...prev, viewsCount: (prev.viewsCount || 0) + 1 }));
+  };
+
   const handleLikePhoto = async (photoId: string, e: React.MouseEvent) => {
     e.stopPropagation();
     try {
@@ -193,20 +203,29 @@ export const PublicCreatorProfilePage: React.FC<PublicCreatorProfilePageProps> =
     return (
       <div className="min-h-screen bg-sand-50 dark:bg-[#120904] flex items-center justify-center p-4 font-cairo" dir="rtl">
         <div className="max-w-md w-full bg-white dark:bg-[#1E110A] rounded-3xl p-8 text-center space-y-4 border border-sand-300 dark:border-[#382317] shadow-xl">
-          <div className="w-16 h-16 rounded-full bg-amber-100 dark:bg-amber-950/60 bg-primary hover:bg-primary-hover text-white flex items-center justify-center mx-auto">
+          <div className="w-16 h-16 rounded-full bg-primary/10 dark:bg-primary/20 text-primary flex items-center justify-center mx-auto">
             <Sparkles className="w-8 h-8" />
           </div>
           <h2 className="text-lg font-bold text-espresso dark:text-cream">صانع المحتوى غير متاح</h2>
           <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed">
             {error || 'لم نتمكن من العثور على هذا الحساب أو أنه قيد المراجعة حالياً.'}
           </p>
-          <button
-            type="button"
-            onClick={() => (onBack ? onBack() : setActivePage('home'))}
-            className="px-6 py-2.5 bg-primary  text-white rounded-xl text-xs font-bold shadow hover:bg-primary-hover transition-all cursor-pointer"
-          >
-            العودة للرئيسية
-          </button>
+          <div className="flex items-center justify-center gap-2">
+            <button
+              type="button"
+              onClick={() => (onBack ? onBack() : setActivePage('creators'))}
+              className="px-5 py-2.5 bg-primary text-white rounded-xl text-xs font-bold shadow hover:bg-primary-hover transition-all cursor-pointer"
+            >
+              تصفح صنّاع المحتوى
+            </button>
+            <button
+              type="button"
+              onClick={() => setActivePage('home')}
+              className="px-5 py-2.5 bg-stone-100 dark:bg-[#25150C] text-stone-700 dark:text-stone-300 rounded-xl text-xs font-bold hover:bg-stone-200 transition-all cursor-pointer"
+            >
+              الرئيسية
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -217,14 +236,24 @@ export const PublicCreatorProfilePage: React.FC<PublicCreatorProfilePageProps> =
       {/* Top Banner Navigation */}
       <div className="bg-white/80 dark:bg-[#1A0E08]/80 backdrop-blur-md sticky top-0 z-30 border-b border-sand-200 dark:border-[#2C1A10]">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-          <button
-            type="button"
-            onClick={() => (onBack ? onBack() : setActivePage('home'))}
-            className="flex items-center gap-1.5 text-xs font-bold text-stone-600 dark:text-stone-300 hover:bg-primary hover:bg-primary-hover text-white transition-colors cursor-pointer"
-          >
-            <ArrowRight className="w-4 h-4" />
-            <span>رجوع</span>
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => (onBack ? onBack() : setActivePage('creators'))}
+              className="flex items-center gap-1.5 text-xs font-bold text-stone-700 dark:text-stone-300 hover:text-primary transition-colors cursor-pointer"
+            >
+              <ArrowRight className="w-4 h-4" />
+              <span>رجوع</span>
+            </button>
+            <span className="text-stone-300 dark:text-stone-700">|</span>
+            <button
+              type="button"
+              onClick={() => setActivePage('creators')}
+              className="text-xs font-bold text-stone-500 hover:text-primary transition-colors cursor-pointer"
+            >
+              دليل صنّاع المحتوى
+            </button>
+          </div>
 
           <div className="flex items-center gap-2">
             <button
@@ -252,6 +281,7 @@ export const PublicCreatorProfilePage: React.FC<PublicCreatorProfilePageProps> =
                 <img
                   src={creator.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1788710904/user.jpg'}
                   alt={creator.name}
+                  referrerPolicy="no-referrer"
                   className="w-full h-full object-cover rounded-[22px] bg-white dark:bg-[#160B05]"
                 />
               </div>
@@ -284,7 +314,7 @@ export const PublicCreatorProfilePage: React.FC<PublicCreatorProfilePageProps> =
 
                   <div className="flex items-center justify-center sm:justify-start gap-3 text-xs text-stone-500 dark:text-stone-400 mt-1">
                     <span className="flex items-center gap-1">
-                      <MapPin className="w-3.5 h-3.5 bg-primary hover:bg-primary-hover text-white" />
+                      <MapPin className="w-3.5 h-3.5 text-primary" />
                       {creator.city ? `${creator.city}، ` : ''}
                       {creator.governorate}
                     </span>
@@ -411,7 +441,7 @@ export const PublicCreatorProfilePage: React.FC<PublicCreatorProfilePageProps> =
             type="button"
             onClick={() => setActiveTab('reels')}
             className={`flex items-center gap-2 px-6 py-2.5 rounded-2xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${activeTab === 'reels'
-              ? 'bg-primary  text-white shadow-md'
+              ? 'bg-primary text-white shadow-md'
               : 'text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-[#1C0E07]'
               }`}
           >
@@ -423,7 +453,7 @@ export const PublicCreatorProfilePage: React.FC<PublicCreatorProfilePageProps> =
             type="button"
             onClick={() => setActiveTab('photos')}
             className={`flex items-center gap-2 px-6 py-2.5 rounded-2xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${activeTab === 'photos'
-              ? 'bg-primary  text-white shadow-md'
+              ? 'bg-primary text-white shadow-md'
               : 'text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-[#1C0E07]'
               }`}
           >
@@ -461,6 +491,7 @@ export const PublicCreatorProfilePage: React.FC<PublicCreatorProfilePageProps> =
                     <img
                       src={reel.posterUrl || 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=800&q=80'}
                       alt={reel.title}
+                      referrerPolicy="no-referrer"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
 
@@ -474,7 +505,7 @@ export const PublicCreatorProfilePage: React.FC<PublicCreatorProfilePageProps> =
 
                     {/* Play icon overlay on hover */}
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <div className="w-12 h-12 rounded-full bg-primary  text-white flex items-center justify-center shadow-lg">
+                      <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center shadow-lg">
                         <Play className="w-5 h-5 fill-current ml-0.5" />
                       </div>
                     </div>
@@ -519,10 +550,7 @@ export const PublicCreatorProfilePage: React.FC<PublicCreatorProfilePageProps> =
                   <motion.div
                     key={item.id}
                     whileHover={{ y: -4 }}
-                    onClick={() => {
-                      setSelectedPhoto(item);
-                      setActivePhotoIdx(0);
-                    }}
+                    onClick={() => handleOpenPhotoLightbox(item)}
                     className="rounded-2xl overflow-hidden bg-white dark:bg-[#1C0E07] border border-sand-200 dark:border-[#382317] shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col"
                   >
                     {/* Cover image */}
@@ -530,6 +558,7 @@ export const PublicCreatorProfilePage: React.FC<PublicCreatorProfilePageProps> =
                       <img
                         src={item.images[0]}
                         alt={item.title}
+                        referrerPolicy="no-referrer"
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                       />
                       {item.images.length > 1 && (
@@ -538,7 +567,7 @@ export const PublicCreatorProfilePage: React.FC<PublicCreatorProfilePageProps> =
                           <span>+{item.images.length} صور</span>
                         </span>
                       )}
-                      <span className="absolute top-2 right-2 px-2 py-0.5 rounded-lg bg-primary  text-white text-[10px] font-bold shadow">
+                      <span className="absolute top-2 right-2 px-2 py-0.5 rounded-lg bg-primary text-white text-[10px] font-bold shadow">
                         {item.governorate}
                       </span>
                     </div>
@@ -564,7 +593,7 @@ export const PublicCreatorProfilePage: React.FC<PublicCreatorProfilePageProps> =
                         <button
                           type="button"
                           onClick={(e) => handleLikePhoto(item.id, e)}
-                          className="flex items-center gap-1 hover:text-red-500 transition-colors"
+                          className="flex items-center gap-1 hover:text-red-500 transition-colors cursor-pointer"
                         >
                           <Heart className="w-3.5 h-3.5 fill-red-500 text-red-500" />
                           <span>{(item.likesCount || 0).toLocaleString('ar-EG')}</span>
@@ -600,18 +629,19 @@ export const PublicCreatorProfilePage: React.FC<PublicCreatorProfilePageProps> =
                 <button
                   type="button"
                   onClick={() => setSelectedPhoto(null)}
-                  className="p-1.5 rounded-full hover:bg-white/10 text-white/80 hover:text-white transition-colors"
+                  className="p-1.5 rounded-full hover:bg-white/10 text-white/80 hover:text-white transition-colors cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               {/* Main Image Viewer */}
-              <div className="relative flex-1 bg-black flex items-center justify-center overflow-hidden min-h-[300px] sm:min-h-[460px]">
+              <div className="relative flex-1 bg-black flex items-center justify-center overflow-hidden min-h-[280px] sm:min-h-[420px]">
                 <img
                   src={selectedPhoto.images[activePhotoIdx]}
                   alt={`${selectedPhoto.title} - ${activePhotoIdx + 1}`}
-                  className="max-h-[60vh] max-w-full object-contain"
+                  referrerPolicy="no-referrer"
+                  className="max-h-[58vh] max-w-full object-contain"
                 />
 
                 {/* Left/Right Carousel buttons */}
@@ -624,7 +654,7 @@ export const PublicCreatorProfilePage: React.FC<PublicCreatorProfilePageProps> =
                           prev > 0 ? prev - 1 : selectedPhoto.images.length - 1
                         )
                       }
-                      className="absolute right-3 p-2 rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors"
+                      className="absolute right-3 p-2 rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors cursor-pointer"
                     >
                       <ChevronRight className="w-6 h-6" />
                     </button>
@@ -635,13 +665,38 @@ export const PublicCreatorProfilePage: React.FC<PublicCreatorProfilePageProps> =
                           prev < selectedPhoto.images.length - 1 ? prev + 1 : 0
                         )
                       }
-                      className="absolute left-3 p-2 rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors"
+                      className="absolute left-3 p-2 rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors cursor-pointer"
                     >
                       <ChevronLeft className="w-6 h-6" />
                     </button>
                   </>
                 )}
               </div>
+
+              {/* Thumbnail Strip for multi-image albums */}
+              {selectedPhoto.images.length > 1 && (
+                <div className="px-4 py-2 bg-black/70 border-t border-white/10 flex items-center gap-2 overflow-x-auto no-scrollbar shrink-0">
+                  {selectedPhoto.images.map((thumbUrl, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setActivePhotoIdx(idx)}
+                      className={`w-12 h-12 rounded-lg overflow-hidden shrink-0 border-2 transition-all cursor-pointer ${
+                        idx === activePhotoIdx
+                          ? 'border-primary scale-105'
+                          : 'border-transparent opacity-60 hover:opacity-100'
+                      }`}
+                    >
+                      <img
+                        src={thumbUrl}
+                        alt={`thumb-${idx}`}
+                        referrerPolicy="no-referrer"
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
 
               {/* Bottom Caption & Details */}
               <div className="p-4 bg-stone-900/90 border-t border-white/10 text-white space-y-2 shrink-0">
@@ -651,7 +706,7 @@ export const PublicCreatorProfilePage: React.FC<PublicCreatorProfilePageProps> =
                 <div className="flex items-center justify-between text-xs text-stone-400 pt-1">
                   <div className="flex items-center gap-3">
                     <span className="flex items-center gap-1">
-                      <MapPin className="w-3.5 h-3.5 bg-primary hover:bg-primary-hover text-white" />
+                      <MapPin className="w-3.5 h-3.5 text-primary" />
                       {selectedPhoto.location || selectedPhoto.governorate}
                     </span>
                     <span>•</span>

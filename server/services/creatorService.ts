@@ -202,7 +202,7 @@ export async function applyForCreator(
 /**
  * Notify all admins of a new creator application
  */
-async function notifyAdminsOnCreatorRequest(params: {
+export async function notifyAdminsOnCreatorRequest(params: {
   userId: string;
   userName: string;
   governorate: string;
@@ -235,6 +235,54 @@ async function notifyAdminsOnCreatorRequest(params: {
     }
   } catch (err) {
     Logger.warn('[CreatorService] Failed to notify admins of creator request:', err);
+  }
+}
+
+/**
+ * Notify all admins when a creator submits or resubmits content for moderation
+ */
+export async function notifyAdminsOnPendingContent(params: {
+  contentType: 'reel' | 'photo';
+  contentId: string;
+  title: string;
+  creatorName: string;
+  creatorId: string;
+  isResubmit?: boolean;
+}) {
+  try {
+    const { db, isMongo } = await getDatabase();
+    let adminUsers: any[] = [];
+    if (isMongo && db) {
+      adminUsers = await db.collection('users').find({ role: 'admin' }).toArray();
+    } else {
+      adminUsers = memoryDb.users.filter((u) => u.role === 'admin');
+    }
+
+    const isReel = params.contentType === 'reel';
+    const notifTitle = params.isResubmit
+      ? isReel ? 'إعادة مراجعة فيديو ريلز معدّل' : 'إعادة مراجعة معرض صور معدّل'
+      : isReel ? 'فيديو ريلز جديد بانتظار الاعتماد' : 'معرض صور جديد بانتظار الاعتماد';
+    const notifMsg = isReel
+      ? `أرسل صانع المحتوى "${params.creatorName}" فيديو "${params.title}" للمراجعة والاعتماد.`
+      : `أرسل صانع المحتوى "${params.creatorName}" معرض صور "${params.title}" للمراجعة والاعتماد.`;
+
+    for (const admin of adminUsers) {
+      await createNotification({
+        userId: admin.id,
+        recipientRole: 'admin',
+        title: notifTitle,
+        message: notifMsg,
+        type: 'system_alert',
+        actionPage: 'admin-creators',
+        metadata: {
+          contentType: params.contentType,
+          contentId: params.contentId,
+          creatorId: params.creatorId
+        }
+      }).catch(() => {});
+    }
+  } catch (err) {
+    Logger.warn('[CreatorService] Failed to notify admins of pending creator content:', err);
   }
 }
 
@@ -761,6 +809,17 @@ export async function createCreatorPhoto(
     details: `تم إضافة معرض الصور "${newPhoto.title}" بواسطة ${user.name} بالحالة (${initialStatus})`
   });
 
+  if (initialStatus === 'pending') {
+    await notifyAdminsOnPendingContent({
+      contentType: 'photo',
+      contentId: photoId,
+      title: newPhoto.title,
+      creatorName: user.name,
+      creatorId,
+      isResubmit: false
+    });
+  }
+
   return newPhoto;
 }
 
@@ -822,6 +881,17 @@ export async function updateCreatorPhoto(
     await db.collection('creator_photos').updateOne({ id: photoId }, { $set: updatePayload });
   }
   Object.assign(photo, updatePayload);
+
+  if (user.role !== 'admin' && updatePayload.status === 'pending') {
+    await notifyAdminsOnPendingContent({
+      contentType: 'photo',
+      contentId: photoId,
+      title: photo.title,
+      creatorName: user.name,
+      creatorId,
+      isResubmit: true
+    });
+  }
 
   return photo;
 }

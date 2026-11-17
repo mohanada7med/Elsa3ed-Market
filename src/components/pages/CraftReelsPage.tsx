@@ -141,6 +141,7 @@ const ReelCard = memo(function ReelCard({
         alt={reel.title}
         loading="lazy"
         decoding="async"
+        referrerPolicy="no-referrer"
         className="h-full w-full object-cover transition-opacity duration-300 group-hover:opacity-90"
       />
 
@@ -222,14 +223,16 @@ interface PermissionState {
   isOpen: boolean;
   title: string;
   message: string;
-  type: 'unauthenticated' | 'buyer';
+  type: 'unauthenticated' | 'buyer' | 'unapproved_creator';
 }
 
 const PermissionModal: React.FC<{
   state: PermissionState;
   onClose: () => void;
   onLogin: () => void;
-}> = ({ state, onClose, onLogin }) => (
+  onApplyCreator: () => void;
+  onOpenCreatorDashboard: () => void;
+}> = ({ state, onClose, onLogin, onApplyCreator, onOpenCreatorDashboard }) => (
   <AnimatePresence>
     {state.isOpen && (
       <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4">
@@ -246,7 +249,7 @@ const PermissionModal: React.FC<{
             <button
               type="button"
               onClick={onClose}
-              className="rounded-full p-2 text-black/50 hover:bg-black/5 dark:text-white/50 dark:hover:bg-white/5"
+              className="rounded-full p-2 text-black/50 hover:bg-black/5 dark:text-white/50 dark:hover:bg-white/5 cursor-pointer"
             >
               <X className="h-5 w-5" />
             </button>
@@ -265,7 +268,7 @@ const PermissionModal: React.FC<{
                 <button
                   type="button"
                   onClick={onLogin}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#6B3A1F] px-4 py-3 text-sm font-bold text-[#FFF9EE]"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#6B3A1F] px-4 py-3 text-sm font-bold text-[#FFF9EE] cursor-pointer"
                 >
                   <LogIn className="h-4 w-4" />
                   تسجيل الدخول
@@ -273,19 +276,47 @@ const PermissionModal: React.FC<{
                 <button
                   type="button"
                   onClick={onClose}
-                  className="rounded-xl bg-black/5 px-4 py-3 text-xs font-bold text-black/70 dark:bg-white/5 dark:text-white/70"
+                  className="rounded-xl bg-black/5 px-4 py-3 text-xs font-bold text-black/70 dark:bg-white/5 dark:text-white/70 cursor-pointer"
+                >
+                  إلغاء
+                </button>
+              </>
+            ) : state.type === 'buyer' ? (
+              <>
+                <button
+                  type="button"
+                  onClick={onApplyCreator}
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary hover:bg-primary-hover px-4 py-3 text-sm font-bold text-white cursor-pointer"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  انضم كصانع محتوى
+                </button>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="rounded-xl bg-black/5 px-4 py-3 text-xs font-bold text-black/70 dark:bg-white/5 dark:text-white/70 cursor-pointer"
                 >
                   إلغاء
                 </button>
               </>
             ) : (
-              <button
-                type="button"
-                onClick={onClose}
-                className="w-full rounded-xl bg-[#6B3A1F] px-4 py-3 text-sm font-bold text-[#FFF9EE]"
-              >
-                فهمت
-              </button>
+              <>
+                <button
+                  type="button"
+                  onClick={onOpenCreatorDashboard}
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary hover:bg-primary-hover px-4 py-3 text-sm font-bold text-white cursor-pointer"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  متابعة حالة الحساب
+                </button>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="rounded-xl bg-black/5 px-4 py-3 text-xs font-bold text-black/70 dark:bg-white/5 dark:text-white/70 cursor-pointer"
+                >
+                  فهمت
+                </button>
+              </>
             )}
           </div>
         </motion.div>
@@ -305,11 +336,13 @@ export const CraftReelsPage: React.FC = () => {
     addToast,
     navigateToProduct,
     navigateToSeller,
+    navigateToCreator,
     currentUser,
     isAuthenticated,
     setIsAuthModalOpen,
     setAuthModalTab,
     setPostLoginRedirect,
+    setIsCreatorApplyModalOpen,
     sellerProducts,
     sellers,
     confirmModal
@@ -562,7 +595,7 @@ export const CraftReelsPage: React.FC = () => {
         isOpen: true,
         title: 'سجّل الدخول لنشر حكايتك',
         message:
-          'نشر حكايات الصعيد متاح للمستخدمين والبائعين المسجلين. سجّل الدخول أو أنشئ حساباً جديداً.',
+          'نشر حكايات الصعيد متاح لصنّاع المحتوى والورش المعتمدة. سجّل الدخول أو أنشئ حساباً جديداً.',
         type: 'unauthenticated'
       });
       return;
@@ -570,10 +603,27 @@ export const CraftReelsPage: React.FC = () => {
     if (currentUser.role === 'buyer') {
       setPermissionAlert({
         isOpen: true,
-        title: 'النشر للشركاء والبائعين',
+        title: 'النشر لصنّاع المحتوى والورش',
         message:
-          'حسابك الحالي مسجل كـ "مشتري". قدّم على صلاحية النشر أو رقّ حسابك لتنشر حكايتك.',
+          'حسابك الحالي مسجل كـ "مشتري". يمكنك الانضمام كصانع محتوى في وه لنشر فيديوهات الريلز ومعارض الصور التراثية مجاناً.',
         type: 'buyer'
+      });
+      return;
+    }
+    if (currentUser.role === 'creator' && currentUser.creatorStatus !== 'approved') {
+      setPermissionAlert({
+        isOpen: true,
+        title:
+          currentUser.creatorStatus === 'rejected'
+            ? 'طلب الانضمام يحتاج لتعديل'
+            : currentUser.creatorStatus === 'suspended'
+              ? 'حساب صانع المحتوى موقوف مؤقتاً'
+              : 'حسابك قيد المراجعة الإدارية',
+        message:
+          currentUser.creatorStatus === 'rejected'
+            ? 'يمكنك تعديل بيانات طلبك وإعادة التقديم من لوحة صانع المحتوى.'
+            : 'ستتمكن من رفع ونشر الريلز فور اعتماد حسابك من إدارة منصة وه.',
+        type: 'unapproved_creator'
       });
       return;
     }
@@ -603,7 +653,15 @@ export const CraftReelsPage: React.FC = () => {
         onClose={() => setIsUploadModalOpen(false)}
         onSuccess={(newReel: CraftReel) => {
           loadReelsFromDb();
-          addToast('تم نشر الفيديو', `تم نشر "${newReel.title}" وأصبح متاحاً للجمهور`, 'success');
+          if (currentUser?.role === 'creator') {
+            addToast(
+              'تم إرسال الفيديو للمراجعة',
+              `تم استلام "${newReel.title}" بنجاح وسيظهر للجمهور فور اعتماده من الإدارة`,
+              'success'
+            );
+          } else {
+            addToast('تم نشر الفيديو', `تم نشر "${newReel.title}" وأصبح متاحاً للجمهور`, 'success');
+          }
         }}
         sellerId={currentUser?.sellerId || currentUser?.id}
         sellerName={currentUser?.name || 'ورشة الحرف التراثية'}
@@ -623,14 +681,31 @@ export const CraftReelsPage: React.FC = () => {
           setAuthModalTab('login');
           setIsAuthModalOpen(true);
         }}
+        onApplyCreator={() => {
+          closePermission();
+          setIsCreatorApplyModalOpen(true);
+        }}
+        onOpenCreatorDashboard={() => {
+          closePermission();
+          setActivePage('creator-dashboard');
+        }}
       />
       <ReelEditModal
         isOpen={Boolean(reelBeingEdited)}
         onClose={() => setReelBeingEdited(null)}
         reel={reelBeingEdited}
         onSuccess={(updatedReel) => {
-          setReels((current) => current.map((reel) => reel.id === updatedReel.id ? updatedReel : reel));
-          addToast('تم تحديث الفيديو', `تم تعديل بيانات الفيديو "${updatedReel.title}" وحفظها`, 'success');
+          if (currentUser?.role === 'creator') {
+            setReels((current) => current.filter((reel) => reel.id !== updatedReel.id));
+            addToast(
+              'تم تحديث الفيديو وإرساله للمراجعة',
+              `تم حفظ تعديلات "${updatedReel.title}" وإعادة إرساله للمراجعة الإدارية`,
+              'info'
+            );
+          } else {
+            setReels((current) => current.map((reel) => reel.id === updatedReel.id ? updatedReel : reel));
+            addToast('تم تحديث الفيديو', `تم تعديل بيانات الفيديو "${updatedReel.title}" وحفظها`, 'success');
+          }
         }}
         currentUser={currentUser}
         sellerProducts={sellerProducts}
@@ -721,8 +796,19 @@ export const CraftReelsPage: React.FC = () => {
               initialReelId={feedInitialId}
               onSelectProduct={navigateToProduct}
               onSelectSeller={navigateToSeller}
+              onSelectCreator={(cid) => {
+                backToGrid();
+                navigateToCreator(cid);
+              }}
               onEditReel={(reel) => {
-                if (currentUser?.role === 'admin') setReelBeingEdited(reel);
+                const isCreatorOwner =
+                  currentUser?.role === 'creator' &&
+                  currentUser?.creatorStatus === 'approved' &&
+                  reel.creatorId &&
+                  (currentUser.id === reel.creatorId || (currentUser as any).creatorId === reel.creatorId);
+                if (currentUser?.role === 'admin' || isCreatorOwner) {
+                  setReelBeingEdited(reel);
+                }
               }}
               onDeleteReel={(id) => setReels((prev) => prev.filter((r) => r.id !== id))}
               onClose={backToGrid}
@@ -798,6 +884,15 @@ export const CraftReelsPage: React.FC = () => {
             >
               <Plus size={14} />
               <span>شارك حكايتك</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActivePage('creators')}
+              className="flex items-center gap-1.5 rounded-xl border border-primary/25 bg-primary/10 hover:bg-primary/15 text-primary px-3.5 py-2 text-xs font-bold transition-all cursor-pointer"
+            >
+              <Sparkles size={14} />
+              <span>دليل صنّاع المحتوى</span>
             </button>
           </div>
         </div>

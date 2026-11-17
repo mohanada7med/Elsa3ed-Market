@@ -274,10 +274,10 @@ export function requireBuyer(req: AuthenticatedRequest, res: Response, next: Nex
     });
   }
 
-  if (req.user.role !== 'buyer') {
+  if (req.user.role !== 'buyer' && req.user.role !== 'creator') {
     return res.status(403).json({
       success: false,
-      error: 'معلش، السلة وإتمام الطلبات مخصصة لحسابات المشترين بس',
+      error: 'معلش، السلة وإتمام الطلبات مخصصة لحسابات المشترين وصناع المحتوى بس',
       code: 'FORBIDDEN_BUYER_ONLY'
     });
   }
@@ -464,6 +464,53 @@ export async function requireCreator(req: AuthenticatedRequest, res: Response, n
       error: 'هذه الميزة مخصصة لصناع المحتوى المعتمدين في منصة وه فقط',
       code: 'FORBIDDEN_CREATOR_ONLY',
       creatorStatus
+    });
+  }
+
+  next();
+}
+
+export async function requireCreatorAccount(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  if (!req.user || !req.user.id) {
+    return res.status(401).json({
+      success: false,
+      error: 'سجّل دخولك بحساب صانع محتوى عشان تقدر تكمل',
+      code: 'UNAUTHORIZED'
+    });
+  }
+
+  if (req.user.role === 'admin') {
+    return next();
+  }
+
+  let creatorDoc = req.user.creator;
+  if (!creatorDoc) {
+    const { db, isMongo } = await getDatabase();
+    const creatorId = req.user.creatorId || req.user.id;
+    if (isMongo && db) {
+      try {
+        creatorDoc = await db.collection('creators').findOne({
+          $or: [{ id: creatorId }, { userId: req.user.id }]
+        });
+      } catch (e) {
+        console.error('[requireCreatorAccount] MongoDB lookup error:', e);
+      }
+    }
+    if (!creatorDoc) {
+      creatorDoc = memoryDb.creators.find((c: any) => c.id === creatorId || c.userId === req.user!.id);
+    }
+    if (creatorDoc) {
+      req.user.creator = creatorDoc;
+      req.user.creatorId = creatorDoc.id;
+      req.user.creatorStatus = creatorDoc.status;
+    }
+  }
+
+  if (req.user.role !== 'creator' && !creatorDoc) {
+    return res.status(403).json({
+      success: false,
+      error: 'هذا القسم مخصص لحسابات صناع المحتوى في منصة وه فقط',
+      code: 'FORBIDDEN_CREATOR_ACCOUNT_ONLY'
     });
   }
 

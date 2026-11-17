@@ -6,6 +6,7 @@ import { ReelProductPill } from './ReelProductPill.tsx';
 interface ReelInfoSectionProps {
   reel: CraftReel;
   onSelectSeller?: (sellerId: string) => void;
+  onSelectCreator?: (creatorId: string) => void;
   onSelectProduct?: (productId: string) => void;
   onCloseParent?: () => void;
 }
@@ -25,6 +26,7 @@ const CONTENT_TYPE_LABELS: Record<string, string> = {
 
 export const ReelInfoSection: React.FC<ReelInfoSectionProps> = ({
   reel,
+  onSelectCreator,
   onSelectProduct,
   onCloseParent
 }) => {
@@ -36,6 +38,8 @@ export const ReelInfoSection: React.FC<ReelInfoSectionProps> = ({
     'اكتشف الصعيد';
 
   const displayLocation = reel.location || reel.governorate || 'الصعيد';
+  const creatorDisplayName = reel.creatorName || reel.artisanName;
+  const creatorAvatarUrl = reel.creatorAvatar || reel.artisanAvatar;
 
   const hasLongDescription =
     (reel.description && reel.description.length > 90) ||
@@ -54,7 +58,37 @@ export const ReelInfoSection: React.FC<ReelInfoSectionProps> = ({
       onClick={(e) => e.stopPropagation()}
       dir="rtl"
     >
-      {/* 1. Location and Category Meta Bar (No public creator identity) */}
+      {/* 0. Creator Attribution Badge (if published by a Content Creator) */}
+      {reel.creatorId && creatorDisplayName && (
+        <div>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onCloseParent?.();
+              onSelectCreator?.(reel.creatorId!);
+            }}
+            className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-black/75 hover:bg-black/90 sm:backdrop-blur-md border border-amber-400/35 text-white text-[11px] font-bold shadow-md transition-all cursor-pointer active:scale-95"
+          >
+            {creatorAvatarUrl ? (
+              <img
+                src={creatorAvatarUrl}
+                alt={creatorDisplayName}
+                referrerPolicy="no-referrer"
+                className="w-5 h-5 rounded-full object-cover border border-amber-400/60 shrink-0"
+              />
+            ) : (
+              <span className="w-5 h-5 rounded-full bg-primary text-white text-[10px] font-black flex items-center justify-center shrink-0">
+                {creatorDisplayName.charAt(0)}
+              </span>
+            )}
+            <span className="truncate max-w-[160px]">{creatorDisplayName}</span>
+            <span className="text-[9px] text-amber-300 font-extrabold">• صانع محتوى</span>
+          </button>
+        </div>
+      )}
+
+      {/* 1. Location and Category Meta Bar */}
       <div className="flex items-center gap-2 flex-wrap">
         {displayLocation && (
           <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/75 sm:backdrop-blur-md border border-white/20 text-[11px] font-bold text-[#d5a56d] shadow-md shrink-0">

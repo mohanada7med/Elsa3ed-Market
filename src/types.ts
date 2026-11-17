@@ -590,6 +590,7 @@ export type ActivePage =
   | 'wholesale'
   | 'crafts'
   | 'reels'
+  | 'creators'
   | 'search'
   | 'cart'
   | 'checkout'
@@ -1493,7 +1494,7 @@ export interface ReportTicket {
   userName: string;
   userEmail?: string;
   userPhone: string;
-  userRole: 'buyer' | 'seller' | 'admin' | 'guest';
+  userRole: 'buyer' | 'seller' | 'admin' | 'creator' | 'guest';
   userGovernorate?: string;
   category: ReportCategory;
   priority: ReportPriority;

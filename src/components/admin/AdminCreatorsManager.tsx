@@ -42,7 +42,7 @@ interface AdminCreatorsManagerProps {
 export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
   onNavigateToPublicProfile
 }) => {
-  const { currentUser, confirmModal, addToast, setActivePage } = useApp();
+  const { currentUser, confirmModal, addToast, navigateToCreator } = useApp();
 
   // Sub-tabs: 'creators' (applications/accounts) vs 'moderation' (pending content)
   const [activeSubTab, setActiveSubTab] = useState<'creators' | 'moderation'>('creators');
@@ -60,13 +60,13 @@ export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
   const [contentFilterType, setContentFilterType] = useState<'all' | 'reels' | 'photos'>('all');
 
   // Selected for action / modal
-  const [selectedCreator, setSelectedCreator] = useState<Creator | null>(null);
   const [rejectionModal, setRejectionModal] = useState<{
     type: 'creator' | 'reel' | 'photo';
     id: string;
     title: string;
   } | null>(null);
   const [rejectionReason, setRejectionReason] = useState('');
+  const [rejectionError, setRejectionError] = useState<string | null>(null);
   const [isSubmittingRejection, setIsSubmittingRejection] = useState(false);
 
   // Media Previews
@@ -126,7 +126,7 @@ export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
           setCreators((prev) => prev.map((c) => (c.id === creator.id ? updated : c)));
           if (addToast) addToast('تم الاعتماد', `تم اعتماد حساب "${creator.name}" بنجاح`, 'success');
         } catch (err: any) {
-          alert(err.message || 'فشل اعتماد الحساب');
+          addToast('تعذر الاعتماد', err?.message || 'فشل اعتماد الحساب', 'error');
         }
       }
     });
@@ -148,7 +148,7 @@ export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
         );
       }
     } catch (err: any) {
-      alert(err.message || 'فشل تعديل شارة التوثيق');
+      addToast('تعذر تعديل التوثيق', err?.message || 'فشل تعديل شارة التوثيق', 'error');
     }
   };
 
@@ -184,7 +184,7 @@ export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
             );
           }
         } catch (err: any) {
-          alert(err.message || 'فشل تحديث حالة الحساب');
+          addToast('تعذر تحديث الحالة', err?.message || 'فشل تحديث حالة الحساب', 'error');
         }
       }
     });
@@ -209,7 +209,7 @@ export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
           }
           if (addToast) addToast('تم الاعتماد', `تم اعتماد ونشر "${title}" في المنصة بنجاح`, 'success');
         } catch (err: any) {
-          alert(err.message || 'فشل اعتماد المحتوى');
+          addToast('تعذر الاعتماد', err?.message || 'فشل اعتماد المحتوى', 'error');
         }
       }
     });
@@ -220,10 +220,11 @@ export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
     e.preventDefault();
     if (!rejectionModal) return;
     if (!rejectionReason.trim()) {
-      alert('يرجى توضيح سبب الرفض باللغة العربية لإرشاد المستخدم');
+      setRejectionError('يرجى توضيح سبب الرفض باللغة العربية لإرشاد المستخدم');
       return;
     }
 
+    setRejectionError(null);
     setIsSubmittingRejection(true);
     try {
       if (rejectionModal.type === 'creator') {
@@ -245,8 +246,9 @@ export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
       if (addToast) addToast('تم الرفض', `تم رفض الطلب وإرسال سبب الرفض إلى صاحب الحساب`, 'info');
       setRejectionModal(null);
       setRejectionReason('');
+      setRejectionError(null);
     } catch (err: any) {
-      alert(err.message || 'فشل رفض الطلب');
+      addToast('تعذر تنفيذ الرفض', err?.message || 'فشل رفض الطلب', 'error');
     } finally {
       setIsSubmittingRejection(false);
     }
@@ -260,7 +262,7 @@ export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
       {/* Top Header Card */}
       <div className="rounded-3xl bg-white dark:bg-[#1C0E07] border border-sand-200 dark:border-[#382317] p-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-primary /10 dark:bg-primary /20 bg-primary hover:bg-primary-hover text-white flex items-center justify-center shadow-inner">
+          <div className="w-12 h-12 rounded-2xl bg-primary/10 dark:bg-primary/20 text-primary flex items-center justify-center shadow-inner">
             <Sparkles className="w-6 h-6" />
           </div>
           <div>
@@ -279,13 +281,13 @@ export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
             type="button"
             onClick={() => setActiveSubTab('creators')}
             className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeSubTab === 'creators'
-              ? 'bg-primary  text-white shadow'
+              ? 'bg-primary text-white shadow'
               : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
               }`}
           >
             <span>طلبات وحسابات الصناع</span>
             {pendingCreatorsCount > 0 && (
-              <span className="px-1.5 py-0.5 rounded-full bg-primary hover:bg-primary-hover text-white text-[10px] font-black">
+              <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-black ${activeSubTab === 'creators' ? 'bg-white/25 text-white' : 'bg-primary text-white'}`}>
                 {pendingCreatorsCount}
               </span>
             )}
@@ -295,7 +297,7 @@ export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
             type="button"
             onClick={() => setActiveSubTab('moderation')}
             className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeSubTab === 'moderation'
-              ? 'bg-primary  text-white shadow'
+              ? 'bg-primary text-white shadow'
               : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
               }`}
           >
@@ -328,7 +330,7 @@ export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
                   type="button"
                   onClick={() => setCreatorFilter(f.id as any)}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${creatorFilter === f.id
-                    ? 'bg-primary  text-white shadow-sm'
+                    ? 'bg-primary text-white shadow-sm'
                     : 'text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-[#25150C]'
                     }`}
                 >
@@ -383,6 +385,7 @@ export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
                             <img
                               src={c.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1788710904/user.jpg'}
                               alt={c.name}
+                              referrerPolicy="no-referrer"
                               className="w-10 h-10 rounded-xl object-cover border border-stone-200 dark:border-[#382317] shrink-0"
                             />
                             <div>
@@ -397,6 +400,11 @@ export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
                               <p className="text-[11px] text-stone-400 line-clamp-1 max-w-xs mt-0.5">
                                 {c.bio}
                               </p>
+                              {c.status === 'rejected' && c.rejectionReason && (
+                                <p className="text-[10px] text-rose-500 line-clamp-1 max-w-xs mt-0.5">
+                                  سبب الرفض: {c.rejectionReason}
+                                </p>
+                              )}
                             </div>
                           </div>
                         </td>
@@ -465,7 +473,7 @@ export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
 
                         <td className="py-3 px-4 text-left">
                           <div className="flex items-center justify-end gap-1.5">
-                            {c.status === 'pending' && (
+                            {(c.status === 'pending' || c.status === 'rejected') && (
                               <>
                                 <button
                                   type="button"
@@ -474,19 +482,23 @@ export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
                                 >
                                   اعتماد
                                 </button>
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    setRejectionModal({
-                                      type: 'creator',
-                                      id: c.id,
-                                      title: c.name
-                                    })
-                                  }
-                                  className="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-bold shadow-sm cursor-pointer"
-                                >
-                                  رفض
-                                </button>
+                                {c.status === 'pending' && (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setRejectionError(null);
+                                      setRejectionReason('');
+                                      setRejectionModal({
+                                        type: 'creator',
+                                        id: c.id,
+                                        title: c.name
+                                      });
+                                    }}
+                                    className="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-bold shadow-sm cursor-pointer"
+                                  >
+                                    رفض
+                                  </button>
+                                )}
                               </>
                             )}
 
@@ -494,7 +506,7 @@ export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
                               <button
                                 type="button"
                                 onClick={() => handleToggleSuspension(c)}
-                                className="px-2 py-1 rounded-lg bg-stone-100 dark:bg-[#25150C] hover:bg-red-50 hover:text-red-600 text-stone-600 dark:text-stone-300 text-[10px] font-medium"
+                                className="px-2 py-1 rounded-lg bg-stone-100 dark:bg-[#25150C] hover:bg-red-50 hover:text-red-600 text-stone-600 dark:text-stone-300 text-[10px] font-medium cursor-pointer"
                                 title="تجميد الحساب"
                               >
                                 تجميد
@@ -505,7 +517,7 @@ export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
                               <button
                                 type="button"
                                 onClick={() => handleToggleSuspension(c)}
-                                className="px-2.5 py-1 rounded-lg bg-emerald-600 text-white text-[11px] font-bold"
+                                className="px-2.5 py-1 rounded-lg bg-emerald-600 text-white text-[11px] font-bold cursor-pointer"
                               >
                                 تنشيط
                               </button>
@@ -517,10 +529,10 @@ export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
                                 if (onNavigateToPublicProfile) {
                                   onNavigateToPublicProfile(c.id);
                                 } else {
-                                  setActivePage('creator-public-profile');
+                                  navigateToCreator(c.id);
                                 }
                               }}
-                              className="p-1 rounded-lg text-stone-400 hover:text-stone-700 dark:hover:text-stone-200"
+                              className="p-1 rounded-lg text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 cursor-pointer"
                               title="معاينة الصفحة العامة"
                             >
                               <ExternalLink className="w-3.5 h-3.5" />
@@ -540,15 +552,15 @@ export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
       {/* SUBTAB 2: CONTENT MODERATION (PENDING REELS & PHOTOS) */}
       {activeSubTab === 'moderation' && (
         <div className="space-y-6">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold text-espresso dark:text-cream">تصفية نوع المحتوى:</span>
               <div className="flex items-center gap-1 bg-white dark:bg-[#1C0E07] p-1 rounded-xl border border-sand-200 dark:border-[#382317]">
                 <button
                   type="button"
                   onClick={() => setContentFilterType('all')}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold ${contentFilterType === 'all'
-                    ? 'bg-primary  text-white'
+                  className={`px-3 py-1 rounded-lg text-xs font-bold cursor-pointer ${contentFilterType === 'all'
+                    ? 'bg-primary text-white'
                     : 'text-stone-600 dark:text-stone-400'
                     }`}
                 >
@@ -557,8 +569,8 @@ export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
                 <button
                   type="button"
                   onClick={() => setContentFilterType('reels')}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold ${contentFilterType === 'reels'
-                    ? 'bg-primary  text-white'
+                  className={`px-3 py-1 rounded-lg text-xs font-bold cursor-pointer ${contentFilterType === 'reels'
+                    ? 'bg-primary text-white'
                     : 'text-stone-600 dark:text-stone-400'
                     }`}
                 >
@@ -567,8 +579,8 @@ export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
                 <button
                   type="button"
                   onClick={() => setContentFilterType('photos')}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold ${contentFilterType === 'photos'
-                    ? 'bg-primary  text-white'
+                  className={`px-3 py-1 rounded-lg text-xs font-bold cursor-pointer ${contentFilterType === 'photos'
+                    ? 'bg-primary text-white'
                     : 'text-stone-600 dark:text-stone-400'
                     }`}
                 >
@@ -615,6 +627,7 @@ export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
                         <img
                           src={reel.posterUrl || 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=800&q=80'}
                           alt={reel.title}
+                          referrerPolicy="no-referrer"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                         />
                         <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity">
@@ -646,7 +659,7 @@ export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
 
                         <div className="text-[10px] text-stone-500 flex items-center gap-2 pt-1">
                           <span className="flex items-center gap-1">
-                            <MapPin className="w-3 h-3 bg-primary hover:bg-primary-hover text-white" />
+                            <MapPin className="w-3 h-3 text-primary" />
                             {reel.governorate}
                           </span>
                           <span>•</span>
@@ -659,13 +672,15 @@ export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
                     <div className="pt-3 border-t border-stone-100 dark:border-[#2C1A10] flex items-center justify-end gap-2">
                       <button
                         type="button"
-                        onClick={() =>
+                        onClick={() => {
+                          setRejectionError(null);
+                          setRejectionReason('');
                           setRejectionModal({
                             type: 'reel',
                             id: reel.id,
                             title: reel.title
-                          })
-                        }
+                          });
+                        }}
                         className="px-4 py-1.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 text-xs font-bold transition-colors cursor-pointer"
                       >
                         رفض مع السبب
@@ -700,6 +715,7 @@ export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
                         <img
                           src={photo.images[0]}
                           alt={photo.title}
+                          referrerPolicy="no-referrer"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                         />
                         {photo.images.length > 1 && (
@@ -731,7 +747,7 @@ export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
 
                         <div className="text-[10px] text-stone-500 flex items-center gap-2 pt-1">
                           <span className="flex items-center gap-1">
-                            <MapPin className="w-3 h-3 bg-primary hover:bg-primary-hover text-white" />
+                            <MapPin className="w-3 h-3 text-primary" />
                             {photo.governorate}
                           </span>
                           <span>•</span>
@@ -744,13 +760,15 @@ export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
                     <div className="pt-3 border-t border-stone-100 dark:border-[#2C1A10] flex items-center justify-end gap-2">
                       <button
                         type="button"
-                        onClick={() =>
+                        onClick={() => {
+                          setRejectionError(null);
+                          setRejectionReason('');
                           setRejectionModal({
                             type: 'photo',
                             id: photo.id,
                             title: photo.title
-                          })
-                        }
+                          });
+                        }}
                         className="px-4 py-1.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 text-xs font-bold transition-colors cursor-pointer"
                       >
                         رفض مع السبب
@@ -804,17 +822,28 @@ export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
                 <textarea
                   rows={4}
                   value={rejectionReason}
-                  onChange={(e) => setRejectionReason(e.target.value)}
+                  onChange={(e) => {
+                    setRejectionReason(e.target.value);
+                    if (rejectionError) setRejectionError(null);
+                  }}
                   placeholder="مثال: يرجى تحسين جودة الصوت في الفيديو، أو تصوير زاوية أوضح، أو التأكد من مطابقة المعروض للهوية الصعيدية..."
                   required
                   className="w-full p-3 rounded-xl border border-stone-200 dark:border-[#382317] bg-stone-50 dark:bg-[#160B05] text-espresso dark:text-cream text-xs focus:outline-none focus:ring-2 focus:ring-rose-500 resize-none leading-relaxed"
                 />
+                {rejectionError && (
+                  <p className="text-xs text-rose-600 dark:text-rose-400 font-bold">
+                    {rejectionError}
+                  </p>
+                )}
 
                 <div className="flex items-center justify-end gap-2 pt-2">
                   <button
                     type="button"
-                    onClick={() => setRejectionModal(null)}
-                    className="px-4 py-2 rounded-xl border border-stone-200 dark:border-[#382317] text-stone-600 text-xs font-bold"
+                    onClick={() => {
+                      setRejectionModal(null);
+                      setRejectionError(null);
+                    }}
+                    className="px-4 py-2 rounded-xl border border-stone-200 dark:border-[#382317] text-stone-600 text-xs font-bold cursor-pointer"
                   >
                     إلغاء
                   </button>
@@ -845,9 +874,10 @@ export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
               <button
                 type="button"
                 onClick={() => setPreviewReel(null)}
+                aria-label="إغلاق المعاينة"
                 className="absolute top-3 right-3 z-20 p-2 rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors cursor-pointer"
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
               <video
                 src={previewReel.videoUrl}
@@ -877,16 +907,18 @@ export const AdminCreatorsManager: React.FC<AdminCreatorsManagerProps> = ({
                 <button
                   type="button"
                   onClick={() => setPreviewPhoto(null)}
-                  className="p-1 rounded-full hover:bg-white/10 text-white/80"
+                  aria-label="إغلاق المعاينة"
+                  className="p-1.5 rounded-full hover:bg-white/10 text-white/80 cursor-pointer"
                 >
-                  ✕
+                  <X className="w-4 h-4" />
                 </button>
               </div>
 
               <div className="relative flex-1 bg-black flex items-center justify-center min-h-[300px]">
                 <img
                   src={previewPhoto.images[previewPhotoIdx]}
-                  alt="Preview"
+                  alt={previewPhoto.title}
+                  referrerPolicy="no-referrer"
                   className="max-h-[60vh] max-w-full object-contain"
                 />
 

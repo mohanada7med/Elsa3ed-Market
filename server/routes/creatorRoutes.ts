@@ -1,6 +1,6 @@
 import express from 'express';
 import type { Response } from 'express';
-import { requireAuth, requireCreator } from '../middleware/auth.ts';
+import { requireAuth, requireCreator, requireCreatorAccount } from '../middleware/auth.ts';
 import type { AuthenticatedRequest } from '../middleware/auth.ts';
 import {
   applyForCreator,
@@ -98,7 +98,7 @@ router.post('/apply', requireAuth, async (req: AuthenticatedRequest, res: Respon
  * GET /api/creators/me
  * Get current authenticated creator profile
  */
-router.get('/me', requireCreator, async (req: AuthenticatedRequest, res: Response) => {
+router.get('/me', requireCreatorAccount, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const user = req.user!;
     const creator = await getCreatorProfile(user.creatorId || user.id);
@@ -127,7 +127,7 @@ router.get('/me', requireCreator, async (req: AuthenticatedRequest, res: Respons
  * PUT /api/creators/me
  * Update creator profile details
  */
-router.put('/me', requireCreator, async (req: AuthenticatedRequest, res: Response) => {
+router.put('/me', requireCreatorAccount, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const user = req.user!;
     const updated = await updateCreatorProfile(user, req.body);
@@ -149,7 +149,7 @@ router.put('/me', requireCreator, async (req: AuthenticatedRequest, res: Respons
  * GET /api/creators/my-reels
  * Get creator's own reels (including draft, pending, approved, rejected)
  */
-router.get('/my-reels', requireCreator, async (req: AuthenticatedRequest, res: Response) => {
+router.get('/my-reels', requireCreatorAccount, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const user = req.user!;
     const creatorId = user.creatorId || user.id;
@@ -197,7 +197,7 @@ router.get('/my-reels', requireCreator, async (req: AuthenticatedRequest, res: R
  * GET /api/creators/my-photos
  * Get creator's own photos (all statuses)
  */
-router.get('/my-photos', requireCreator, async (req: AuthenticatedRequest, res: Response) => {
+router.get('/my-photos', requireCreatorAccount, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const user = req.user!;
     const creatorId = user.creatorId || user.id;

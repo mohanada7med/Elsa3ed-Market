@@ -12,6 +12,7 @@ import { WahOnboardingExperience } from './components/layout/WahOnboardingExperi
 import { CartDrawer } from './components/cart/CartDrawer';
 import { AuthModal } from './components/auth/AuthModal';
 import { ForceChangePasswordModal } from './components/auth/ForceChangePasswordModal';
+import { CreatorApplicationModal } from './components/creator/CreatorApplicationModal';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { updatePageSEO, generateBreadcrumbSchema } from './utils/seo';
 import { MobileBottomBar } from './components/layout/MobileBottomBar';
@@ -150,6 +151,9 @@ const CreatorDashboard = lazyWithRetry(() =>
 const PublicCreatorProfilePage = lazyWithRetry(() =>
   import('./components/creator/PublicCreatorProfilePage').then((m) => ({ default: m.PublicCreatorProfilePage }))
 );
+const CreatorsGalleryPage = lazyWithRetry(() =>
+  import('./components/creator/CreatorsGalleryPage').then((m) => ({ default: m.CreatorsGalleryPage }))
+);
 
 const SkeletonBlock: React.FC<{ className: string }> = ({ className }) => (
   <div aria-hidden="true" className={`skeleton-pulse ${className}`} />
@@ -171,6 +175,7 @@ const LazySectionFallback: React.FC = () => {
     'sellers',
     'favorites',
     'reels',
+    'creators',
   ].includes(activePage);
   const isDetail = [
     'product-details',
@@ -289,6 +294,8 @@ const MainContent: React.FC = () => {
     setIsAuthModalOpen,
     setAuthModalTab,
     setPostLoginRedirect,
+    isCreatorApplyModalOpen,
+    setIsCreatorApplyModalOpen,
   } = useApp();
 
   const selectedProduct = products.find((p) => p.id === selectedProductId);
@@ -456,6 +463,13 @@ const MainContent: React.FC = () => {
           schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'الشروط والأحكام' }])
         });
         break;
+      case 'creators':
+        updatePageSEO({
+          title: 'دليل صنّاع المحتوى والمعارض التراثية | وه',
+          description: 'تعرّف على صنّاع المحتوى والمصورين الموثقين في صعيد مصر وتصفح معارض الصور التراثية والحكايات المصورة.',
+          schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'صنّاع المحتوى' }])
+        });
+        break;
       case 'creator-public-profile':
         updatePageSEO({
           title: 'صانع محتوى صعيدي | وه',
@@ -481,7 +495,7 @@ const MainContent: React.FC = () => {
   const isProtectedRoute =
     activePage.startsWith('admin') ||
     activePage.startsWith('seller') ||
-    (activePage.startsWith('creator') && activePage !== 'creator-public-profile') ||
+    (activePage.startsWith('creator-') && activePage !== 'creator-public-profile') ||
     activePage === 'buyer-account' ||
     activePage === 'profile';
 
@@ -782,12 +796,19 @@ const MainContent: React.FC = () => {
                 )
               )}
 
+              {/* Creators Directory & Heritage Photo Galleries */}
+              {activePage === 'creators' && (
+                <React.Suspense fallback={<LazySectionFallback />}>
+                  <CreatorsGalleryPage />
+                </React.Suspense>
+              )}
+
               {/* Public Creator Profile */}
               {activePage === 'creator-public-profile' && (
                 <React.Suspense fallback={<LazySectionFallback />}>
                   <PublicCreatorProfilePage
                     creatorId={selectedCreatorId || (currentUser?.role === 'creator' ? ((currentUser as any).creatorId || currentUser.id) : '')}
-                    onBack={() => setActivePage('home')}
+                    onBack={() => setActivePage('creators')}
                   />
                 </React.Suspense>
               )}
@@ -813,7 +834,7 @@ const MainContent: React.FC = () => {
                   </React.Suspense>
                 ) : (
                   <div className="max-w-md mx-auto my-16 p-8 bg-white/80 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 shadow-xl text-center space-y-4" dir="rtl">
-                    <div className="w-16 h-16 rounded-2xl bg-primary /15 text-[#E66A2E] flex items-center justify-center mx-auto text-2xl border border-[#E66A2E]/20">
+                    <div className="w-16 h-16 rounded-2xl bg-primary/15 text-[#E66A2E] flex items-center justify-center mx-auto text-2xl border border-[#E66A2E]/20">
                       ✨
                     </div>
                     <h2 className="text-xl font-bold text-espresso dark:text-cream">لوحة تحكم صناع المحتوى</h2>
@@ -828,7 +849,7 @@ const MainContent: React.FC = () => {
                           setAuthModalTab('login');
                           setIsAuthModalOpen(true);
                         }}
-                        className="w-full py-3.5 bg-primary  text-white hover:bg-primary-hover font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
+                        className="w-full py-3.5 bg-primary text-white hover:bg-primary-hover font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
                       >
                         تسجيل دخول صانع المحتوى
                       </button>
@@ -836,7 +857,7 @@ const MainContent: React.FC = () => {
                         type="button"
                         onClick={() => {
                           if (isAuthenticated) {
-                            setActivePage('creator-dashboard');
+                            setIsCreatorApplyModalOpen(true);
                           } else {
                             setPostLoginRedirect('creator-dashboard');
                             setAuthModalTab('register');
@@ -932,8 +953,12 @@ const MainContent: React.FC = () => {
       <MobileBottomBar />
 
       {/* Global Modals & Drawers */}
-      {(currentRole === 'buyer' || !isAuthenticated) && <CartDrawer />}
+      {(currentRole === 'buyer' || currentRole === 'creator' || !isAuthenticated) && <CartDrawer />}
       <AuthModal />
+      <CreatorApplicationModal
+        isOpen={isCreatorApplyModalOpen}
+        onClose={() => setIsCreatorApplyModalOpen(false)}
+      />
       <ForceChangePasswordModal />
       <IntroExperience />
       <WahOnboardingExperience />

@@ -44,6 +44,7 @@ import {
   ArrowUpLeft,
   Loader2,
   Tag,
+  Camera,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -410,6 +411,13 @@ const WAH_PORTALS_PREVIEW: Record<string, PortalPreviewItem> = {
     badge: 'حكايات عم وه',
     accentColor: '#C99444',
   },
+  creators: {
+    title: 'عم وه مع عدسة الصعيد',
+    desc: 'اتعرف على صنّاع المحتوى والمصورين الموثقين وتصفح معارض الصور التراثية من كل محافظات الصعيد.',
+    avatar: '/mascot/reels.png',
+    badge: 'عدسة وه',
+    accentColor: '#E66A2E',
+  },
   sellers: {
     title: 'عم وه عند أهل الصنعة',
     desc: 'جولة بين ورش وحرفيي الصعيد، نشوف الصنعة وهي بتتعمل ونسمع حكاية كل صاحب حرفة.',
@@ -460,6 +468,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
     setIsAuthModalOpen,
     setAuthModalTab,
     setPostLoginRedirect,
+    setIsCreatorApplyModalOpen,
     setShowIntroVideo,
     theme,
     toggleTheme,
@@ -618,7 +627,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
   const isAdmin = currentRole === 'admin' || currentUser?.role === 'admin';
   const isSeller = currentRole === 'seller' || currentUser?.role === 'seller';
   const isCreator = currentRole === 'creator' || currentUser?.role === 'creator';
-  const isStaff = isSeller || isAdmin || isCreator;
+  const isShopBlockedStaff = isSeller || isAdmin;
 
   useEffect(() => {
     const handleClickOutside = (event: PointerEvent) => {
@@ -713,13 +722,14 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
       { id: 'food', label: 'طعم الصعيد (المطبخ الأصيل)', shortLabel: 'طعم الصعيد', icon: UtensilsCrossed },
       { id: 'events', label: 'مواسم وليالي الصعيد', shortLabel: 'ليالي ومواسم', icon: Calendar },
       { id: 'reels', label: 'ريلز وه', shortLabel: 'ريلز وه', isNew: true, icon: Film },
+      { id: 'creators', label: 'صنّاع المحتوى والصور', shortLabel: 'صنّاع المحتوى', isNew: true, icon: Camera },
       { id: 'sellers', label: 'شيوخ الصنعة والورش', shortLabel: 'ورش الصنعة', icon: Store },
       { id: 'categories', label: 'التصنيفات التراثية', shortLabel: 'التصنيفات', icon: Layers },
       { id: 'quize', label: 'انت صعيدى ؟ (لعبة اللهجة)', shortLabel: 'انت صعيدى؟', isNew: true, icon: Flame },
       { id: 'help', label: 'مضايفة وه (المساعدة والتواصل)', shortLabel: 'المساعدة', icon: Headphones },
     ];
 
-    if (isAuthenticated && currentRole === 'buyer') {
+    if (isAuthenticated && (currentRole === 'buyer' || currentRole === 'creator')) {
       links.push({ id: 'cart', label: 'السلة' });
       links.push({ id: 'orders', label: 'طلباتي' });
     }
@@ -802,9 +812,9 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
           {
             id: 'heritage',
             title: 'تراث وحكايات الصعيد',
-            description: 'الأكل والمواسم والحكايات',
+            description: 'الأكل والمواسم والحكايات والصور',
             icon: Landmark,
-            items: ['food', 'events', 'reels'],
+            items: ['food', 'events', 'reels', 'creators'],
           },
           {
             id: 'wah-market',
@@ -1040,6 +1050,30 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
           badge: null,
         },
         {
+          id: 'creators',
+          label: 'دليل صنّاع المحتوى',
+          icon: Camera,
+          badge: null,
+        },
+        {
+          id: 'orders',
+          label: 'طلباتي ومشترياتي',
+          icon: ClipboardList,
+          badge: null,
+        },
+        {
+          id: 'favorites',
+          label: 'المفضلة',
+          icon: Heart,
+          badge: favorites.length > 0 ? (favorites.length > 99 ? '99+' : favorites.length) : null,
+        },
+        {
+          id: 'buyer-account',
+          label: 'حسابي والعناوين',
+          icon: User,
+          badge: null,
+        },
+        {
           id: 'notifications',
           label: 'الإشعارات',
           icon: Bell,
@@ -1057,10 +1091,16 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
         badge: null,
       },
       {
-        id: 'creator-dashboard',
+        id: 'apply-creator',
         label: 'انضم كصانع محتوى في وه',
         icon: Sparkles,
         badge: 'جديد',
+      },
+      {
+        id: 'creators',
+        label: 'دليل صنّاع المحتوى',
+        icon: Camera,
+        badge: null,
       },
       {
         id: 'orders',
@@ -1420,7 +1460,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               {isDark ? <Sun size={18} className="text-primary-hover" /> : <Moon size={18} />}
             </button>
 
-            {!isStaff && (
+            {!isShopBlockedStaff && (
               <button
                 type="button"
                 onClick={handleFavoritesClick}
@@ -1431,7 +1471,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               >
                 <Heart size={18} />
                 {favorites.length > 0 && (
-                  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold bg-primary  text-white">
+                  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold bg-primary text-white">
                     {favorites.length > 99 ? '99+' : favorites.length}
                   </span>
                 )}
@@ -1448,7 +1488,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               >
                 <MessageCircle size={18} />
                 {chatUnreadCount > 0 && (
-                  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold bg-primary  text-white">
+                  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold bg-primary text-white">
                     {chatUnreadCount > 99 ? '99+' : chatUnreadCount}
                   </span>
                 )}
@@ -1465,7 +1505,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               />
             )}
 
-            {!isStaff && (
+            {!isShopBlockedStaff && (
               <button
                 type="button"
                 onClick={() => setIsCartDrawerOpen(true)}
@@ -1475,7 +1515,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               >
                 <ShoppingBag size={18} />
                 {cartCount > 0 && (
-                  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold bg-primary  text-white">
+                  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold bg-primary text-white">
                     {cartCount > 99 ? '99+' : cartCount}
                   </span>
                 )}
@@ -1497,7 +1537,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     color: mainText,
                   }}
                 >
-                  <img src={profileImage} alt={displayName} className="h-9.5 w-9.5 rounded-full object-cover ring-2 ring-primary/40" />
+                  <img src={profileImage} alt={displayName} referrerPolicy="no-referrer" className="h-9.5 w-9.5 rounded-full object-cover ring-2 ring-primary/40" />
                   <div className="flex flex-col text-right leading-tight">
                     <span className="max-w-[110px] truncate text-sm font-black">{displayName}</span>
                     <span className="text-[10px] font-semibold opacity-70" style={{ color: secondaryText }}>
@@ -1529,7 +1569,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         className="flex items-center gap-3.5 p-3.5 rounded-xl cursor-pointer hover:bg-primary/5 border-b"
                         style={{ borderColor }}
                       >
-                        <img src={profileImage} alt={displayName} className="h-11 w-11 rounded-full object-cover ring-2 ring-primary/30" />
+                        <img src={profileImage} alt={displayName} referrerPolicy="no-referrer" className="h-11 w-11 rounded-full object-cover ring-2 ring-primary/30" />
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-black">{displayName}</p>
                           <p className="text-xs font-semibold opacity-70" style={{ color: secondaryText }}>
@@ -1545,8 +1585,17 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                           return (
                             <a
                               key={item.id}
-                              href={PAGE_ROUTES[item.id as ActivePage] || `/${item.id}`}
-                              onClick={(event) => navigateFromLink(event, item.id)}
+                              href={item.id === 'apply-creator' ? '#apply-creator' : (PAGE_ROUTES[item.id as ActivePage] || `/${item.id}`)}
+                              onClick={(event) => {
+                                if (item.id === 'apply-creator') {
+                                  event.preventDefault();
+                                  setUserDropdownOpen(false);
+                                  setIsProfileMenuOpen(false);
+                                  setIsCreatorApplyModalOpen(true);
+                                  return;
+                                }
+                                navigateFromLink(event, item.id);
+                              }}
                               className="flex w-full items-center justify-between px-3.5 py-2 text-sm font-bold rounded-xl cursor-pointer transition-colors"
                               style={{
                                 backgroundColor: isActive
@@ -1566,7 +1615,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                 <span>{item.label}</span>
                               </div>
                               {item.badge && (
-                                <span className="flex h-4.5 min-w-4.5 items-center justify-center rounded-full px-1.5 text-[10px] font-bold bg-primary  text-white">
+                                <span className="flex h-4.5 min-w-4.5 items-center justify-center rounded-full px-1.5 text-[10px] font-bold bg-primary text-white">
                                   {item.badge}
                                 </span>
                               )}
@@ -1690,7 +1739,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
 
           {/* الجانب الأيسر: المظهر والمفضلة والسلة والحساب */}
           <div className="relative flex items-center gap-1 sm:gap-1.5 z-50">
-            {!isStaff && (
+            {!isShopBlockedStaff && (
               <button
                 type="button"
                 onClick={handleFavoritesClick}
@@ -1702,7 +1751,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 <Heart size={18} />
 
                 {favorites.length > 0 && (
-                  <span className="absolute -right-0.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full px-1 text-[8px] font-bold bg-primary  text-white">
+                  <span className="absolute -right-0.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full px-1 text-[8px] font-bold bg-primary text-white">
                     {favorites.length > 99 ? '99+' : favorites.length}
                   </span>
                 )}
@@ -1732,6 +1781,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     <img
                       src={profileImage}
                       alt={displayName}
+                      referrerPolicy="no-referrer"
                       className="h-full w-full object-cover"
                     />
                   </button>
@@ -1762,7 +1812,9 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                             ? 'مدير النظام'
                             : isSeller
                               ? 'بائع'
-                              : 'مشتري'}
+                              : isCreator
+                                ? 'صانع محتوى'
+                                : 'مشتري'}
                         </p>
                       </div>
 
@@ -1774,8 +1826,17 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                           return (
                             <a
                               key={item.id}
-                              href={PAGE_ROUTES[item.id as ActivePage] || `/${item.id}`}
-                              onClick={(event) => navigateFromLink(event, item.id)}
+                              href={item.id === 'apply-creator' ? '#apply-creator' : (PAGE_ROUTES[item.id as ActivePage] || `/${item.id}`)}
+                              onClick={(event) => {
+                                if (item.id === 'apply-creator') {
+                                  event.preventDefault();
+                                  setIsProfileMenuOpen(false);
+                                  setUserDropdownOpen(false);
+                                  setIsCreatorApplyModalOpen(true);
+                                  return;
+                                }
+                                navigateFromLink(event, item.id);
+                              }}
                               className="flex w-full items-center justify-between px-4 py-2.5 text-sm font-semibold transition-colors cursor-pointer"
                               style={{
                                 backgroundColor: isActive
@@ -1795,7 +1856,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                 <span>{item.label}</span>
                               </div>
                               {item.badge && (
-                                <span className="flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold bg-primary  text-white">
+                                <span className="flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold bg-primary text-white">
                                   {item.badge}
                                 </span>
                               )}
@@ -2307,6 +2368,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   <img
                     src={profileImage}
                     alt={displayName}
+                    referrerPolicy="no-referrer"
                     className="h-12 w-12 rounded-xl border-2 border-[#C99444]/50 object-cover"
                   />
 
@@ -2321,7 +2383,9 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         ? 'مدير النظام'
                         : isSeller
                           ? 'صاحب ورشة'
-                          : 'عضو في مجتمع وَه'}
+                          : isCreator
+                            ? 'صانع محتوى'
+                            : 'عضو في مجتمع وَه'}
                     </p>
                   </div>
 

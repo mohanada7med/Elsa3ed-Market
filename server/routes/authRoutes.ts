@@ -264,7 +264,19 @@ router.post('/login', async (req: Request, res: Response) => {
 // POST /api/auth/google (Unified Google Sign-In & Sign-Up via verified Firebase ID Token)
 router.post('/google', async (req: Request, res: Response) => {
   try {
-    const { idToken, mode, role, phone, governorate, workshopName, specialty } = req.body || {};
+    const {
+      idToken,
+      mode,
+      role,
+      phone,
+      governorate,
+      workshopName,
+      specialty,
+      bio,
+      city,
+      specialties,
+      socialLinks
+    } = req.body || {};
 
     if (!idToken || typeof idToken !== 'string' || !idToken.trim()) {
       return res.status(400).json({
@@ -276,11 +288,15 @@ router.post('/google', async (req: Request, res: Response) => {
     const result = await authenticateWithGoogle({
       idToken: idToken.trim(),
       mode: mode === 'register' ? 'register' : 'login',
-      role: role === 'seller' ? 'seller' : 'buyer',
+      role: role === 'seller' ? 'seller' : role === 'creator' ? 'creator' : 'buyer',
       phone: typeof phone === 'string' ? phone : undefined,
       governorate: typeof governorate === 'string' ? governorate : undefined,
       workshopName: typeof workshopName === 'string' ? workshopName : undefined,
-      specialty: typeof specialty === 'string' ? specialty : undefined
+      specialty: typeof specialty === 'string' ? specialty : undefined,
+      bio: typeof bio === 'string' ? bio : undefined,
+      city: typeof city === 'string' ? city : undefined,
+      specialties: Array.isArray(specialties) ? specialties : undefined,
+      socialLinks: typeof socialLinks === 'object' && socialLinks !== null ? socialLinks : undefined
     });
 
     setAuthCookie(res, result.session.token);
@@ -289,7 +305,9 @@ router.post('/google', async (req: Request, res: Response) => {
       success: true,
       isNewUser: result.isNewUser,
       message: result.isNewUser
-        ? (result.session.user.sellerStatus === 'pending'
+        ? (result.session.user.creatorStatus === 'pending'
+          ? 'تم تقديم طلب الانضمام كصانع محتوى عبر Google بنجاح، وهو قيد المراجعة والاعتماد'
+          : result.session.user.sellerStatus === 'pending'
           ? 'تم تسجيل حساب الورشة عبر Google بنجاح، وهو قيد المراجعة والاعتماد'
           : 'تم إنشاء حسابك عبر Google بنجاح')
         : 'تم تسجيل الدخول عبر Google بنجاح',
@@ -299,10 +317,10 @@ router.post('/google', async (req: Request, res: Response) => {
       }
     });
   } catch (error: any) {
-    if (error?.code === 'SELLER_DETAILS_REQUIRED') {
+    if (error?.code === 'SELLER_DETAILS_REQUIRED' || error?.code === 'CREATOR_DETAILS_REQUIRED') {
       return res.status(422).json({
         success: false,
-        code: 'SELLER_DETAILS_REQUIRED',
+        code: error.code,
         googleProfile: error.googleProfile,
         error: error.message
       });
@@ -695,7 +713,7 @@ router.post('/profile/image', uploadLimiter, requireAuth, async (req: Authentica
       });
     }
 
-    // 4. If user is a seller, also update avatar in sellers collection for consistency
+    // 4. If user is a seller or creator, also update avatar in respective collection for consistency
     if (req.user!.role === 'seller') {
       const { db, isMongo } = await getDatabase();
       const sellerId = req.user!.sellerId || req.user!.id;
@@ -705,6 +723,17 @@ router.post('/profile/image', uploadLimiter, requireAuth, async (req: Authentica
           { $set: { avatar: result.url, updatedAt: new Date().toISOString() } }
         ).catch(() => { });
       }
+    } else if (req.user!.role === 'creator' || req.user!.creatorId) {
+      const { db, isMongo } = await getDatabase();
+      const creatorId = req.user!.creatorId || req.user!.id;
+      if (isMongo && db) {
+        await db.collection('creators').updateOne(
+          { $or: [{ id: creatorId }, { userId: userId }] },
+          { $set: { avatar: result.url, updatedAt: new Date().toISOString() } }
+        ).catch(() => { });
+      }
+      const memCreator = memoryDb.creators.find((c: any) => c.id === creatorId || c.userId === userId);
+      if (memCreator) memCreator.avatar = result.url;
     }
 
     const { passwordHash, ...sanitized } = updated;
@@ -759,7 +788,7 @@ router.delete('/profile/image', requireAuth, async (req: AuthenticatedRequest, r
       avatar: defaultAvatar
     });
 
-    // If seller, sync default avatar in sellers collection
+    // If seller or creator, sync default avatar in respective collection
     if (req.user!.role === 'seller') {
       const { db, isMongo } = await getDatabase();
       const sellerId = req.user!.sellerId || req.user!.id;
@@ -769,6 +798,17 @@ router.delete('/profile/image', requireAuth, async (req: AuthenticatedRequest, r
           { $set: { avatar: defaultAvatar, updatedAt: new Date().toISOString() } }
         ).catch(() => { });
       }
+    } else if (req.user!.role === 'creator' || req.user!.creatorId) {
+      const { db, isMongo } = await getDatabase();
+      const creatorId = req.user!.creatorId || req.user!.id;
+      if (isMongo && db) {
+        await db.collection('creators').updateOne(
+          { $or: [{ id: creatorId }, { userId: userId }] },
+          { $set: { avatar: defaultAvatar, updatedAt: new Date().toISOString() } }
+        ).catch(() => { });
+      }
+      const memCreator = memoryDb.creators.find((c: any) => c.id === creatorId || c.userId === userId);
+      if (memCreator) memCreator.avatar = defaultAvatar;
     }
 
     const { passwordHash, ...sanitized } = (updated || currentUserDoc);
