@@ -26,6 +26,7 @@ import {
   UserRound,
   KeyRound,
   Info,
+  Sparkles,
 } from 'lucide-react';
 
 /* =========================================================
