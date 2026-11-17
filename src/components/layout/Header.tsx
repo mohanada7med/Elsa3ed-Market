@@ -418,6 +418,13 @@ const WAH_PORTALS_PREVIEW: Record<string, PortalPreviewItem> = {
     badge: 'عدسة وه',
     accentColor: '#E66A2E',
   },
+  'creators-photos': {
+    title: 'معرض صور الصعيد',
+    desc: 'جولة بصرية مصوّرة لقرى الصعيد ومعالمه وحرفه وأهله بعدسة صنّاع المحتوى المعتمدين.',
+    avatar: '/mascot/reels.png',
+    badge: 'صور الصعيد',
+    accentColor: '#C99444',
+  },
   sellers: {
     title: 'عم وه عند أهل الصنعة',
     desc: 'جولة بين ورش وحرفيي الصعيد، نشوف الصنعة وهي بتتعمل ونسمع حكاية كل صاحب حرفة.',
@@ -520,6 +527,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
     navigateToProduct,
     navigateToSeller,
     navigateToCreator,
+    navigateToCreatorsGallery,
     navigateToGovernorate,
     navigateToPlace,
     navigateToFood,
@@ -780,7 +788,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
       { id: 'food', label: 'طعم الصعيد (المطبخ الأصيل)', shortLabel: 'طعم الصعيد', icon: UtensilsCrossed },
       { id: 'events', label: 'مواسم وليالي الصعيد', shortLabel: 'ليالي ومواسم', icon: Calendar },
       { id: 'reels', label: 'ريلز وه', shortLabel: 'ريلز وه', isNew: true, icon: Film },
-      { id: 'creators', label: 'صنّاع المحتوى والصور', shortLabel: 'صنّاع المحتوى', isNew: true, icon: Camera },
+      { id: 'creators', label: 'صنّاع المحتوى', shortLabel: 'صنّاع المحتوى', isNew: true, icon: Camera },
+      { id: 'creators-photos', label: 'معرض صور الصعيد', shortLabel: 'صور الصعيد', isNew: true, icon: ImageIcon },
       { id: 'sellers', label: 'شيوخ الصنعة والورش', shortLabel: 'ورش الصنعة', icon: Store },
       { id: 'categories', label: 'التصنيفات التراثية', shortLabel: 'التصنيفات', icon: Layers },
       { id: 'quize', label: 'انت صعيدى ؟ (لعبة اللهجة)', shortLabel: 'انت صعيدى؟', isNew: true, icon: Flame },
@@ -904,7 +913,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               title: 'تراث وحكايات الصعيد',
               description: 'الأكل والمواسم والحكايات والصور',
               icon: Landmark,
-              items: ['food', 'events', 'reels', 'creators'],
+              items: ['food', 'events', 'reels', 'creators', 'creators-photos'],
             },
             {
               id: 'wah-market',
@@ -938,6 +947,20 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
   const navigate = useCallback(
     (page: string) => {
       const cleanPage = page.startsWith('/') ? page.slice(1) : page;
+      if (cleanPage === 'creators-photos') {
+        navigateToCreatorsGallery('photos');
+        setMobileMenuOpen(false);
+        setUserDropdownOpen(false);
+        setIsProfileMenuOpen(false);
+        return;
+      }
+      if (cleanPage === 'creators') {
+        navigateToCreatorsGallery('creators');
+        setMobileMenuOpen(false);
+        setUserDropdownOpen(false);
+        setIsProfileMenuOpen(false);
+        return;
+      }
       if (cleanPage === 'creator-public-profile' && isCreator) {
         const ownCreatorId = (currentUser as any)?.creatorId || currentUser?.id;
         if (ownCreatorId) {
@@ -953,7 +976,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
       setUserDropdownOpen(false);
       setIsProfileMenuOpen(false);
     },
-    [setActivePage, isCreator, currentUser, navigateToCreator]
+    [setActivePage, isCreator, currentUser, navigateToCreator, navigateToCreatorsGallery]
   );
 
   const navigateFromLink = useCallback(

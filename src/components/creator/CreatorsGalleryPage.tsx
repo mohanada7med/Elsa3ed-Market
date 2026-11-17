@@ -58,10 +58,25 @@ export const CreatorsGalleryPage: React.FC = () => {
     setActivePage,
     setIsCreatorApplyModalOpen,
     setIsAuthModalOpen,
-    setAuthModalTab
+    setAuthModalTab,
+    creatorsGalleryTab,
+    setCreatorsGalleryTab
   } = useApp();
 
-  const [activeView, setActiveView] = useState<'creators' | 'photos'>('creators');
+  const [activeView, setActiveView] = useState<'creators' | 'photos'>(creatorsGalleryTab || 'creators');
+
+  useEffect(() => {
+    setActiveView(creatorsGalleryTab || 'creators');
+  }, [creatorsGalleryTab]);
+
+  const handleSwitchView = (view: 'creators' | 'photos') => {
+    setActiveView(view);
+    setCreatorsGalleryTab(view);
+    try {
+      const targetUrl = view === 'photos' ? '/creators?tab=photos' : '/creators';
+      window.history.replaceState({ page: 'creators', tab: view }, '', targetUrl);
+    } catch { }
+  };
 
   // Creators Directory State
   const [creators, setCreators] = useState<Creator[]>([]);
@@ -121,6 +136,21 @@ export const CreatorsGalleryPage: React.FC = () => {
   useEffect(() => {
     loadPhotos();
   }, [loadPhotos]);
+
+  useEffect(() => {
+    if (!selectedPhoto) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSelectedPhoto(null);
+      } else if (e.key === 'ArrowRight' && selectedPhoto.images.length > 1) {
+        setActivePhotoIdx((prev) => (prev > 0 ? prev - 1 : selectedPhoto.images.length - 1));
+      } else if (e.key === 'ArrowLeft' && selectedPhoto.images.length > 1) {
+        setActivePhotoIdx((prev) => (prev < selectedPhoto.images.length - 1 ? prev + 1 : 0));
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [selectedPhoto]);
 
   const handleJoinCreatorClick = () => {
     if (!isAuthenticated || !currentUser || currentUser.role === 'guest' || currentUser.id === 'guest-visitor') {
@@ -212,8 +242,8 @@ export const CreatorsGalleryPage: React.FC = () => {
           <div className="flex items-center gap-3 mt-8 pt-6 border-t border-white/10">
             <button
               type="button"
-              onClick={() => setActiveView('creators')}
-              className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all cursor-pointer ${
+              onClick={() => handleSwitchView('creators')}
+              className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                 activeView === 'creators'
                   ? 'bg-primary text-white shadow-md'
                   : 'bg-white/10 text-stone-300 hover:bg-white/15 hover:text-white'
@@ -225,15 +255,15 @@ export const CreatorsGalleryPage: React.FC = () => {
 
             <button
               type="button"
-              onClick={() => setActiveView('photos')}
-              className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all cursor-pointer ${
+              onClick={() => handleSwitchView('photos')}
+              className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                 activeView === 'photos'
                   ? 'bg-primary text-white shadow-md'
                   : 'bg-white/10 text-stone-300 hover:bg-white/15 hover:text-white'
               }`}
             >
               <ImageIcon className="w-4 h-4" />
-              <span>معارض الصور التراثية ({photos.length})</span>
+              <span>معرض صور الصعيد ({photos.length})</span>
             </button>
           </div>
         </div>

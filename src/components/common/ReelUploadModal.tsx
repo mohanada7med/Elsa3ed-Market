@@ -267,10 +267,11 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
       posterUrl ||
       getOptimizedVideoPoster(compressedVideoUrl, null, 720) ||
       productImage ||
-      'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=800&q=80';
+      '';
 
     try {
       const isCreator = currentUser?.role === 'creator';
+      const isApprovedCreator = isCreator && (currentUser as any)?.creatorStatus === 'approved';
       const userParam = (currentUser as any) || {
         id: sellerId || 'seller-current',
         role: (currentUser as any)?.role || 'seller',
@@ -288,7 +289,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
         creatorId: isCreator ? ((currentUser as any)?.creatorId || currentUser?.id) : undefined,
         creatorName: isCreator ? (artisanName || currentUser?.name) : undefined,
         creatorAvatar: isCreator ? (artisanAvatar || currentUser?.avatar) : undefined,
-        status: isCreator ? 'pending' : (currentUser?.role === 'admin' ? 'approved' : 'pending'),
+        status: isCreator ? (isApprovedCreator ? 'approved' : 'pending') : 'approved',
         governorate,
         location: location.trim() || governorate,
         contentType: contentType || 'places',

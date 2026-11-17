@@ -183,7 +183,13 @@ export const PhotoEditModal: React.FC<PhotoEditModalProps> = ({
         images
       });
 
-      addToast('تم حفظ التعديلات', 'تم إرسال التعديلات للمراجعة الإدارية بنجاح', 'success');
+      addToast(
+        'تم حفظ التعديلات',
+        updated.status === 'pending'
+          ? 'تم إعادة إرسال الألبوم للمراجعة الإدارية بنجاح'
+          : 'تم تحديث ألبوم الصور وظهور التعديلات مباشرة للجمهور',
+        'success'
+      );
       onSuccess(updated);
       onClose();
     } catch (err: any) {
@@ -247,10 +253,12 @@ export const PhotoEditModal: React.FC<PhotoEditModalProps> = ({
             </div>
           )}
 
-          {/* Warning: Re-moderation */}
-          <div className="p-3 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/40 rounded-xl text-[11px] text-amber-800 dark:text-amber-300 leading-relaxed">
-            ⚠️ تنبيه: أي تعديل على المنشور سيؤدي تلقائياً إلى إعادة إرساله لمراجعة الإدارة (قيد المراجعة) للتأكد من المحتوى قبل ظهوره العام.
-          </div>
+          {/* Warning only when resubmitting rejected content */}
+          {photo.status === 'rejected' && (
+            <div className="p-3 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/40 rounded-xl text-[11px] text-amber-800 dark:text-amber-300 leading-relaxed">
+              سيتم إعادة إرسال هذا الألبوم للمراجعة الإدارية بعد التعديل للتأكد من استيفاء الملاحظات.
+            </div>
+          )}
 
           {/* Current Images */}
           <div>
@@ -434,7 +442,7 @@ export const PhotoEditModal: React.FC<PhotoEditModalProps> = ({
               ) : (
                 <>
                   <Save className="w-4 h-4" />
-                  <span>حفظ وإعادة الإرسال للمراجعة</span>
+                  <span>{photo.status === 'rejected' ? 'حفظ وإعادة الإرسال للمراجعة' : 'حفظ التعديلات'}</span>
                 </>
               )}
             </button>

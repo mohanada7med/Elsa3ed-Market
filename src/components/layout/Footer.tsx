@@ -31,6 +31,7 @@ import {
 export const Footer: React.FC = () => {
   const {
     setActivePage,
+    navigateToCreatorsGallery,
     setShowIntroVideo,
     setShowOnboarding,
     isAuthenticated,
@@ -115,6 +116,14 @@ export const Footer: React.FC = () => {
     }
 
     event.preventDefault();
+    if (page === 'creators-photos') {
+      navigateToCreatorsGallery('photos');
+      return;
+    }
+    if (page === 'creators') {
+      navigateToCreatorsGallery('creators');
+      return;
+    }
     setActivePage(page as ActivePage);
   };
 
@@ -137,7 +146,8 @@ export const Footer: React.FC = () => {
     { label: 'فعاليات ومواسم الصعيد', page: 'events' },
     { label: 'سوق وه الحرفي (المتجر)', page: 'products' },
     { label: 'شيوخ الصنعة والورش', page: 'sellers' },
-    { label: 'صنّاع المحتوى والمعارض', page: 'creators' },
+    { label: 'صنّاع المحتوى', page: 'creators' },
+    { label: 'معرض صور الصعيد', page: 'creators-photos' },
     { label: 'التصنيفات التراثية', page: 'categories' },
     { label: 'توريدات المؤسسات (B2B)', page: 'wholesale' },
   ];

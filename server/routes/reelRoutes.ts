@@ -9,7 +9,7 @@ import { getDatabase, memoryDb } from '../db/mongodb.ts';
 import type { CraftReelDocument, CraftReelCommentDocument } from '../models/types.ts';
 import { Logger } from '../utils/logger.ts';
 import { createAuditLog } from '../services/auditService.ts';
-import { notifyAdminsOnPendingContent } from '../services/creatorService.ts';
+import { notifyAdminsOnPendingContent, syncCreatorStats, getInactiveCreatorIds } from '../services/creatorService.ts';
 
 import { storageService } from '../services/storage/storageProvider.ts';
 import { extractCloudinaryPublicId, cloudinaryStorage } from '../services/storage/cloudinaryProvider.ts';
@@ -183,6 +183,11 @@ router.get('/', async (req, res: Response) => {
         });
       }
 
+      const inactiveCreatorIds = !isPrivilegedViewer ? await getInactiveCreatorIds() : new Set<string>();
+      if (inactiveCreatorIds.size > 0) {
+        conditions.push({ creatorId: { $nin: Array.from(inactiveCreatorIds) } });
+      }
+
       const finalQuery = conditions.length > 0 ? { $and: conditions } : {};
 
       reels = (await db
@@ -241,6 +246,10 @@ router.get('/', async (req, res: Response) => {
             (r.craftType && r.craftType.toLowerCase().includes(q)) ||
             (r.productTitle && r.productTitle.toLowerCase().includes(q))
         );
+      }
+      const inactiveCreatorIdsMem = !isPrivilegedMemViewer ? await getInactiveCreatorIds() : new Set<string>();
+      if (inactiveCreatorIdsMem.size > 0) {
+        memoryList = memoryList.filter((r) => !r.creatorId || !inactiveCreatorIdsMem.has(r.creatorId));
       }
       reels = memoryList;
     }
@@ -866,7 +875,8 @@ router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =
       undefined;
 
     const hasProduct = Boolean(productId && productId !== 'none' && productTitle?.trim());
-    const initialStatus = user.role === 'admin' ? 'approved' : user.role === 'creator' ? 'pending' : 'approved';
+    // Approved creators (checked above via CREATOR_NOT_APPROVED), approved sellers, and admins publish live immediately
+    const initialStatus = 'approved' as const;
     const nowIso = new Date().toISOString();
 
     const newReel: CraftReelDocument = {
@@ -891,7 +901,7 @@ router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =
       posterUrl:
         posterUrl?.trim() ||
         productImage ||
-        'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=800&q=80',
+        '',
       duration: duration || '0:30',
       likesCount: 0,
       viewsCount: 1,
@@ -914,8 +924,8 @@ router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =
       isFeatured: user.role === 'admin' ? Boolean(isFeatured) : false,
       status: initialStatus,
       submittedAt: nowIso,
-      approvedAt: initialStatus === 'approved' ? nowIso : undefined,
-      approvedBy: initialStatus === 'approved' ? user.name : undefined,
+      approvedAt: nowIso,
+      approvedBy: user.name,
       createdAt: nowIso.split('T')[0],
       comments: []
     };
@@ -939,15 +949,8 @@ router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =
       details: `تم إضافة الفيديو "${newReel.title}" بواسطة (${user.name}) للحالة (${initialStatus}) [${newReel.id}]`
     }).catch(() => {});
 
-    if (initialStatus === 'pending') {
-      await notifyAdminsOnPendingContent({
-        contentType: 'reel',
-        contentId: newReel.id,
-        title: newReel.title,
-        creatorName: user.name,
-        creatorId: newReel.creatorId || user.creatorId || user.id,
-        isResubmit: false
-      });
+    if (newReel.creatorId) {
+      await syncCreatorStats(newReel.creatorId);
     }
 
     Logger.info(`[Reels] Created new reel: ${newReel.id} by ${user.role} (${user.id}) - Status: ${initialStatus}`);
@@ -955,9 +958,7 @@ router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =
     return res.status(201).json({
       success: true,
       data: newReel,
-      message: user.role === 'creator'
-        ? 'تم إرسال مقطع الفيديو للمراجعة والاعتماد، وسيظهر للجمهور فور موافقة الإدارة'
-        : 'تم إضافة مقطع الفيديو بنجاح وحفظه في قاعدة البيانات'
+      message: 'تم نشر مقطع الفيديو بنجاح وأصبح متاحاً للجمهور في ريلز وه وبروفايلك'
     });
   } catch (err: any) {
     Logger.error('[Reels] Error creating reel:', err);
@@ -1104,12 +1105,14 @@ router.put('/:id', requireAuth, async (req: AuthenticatedRequest, res: Response)
     if (updates.productImage !== undefined) sanitizedUpdates.productImage = updates.productImage || undefined;
     if (updates.inStock !== undefined) sanitizedUpdates.inStock = Boolean(updates.inStock);
 
-    // Admin-Only Privileges
     if (user.role === 'creator') {
-      // RULE 9: Editing approved content must trigger moderation again when the edit changes public-facing content.
-      sanitizedUpdates.status = 'pending';
-      sanitizedUpdates.rejectionReason = null;
-      sanitizedUpdates.submittedAt = new Date().toISOString();
+      if (existingReel.status === 'rejected') {
+        sanitizedUpdates.status = 'pending';
+        sanitizedUpdates.rejectionReason = null;
+        sanitizedUpdates.submittedAt = new Date().toISOString();
+      } else {
+        sanitizedUpdates.status = existingReel.status || 'approved';
+      }
     }
 
     if (user.role === 'admin') {
@@ -1174,14 +1177,19 @@ router.put('/:id', requireAuth, async (req: AuthenticatedRequest, res: Response)
       });
     }
 
+    if (updatedReel.creatorId) {
+      await syncCreatorStats(updatedReel.creatorId);
+    }
+
     Logger.info(`[Reels] Updated reel ${id} by ${user.role} (${user.id})`);
 
     return res.json({
       success: true,
       data: updatedReel,
-      message: user.role === 'creator'
-        ? 'تم تحديث الفيديو وإعادة إرساله للمراجعة الإدارية بنجاح'
-        : 'تم تحديث بيانات مقطع الفيديو بنجاح في قاعدة البيانات'
+      message:
+        updatedReel.status === 'pending'
+          ? 'تم تحديث الفيديو وإعادة إرساله للمراجعة الإدارية بنجاح'
+          : 'تم تحديث بيانات مقطع الفيديو بنجاح وحفظها'
     });
   } catch (err: any) {
     Logger.error('[Reels] Error updating reel:', err);
@@ -1280,6 +1288,10 @@ router.delete('/:id', requireAuth, async (req: AuthenticatedRequest, res: Respon
       status: 'تنبيه',
       details: `تم حذف الفيديو "${existingReel.title}" من ورشة "${existingReel.workshopName}" بواسطة ${user.name} [${id}]`
     }).catch(() => {});
+
+    if (existingReel.creatorId) {
+      await syncCreatorStats(existingReel.creatorId);
+    }
 
     Logger.info(`[Reels] Deleted reel ${id} by ${user.role} (${user.id})`);
 
@@ -1511,6 +1523,19 @@ router.post('/:id/like', requireAuth, async (req: AuthenticatedRequest, res: Res
       }
     }
 
+    // Sync creator likes if reel belongs to a creator
+    const likedReel = memoryDb.reels.find((r) => r.id === reelId);
+    if (likedReel?.creatorId) {
+      syncCreatorStats(likedReel.creatorId).catch(() => {});
+    } else if (isMongo && db) {
+      db.collection('reels')
+        .findOne({ id: reelId }, { projection: { creatorId: 1 } })
+        .then((doc) => {
+          if (doc?.creatorId) syncCreatorStats(String(doc.creatorId)).catch(() => {});
+        })
+        .catch(() => {});
+    }
+
     return res.json({
       success: true,
       isLiked: shouldBeLiked,
@@ -1538,6 +1563,14 @@ router.post('/:id/view', async (req, res: Response) => {
     const reel = memoryDb.reels.find((r) => r.id === id);
     if (reel) {
       reel.viewsCount += 1;
+      if (reel.creatorId) syncCreatorStats(reel.creatorId).catch(() => {});
+    } else if (isMongo && db) {
+      db.collection('reels')
+        .findOne({ id }, { projection: { creatorId: 1 } })
+        .then((doc) => {
+          if (doc?.creatorId) syncCreatorStats(String(doc.creatorId)).catch(() => {});
+        })
+        .catch(() => {});
     }
 
     return res.json({ success: true, viewsCount: reel?.viewsCount || 0 });

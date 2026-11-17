@@ -103,6 +103,7 @@ interface ReelCardProps {
   onOpen: (id: string) => void;
   onAdd: (e: React.MouseEvent, reel: CraftReel) => void;
   onDelete: (e: React.MouseEvent, reel: CraftReel) => void;
+  onOpenAuthor?: (reel: CraftReel) => void;
 }
 
 const ReelCard = memo(function ReelCard({
@@ -111,7 +112,8 @@ const ReelCard = memo(function ReelCard({
   isAdmin,
   onOpen,
   onAdd,
-  onDelete
+  onDelete,
+  onOpenAuthor
 }: ReelCardProps) {
   const poster = useMemo(
     () =>
@@ -196,6 +198,33 @@ const ReelCard = memo(function ReelCard({
         >
           {reel.title}
         </h3>
+
+        {(reel.creatorName || reel.artisanName || reel.workshopName) && (
+          <button
+            type="button"
+            onClick={(e) => {
+              if (onOpenAuthor && (reel.creatorId || reel.sellerId)) {
+                e.stopPropagation();
+                onOpenAuthor(reel);
+              }
+            }}
+            className={`flex items-center gap-1.5 text-[10px] text-white/80 hover:text-amber-300 transition-colors max-w-full ${
+              reel.creatorId || reel.sellerId ? 'cursor-pointer' : 'cursor-default'
+            }`}
+          >
+            {(reel.creatorAvatar || reel.artisanAvatar) && (
+              <img
+                src={reel.creatorAvatar || reel.artisanAvatar}
+                alt={reel.creatorName || reel.artisanName || ''}
+                referrerPolicy="no-referrer"
+                className="w-4 h-4 rounded-full object-cover border border-white/30 shrink-0"
+              />
+            )}
+            <span className="truncate font-semibold">
+              {reel.creatorName || reel.artisanName || reel.workshopName}
+            </span>
+          </button>
+        )}
 
         {hasProduct && (
           <div className="flex items-center justify-between border-t border-white/20 pt-2">
@@ -443,6 +472,7 @@ export const CraftReelsPage: React.FC = () => {
           r.governorate,
           r.contentType,
           r.craftType,
+          r.creatorName,
           r.artisanName,
           r.workshopName,
           r.productTitle
@@ -653,14 +683,19 @@ export const CraftReelsPage: React.FC = () => {
         onClose={() => setIsUploadModalOpen(false)}
         onSuccess={(newReel: CraftReel) => {
           loadReelsFromDb();
-          if (currentUser?.role === 'creator') {
+          if (newReel.status === 'pending') {
             addToast(
               'تم إرسال الفيديو للمراجعة',
               `تم استلام "${newReel.title}" بنجاح وسيظهر للجمهور فور اعتماده من الإدارة`,
-              'success'
+              'info'
             );
           } else {
-            addToast('تم نشر الفيديو', `تم نشر "${newReel.title}" وأصبح متاحاً للجمهور`, 'success');
+            setReels((prev) => [newReel, ...prev.filter((r) => r.id !== newReel.id)]);
+            addToast(
+              'تم نشر الفيديو بنجاح',
+              `أصبح "${newReel.title}" متاحاً الآن للجمهور في ريلز وه وبروفايلك`,
+              'success'
+            );
           }
         }}
         sellerId={currentUser?.sellerId || currentUser?.id}
@@ -695,7 +730,7 @@ export const CraftReelsPage: React.FC = () => {
         onClose={() => setReelBeingEdited(null)}
         reel={reelBeingEdited}
         onSuccess={(updatedReel) => {
-          if (currentUser?.role === 'creator') {
+          if (updatedReel.status === 'pending') {
             setReels((current) => current.filter((reel) => reel.id !== updatedReel.id));
             addToast(
               'تم تحديث الفيديو وإرساله للمراجعة',
@@ -703,7 +738,7 @@ export const CraftReelsPage: React.FC = () => {
               'info'
             );
           } else {
-            setReels((current) => current.map((reel) => reel.id === updatedReel.id ? updatedReel : reel));
+            setReels((current) => current.map((reel) => (reel.id === updatedReel.id ? updatedReel : reel)));
             addToast('تم تحديث الفيديو', `تم تعديل بيانات الفيديو "${updatedReel.title}" وحفظها`, 'success');
           }
         }}
@@ -1064,6 +1099,10 @@ export const CraftReelsPage: React.FC = () => {
                     onOpen={openReelInFeed}
                     onAdd={handleQuickAdd}
                     onDelete={handleAdminDeleteReel}
+                    onOpenAuthor={(r) => {
+                      if (r.creatorId) navigateToCreator(r.creatorId);
+                      else if (r.sellerId) navigateToSeller(r.sellerId);
+                    }}
                   />
                 ))}
               </div>

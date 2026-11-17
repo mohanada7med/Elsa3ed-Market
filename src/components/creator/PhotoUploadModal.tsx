@@ -170,7 +170,7 @@ export const PhotoUploadModal: React.FC<PhotoUploadModalProps> = ({
       });
 
       setUploadProgress(100);
-      addToast('تم رفع الألبوم للمراجعة', 'سيظهر ألبوم الصور في المعرض العام فور اعتماده من الإدارة', 'success');
+      addToast('تم نشر الألبوم بنجاح', 'أصبح ألبوم الصور متاحاً الآن في معرض صور الصعيد وبروفايلك', 'success');
       onSuccess(newPhoto);
       onClose();
     } catch (err: any) {
@@ -424,9 +424,9 @@ export const PhotoUploadModal: React.FC<PhotoUploadModalProps> = ({
             </div>
           </div>
 
-          {/* Moderation notice */}
+          {/* Publishing note */}
           <div className="p-3 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/40 rounded-xl text-[11px] text-amber-800 dark:text-amber-300 leading-relaxed">
-            💡 ملاحظة هامة: يخضع المحتوى لمراجعة فريق التحرير الإداري لمنصة وه قبل ظهوره في المعرض العام للتأكد من جودته ومطابقته للهوية التراثية لصعيد مصر.
+            سيُنشر هذا الألبوم مباشرة في معرض صور الصعيد العام وعلى صفحتك الشخصية ليراه كل زوّار منصة وه.
           </div>
 
           {/* Action Buttons */}
@@ -452,7 +452,7 @@ export const PhotoUploadModal: React.FC<PhotoUploadModalProps> = ({
               ) : (
                 <>
                   <Send className="w-4 h-4" />
-                  <span>إرسال للمراجعة والنشر</span>
+                  <span>نشر الألبوم الآن</span>
                 </>
               )}
             </button>

@@ -292,9 +292,9 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
           </div>
         )}
 
-        {!isAdmin && currentUser?.role === 'creator' && (
+        {!isAdmin && currentUser?.role === 'creator' && reel.status === 'rejected' && (
           <div className="mx-6 mt-4 p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-2xl text-[11px] text-amber-800 dark:text-amber-300">
-            ⚠️ تنبيه: حفظ أي تعديل على الريل سيعيد إرساله تلقائياً للمراجعة الإدارية (قيد المراجعة) قبل ظهوره للجمهور.
+            تنبيه: بعد تعديل المقطع المرفوض سيتم إعادة إرساله للمراجعة الإدارية لاعتماده ونشره للجمهور.
           </div>
         )}
 

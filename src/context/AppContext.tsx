@@ -77,6 +77,9 @@ interface AppContextType {
   setSelectedSellerId: (id: string | null) => void;
   selectedCreatorId: string | null;
   setSelectedCreatorId: (id: string | null) => void;
+  creatorsGalleryTab: 'creators' | 'photos';
+  setCreatorsGalleryTab: (tab: 'creators' | 'photos') => void;
+  navigateToCreatorsGallery: (tab?: 'creators' | 'photos') => void;
   selectedOrderId: string | null;
   setSelectedOrderId: (id: string | null) => void;
   navigateToProduct: (productIdOrObj: string | { id?: string; slug?: string }) => void;
@@ -571,6 +574,7 @@ function getInitialNavigationState(): {
   categoryId: string | null;
   sellerId: string | null;
   creatorId?: string | null;
+  creatorsTab?: 'creators' | 'photos';
   orderId: string | null;
   searchQuery: string;
   governorateSlug?: string | null;
@@ -785,13 +789,17 @@ function getInitialNavigationState(): {
     return { page: 'sellers', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
-  // Creators: /creators or /creators/:id
+  // Creators & Upper Egypt Photos Gallery: /creators, /creators?tab=photos, or /creators/:id
+  if (rawPath === '/photos') {
+    return { page: 'creators', productId: null, categoryId: null, sellerId: null, creatorId: null, creatorsTab: 'photos', orderId: null, searchQuery: queryTerm };
+  }
   if (rawPath === '/creators' || rawPath.startsWith('/creators/')) {
     const crId = idFromQuery || (rawPath.startsWith('/creators/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
     if (isValidRouteIdentifier(crId)) {
       return { page: 'creator-public-profile', productId: null, categoryId: null, sellerId: null, creatorId: crId!.trim(), orderId: null, searchQuery: queryTerm };
     }
-    return { page: 'creators', productId: null, categoryId: null, sellerId: null, creatorId: null, orderId: null, searchQuery: queryTerm };
+    const requestedTab = params.get('tab') === 'photos' ? 'photos' : 'creators';
+    return { page: 'creators', productId: null, categoryId: null, sellerId: null, creatorId: null, creatorsTab: requestedTab, orderId: null, searchQuery: queryTerm };
   }
 
   // Orders: /orders or /orders/:id
@@ -891,6 +899,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(initialNav.categoryId);
   const [selectedSellerId, setSelectedSellerId] = useState<string | null>(initialNav.sellerId);
   const [selectedCreatorId, setSelectedCreatorId] = useState<string | null>(initialNav.creatorId || null);
+  const [creatorsGalleryTab, setCreatorsGalleryTab] = useState<'creators' | 'photos'>(initialNav.creatorsTab || 'creators');
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(initialNav.orderId);
 
   // WAH Cultural Ecosystem Selected Slugs
@@ -931,6 +940,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
       if (nav.sellerId !== undefined) setSelectedSellerId(nav.sellerId);
       if (nav.creatorId !== undefined) setSelectedCreatorId(nav.creatorId);
+      if (nav.creatorsTab) setCreatorsGalleryTab(nav.creatorsTab);
       if (nav.orderId !== undefined) setSelectedOrderId(nav.orderId);
       if (nav.governorateSlug !== undefined) setSelectedGovernorateSlug(nav.governorateSlug);
       if (nav.placeSlug !== undefined) setSelectedPlaceSlug(nav.placeSlug);
@@ -2595,6 +2605,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const navigateToCreatorsGallery = (tab: 'creators' | 'photos' = 'creators') => {
+    setCreatorsGalleryTab(tab);
+    setActivePageState('creators');
+    try {
+      sessionStorage.setItem('elsa3ed_active_page', 'creators');
+      const targetUrl = tab === 'photos' ? '/creators?tab=photos' : '/creators';
+      window.history.pushState({ page: 'creators', tab }, '', targetUrl);
+    } catch { }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const navigateToOrder = (orderIdOrObj: string | { id?: string }) => {
     const orderId = safeExtractIdentifier(orderIdOrObj);
     if (!orderId) {
@@ -3509,6 +3530,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setSelectedSellerId,
         selectedCreatorId,
         setSelectedCreatorId,
+        creatorsGalleryTab,
+        setCreatorsGalleryTab,
+        navigateToCreatorsGallery,
         selectedOrderId,
         setSelectedOrderId,
         navigateToProduct,

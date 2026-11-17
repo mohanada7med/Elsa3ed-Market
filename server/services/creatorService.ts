@@ -11,6 +11,7 @@ import { invalidateAuthSession } from '../middleware/auth.ts';
 import { createAuditLog } from './auditService.ts';
 import { createNotification } from './notificationService.ts';
 import { Logger } from '../utils/logger.ts';
+import { extractCloudinaryPublicId, cloudinaryStorage } from './storage/cloudinaryProvider.ts';
 
 /**
  * Submit or update a Creator Application
@@ -307,6 +308,105 @@ export async function getCreatorProfile(idOrUserId: string): Promise<CreatorDocu
       null;
   }
   return creator;
+}
+
+/**
+ * Compute & persist Creator aggregate stats (reelsCount, photosCount, viewsCount, likesCount)
+ */
+export async function syncCreatorStats(creatorId?: string | null): Promise<void> {
+  if (!creatorId) return;
+  try {
+    const creator = await getCreatorProfile(creatorId);
+    if (!creator) return;
+
+    const { db, isMongo } = await getDatabase();
+    let reels: CraftReelDocument[] = [];
+    let photos: CreatorPhotoDocument[] = [];
+
+    const idCandidates = Array.from(new Set([creator.id, creator.userId].filter(Boolean)));
+
+    if (isMongo && db) {
+      reels = (await db
+        .collection<CraftReelDocument>('reels')
+        .find({
+          $and: [
+            {
+              $or: [
+                { creatorId: { $in: idCandidates } },
+                { sellerId: { $in: idCandidates } }
+              ]
+            },
+            { $or: [{ status: 'approved' }, { status: { $exists: false } }] }
+          ]
+        })
+        .toArray()) as any[];
+
+      photos = (await db
+        .collection<CreatorPhotoDocument>('creator_photos')
+        .find({
+          creatorId: { $in: idCandidates },
+          status: 'approved'
+        })
+        .toArray()) as any[];
+    } else {
+      reels = memoryDb.reels.filter(
+        (r) =>
+          (idCandidates.includes(r.creatorId || '') || idCandidates.includes(r.sellerId || '')) &&
+          (!r.status || r.status === 'approved')
+      );
+      photos = memoryDb.creatorPhotos.filter(
+        (p) => idCandidates.includes(p.creatorId) && p.status === 'approved'
+      );
+    }
+
+    const nextStats = {
+      reelsCount: reels.length,
+      photosCount: photos.length,
+      viewsCount:
+        reels.reduce((sum, r) => sum + (r.viewsCount || 0), 0) +
+        photos.reduce((sum, p) => sum + (p.viewsCount || 0), 0),
+      likesCount:
+        reels.reduce((sum, r) => sum + (r.likesCount || 0), 0) +
+        photos.reduce((sum, p) => sum + (p.likesCount || 0), 0)
+    };
+
+    if (isMongo && db) {
+      await db.collection('creators').updateOne({ id: creator.id }, { $set: { stats: nextStats } });
+    }
+    const memCreator = memoryDb.creators.find((c) => c.id === creator.id);
+    if (memCreator) {
+      (memCreator as any).stats = nextStats;
+    }
+  } catch (err) {
+    Logger.warn('[CreatorService] Failed to sync creator stats:', err);
+  }
+}
+
+/**
+ * Returns IDs (both creator.id and creator.userId) of creators whose status is NOT 'approved'
+ * so public feeds automatically hide suspended/rejected/pending creator content.
+ */
+export async function getInactiveCreatorIds(): Promise<Set<string>> {
+  const inactiveIds = new Set<string>();
+  try {
+    const { db, isMongo } = await getDatabase();
+    let inactiveCreators: any[] = [];
+    if (isMongo && db) {
+      inactiveCreators = await db
+        .collection('creators')
+        .find({ status: { $ne: 'approved' } }, { projection: { id: 1, userId: 1 } })
+        .toArray();
+    } else {
+      inactiveCreators = memoryDb.creators.filter((c) => c.status !== 'approved');
+    }
+    for (const c of inactiveCreators) {
+      if (c.id) inactiveIds.add(String(c.id));
+      if (c.userId) inactiveIds.add(String(c.userId));
+    }
+  } catch (err) {
+    Logger.warn('[CreatorService] Failed to query inactive creator IDs:', err);
+  }
+  return inactiveIds;
 }
 
 /**
@@ -765,9 +865,9 @@ export async function createCreatorPhoto(
   const photoId = `photo-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
   const creatorId = user.creatorId || user.id;
 
-  // Moderation status: Admin uploads are approved immediately; creators enter 'pending'
+  // Approved creators and admins publish directly; drafts stay as 'draft'
   const initialStatus: ContentStatus =
-    user.role === 'admin' ? (data.status || 'approved') : (data.status === 'draft' ? 'draft' : 'pending');
+    data.status === 'draft' ? 'draft' : 'approved';
 
   const newPhoto: CreatorPhotoDocument = {
     id: photoId,
@@ -809,15 +909,8 @@ export async function createCreatorPhoto(
     details: `تم إضافة معرض الصور "${newPhoto.title}" بواسطة ${user.name} بالحالة (${initialStatus})`
   });
 
-  if (initialStatus === 'pending') {
-    await notifyAdminsOnPendingContent({
-      contentType: 'photo',
-      contentId: photoId,
-      title: newPhoto.title,
-      creatorName: user.name,
-      creatorId,
-      isResubmit: false
-    });
+  if (initialStatus === 'approved') {
+    await syncCreatorStats(creatorId);
   }
 
   return newPhoto;
@@ -866,12 +959,14 @@ export async function updateCreatorPhoto(
   if (data.location !== undefined) updatePayload.location = data.location;
   if (data.tags !== undefined) updatePayload.tags = data.tags;
 
-  // RULE 9: Editing approved content must trigger moderation again!
+  // If editing a previously rejected item, resubmit to 'pending'; keep 'approved' items published live
   if (user.role !== 'admin') {
-    if (photo.status === 'approved' || photo.status === 'rejected') {
+    if (photo.status === 'rejected') {
       updatePayload.status = 'pending';
       updatePayload.rejectionReason = null;
       updatePayload.submittedAt = now;
+    } else if (data.status === 'draft' || data.status === 'approved') {
+      updatePayload.status = data.status;
     }
   } else if (data.status) {
     updatePayload.status = data.status;
@@ -892,6 +987,8 @@ export async function updateCreatorPhoto(
       isResubmit: true
     });
   }
+
+  await syncCreatorStats(photo.creatorId);
 
   return photo;
 }
@@ -919,6 +1016,21 @@ export async function deleteCreatorPhoto(user: AuthenticatedUser, photoId: strin
     throw new Error('غير مصرح لك بحذف هذا المنشور');
   }
 
+  if (Array.isArray(photo.images)) {
+    for (const imgUrl of photo.images) {
+      const publicId = extractCloudinaryPublicId(imgUrl);
+      if (publicId) {
+        cloudinaryStorage
+          .delete(publicId, {
+            id: user.id,
+            role: user.role,
+            creatorId: user.creatorId
+          })
+          .catch(() => {});
+      }
+    }
+  }
+
   if (isMongo && db) {
     await db.collection('creator_photos').deleteOne({ id: photoId });
   }
@@ -937,6 +1049,8 @@ export async function deleteCreatorPhoto(user: AuthenticatedUser, photoId: strin
     status: 'نجاح',
     details: `تم حذف منشور الصور "${photo.title}" بواسطة ${user.name}`
   });
+
+  await syncCreatorStats(photo.creatorId);
 
   return true;
 }
@@ -979,8 +1093,12 @@ export async function getPublicPhotos(filters?: {
   limit?: number;
 }): Promise<CreatorPhotoDocument[]> {
   const { db, isMongo } = await getDatabase();
+  const inactiveIds = await getInactiveCreatorIds();
   const query: any = { status: 'approved' };
 
+  if (inactiveIds.size > 0) {
+    query.creatorId = { $nin: Array.from(inactiveIds) };
+  }
   if (filters?.category && filters.category !== 'all') {
     query.category = filters.category;
   }
@@ -989,7 +1107,7 @@ export async function getPublicPhotos(filters?: {
   }
   if (filters?.search && filters.search.trim()) {
     const regex = new RegExp(filters.search.trim(), 'i');
-    query.$or = [{ title: regex }, { caption: regex }, { location: regex }, { tags: regex }];
+    query.$or = [{ title: regex }, { caption: regex }, { location: regex }, { tags: regex }, { creatorName: regex }];
   }
 
   const max = Number(filters?.limit) || 50;
@@ -1006,11 +1124,18 @@ export async function getPublicPhotos(filters?: {
   return memoryDb.creatorPhotos
     .filter((p) => {
       if (p.status !== 'approved') return false;
+      if (inactiveIds.has(p.creatorId)) return false;
       if (filters?.category && filters.category !== 'all' && p.category !== filters.category) return false;
       if (filters?.governorate && filters.governorate !== 'all' && p.governorate !== filters.governorate) return false;
       if (filters?.search && filters.search.trim()) {
         const q = filters.search.trim().toLowerCase();
-        if (!p.title.toLowerCase().includes(q) && !p.caption.toLowerCase().includes(q)) return false;
+        if (
+          !p.title.toLowerCase().includes(q) &&
+          !p.caption.toLowerCase().includes(q) &&
+          !(p.creatorName || '').toLowerCase().includes(q)
+        ) {
+          return false;
+        }
       }
       return true;
     })
@@ -1139,6 +1264,10 @@ export async function adminModerateReel(
     details: `قام المدير (${adminUser.name}) بـ ${action === 'approve' ? 'اعتماد' : 'رفض'} الفيديو "${reel.title}". ${reason ? 'السبب: ' + reason : ''}`
   });
 
+  if (targetCreatorId) {
+    syncCreatorStats(targetCreatorId).catch(() => {});
+  }
+
   return reel;
 }
 
@@ -1223,6 +1352,10 @@ export async function adminModeratePhoto(
     details: `قام المدير (${adminUser.name}) بـ ${action === 'approve' ? 'اعتماد' : 'رفض'} معرض الصور "${photo.title}". ${reason ? 'السبب: ' + reason : ''}`
   });
 
+  if (photo.creatorId) {
+    syncCreatorStats(photo.creatorId).catch(() => {});
+  }
+
   return photo;
 }
 
@@ -1232,6 +1365,7 @@ export async function adminModeratePhoto(
 export async function likeCreatorPhoto(photoId: string): Promise<number> {
   const { db, isMongo } = await getDatabase();
   let likes = 0;
+  let creatorId: string | undefined;
   if (isMongo && db) {
     const res = await db.collection('creator_photos').findOneAndUpdate(
       { id: photoId },
@@ -1239,13 +1373,16 @@ export async function likeCreatorPhoto(photoId: string): Promise<number> {
       { returnDocument: 'after' }
     );
     likes = res?.likesCount || 1;
+    creatorId = res?.creatorId;
   } else {
     const p = memoryDb.creatorPhotos.find((x) => x.id === photoId);
     if (p) {
       p.likesCount = (p.likesCount || 0) + 1;
       likes = p.likesCount;
+      creatorId = p.creatorId;
     }
   }
+  if (creatorId) syncCreatorStats(creatorId).catch(() => {});
   return likes;
 }
 
@@ -1255,6 +1392,7 @@ export async function likeCreatorPhoto(photoId: string): Promise<number> {
 export async function incrementPhotoView(photoId: string): Promise<number> {
   const { db, isMongo } = await getDatabase();
   let views = 0;
+  let creatorId: string | undefined;
   if (isMongo && db) {
     const res = await db.collection('creator_photos').findOneAndUpdate(
       { id: photoId },
@@ -1262,12 +1400,15 @@ export async function incrementPhotoView(photoId: string): Promise<number> {
       { returnDocument: 'after' }
     );
     views = res?.viewsCount || 1;
+    creatorId = res?.creatorId;
   } else {
     const p = memoryDb.creatorPhotos.find((x) => x.id === photoId);
     if (p) {
       p.viewsCount = (p.viewsCount || 0) + 1;
       views = p.viewsCount;
+      creatorId = p.creatorId;
     }
   }
+  if (creatorId) syncCreatorStats(creatorId).catch(() => {});
   return views;
 }
