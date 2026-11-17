@@ -31,7 +31,7 @@ export const CartDrawer: React.FC = () => {
 
   const [couponInput, setCouponInput] = useState('');
 
-  const isOpen = isCartDrawerOpen && !(isAuthenticated && (currentRole === 'seller' || currentRole === 'admin'));
+  const isOpen = isCartDrawerOpen && !(isAuthenticated && (currentRole === 'seller' || currentRole === 'admin' || currentRole === 'creator'));
 
   // Lock background scroll when Cart Drawer is open
   useEffect(() => {

@@ -75,9 +75,11 @@ export const CraftReelsSection: React.FC = () => {
     addToCart,
     addToast,
     currentUser,
+    currentRole,
     isAuthenticated,
     setIsAuthModalOpen
   } = useApp();
+  const canShop = !isAuthenticated || currentRole === 'buyer';
 
   const [reels, setReels] = useState<CraftReel[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>('all');
@@ -1257,32 +1259,34 @@ export const CraftReelsSection: React.FC = () => {
                                 </div>
                               </div>
 
-                              <button
-                                type="button"
-                                aria-label="إضافة للحقيبة"
-                                onClick={(e) => handleQuickAdd(e, reel)}
-                                className={`
-                                  px-3 py-2 rounded-xl text-xs font-bold
-                                  flex items-center gap-1.5 shrink-0
-                                  transition-all duration-200 active:scale-95 shadow cursor-pointer
-                                  ${addedProductIds.has(reel.productId)
-                                    ? 'bg-emerald-600 text-white'
-                                    : 'bg-[#C99444] hover:bg-[#E0C79B] text-[#1B1009] shadow-[#C99444]/30'
-                                  }
-                                `}
-                              >
-                                {addedProductIds.has(reel.productId) ? (
-                                  <>
-                                    <Check className="w-3.5 h-3.5" />
-                                    <span>أُضيف</span>
-                                  </>
-                                ) : (
-                                  <>
-                                    <ShoppingBag className="w-3.5 h-3.5" />
-                                    <span>اقتنِ القطعة</span>
-                                  </>
-                                )}
-                              </button>
+                              {canShop && (
+                                <button
+                                  type="button"
+                                  aria-label="إضافة للحقيبة"
+                                  onClick={(e) => handleQuickAdd(e, reel)}
+                                  className={`
+                                    px-3 py-2 rounded-xl text-xs font-bold
+                                    flex items-center gap-1.5 shrink-0
+                                    transition-all duration-200 active:scale-95 shadow cursor-pointer
+                                    ${addedProductIds.has(reel.productId)
+                                      ? 'bg-emerald-600 text-white'
+                                      : 'bg-[#C99444] hover:bg-[#E0C79B] text-[#1B1009] shadow-[#C99444]/30'
+                                    }
+                                  `}
+                                >
+                                  {addedProductIds.has(reel.productId) ? (
+                                    <>
+                                      <Check className="w-3.5 h-3.5" />
+                                      <span>أُضيف</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <ShoppingBag className="w-3.5 h-3.5" />
+                                      <span>اقتنِ القطعة</span>
+                                    </>
+                                  )}
+                                </button>
+                              )}
                             </motion.div>
                           )}
                         </div>

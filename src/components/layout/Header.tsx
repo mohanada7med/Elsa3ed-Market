@@ -446,6 +446,48 @@ const WAH_PORTALS_PREVIEW: Record<string, PortalPreviewItem> = {
     badge: 'تحدي عم وه',
     accentColor: '#E66A2E',
   },
+  'creator-dashboard': {
+    title: 'استوديو صانع المحتوى',
+    desc: 'تابع مشاهداتك وإحصائياتك وحالة اعتماد أعمالك التراثية من مكان واحد.',
+    avatar: '/mascot/reels.png',
+    badge: 'استوديو وه',
+    accentColor: '#E66A2E',
+  },
+  'creator-reels': {
+    title: 'مقاطع الريلز والحكايات',
+    desc: 'ارفع فيديوهاتك القصيرة وشارك حكايات الحرف والمعالم مع جمهور منصة وه.',
+    avatar: '/mascot/reels.png',
+    badge: 'ريلز الصانع',
+    accentColor: '#C99444',
+  },
+  'creator-photos': {
+    title: 'معارض الصور التراثية',
+    desc: 'أنشئ ألبومات مصورة توثق تراث الصعيد وحرفه ومعالمه حتى ١٠ صور في المعرض.',
+    avatar: '/mascot/make.png',
+    badge: 'عدسة الصانع',
+    accentColor: '#E66A2E',
+  },
+  'creator-content': {
+    title: 'أرشيف ومحتوى حسابك',
+    desc: 'راجع حالة كل الريلز ومعارض الصور المعتمدة أو قيد المراجعة وعدّلها بسهولة.',
+    avatar: '/mascot/pro.png',
+    badge: 'إدارة المحتوى',
+    accentColor: '#C99444',
+  },
+  'creator-profile': {
+    title: 'هوية صانع المحتوى',
+    desc: 'حدّث نبذتك التعريفية، تخصصاتك، وروابط حساباتك الاجتماعية لجمهورك.',
+    avatar: '/mascot/fan.png',
+    badge: 'ملف الصانع',
+    accentColor: '#C99444',
+  },
+  'creator-public-profile': {
+    title: 'صفحتك العامة في وه',
+    desc: 'شاهد كيف يظهر معرضك وأعمالك المعتمدة لزوار منصة وه.',
+    avatar: '/mascot/saaed.png',
+    badge: 'المعرض العام',
+    accentColor: '#E66A2E',
+  },
 };
 
 /* =========================================================
@@ -477,6 +519,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
     openReportModal,
     navigateToProduct,
     navigateToSeller,
+    navigateToCreator,
     navigateToGovernorate,
     navigateToPlace,
     navigateToFood,
@@ -627,7 +670,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
   const isAdmin = currentRole === 'admin' || currentUser?.role === 'admin';
   const isSeller = currentRole === 'seller' || currentUser?.role === 'seller';
   const isCreator = currentRole === 'creator' || currentUser?.role === 'creator';
-  const isShopBlockedStaff = isSeller || isAdmin;
+  const isShopBlockedStaff = isSeller || isAdmin || isCreator;
 
   useEffect(() => {
     const handleClickOutside = (event: PointerEvent) => {
@@ -713,6 +756,21 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
       ];
     }
 
+    if (isCreator) {
+      return [
+        { id: 'home', label: 'الرئيسية', shortLabel: 'الرئيسية', icon: HomeIcon },
+        { id: 'creator-dashboard', label: 'لوحة صانع المحتوى', shortLabel: 'لوحة التحكم', icon: LayoutDashboard },
+        { id: 'creator-reels', label: 'فيديوهاتي والريلز', shortLabel: 'الريلز', icon: Film },
+        { id: 'creator-photos', label: 'معارض صوري التراثية', shortLabel: 'معارض الصور', icon: ImageIcon },
+        { id: 'creator-content', label: 'إدارة كل المحتوى', shortLabel: 'كل المحتوى', icon: Layers },
+        { id: 'creators', label: 'دليل صنّاع المحتوى', shortLabel: 'دليل الصنّاع', icon: Camera },
+        { id: 'reels', label: 'حكايات وه (Reels)', shortLabel: 'حكايات وه', icon: Play },
+        { id: 'creator-profile', label: 'بيانات صانع المحتوى', shortLabel: 'ملفي', icon: UserCircle },
+        { id: 'creator-public-profile', label: 'صفحتي العامة', shortLabel: 'صفحتي العامة', icon: Sparkles },
+        { id: 'buyer-account', label: 'إعدادات الحساب', shortLabel: 'الحساب', icon: User },
+      ];
+    }
+
     const links: any[] = [
       { id: 'home', label: 'الرئيسية', shortLabel: 'الرئيسية' },
       { id: 'products', label: 'المنتجات', shortLabel: 'المنتجات' },
@@ -729,20 +787,21 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
       { id: 'help', label: 'مضايفة وه (المساعدة والتواصل)', shortLabel: 'المساعدة', icon: Headphones },
     ];
 
-    if (isAuthenticated && (currentRole === 'buyer' || currentRole === 'creator')) {
+    if (isAuthenticated && currentRole === 'buyer') {
       links.push({ id: 'cart', label: 'السلة' });
       links.push({ id: 'orders', label: 'طلباتي' });
     }
 
     return links;
-  }, [currentRole, isAuthenticated, isSeller, isAdmin]);
+  }, [currentRole, isAuthenticated, isSeller, isAdmin, isCreator]);
   const portalLinks = useMemo(() => {
     return roleNavLinks.filter(
       (link: any) =>
         link.id !== 'home' &&
         link.id !== 'products' &&
         link.id !== 'cart' &&
-        link.id !== 'orders'
+        link.id !== 'orders' &&
+        link.id !== 'buyer-account'
     );
   }, [roleNavLinks]);
   const mobileNavCategories = useMemo(() => {
@@ -794,43 +853,74 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             items: ['admin-reports', 'admin-audit-logs'],
           },
         ]
-        : [
-          {
-            id: 'main',
-            title: 'الرئيسية والسوق',
-            description: 'ابدأ رحلتك في منصة وَه',
-            icon: HomeIcon,
-            items: ['home', 'products', 'cart', 'orders'],
-          },
-          {
-            id: 'discover',
-            title: 'اكتشف الصعيد',
-            description: 'المحافظات والأماكن والشخصيات',
-            icon: Compass,
-            items: ['map', 'places', 'people'],
-          },
-          {
-            id: 'heritage',
-            title: 'تراث وحكايات الصعيد',
-            description: 'الأكل والمواسم والحكايات والصور',
-            icon: Landmark,
-            items: ['food', 'events', 'reels', 'creators'],
-          },
-          {
-            id: 'wah-market',
-            title: 'سوق وَه',
-            description: 'الحرفيون والمنتجات التراثية',
-            icon: ShoppingBag,
-            items: ['sellers', 'categories'],
-          },
-          {
-            id: 'help',
-            title: 'المساعدة والتواصل',
-            description: 'تواصل معنا واطلب مساعدة في أي وقت',
-            icon: Headphones,
-            items: ['quize', 'help'],
-          },
-        ];
+        : isCreator
+          ? [
+            {
+              id: 'creator-studio',
+              title: 'استوديو صانع المحتوى',
+              description: 'لوحة التحكم وإدارة جميع أعمالك',
+              icon: LayoutDashboard,
+              items: ['creator-dashboard', 'creator-content', 'creator-public-profile'],
+            },
+            {
+              id: 'creator-media',
+              title: 'الريلز ومعارض الصور',
+              description: 'ارفع وتابع مقاطع الفيديو والألبومات التراثية',
+              icon: Camera,
+              items: ['creator-reels', 'creator-photos'],
+            },
+            {
+              id: 'creator-community',
+              title: 'مجتمع الصنّاع والحكايات',
+              description: 'تصفح أعمال صنّاع المحتوى وحكايات وه',
+              icon: Film,
+              items: ['home', 'creators', 'reels'],
+            },
+            {
+              id: 'creator-account',
+              title: 'الملف الشخصي والحساب',
+              description: 'تحديث بياناتك وتخصصاتك وإعدادات الحساب',
+              icon: UserCircle,
+              items: ['creator-profile', 'buyer-account'],
+            },
+          ]
+          : [
+            {
+              id: 'main',
+              title: 'الرئيسية والسوق',
+              description: 'ابدأ رحلتك في منصة وَه',
+              icon: HomeIcon,
+              items: ['home', 'products', 'cart', 'orders'],
+            },
+            {
+              id: 'discover',
+              title: 'اكتشف الصعيد',
+              description: 'المحافظات والأماكن والشخصيات',
+              icon: Compass,
+              items: ['map', 'places', 'people'],
+            },
+            {
+              id: 'heritage',
+              title: 'تراث وحكايات الصعيد',
+              description: 'الأكل والمواسم والحكايات والصور',
+              icon: Landmark,
+              items: ['food', 'events', 'reels', 'creators'],
+            },
+            {
+              id: 'wah-market',
+              title: 'سوق وَه',
+              description: 'الحرفيون والمنتجات التراثية',
+              icon: ShoppingBag,
+              items: ['sellers', 'categories'],
+            },
+            {
+              id: 'help',
+              title: 'المساعدة والتواصل',
+              description: 'تواصل معنا واطلب مساعدة في أي وقت',
+              icon: Headphones,
+              items: ['quize', 'help'],
+            },
+          ];
 
     return categories
       .map((category) => ({
@@ -840,7 +930,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
         ),
       }))
       .filter((category) => category.links.length > 0);
-  }, [roleNavLinks, isSeller, isAdmin]);
+  }, [roleNavLinks, isSeller, isAdmin, isCreator]);
   const splitHalf = Math.ceil(portalLinks.length / 2);
   const rightPortals = portalLinks.slice(0, splitHalf);
   const leftPortals = portalLinks.slice(splitHalf);
@@ -848,12 +938,22 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
   const navigate = useCallback(
     (page: string) => {
       const cleanPage = page.startsWith('/') ? page.slice(1) : page;
+      if (cleanPage === 'creator-public-profile' && isCreator) {
+        const ownCreatorId = (currentUser as any)?.creatorId || currentUser?.id;
+        if (ownCreatorId) {
+          navigateToCreator(ownCreatorId);
+          setMobileMenuOpen(false);
+          setUserDropdownOpen(false);
+          setIsProfileMenuOpen(false);
+          return;
+        }
+      }
       setActivePage(cleanPage as ActivePage);
       setMobileMenuOpen(false);
       setUserDropdownOpen(false);
       setIsProfileMenuOpen(false);
     },
-    [setActivePage]
+    [setActivePage, isCreator, currentUser, navigateToCreator]
   );
 
   const navigateFromLink = useCallback(
@@ -1056,28 +1156,22 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
           badge: null,
         },
         {
-          id: 'orders',
-          label: 'طلباتي ومشترياتي',
-          icon: ClipboardList,
-          badge: null,
-        },
-        {
-          id: 'favorites',
-          label: 'المفضلة',
-          icon: Heart,
-          badge: favorites.length > 0 ? (favorites.length > 99 ? '99+' : favorites.length) : null,
-        },
-        {
-          id: 'buyer-account',
-          label: 'حسابي والعناوين',
-          icon: User,
-          badge: null,
+          id: 'messages',
+          label: 'الدعم الفني',
+          icon: MessageCircle,
+          badge: chatUnreadCount > 0 ? (chatUnreadCount > 99 ? '99+' : chatUnreadCount) : null,
         },
         {
           id: 'notifications',
           label: 'الإشعارات',
           icon: Bell,
           badge: unreadNotificationsCount > 0 ? (unreadNotificationsCount > 99 ? '99+' : unreadNotificationsCount) : null,
+        },
+        {
+          id: 'buyer-account',
+          label: 'إعدادات الحساب',
+          icon: User,
+          badge: null,
         },
       ];
     }
@@ -1380,18 +1474,34 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               style={{ color: secondaryText }}
             >
               <Sparkles size={13} className="text-primary" />
-              <span className="truncate">من قلب الصعيد... حكاية بتبدأ</span>
+              <span className="truncate">
+                {isCreator
+                  ? 'بوابة صانع المحتوى في منصة «وه» — استوديو التوثيق والريلز'
+                  : 'من قلب الصعيد... حكاية بتبدأ'}
+              </span>
             </div>
 
             <div
               className="flex items-center gap-5 text-xs font-bold"
               style={{ color: secondaryText }}
             >
-              <span>أصالة</span>
-              <span>•</span>
-              <span>حرفة</span>
-              <span>•</span>
-              <span>حكاية</span>
+              {isCreator ? (
+                <>
+                  <span>عدسة</span>
+                  <span>•</span>
+                  <span>توثيق</span>
+                  <span>•</span>
+                  <span>حكاية</span>
+                </>
+              ) : (
+                <>
+                  <span>أصالة</span>
+                  <span>•</span>
+                  <span>حرفة</span>
+                  <span>•</span>
+                  <span>حكاية</span>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -1401,41 +1511,89 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             ========================================================= */}
         <div className="hidden lg:flex relative mx-auto max-w-[1600px] h-[78px] items-center justify-between px-8 xl:px-12">
           {/* Start Actions / Nav Links */}
-          <div className="flex items-center gap-6">
-            <a
-              href={PAGE_ROUTES.home}
-              onClick={(event) => navigateFromLink(event, 'home')}
-              className="whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
-              style={{
-                color: activePage === 'home' ? (isDark ? '#C99444' : '#6B3A1F') : mainText,
-              }}
-            >
-              الرئيسية
-            </a>
+          {isCreator ? (
+            <div className="flex items-center gap-5 xl:gap-6">
+              <a
+                href={PAGE_ROUTES['creator-dashboard']}
+                onClick={(event) => navigateFromLink(event, 'creator-dashboard')}
+                className="flex items-center gap-1.5 whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
+                style={{
+                  color: activePage === 'creator-dashboard' ? (isDark ? '#C99444' : '#6B3A1F') : mainText,
+                }}
+              >
+                <LayoutDashboard size={15} className="text-primary" />
+                <span>لوحة صانع المحتوى</span>
+              </a>
 
-            <a
-              href={PAGE_ROUTES.products}
-              onClick={(event) => navigateFromLink(event, 'products')}
-              className="whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
-              style={{
-                color: activePage === 'products' ? (isDark ? '#C99444' : '#6B3A1F') : mainText,
-              }}
-            >
-              المنتجات
-            </a>
+              <a
+                href={PAGE_ROUTES['creator-reels']}
+                onClick={(event) => navigateFromLink(event, 'creator-reels')}
+                className="whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
+                style={{
+                  color: activePage === 'creator-reels' ? (isDark ? '#C99444' : '#6B3A1F') : mainText,
+                }}
+              >
+                الريلز والفيديو
+              </a>
 
-            <a
-              href={PAGE_ROUTES.map}
-              onClick={(event) => navigateFromLink(event, 'map')}
-              className="flex items-center gap-1.5 whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
-              style={{
-                color: activePage === 'map' ? (isDark ? '#C99444' : '#6B3A1F') : mainText,
-              }}
-            >
-              محافظات الصعيد
+              <a
+                href={PAGE_ROUTES['creator-photos']}
+                onClick={(event) => navigateFromLink(event, 'creator-photos')}
+                className="whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
+                style={{
+                  color: activePage === 'creator-photos' ? (isDark ? '#C99444' : '#6B3A1F') : mainText,
+                }}
+              >
+                معارض الصور
+              </a>
 
-            </a>
-          </div>
+              <a
+                href={PAGE_ROUTES.creators}
+                onClick={(event) => navigateFromLink(event, 'creators')}
+                className="whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
+                style={{
+                  color: activePage === 'creators' ? (isDark ? '#C99444' : '#6B3A1F') : mainText,
+                }}
+              >
+                دليل الصنّاع
+              </a>
+            </div>
+          ) : (
+            <div className="flex items-center gap-6">
+              <a
+                href={PAGE_ROUTES.home}
+                onClick={(event) => navigateFromLink(event, 'home')}
+                className="whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
+                style={{
+                  color: activePage === 'home' ? (isDark ? '#C99444' : '#6B3A1F') : mainText,
+                }}
+              >
+                الرئيسية
+              </a>
+
+              <a
+                href={PAGE_ROUTES.products}
+                onClick={(event) => navigateFromLink(event, 'products')}
+                className="whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
+                style={{
+                  color: activePage === 'products' ? (isDark ? '#C99444' : '#6B3A1F') : mainText,
+                }}
+              >
+                المنتجات
+              </a>
+
+              <a
+                href={PAGE_ROUTES.map}
+                onClick={(event) => navigateFromLink(event, 'map')}
+                className="flex items-center gap-1.5 whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
+                style={{
+                  color: activePage === 'map' ? (isDark ? '#C99444' : '#6B3A1F') : mainText,
+                }}
+              >
+                محافظات الصعيد
+              </a>
+            </div>
+          )}
 
           {/* End Actions */}
           <div className="flex items-center gap-2">
@@ -2186,12 +2344,20 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       <span>استكشف أقسام منصة وه</span>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                      {[
-                        { label: 'سوق الحرف', icon: ShoppingBag, page: 'products' },
-                        { label: 'شيوخ الصنعة', icon: Store, page: 'sellers' },
-                        { label: 'أكلات زمان', icon: UtensilsCrossed, page: 'food' },
-                        { label: 'معالم وآثار', icon: Landmark, page: 'places' },
-                      ].map((item) => (
+                      {(isCreator
+                        ? [
+                            { label: 'لوحة الصانع', icon: LayoutDashboard, page: 'creator-dashboard' },
+                            { label: 'دليل الصنّاع', icon: Camera, page: 'creators' },
+                            { label: 'ريلز وه', icon: Film, page: 'reels' },
+                            { label: 'معالم وآثار', icon: Landmark, page: 'places' },
+                          ]
+                        : [
+                            { label: 'سوق الحرف', icon: ShoppingBag, page: 'products' },
+                            { label: 'شيوخ الصنعة', icon: Store, page: 'sellers' },
+                            { label: 'أكلات زمان', icon: UtensilsCrossed, page: 'food' },
+                            { label: 'معالم وآثار', icon: Landmark, page: 'places' },
+                          ]
+                      ).map((item) => (
                         <button
                           key={item.page}
                           type="button"

@@ -1371,7 +1371,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Sync cart & favorites to localStorage (Buyers and guests only)
   useEffect(() => {
-    if (currentRole === 'seller' || currentRole === 'admin') {
+    if (currentRole === 'seller' || currentRole === 'admin' || currentRole === 'creator') {
       try {
         localStorage.removeItem('saeed_cart');
         localStorage.removeItem('saeed_favorites');
@@ -1384,7 +1384,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [cart, currentRole]);
 
   useEffect(() => {
-    if (currentRole === 'seller' || currentRole === 'admin') {
+    if (currentRole === 'seller' || currentRole === 'admin' || currentRole === 'creator') {
       return;
     }
     try {
@@ -1461,13 +1461,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           role: 'seller',
           sellerId: currentUser.id
         });
-      } else if ((currentRole === 'buyer' || currentRole === 'creator') && currentUser.id && currentUser.id !== 'guest-visitor') {
+      } else if (currentRole === 'buyer' && currentUser.id && currentUser.id !== 'guest-visitor') {
         fetchedOrders = await api.getBuyerOrders({
           id: currentUser.id,
           role: currentRole
         });
       } else {
-        // Guest or unauthenticated visitors have no orders — do NOT call /api/orders
+        // Guest, creator, or unauthenticated visitors have no orders — do NOT call /api/orders
         return;
       }
 
@@ -1575,9 +1575,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, [currentUser.id, currentRole]);
 
-  // Fetch Buyer/Creator Cart from backend
+  // Fetch Buyer Cart from backend
   const refreshCart = useCallback(async () => {
-    if ((currentRole === 'buyer' || currentRole === 'creator') && currentUser.id && currentUser.id !== 'guest-visitor') {
+    if (currentRole === 'buyer' && currentUser.id && currentUser.id !== 'guest-visitor') {
       try {
         const remoteCart = await api.getCart({ id: currentUser.id, role: currentRole });
         if (remoteCart && Array.isArray(remoteCart.items)) {
@@ -1639,7 +1639,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       } catch (e) {
         console.warn('[AppContext] Could not fetch remote cart:', e);
       }
-    } else if (currentRole === 'seller' || currentRole === 'admin') {
+    } else if (currentRole === 'seller' || currentRole === 'admin' || currentRole === 'creator') {
       setCart([]);
       setIsCartDrawerOpen(false);
       try {
@@ -1648,9 +1648,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, [currentRole, currentUser.id]);
 
-  // Fetch Buyer/Creator Favorites from backend
+  // Fetch Buyer Favorites from backend
   const refreshFavorites = useCallback(async () => {
-    if ((currentRole === 'buyer' || currentRole === 'creator') && currentUser.id && currentUser.id !== 'guest-visitor') {
+    if (currentRole === 'buyer' && currentUser.id && currentUser.id !== 'guest-visitor') {
       try {
         const remoteFavs = await api.getFavorites({ id: currentUser.id, role: currentRole });
         if (remoteFavs && Array.isArray(remoteFavs)) {
@@ -1665,6 +1665,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       } catch (e) {
         console.warn('[AppContext] Could not fetch remote favorites:', e);
       }
+    } else if (currentRole === 'seller' || currentRole === 'admin' || currentRole === 'creator') {
+      setFavorites([]);
+      try {
+        localStorage.removeItem('saeed_favorites');
+      } catch { }
     }
   }, [currentRole, currentUser.id]);
 
@@ -1703,7 +1708,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       refreshAdminProducts();
       refreshAuditLogs();
       refreshReviews();
-    } else if (currentRole === 'buyer' || currentRole === 'creator') {
+    } else if (currentRole === 'creator') {
+      setCart([]);
+      setFavorites([]);
+      setIsCartDrawerOpen(false);
+    } else if (currentRole === 'buyer') {
       refreshOrders();
       refreshCart();
       refreshFavorites();
@@ -1989,8 +1998,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setIsAuthModalOpen(false);
       addToast('تسجيل الدخول', `مرحباً بك يا ${data.user.username || data.user.name} في وه!`, 'success');
 
-      // Sync any local cart items to backend if buyer or creator
-      if ((role === 'buyer' || role === 'creator') && cart.length > 0) {
+      // Sync any local cart items to backend if buyer
+      if (role === 'buyer' && cart.length > 0) {
         const payload = cart.map((it) => ({
           productId: it.product.id,
           quantity: it.quantity,
@@ -2065,7 +2074,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         );
       }
 
-      if ((role === 'buyer' || role === 'creator') && cart.length > 0) {
+      if (role === 'buyer' && cart.length > 0) {
         const payload = cart.map((it) => ({
           productId: it.product.id,
           quantity: it.quantity,
@@ -2153,8 +2162,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setAuthState('AUTHENTICATED');
       setIsAuthModalOpen(false);
 
-      // Sync any local cart items to backend if buyer or creator
-      if ((role === 'buyer' || role === 'creator') && cart.length > 0) {
+      // Sync any local cart items to backend if buyer
+      if (role === 'buyer' && cart.length > 0) {
         const payload = cart.map((it) => ({
           productId: it.product.id,
           quantity: it.quantity,
@@ -2303,7 +2312,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Cart operations
   const addToCart = async (product: Product, quantity = 1) => {
-    if (currentRole === 'seller' || currentRole === 'admin') {
+    if (currentRole === 'seller' || currentRole === 'admin' || currentRole === 'creator') {
       addToast('غير مصرح', 'عفواً، سلة المشتريات والتسوق مخصصة لحسابات المشترين فقط', 'error');
       return;
     }
@@ -2339,7 +2348,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     addToast('تمت الإضافة إلى سلة المشتريات', `${product.title} (${safeQty} قطعة)`, 'success');
 
-    if (isAuthenticated && (currentRole === 'buyer' || currentRole === 'creator')) {
+    if (isAuthenticated && currentRole === 'buyer') {
       try {
         await api.addToCart({ id: currentUser.id, role: currentRole }, product.id, safeQty);
       } catch (err: any) {
@@ -2349,14 +2358,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const removeFromCart = async (productId: string) => {
-    if (currentRole === 'seller' || currentRole === 'admin') {
+    if (currentRole === 'seller' || currentRole === 'admin' || currentRole === 'creator') {
       return;
     }
 
     setCart((prev) => prev.filter((item) => item.product.id !== productId));
     addToast('تم الحذف', 'تم حذف المنتج من سلة المشتريات', 'info');
 
-    if (isAuthenticated && (currentRole === 'buyer' || currentRole === 'creator')) {
+    if (isAuthenticated && currentRole === 'buyer') {
       try {
         await api.removeCartItem({ id: currentUser.id, role: currentRole }, productId);
       } catch (err: any) {
@@ -2366,7 +2375,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const updateCartQuantity = async (productId: string, quantity: number) => {
-    if (currentRole === 'seller' || currentRole === 'admin') {
+    if (currentRole === 'seller' || currentRole === 'admin' || currentRole === 'creator') {
       return;
     }
 
@@ -2386,7 +2395,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       prev.map((it) => (it.product.id === productId ? { ...it, quantity: safeQty } : it))
     );
 
-    if (isAuthenticated && (currentRole === 'buyer' || currentRole === 'creator')) {
+    if (isAuthenticated && currentRole === 'buyer') {
       try {
         await api.updateCartItem({ id: currentUser.id, role: currentRole }, productId, safeQty);
       } catch (err: any) {
@@ -2402,7 +2411,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       localStorage.removeItem('saeed_cart');
     } catch { }
 
-    if (isAuthenticated && (currentRole === 'buyer' || currentRole === 'creator')) {
+    if (isAuthenticated && currentRole === 'buyer') {
       try {
         await api.clearCart({ id: currentUser.id, role: currentRole });
       } catch (err: any) {
@@ -2436,7 +2445,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Favorites (Syncs with Database)
   const toggleFavorite = async (productId: string) => {
-    if (currentRole === 'seller' || currentRole === 'admin') {
+    if (currentRole === 'seller' || currentRole === 'admin' || currentRole === 'creator') {
       addToast('غير مصرح', 'عفواً، قائمة المفضلة مخصصة لحسابات المشترين فقط', 'error');
       return;
     }
@@ -2458,7 +2467,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       addToast('المفضلة', `تمت إضافة "${prod?.title || 'المنتج'}" إلى المفضلة ❤️`, 'success');
     }
 
-    if (isAuthenticated && (currentRole === 'buyer' || currentRole === 'creator') && currentUser?.id && currentUser.id !== 'guest-visitor') {
+    if (isAuthenticated && currentRole === 'buyer' && currentUser?.id && currentUser.id !== 'guest-visitor') {
       try {
         const updatedFavs = await api.toggleFavorite(
           { id: currentUser.id, role: currentRole },
@@ -3190,7 +3199,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }));
 
     // Pre-sync cart to server so persistent cart session matches frontend state
-    if (isAuthenticated && (currentRole === 'buyer' || currentRole === 'creator') && currentUser.id) {
+    if (isAuthenticated && currentRole === 'buyer' && currentUser.id) {
       try {
         await api.syncCart({ id: currentUser.id, role: currentRole }, cartPayloadItems);
       } catch (syncErr) {

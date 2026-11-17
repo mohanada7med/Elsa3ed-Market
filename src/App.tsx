@@ -534,7 +534,7 @@ const MainContent: React.FC = () => {
 
               {/* Cart */}
               {activePage === 'cart' && (
-                isAuthenticated && (currentRole === 'seller' || currentRole === 'admin') ? (
+                isAuthenticated && (currentRole === 'seller' || currentRole === 'admin' || currentRole === 'creator') ? (
                   <ForbiddenPage />
                 ) : (
                   <CartPage />
@@ -543,7 +543,7 @@ const MainContent: React.FC = () => {
 
               {/* Checkout */}
               {activePage === 'checkout' && (
-                isAuthenticated && (currentRole === 'seller' || currentRole === 'admin') ? (
+                isAuthenticated && (currentRole === 'seller' || currentRole === 'admin' || currentRole === 'creator') ? (
                   <ForbiddenPage />
                 ) : isAuthenticated ? (
                   <CheckoutPage />
@@ -581,7 +581,7 @@ const MainContent: React.FC = () => {
               )}
 
               {(activePage === 'orders' || activePage === 'order-details') && (
-                isAuthenticated && (currentRole === 'seller' || currentRole === 'admin') ? (
+                isAuthenticated && (currentRole === 'seller' || currentRole === 'admin' || currentRole === 'creator') ? (
                   <ForbiddenPage />
                 ) : (
                   <React.Suspense fallback={<LazySectionFallback />}>
@@ -591,7 +591,7 @@ const MainContent: React.FC = () => {
               )}
 
               {activePage === 'favorites' && (
-                isAuthenticated && (currentRole === 'seller' || currentRole === 'admin') ? (
+                isAuthenticated && (currentRole === 'seller' || currentRole === 'admin' || currentRole === 'creator') ? (
                   <ForbiddenPage />
                 ) : (
                   <FavoritesPage />
@@ -953,7 +953,7 @@ const MainContent: React.FC = () => {
       <MobileBottomBar />
 
       {/* Global Modals & Drawers */}
-      {(currentRole === 'buyer' || currentRole === 'creator' || !isAuthenticated) && <CartDrawer />}
+      {(currentRole === 'buyer' || !isAuthenticated) && <CartDrawer />}
       <AuthModal />
       <CreatorApplicationModal
         isOpen={isCreatorApplyModalOpen}

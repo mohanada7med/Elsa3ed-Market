@@ -128,7 +128,8 @@ const ProductCard: React.FC<{
   centerOnMobile = false,
   hideOnMobile = false,
 }) => {
-  const { addToCart, setIsCartDrawerOpen, addToFavorites, removeFromFavorites, isFavorite } = useApp();
+  const { addToCart, setIsCartDrawerOpen, addToFavorites, removeFromFavorites, isFavorite, currentRole, isAuthenticated } = useApp();
+  const canShop = !isAuthenticated || currentRole === 'buyer';
   const [imageIndex, setImageIndex] = useState(0);
 
   const productId = text(product, ['id', '_id', 'productId']);
@@ -297,15 +298,17 @@ const ProductCard: React.FC<{
             </a>
 
             <div className="absolute left-2.5 top-2.5 flex flex-col gap-2">
-              <button
-                type="button"
-                aria-label={isFav ? 'إزالة من المفضلة' : 'إضافة للمفضلة'}
-                aria-pressed={isFav}
-                onClick={handleFavorite}
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/95 text-espresso shadow-md transition-transform hover:scale-110 dark:bg-black/65 dark:text-white"
-              >
-                <Heart size={16} className={isFav ? 'fill-rose-500 text-rose-500' : ''} fill={isFav ? 'currentColor' : 'none'} />
-              </button>
+              {canShop && (
+                <button
+                  type="button"
+                  aria-label={isFav ? 'إزالة من المفضلة' : 'إضافة للمفضلة'}
+                  aria-pressed={isFav}
+                  onClick={handleFavorite}
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white/95 text-espresso shadow-md transition-transform hover:scale-110 dark:bg-black/65 dark:text-white"
+                >
+                  <Heart size={16} className={isFav ? 'fill-rose-500 text-rose-500' : ''} fill={isFav ? 'currentColor' : 'none'} />
+                </button>
+              )}
               <button
                 type="button"
                 aria-label="عرض سريع"
@@ -408,15 +411,29 @@ const ProductCard: React.FC<{
           {lowStock && <span className="font-black text-[#a74a32]">باقي {formatPrice(stock)} قطع بس</span>}
         </div>
 
-        <button
-          type="button"
-          disabled={outOfStock}
-          onClick={handleAddToCart}
-          className="mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-full bg-[#6B3A1F] text-sm font-black text-[#FFF9EE] transition-colors hover:bg-[#3B1E0E] disabled:cursor-not-allowed disabled:opacity-40 dark:hover:bg-[#C99444] dark:hover:text-espresso"
-        >
-          <ShoppingBag size={17} />
-          {outOfStock ? 'خلصان دلوقتي' : 'حط في السلة'}
-        </button>
+        {canShop ? (
+          <button
+            type="button"
+            disabled={outOfStock}
+            onClick={handleAddToCart}
+            className="mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-full bg-[#6B3A1F] text-sm font-black text-[#FFF9EE] transition-colors hover:bg-[#3B1E0E] disabled:cursor-not-allowed disabled:opacity-40 dark:hover:bg-[#C99444] dark:hover:text-espresso"
+          >
+            <ShoppingBag size={17} />
+            {outOfStock ? 'خلصان دلوقتي' : 'حط في السلة'}
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation();
+              onNavigate(product);
+            }}
+            className="mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-full border border-[#6B3A1F]/25 text-sm font-black text-[#6B3A1F] transition-colors hover:bg-[#6B3A1F]/10 dark:border-[#C99444]/30 dark:text-[#C99444]"
+          >
+            <Eye size={17} />
+            شوف التفاصيل
+          </button>
+        )}
       </article>
     </div>
   );
@@ -431,7 +448,8 @@ const QuickView: React.FC<{
   onClose: () => void;
   onNavigate: (product: ProductLike) => void;
 }> = ({ product, onClose, onNavigate }) => {
-  const { addToCart, setIsCartDrawerOpen } = useApp();
+  const { addToCart, setIsCartDrawerOpen, currentRole, isAuthenticated } = useApp();
+  const canShop = !isAuthenticated || currentRole === 'buyer';
   const [imageIndex, setImageIndex] = useState(0);
 
   useEffect(() => {
@@ -557,19 +575,21 @@ const QuickView: React.FC<{
             )}
 
             <div className="mt-auto flex flex-col gap-3 pt-8 sm:flex-row">
-              <button
-                type="button"
-                disabled={outOfStock}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  addToCart(product as any, 1);
-                  setIsCartDrawerOpen(true);
-                }}
-                className="flex h-14 flex-1 items-center justify-center gap-3 rounded-full bg-[#6B3A1F] text-sm font-black text-[#FFF9EE] transition hover:bg-[#3B1E0E] disabled:cursor-not-allowed disabled:opacity-40 dark:hover:bg-[#C99444]"
-              >
-                <ShoppingBag size={16} />
-                حط في السلة
-              </button>
+              {canShop && (
+                <button
+                  type="button"
+                  disabled={outOfStock}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    addToCart(product as any, 1);
+                    setIsCartDrawerOpen(true);
+                  }}
+                  className="flex h-14 flex-1 items-center justify-center gap-3 rounded-full bg-[#6B3A1F] text-sm font-black text-[#FFF9EE] transition hover:bg-[#3B1E0E] disabled:cursor-not-allowed disabled:opacity-40 dark:hover:bg-[#C99444]"
+                >
+                  <ShoppingBag size={16} />
+                  حط في السلة
+                </button>
+              )}
 
               <button
                 type="button"

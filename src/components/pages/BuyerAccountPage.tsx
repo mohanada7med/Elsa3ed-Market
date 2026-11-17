@@ -61,7 +61,7 @@ export const BuyerAccountPage: React.FC = () => {
   const isAdmin = currentRole === 'admin' || currentUser?.role === 'admin';
   const isSeller = currentRole === 'seller' || currentUser?.role === 'seller';
   const isCreator = currentRole === 'creator' || currentUser?.role === 'creator';
-  const isBuyer = !isAdmin && !isSeller;
+  const isBuyer = !isAdmin && !isSeller && !isCreator;
 
   const profileTabs: { id: AccountTab; label: string; icon: typeof User; badge?: number }[] = [
     { id: 'personal', label: 'البيانات الشخصية', icon: User },
