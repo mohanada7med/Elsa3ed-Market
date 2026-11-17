@@ -1477,26 +1477,8 @@ export const ProductDetailsView: React.FC = () => {
                     </button>
                   </div>
                 </div>
-              ) : currentRole === 'creator' ? (
-                /* 4. لو صانع محتوى يتصفح القطعة */
-                <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 space-y-3">
-                  <div className="flex items-center gap-2 text-xs font-bold text-espresso dark:text-cream">
-                    <Sparkles size={16} className="text-primary" />
-                    <span>تصفح القطعة بحساب صانع المحتوى</span>
-                  </div>
-                  <p className="text-[11px] text-black/60 dark:text-white/60 leading-relaxed">
-                    يمكنك استعراض تفاصيل القطعة وتوثيق قصة الحرفة والورشة في محتواك، أو العودة لاستوديو صانع المحتوى.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => setActivePage('creator-dashboard')}
-                    className="flex min-h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary px-4 text-xs font-bold text-white hover:bg-primary-hover transition-colors"
-                  >
-                    العودة لاستوديو صانع المحتوى
-                  </button>
-                </div>
               ) : (
-                /* 5. لو بائع مسجل ولكن المنتج لورشة/بائع آخر (تظهر له خيارات الشراء والاستفسار كأي متصفح) */
+                /* 4. لو بائع مسجل ولكن المنتج لورشة/بائع آخر (تظهر له خيارات الشراء والاستفسار كأي متصفح) */
                 <div className="flex flex-col gap-3">
                   <button
                     type="button"

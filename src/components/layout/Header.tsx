@@ -27,7 +27,6 @@ import {
   Check,
   Flame,
   Film,
-  Image as ImageIcon,
   AlertTriangle,
   Calendar,
   Landmark,
@@ -44,7 +43,6 @@ import {
   ArrowUpLeft,
   Loader2,
   Tag,
-  Camera,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -411,20 +409,6 @@ const WAH_PORTALS_PREVIEW: Record<string, PortalPreviewItem> = {
     badge: 'حكايات عم وه',
     accentColor: '#C99444',
   },
-  creators: {
-    title: 'عم وه مع عدسة الصعيد',
-    desc: 'اتعرف على صنّاع المحتوى والمصورين الموثقين وتصفح معارض الصور التراثية من كل محافظات الصعيد.',
-    avatar: '/mascot/reels.png',
-    badge: 'عدسة وه',
-    accentColor: '#E66A2E',
-  },
-  'creators-photos': {
-    title: 'معرض صور الصعيد',
-    desc: 'جولة بصرية مصوّرة لقرى الصعيد ومعالمه وحرفه وأهله بعدسة صنّاع المحتوى المعتمدين.',
-    avatar: '/mascot/reels.png',
-    badge: 'صور الصعيد',
-    accentColor: '#C99444',
-  },
   sellers: {
     title: 'عم وه عند أهل الصنعة',
     desc: 'جولة بين ورش وحرفيي الصعيد، نشوف الصنعة وهي بتتعمل ونسمع حكاية كل صاحب حرفة.',
@@ -453,48 +437,6 @@ const WAH_PORTALS_PREVIEW: Record<string, PortalPreviewItem> = {
     badge: 'تحدي عم وه',
     accentColor: '#E66A2E',
   },
-  'creator-dashboard': {
-    title: 'استوديو صانع المحتوى',
-    desc: 'تابع مشاهداتك وإحصائياتك وحالة اعتماد أعمالك التراثية من مكان واحد.',
-    avatar: '/mascot/reels.png',
-    badge: 'استوديو وه',
-    accentColor: '#E66A2E',
-  },
-  'creator-reels': {
-    title: 'مقاطع الريلز والحكايات',
-    desc: 'ارفع فيديوهاتك القصيرة وشارك حكايات الحرف والمعالم مع جمهور منصة وه.',
-    avatar: '/mascot/reels.png',
-    badge: 'ريلز الصانع',
-    accentColor: '#C99444',
-  },
-  'creator-photos': {
-    title: 'معارض الصور التراثية',
-    desc: 'أنشئ ألبومات مصورة توثق تراث الصعيد وحرفه ومعالمه حتى ١٠ صور في المعرض.',
-    avatar: '/mascot/make.png',
-    badge: 'عدسة الصانع',
-    accentColor: '#E66A2E',
-  },
-  'creator-content': {
-    title: 'أرشيف ومحتوى حسابك',
-    desc: 'راجع حالة كل الريلز ومعارض الصور المعتمدة أو قيد المراجعة وعدّلها بسهولة.',
-    avatar: '/mascot/pro.png',
-    badge: 'إدارة المحتوى',
-    accentColor: '#C99444',
-  },
-  'creator-profile': {
-    title: 'هوية صانع المحتوى',
-    desc: 'حدّث نبذتك التعريفية، تخصصاتك، وروابط حساباتك الاجتماعية لجمهورك.',
-    avatar: '/mascot/fan.png',
-    badge: 'ملف الصانع',
-    accentColor: '#C99444',
-  },
-  'creator-public-profile': {
-    title: 'صفحتك العامة في وه',
-    desc: 'شاهد كيف يظهر معرضك وأعمالك المعتمدة لزوار منصة وه.',
-    avatar: '/mascot/saaed.png',
-    badge: 'المعرض العام',
-    accentColor: '#E66A2E',
-  },
 };
 
 /* =========================================================
@@ -517,7 +459,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
     setIsAuthModalOpen,
     setAuthModalTab,
     setPostLoginRedirect,
-    setIsCreatorApplyModalOpen,
     setShowIntroVideo,
     theme,
     toggleTheme,
@@ -526,8 +467,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
     openReportModal,
     navigateToProduct,
     navigateToSeller,
-    navigateToCreator,
-    navigateToCreatorsGallery,
     navigateToGovernorate,
     navigateToPlace,
     navigateToFood,
@@ -677,8 +616,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
 
   const isAdmin = currentRole === 'admin' || currentUser?.role === 'admin';
   const isSeller = currentRole === 'seller' || currentUser?.role === 'seller';
-  const isCreator = currentRole === 'creator' || currentUser?.role === 'creator';
-  const isShopBlockedStaff = isSeller || isAdmin || isCreator;
+  const isShopBlockedStaff = isSeller || isAdmin;
 
   useEffect(() => {
     const handleClickOutside = (event: PointerEvent) => {
@@ -764,21 +702,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
       ];
     }
 
-    if (isCreator) {
-      return [
-        { id: 'home', label: 'الرئيسية', shortLabel: 'الرئيسية', icon: HomeIcon },
-        { id: 'creator-dashboard', label: 'لوحة صانع المحتوى', shortLabel: 'لوحة التحكم', icon: LayoutDashboard },
-        { id: 'creator-reels', label: 'فيديوهاتي والريلز', shortLabel: 'الريلز', icon: Film },
-        { id: 'creator-photos', label: 'معارض صوري التراثية', shortLabel: 'معارض الصور', icon: ImageIcon },
-        { id: 'creator-content', label: 'إدارة كل المحتوى', shortLabel: 'كل المحتوى', icon: Layers },
-        { id: 'creators', label: 'دليل صنّاع المحتوى', shortLabel: 'دليل الصنّاع', icon: Camera },
-        { id: 'reels', label: 'حكايات وه (Reels)', shortLabel: 'حكايات وه', icon: Play },
-        { id: 'creator-profile', label: 'بيانات صانع المحتوى', shortLabel: 'ملفي', icon: UserCircle },
-        { id: 'creator-public-profile', label: 'صفحتي العامة', shortLabel: 'صفحتي العامة', icon: Sparkles },
-        { id: 'buyer-account', label: 'إعدادات الحساب', shortLabel: 'الحساب', icon: User },
-      ];
-    }
-
     const links: any[] = [
       { id: 'home', label: 'الرئيسية', shortLabel: 'الرئيسية' },
       { id: 'products', label: 'المنتجات', shortLabel: 'المنتجات' },
@@ -788,8 +711,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
       { id: 'food', label: 'طعم الصعيد (المطبخ الأصيل)', shortLabel: 'طعم الصعيد', icon: UtensilsCrossed },
       { id: 'events', label: 'مواسم وليالي الصعيد', shortLabel: 'ليالي ومواسم', icon: Calendar },
       { id: 'reels', label: 'ريلز وه', shortLabel: 'ريلز وه', isNew: true, icon: Film },
-      { id: 'creators', label: 'صنّاع المحتوى', shortLabel: 'صنّاع المحتوى', isNew: true, icon: Camera },
-      { id: 'creators-photos', label: 'معرض صور الصعيد', shortLabel: 'صور الصعيد', isNew: true, icon: ImageIcon },
       { id: 'sellers', label: 'شيوخ الصنعة والورش', shortLabel: 'ورش الصنعة', icon: Store },
       { id: 'categories', label: 'التصنيفات التراثية', shortLabel: 'التصنيفات', icon: Layers },
       { id: 'quize', label: 'انت صعيدى ؟ (لعبة اللهجة)', shortLabel: 'انت صعيدى؟', isNew: true, icon: Flame },
@@ -802,7 +723,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
     }
 
     return links;
-  }, [currentRole, isAuthenticated, isSeller, isAdmin, isCreator]);
+  }, [currentRole, isAuthenticated, isSeller, isAdmin]);
   const portalLinks = useMemo(() => {
     return roleNavLinks.filter(
       (link: any) =>
@@ -862,38 +783,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             items: ['admin-reports', 'admin-audit-logs'],
           },
         ]
-        : isCreator
-          ? [
-            {
-              id: 'creator-studio',
-              title: 'استوديو صانع المحتوى',
-              description: 'لوحة التحكم وإدارة جميع أعمالك',
-              icon: LayoutDashboard,
-              items: ['creator-dashboard', 'creator-content', 'creator-public-profile'],
-            },
-            {
-              id: 'creator-media',
-              title: 'الريلز ومعارض الصور',
-              description: 'ارفع وتابع مقاطع الفيديو والألبومات التراثية',
-              icon: Camera,
-              items: ['creator-reels', 'creator-photos'],
-            },
-            {
-              id: 'creator-community',
-              title: 'مجتمع الصنّاع والحكايات',
-              description: 'تصفح أعمال صنّاع المحتوى وحكايات وه',
-              icon: Film,
-              items: ['home', 'creators', 'reels'],
-            },
-            {
-              id: 'creator-account',
-              title: 'الملف الشخصي والحساب',
-              description: 'تحديث بياناتك وتخصصاتك وإعدادات الحساب',
-              icon: UserCircle,
-              items: ['creator-profile', 'buyer-account'],
-            },
-          ]
-          : [
+        : [
             {
               id: 'main',
               title: 'الرئيسية والسوق',
@@ -913,7 +803,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               title: 'تراث وحكايات الصعيد',
               description: 'الأكل والمواسم والحكايات والصور',
               icon: Landmark,
-              items: ['food', 'events', 'reels', 'creators', 'creators-photos'],
+              items: ['food', 'events', 'reels'],
             },
             {
               id: 'wah-market',
@@ -939,7 +829,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
         ),
       }))
       .filter((category) => category.links.length > 0);
-  }, [roleNavLinks, isSeller, isAdmin, isCreator]);
+  }, [roleNavLinks, isSeller, isAdmin]);
   const splitHalf = Math.ceil(portalLinks.length / 2);
   const rightPortals = portalLinks.slice(0, splitHalf);
   const leftPortals = portalLinks.slice(splitHalf);
@@ -947,36 +837,12 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
   const navigate = useCallback(
     (page: string) => {
       const cleanPage = page.startsWith('/') ? page.slice(1) : page;
-      if (cleanPage === 'creators-photos') {
-        navigateToCreatorsGallery('photos');
-        setMobileMenuOpen(false);
-        setUserDropdownOpen(false);
-        setIsProfileMenuOpen(false);
-        return;
-      }
-      if (cleanPage === 'creators') {
-        navigateToCreatorsGallery('creators');
-        setMobileMenuOpen(false);
-        setUserDropdownOpen(false);
-        setIsProfileMenuOpen(false);
-        return;
-      }
-      if (cleanPage === 'creator-public-profile' && isCreator) {
-        const ownCreatorId = (currentUser as any)?.creatorId || currentUser?.id;
-        if (ownCreatorId) {
-          navigateToCreator(ownCreatorId);
-          setMobileMenuOpen(false);
-          setUserDropdownOpen(false);
-          setIsProfileMenuOpen(false);
-          return;
-        }
-      }
       setActivePage(cleanPage as ActivePage);
       setMobileMenuOpen(false);
       setUserDropdownOpen(false);
       setIsProfileMenuOpen(false);
     },
-    [setActivePage, isCreator, currentUser, navigateToCreator, navigateToCreatorsGallery]
+    [setActivePage]
   );
 
   const navigateFromLink = useCallback(
@@ -1005,9 +871,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
   const getAccountPage = useCallback((): ActivePage => {
     if (isAdmin) return 'admin-dashboard';
     if (isSeller) return 'seller-dashboard';
-    if (isCreator) return 'creator-dashboard';
     return 'buyer-account';
-  }, [isAdmin, isSeller, isCreator]);
+  }, [isAdmin, isSeller]);
 
   const profileMenuItems = useMemo(() => {
     if (isAdmin) {
@@ -1016,12 +881,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
           id: 'admin-dashboard',
           label: 'لوحة التحكم العامة',
           icon: LayoutDashboard,
-          badge: null,
-        },
-        {
-          id: 'admin-creators',
-          label: 'إدارة صناع المحتوى',
-          icon: Sparkles,
           badge: null,
         },
         {
@@ -1134,89 +993,12 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
       ];
     }
 
-    if (isCreator) {
-      return [
-        {
-          id: 'creator-dashboard',
-          label: 'لوحة تحكم صانع المحتوى',
-          icon: LayoutDashboard,
-          badge: null,
-        },
-        {
-          id: 'creator-reels',
-          label: 'فيديوهاتي والريلز',
-          icon: Film,
-          badge: null,
-        },
-        {
-          id: 'creator-photos',
-          label: 'معارض صوري التراثية',
-          icon: ImageIcon,
-          badge: null,
-        },
-        {
-          id: 'creator-content',
-          label: 'إدارة كل المحتوى',
-          icon: Layers,
-          badge: null,
-        },
-        {
-          id: 'creator-profile',
-          label: 'بيانات صانع المحتوى',
-          icon: UserCircle,
-          badge: null,
-        },
-        {
-          id: 'creator-public-profile',
-          label: 'معاينة صفحتي العامة',
-          icon: Sparkles,
-          badge: null,
-        },
-        {
-          id: 'creators',
-          label: 'دليل صنّاع المحتوى',
-          icon: Camera,
-          badge: null,
-        },
-        {
-          id: 'messages',
-          label: 'الدعم الفني',
-          icon: MessageCircle,
-          badge: chatUnreadCount > 0 ? (chatUnreadCount > 99 ? '99+' : chatUnreadCount) : null,
-        },
-        {
-          id: 'notifications',
-          label: 'الإشعارات',
-          icon: Bell,
-          badge: unreadNotificationsCount > 0 ? (unreadNotificationsCount > 99 ? '99+' : unreadNotificationsCount) : null,
-        },
-        {
-          id: 'buyer-account',
-          label: 'إعدادات الحساب',
-          icon: User,
-          badge: null,
-        },
-      ];
-    }
-
     // Buyer / Regular User
     return [
       {
         id: 'buyer-account',
         label: 'الملف الشخصي',
         icon: UserCircle,
-        badge: null,
-      },
-      {
-        id: 'apply-creator',
-        label: 'انضم كصانع محتوى في وه',
-        icon: Sparkles,
-        badge: 'جديد',
-      },
-      {
-        id: 'creators',
-        label: 'دليل صنّاع المحتوى',
-        icon: Camera,
         badge: null,
       },
       {
@@ -1244,7 +1026,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
         badge: unreadNotificationsCount > 0 ? (unreadNotificationsCount > 99 ? '99+' : unreadNotificationsCount) : null,
       },
     ];
-  }, [isAdmin, isSeller, isCreator, unreadNotificationsCount, chatUnreadCount, favorites.length]);
+  }, [isAdmin, isSeller, unreadNotificationsCount, chatUnreadCount, favorites.length]);
 
   const displayName = currentUser?.name || currentUser?.username || 'حسابي';
   const profileImage =
@@ -1498,9 +1280,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             >
               <Sparkles size={13} className="text-primary" />
               <span className="truncate">
-                {isCreator
-                  ? 'بوابة صانع المحتوى في منصة «وه» — استوديو التوثيق والريلز'
-                  : 'من قلب الصعيد... حكاية بتبدأ'}
+                من قلب الصعيد... حكاية بتبدأ
               </span>
             </div>
 
@@ -1508,23 +1288,11 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               className="flex items-center gap-5 text-xs font-bold"
               style={{ color: secondaryText }}
             >
-              {isCreator ? (
-                <>
-                  <span>عدسة</span>
-                  <span>•</span>
-                  <span>توثيق</span>
-                  <span>•</span>
-                  <span>حكاية</span>
-                </>
-              ) : (
-                <>
-                  <span>أصالة</span>
-                  <span>•</span>
-                  <span>حرفة</span>
-                  <span>•</span>
-                  <span>حكاية</span>
-                </>
-              )}
+              <span>أصالة</span>
+              <span>•</span>
+              <span>حرفة</span>
+              <span>•</span>
+              <span>حكاية</span>
             </div>
           </div>
         </div>
@@ -1534,54 +1302,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             ========================================================= */}
         <div className="hidden lg:flex relative mx-auto max-w-[1600px] h-[78px] items-center justify-between px-8 xl:px-12">
           {/* Start Actions / Nav Links */}
-          {isCreator ? (
-            <div className="flex items-center gap-5 xl:gap-6">
-              <a
-                href={PAGE_ROUTES['creator-dashboard']}
-                onClick={(event) => navigateFromLink(event, 'creator-dashboard')}
-                className="flex items-center gap-1.5 whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
-                style={{
-                  color: activePage === 'creator-dashboard' ? (isDark ? '#C99444' : '#6B3A1F') : mainText,
-                }}
-              >
-                <LayoutDashboard size={15} className="text-primary" />
-                <span>لوحة صانع المحتوى</span>
-              </a>
-
-              <a
-                href={PAGE_ROUTES['creator-reels']}
-                onClick={(event) => navigateFromLink(event, 'creator-reels')}
-                className="whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
-                style={{
-                  color: activePage === 'creator-reels' ? (isDark ? '#C99444' : '#6B3A1F') : mainText,
-                }}
-              >
-                الريلز والفيديو
-              </a>
-
-              <a
-                href={PAGE_ROUTES['creator-photos']}
-                onClick={(event) => navigateFromLink(event, 'creator-photos')}
-                className="whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
-                style={{
-                  color: activePage === 'creator-photos' ? (isDark ? '#C99444' : '#6B3A1F') : mainText,
-                }}
-              >
-                معارض الصور
-              </a>
-
-              <a
-                href={PAGE_ROUTES.creators}
-                onClick={(event) => navigateFromLink(event, 'creators')}
-                className="whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
-                style={{
-                  color: activePage === 'creators' ? (isDark ? '#C99444' : '#6B3A1F') : mainText,
-                }}
-              >
-                دليل الصنّاع
-              </a>
-            </div>
-          ) : (
             <div className="flex items-center gap-6">
               <a
                 href={PAGE_ROUTES.home}
@@ -1616,7 +1336,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 محافظات الصعيد
               </a>
             </div>
-          )}
 
           {/* End Actions */}
           <div className="flex items-center gap-2">
@@ -1722,7 +1441,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   <div className="flex flex-col text-right leading-tight">
                     <span className="max-w-[110px] truncate text-sm font-black">{displayName}</span>
                     <span className="text-[10px] font-semibold opacity-70" style={{ color: secondaryText }}>
-                      {currentRole === 'admin' ? 'الإدارة' : isSeller ? 'صاحب ورشة' : isCreator ? 'صانع محتوى' : 'حسابي'}
+                      {currentRole === 'admin' ? 'الإدارة' : isSeller ? 'صاحب ورشة' : 'حسابي'}
                     </span>
                   </div>
                   <ChevronDown size={15} className={`text-primary transition-transform duration-300 ${userDropdownOpen ? 'rotate-180' : ''}`} />
@@ -1754,7 +1473,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-black">{displayName}</p>
                           <p className="text-xs font-semibold opacity-70" style={{ color: secondaryText }}>
-                            {currentRole === 'admin' ? 'إدارة وه' : isSeller ? 'شيخ صنعة / بائع' : isCreator ? 'صانع محتوى صعيدي' : 'ابن البلد / زبون'}
+                            {currentRole === 'admin' ? 'إدارة وه' : isSeller ? 'شيخ صنعة / بائع' : 'ابن البلد / زبون'}
                           </p>
                         </div>
                       </div>
@@ -1766,17 +1485,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                           return (
                             <a
                               key={item.id}
-                              href={item.id === 'apply-creator' ? '#apply-creator' : (PAGE_ROUTES[item.id as ActivePage] || `/${item.id}`)}
-                              onClick={(event) => {
-                                if (item.id === 'apply-creator') {
-                                  event.preventDefault();
-                                  setUserDropdownOpen(false);
-                                  setIsProfileMenuOpen(false);
-                                  setIsCreatorApplyModalOpen(true);
-                                  return;
-                                }
-                                navigateFromLink(event, item.id);
-                              }}
+                              href={PAGE_ROUTES[item.id as ActivePage] || `/${item.id}`}
+                              onClick={(event) => navigateFromLink(event, item.id)}
                               className="flex w-full items-center justify-between px-3.5 py-2 text-sm font-bold rounded-xl cursor-pointer transition-colors"
                               style={{
                                 backgroundColor: isActive
@@ -1993,9 +1703,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                             ? 'مدير النظام'
                             : isSeller
                               ? 'بائع'
-                              : isCreator
-                                ? 'صانع محتوى'
-                                : 'مشتري'}
+                              : 'مشتري'}
                         </p>
                       </div>
 
@@ -2007,17 +1715,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                           return (
                             <a
                               key={item.id}
-                              href={item.id === 'apply-creator' ? '#apply-creator' : (PAGE_ROUTES[item.id as ActivePage] || `/${item.id}`)}
-                              onClick={(event) => {
-                                if (item.id === 'apply-creator') {
-                                  event.preventDefault();
-                                  setIsProfileMenuOpen(false);
-                                  setUserDropdownOpen(false);
-                                  setIsCreatorApplyModalOpen(true);
-                                  return;
-                                }
-                                navigateFromLink(event, item.id);
-                              }}
+                              href={PAGE_ROUTES[item.id as ActivePage] || `/${item.id}`}
+                              onClick={(event) => navigateFromLink(event, item.id)}
                               className="flex w-full items-center justify-between px-4 py-2.5 text-sm font-semibold transition-colors cursor-pointer"
                               style={{
                                 backgroundColor: isActive
@@ -2367,20 +2066,12 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       <span>استكشف أقسام منصة وه</span>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                      {(isCreator
-                        ? [
-                            { label: 'لوحة الصانع', icon: LayoutDashboard, page: 'creator-dashboard' },
-                            { label: 'دليل الصنّاع', icon: Camera, page: 'creators' },
-                            { label: 'ريلز وه', icon: Film, page: 'reels' },
-                            { label: 'معالم وآثار', icon: Landmark, page: 'places' },
-                          ]
-                        : [
-                            { label: 'سوق الحرف', icon: ShoppingBag, page: 'products' },
-                            { label: 'شيوخ الصنعة', icon: Store, page: 'sellers' },
-                            { label: 'أكلات زمان', icon: UtensilsCrossed, page: 'food' },
-                            { label: 'معالم وآثار', icon: Landmark, page: 'places' },
-                          ]
-                      ).map((item) => (
+                      {[
+                        { label: 'سوق الحرف', icon: ShoppingBag, page: 'products' },
+                        { label: 'شيوخ الصنعة', icon: Store, page: 'sellers' },
+                        { label: 'أكلات زمان', icon: UtensilsCrossed, page: 'food' },
+                        { label: 'معالم وآثار', icon: Landmark, page: 'places' },
+                      ].map((item) => (
                         <button
                           key={item.page}
                           type="button"
@@ -2572,9 +2263,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         ? 'مدير النظام'
                         : isSeller
                           ? 'صاحب ورشة'
-                          : isCreator
-                            ? 'صانع محتوى'
-                            : 'عضو في مجتمع وَه'}
+                          : 'عضو في مجتمع وَه'}
                     </p>
                   </div>
 

@@ -176,12 +176,9 @@ export class CloudinaryStorageProvider implements IStorageProvider {
     let shouldOverwrite = false;
 
     if (isVideo || (folder as string) === 'reels' || (folder as string) === 'videos') {
-      if (options.role === 'admin' && !options.sellerId && !options.creatorId) {
+      if (options.role === 'admin' && !options.sellerId) {
         // Admin video uploads go to dedicated WAH videos folder
         cloudinaryFolder = 'WAH/videos';
-      } else if (options.role === 'creator' || options.creatorId) {
-        const cleanCreatorId = (options.creatorId || ownerId || 'creator').replace(/[^a-zA-Z0-9_-]/g, '_');
-        cloudinaryFolder = `WAH/creators/${cleanCreatorId}/videos`;
       } else if (options.sellerId) {
         // Seller video uploads go to isolated seller folder
         const cleanSellerId = options.sellerId.replace(/[^a-zA-Z0-9_-]/g, '_');
@@ -209,13 +206,6 @@ export class CloudinaryStorageProvider implements IStorageProvider {
       cloudinaryFolder = `WAH/users/${targetUserId}`;
       publicId = customPublicId || 'profile';
       shouldOverwrite = overwrite ?? true;
-    } else if (folder === 'creators') {
-      const targetCreatorId = (options.creatorId || ownerId || userId || 'creator').replace(/[^a-zA-Z0-9_-]/g, '_');
-      cloudinaryFolder = `WAH/creators/${targetCreatorId}/photos`;
-      const cleanFilename = filename.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_');
-      const uniqueSuffix = `${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
-      publicId = `${cleanFilename}_${uniqueSuffix}`;
-      shouldOverwrite = overwrite ?? false;
     } else if (folder === 'sellers') {
       const targetSellerId = (options.sellerId || ownerId || 'seller').replace(/[^a-zA-Z0-9_-]/g, '_');
       cloudinaryFolder = `WAH/sellers/${targetSellerId}`;
@@ -293,7 +283,7 @@ export class CloudinaryStorageProvider implements IStorageProvider {
   /**
    * Delete asset from Cloudinary by public_id or full Cloudinary URL
    */
-  async delete(fileKeyOrUrl: string, _requestingUser?: { id: string; role: string; sellerId?: string; creatorId?: string }): Promise<boolean> {
+  async delete(fileKeyOrUrl: string, _requestingUser?: { id: string; role: string; sellerId?: string }): Promise<boolean> {
     this.configure();
 
     if (!fileKeyOrUrl || !this.isConfigured) return false;
@@ -335,7 +325,6 @@ export class CloudinaryStorageProvider implements IStorageProvider {
   generateVideoUploadSignature(options: {
     role: string;
     sellerId?: string;
-    creatorId?: string;
     filename?: string;
     folder?: string;
     entityType?: string;
@@ -382,11 +371,8 @@ export class CloudinaryStorageProvider implements IStorageProvider {
         entitySlug: options.entitySlug,
         resourceType: 'video'
       });
-    } else if (options.role === 'admin' && !options.sellerId && !options.creatorId) {
+    } else if (options.role === 'admin' && !options.sellerId) {
       folder = 'WAH/admin/videos';
-    } else if (options.role === 'creator' || options.creatorId) {
-      const cleanCreatorId = (options.creatorId || 'creator').replace(/[^a-zA-Z0-9_-]/g, '_');
-      folder = `WAH/creators/${cleanCreatorId}/videos`;
     } else if (options.sellerId) {
       const cleanSellerId = options.sellerId.replace(/[^a-zA-Z0-9_-]/g, '_');
       folder = `WAH/sellers/${cleanSellerId}/videos`;

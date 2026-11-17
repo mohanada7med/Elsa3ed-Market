@@ -14,9 +14,6 @@ import {
   MapPin,
   House,
   Settings,
-  Film,
-  Image as ImageIcon,
-  Sparkles,
 } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -58,9 +55,6 @@ export const MobileBottomBar: React.FC = () => {
   const isAccountActive =
     activePage === 'buyer-account' ||
     activePage === 'seller-account' ||
-    activePage === 'creator-profile' ||
-    (currentRole === 'creator' &&
-      activePage === 'creator-dashboard') ||
     (currentRole === 'seller' &&
       activePage === 'seller-dashboard') ||
     (currentRole === 'admin' &&
@@ -192,59 +186,6 @@ export const MobileBottomBar: React.FC = () => {
         isActive: activePage === 'admin-sellers',
         onClick: () =>
           setActivePage('admin-sellers' as any),
-      },
-    ];
-  }
-
-  /*
-   * ============================================================
-   * CREATOR
-   * ============================================================
-   */
-
-  else if (
-    isAuthenticated &&
-    (currentRole === 'creator' || currentUser?.role === 'creator')
-  ) {
-    leftItems = [
-      {
-        id: 'home',
-        label: 'الرئيسية',
-        icon: Compass,
-        isActive: activePage === 'home',
-        onClick: () => setActivePage('home' as any),
-      },
-      {
-        id: 'creator-reels',
-        label: 'ريلز وفيديو',
-        icon: Film,
-        isActive: activePage === 'creator-reels',
-        onClick: () => setActivePage('creator-reels' as any),
-      },
-    ];
-
-    centerItem = {
-      id: 'creator-dashboard',
-      label: 'لوحة التحكم',
-      icon: Sparkles,
-      isActive: activePage === 'creator-dashboard',
-      onClick: () => setActivePage('creator-dashboard' as any),
-    };
-
-    rightItems = [
-      {
-        id: 'creator-photos',
-        label: 'معارض الصور',
-        icon: ImageIcon,
-        isActive: activePage === 'creator-photos',
-        onClick: () => setActivePage('creator-photos' as any),
-      },
-      {
-        id: 'creator-profile',
-        label: 'ملفي',
-        icon: User,
-        isActive: activePage === 'creator-profile' || activePage === 'creator-public-profile',
-        onClick: () => setActivePage('creator-profile' as any),
       },
     ];
   }

@@ -4,7 +4,7 @@ import '../src/index.css';
 export const metadata: Metadata = {
   title: 'وه | WAH — الحكاية ورا كل حاجة',
   description:
-    'منصة صعيد مصر الشاملة: سوق حرفي تجاري متكامل للتسوق المباشر، ريلز وتجارب صناع المحتوى الحية، وتوثيق وثائقي تفاعلي لمعالم وتراث محافظات الصعيد.',
+    'منصة صعيد مصر الشاملة: سوق حرفي تجاري متكامل للتسوق المباشر، ريلز وتجارب الحرفيين الحية، وتوثيق وثائقي تفاعلي لمعالم وتراث محافظات الصعيد.',
   icons: {
     icon: 'https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png',
     apple: 'https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png',
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'وه | WAH — الحكاية ورا كل حاجة',
     description:
-      'منصة صعيد مصر الشاملة: سوق حرفي تجاري متكامل للتسوق المباشر، ريلز وتجارب صناع المحتوى الحية، وتوثيق وثائقي تفاعلي لمعالم وتراث محافظات الصعيد.',
+      'منصة صعيد مصر الشاملة: سوق حرفي تجاري متكامل للتسوق المباشر، ريلز وتجارب الحرفيين الحية، وتوثيق وثائقي تفاعلي لمعالم وتراث محافظات الصعيد.',
     type: 'website',
     images: [
       {
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     card: 'summary',
     title: 'وه | WAH — الحكاية ورا كل حاجة',
     description:
-      'منصة صعيد مصر الشاملة: سوق حرفي تجاري متكامل للتسوق المباشر، ريلز وتجارب صناع المحتوى الحية، وتوثيق وثائقي تفاعلي لمعالم وتراث محافظات الصعيد.',
+      'منصة صعيد مصر الشاملة: سوق حرفي تجاري متكامل للتسوق المباشر، ريلز وتجارب الحرفيين الحية، وتوثيق وثائقي تفاعلي لمعالم وتراث محافظات الصعيد.',
     images: ['https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png'],
   },
 };
@@ -180,7 +180,7 @@ export default function RootLayout({
               <span className="wah-loader-message-list">
                 <span>بنجهزلك رحلة في قلب الصعيد</span>
                 <span>بنفتح أبواب الحكايات والتراث</span>
-                <span>بنوصلك بصنّاع وه المميزين</span>
+                <span>بنوصلك بحرفيي وه المميزين</span>
               </span>
             </p>
             <div

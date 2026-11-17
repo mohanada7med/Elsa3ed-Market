@@ -1,90 +1,10 @@
-export type UserRole = 'guest' | 'buyer' | 'seller' | 'admin' | 'creator';
+export type UserRole = 'guest' | 'buyer' | 'seller' | 'admin';
 
 export type ProductStatus = 'draft' | 'pending' | 'approved' | 'rejected';
 
 export type SellerStatus = 'pending' | 'approved' | 'rejected' | 'suspended';
 
-export type CreatorStatus = 'pending' | 'approved' | 'rejected' | 'suspended';
-
 export type ContentStatus = 'draft' | 'pending' | 'approved' | 'rejected';
-
-export interface CreatorSocialLinks {
-  instagram?: string;
-  youtube?: string;
-  tiktok?: string;
-  facebook?: string;
-}
-
-export interface CreatorStats {
-  reelsCount: number;
-  photosCount: number;
-  viewsCount: number;
-  likesCount: number;
-}
-
-export interface CreatorDocument {
-  id: string;
-  userId: string;
-  name: string;
-  avatar: string;
-  bio: string;
-  governorate: string;
-  city: string;
-  specialties: string[];
-  socialLinks: CreatorSocialLinks;
-  phone: string;
-  email: string;
-  status: CreatorStatus;
-  verified: boolean;
-  rejectionReason?: string | null;
-  suspensionReason?: string | null;
-  approvedAt?: string | null;
-  approvedBy?: string | null;
-  rejectedAt?: string | null;
-  rejectedBy?: string | null;
-  suspendedAt?: string | null;
-  suspendedBy?: string | null;
-  stats?: CreatorStats;
-  createdAt: string;
-  updatedAt?: string;
-}
-
-export type PhotoCategory =
-  | 'heritage'
-  | 'crafts'
-  | 'landmarks'
-  | 'daily_life'
-  | 'festivals'
-  | 'communities'
-  | 'food'
-  | 'nature'
-  | 'other';
-
-export interface CreatorPhotoDocument {
-  id: string;
-  creatorId: string;
-  creatorName: string;
-  creatorAvatar?: string;
-  creatorGovernorate?: string;
-  title: string;
-  caption: string;
-  images: string[];
-  category: PhotoCategory | string;
-  governorate: string;
-  location?: string;
-  tags: string[];
-  likesCount: number;
-  viewsCount: number;
-  status: ContentStatus;
-  rejectionReason?: string | null;
-  submittedAt?: string;
-  approvedAt?: string | null;
-  approvedBy?: string | null;
-  rejectedAt?: string | null;
-  rejectedBy?: string | null;
-  createdAt: string;
-  updatedAt?: string;
-}
 
 export type OrderStatus =
   | 'pending'
@@ -521,9 +441,6 @@ export interface UserDocument {
   governorate?: string;
   sellerId?: string;
   sellerStatus?: SellerStatus;
-  creatorId?: string;
-  creatorStatus?: CreatorStatus;
-  creator?: any;
   savedAddresses?: UserAddress[];
   mustChangePassword?: boolean;
   passwordResetTokenHash?: string | null;
@@ -582,8 +499,8 @@ export interface NotificationDocument {
   link?: string;
   actionPage?: string;
   metadata?: any;
-  recipientRole?: 'admin' | 'seller' | 'buyer' | 'creator' | 'all';
-  targetType?: 'all' | 'user' | 'buyers' | 'sellers' | 'creators';
+  recipientRole?: 'admin' | 'seller' | 'buyer' | 'all';
+  targetType?: 'all' | 'user' | 'buyers' | 'sellers';
   targetUserId?: string;
   senderId?: string;
   senderRole?: 'admin';
@@ -806,9 +723,6 @@ export interface CraftReelDocument {
   comments?: CraftReelCommentDocument[];
   isLiked?: boolean;
   status?: ContentStatus;
-  creatorId?: string;
-  creatorName?: string;
-  creatorAvatar?: string;
   rejectionReason?: string | null;
   submittedAt?: string;
   approvedAt?: string | null;

@@ -8,7 +8,6 @@ import { ProductOfWeekSection } from '../public/ProductOfWeekSection';
 import { PaidPromotionSection } from '../public/PaidPromotionSection';
 import { HomeMarketSection } from '../public/HomeMarketSection';
 import { HomeFeaturedSellersSection } from '../public/HomeFeaturedSellersSection';
-import { HomeCreatorsGallerySection } from '../public/HomeCreatorsGallerySection';
 
 export const HomePage: React.FC = () => {
   return (
@@ -45,12 +44,6 @@ export const HomePage: React.FC = () => {
         {/* 3. Craft Reels (وه بيحكي) */}
         <CraftReelsSection />
         <PaidPromotionSection position="after-reels" />
-
-        {/* فاصل تراثي - عدسة وه وصور الصعيد */}
-        <HeritageSectionDivider variant="dots" label="عدسة وه وصور الصعيد" />
-
-        {/* 4. Creators Documentary Photos & Featured Creators */}
-        <HomeCreatorsGallerySection />
 
         {/* فاصل تراثي - الشكل الموجي */}
         <HeritageSectionDivider variant="wave" label="سوق ومنتجات وه" />

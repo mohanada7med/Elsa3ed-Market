@@ -1,95 +1,8 @@
-export type UserRole = 'guest' | 'buyer' | 'seller' | 'admin' | 'creator';
+export type UserRole = 'guest' | 'buyer' | 'seller' | 'admin';
 export type AuthState = 'AUTH_CHECKING' | 'AUTHENTICATED' | 'UNAUTHENTICATED';
 export type ThemeMode = 'light' | 'dark';
 
-export type CreatorStatus = 'pending' | 'approved' | 'rejected' | 'suspended';
-
 export type ContentStatus = 'draft' | 'pending' | 'approved' | 'rejected';
-
-export interface CreatorSocialLinks {
-  instagram?: string;
-  youtube?: string;
-  tiktok?: string;
-  facebook?: string;
-}
-
-export interface CreatorStats {
-  reelsCount: number;
-  photosCount: number;
-  viewsCount: number;
-  likesCount: number;
-}
-
-export interface Creator {
-  id: string;
-  userId: string;
-  name: string;
-  avatar: string;
-  bio: string;
-  governorate: Governorate;
-  city: string;
-  specialties: string[];
-  socialLinks: CreatorSocialLinks;
-  phone: string;
-  email: string;
-  status: CreatorStatus;
-  verified: boolean;
-  rejectionReason?: string | null;
-  suspensionReason?: string | null;
-  approvedAt?: string | null;
-  approvedBy?: string | null;
-  rejectedAt?: string | null;
-  rejectedBy?: string | null;
-  suspendedAt?: string | null;
-  suspendedBy?: string | null;
-  stats?: CreatorStats;
-  createdAt: string;
-  updatedAt?: string;
-}
-
-export type PhotoCategory =
-  | 'heritage'
-  | 'crafts'
-  | 'landmarks'
-  | 'daily_life'
-  | 'festivals'
-  | 'communities'
-  | 'food'
-  | 'nature'
-  | 'other';
-
-export interface CreatorPhoto {
-  id: string;
-  creatorId: string;
-  creatorName: string;
-  creatorAvatar?: string;
-  creatorGovernorate?: string;
-  title: string;
-  caption: string;
-  images: string[];
-  category: PhotoCategory | string;
-  governorate: string;
-  location?: string;
-  tags: string[];
-  likesCount: number;
-  viewsCount: number;
-  status: ContentStatus;
-  rejectionReason?: string | null;
-  submittedAt?: string;
-  approvedAt?: string | null;
-  approvedBy?: string | null;
-  rejectedAt?: string | null;
-  rejectedBy?: string | null;
-  createdAt: string;
-  updatedAt?: string;
-}
-
-export interface CreatorPublicProfile {
-  creator: Creator;
-  reels: CraftReel[];
-  photos: CreatorPhoto[];
-  stats: CreatorStats;
-}
 
 export type Governorate =
   | 'أسوان'
@@ -541,9 +454,6 @@ export interface UserProfile {
   sellerId?: string;
   sellerStatus?: SellerStatus;
   seller?: any;
-  creatorId?: string;
-  creatorStatus?: CreatorStatus;
-  creator?: any;
   mustChangePassword?: boolean;
   authProvider?: 'local' | 'google' | 'hybrid';
   hasPassword?: boolean;
@@ -590,7 +500,6 @@ export type ActivePage =
   | 'wholesale'
   | 'crafts'
   | 'reels'
-  | 'creators'
   | 'search'
   | 'cart'
   | 'checkout'
@@ -608,13 +517,6 @@ export type ActivePage =
   | 'seller-payouts'
   | 'seller-analytics'
   | 'seller-account'
-  | 'creator-dashboard'
-  | 'creator-reels'
-  | 'creator-photos'
-  | 'creator-profile'
-  | 'creator-content'
-  | 'creator-public-profile'
-  | 'admin-creators'
   | 'admin-dashboard'
   | 'admin-cultural-cms'
   | 'admin-map-editor'
@@ -817,9 +719,6 @@ export interface CraftReel {
   comments?: CraftReelComment[];
   isLiked?: boolean;
   status?: ContentStatus;
-  creatorId?: string;
-  creatorName?: string;
-  creatorAvatar?: string;
   rejectionReason?: string | null;
   submittedAt?: string;
   approvedAt?: string | null;
@@ -1494,7 +1393,7 @@ export interface ReportTicket {
   userName: string;
   userEmail?: string;
   userPhone: string;
-  userRole: 'buyer' | 'seller' | 'admin' | 'creator' | 'guest';
+  userRole: 'buyer' | 'seller' | 'admin' | 'guest';
   userGovernorate?: string;
   category: ReportCategory;
   priority: ReportPriority;

@@ -51,7 +51,6 @@ export const BuyerAccountPage: React.FC = () => {
     uploadProfileImage,
     removeProfileImage,
     applyToBecomeSeller,
-    setIsCreatorApplyModalOpen,
     setIsAuthModalOpen,
     setAuthModalTab,
     confirmModal,
@@ -60,8 +59,7 @@ export const BuyerAccountPage: React.FC = () => {
 
   const isAdmin = currentRole === 'admin' || currentUser?.role === 'admin';
   const isSeller = currentRole === 'seller' || currentUser?.role === 'seller';
-  const isCreator = currentRole === 'creator' || currentUser?.role === 'creator';
-  const isBuyer = !isAdmin && !isSeller && !isCreator;
+  const isBuyer = !isAdmin && !isSeller;
 
   const profileTabs: { id: AccountTab; label: string; icon: typeof User; badge?: number }[] = [
     { id: 'personal', label: 'البيانات الشخصية', icon: User },
@@ -470,9 +468,7 @@ export const BuyerAccountPage: React.FC = () => {
                     ? 'مدير المنصة'
                     : currentUser?.role === 'seller'
                       ? 'ورشة معتمدة'
-                      : isCreator
-                        ? 'صانع محتوى صعيدي'
-                        : 'متسوق موثق'}
+                      : 'متسوق موثق'}
                 </span>
               </div>
               <p className="text-xs text-black/60 dark:text-white/60 mt-1">{currentUser?.email || ''}</p>
@@ -850,88 +846,6 @@ export const BuyerAccountPage: React.FC = () => {
                   >
                     <Store className="w-4 h-4" />
                     <span>قدّم طلب عشان تفتح ورشتك كبائع</span>
-                  </button>
-                </>
-              )}
-            </div>
-          )}
-
-          {/* Content Creator Card (Available for Buyers & Creators) */}
-          {!isAdmin && !isSeller && (
-            <div className="bg-white/75 dark:bg-espresso-900/90 p-6 rounded-[2rem] border border-primary/20 space-y-3 text-right shadow-lg backdrop-blur-xl">
-              {isCreator || Boolean(currentUser?.creatorStatus) ? (
-                <>
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-bold text-xs">حساب صانع المحتوى</h4>
-                    {currentUser?.creatorStatus === 'approved' ? (
-                      <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
-                        <CheckCircle2 className="w-3 h-3" />
-                        معتمد وموثق
-                      </span>
-                    ) : currentUser?.creatorStatus === 'rejected' ? (
-                      <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-500/20">
-                        <AlertCircle className="w-3 h-3" />
-                        تم الرفض
-                      </span>
-                    ) : currentUser?.creatorStatus === 'suspended' ? (
-                      <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-700 dark:text-rose-300 border border-rose-500/20">
-                        <AlertTriangle className="w-3 h-3" />
-                        موقوف مؤقتاً
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/20">
-                        <Clock className="w-3 h-3" />
-                        قيد المراجعة
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-xs text-black/60 dark:text-white/60 leading-relaxed">
-                    {currentUser?.creatorStatus === 'approved'
-                      ? 'حسابك معتمد كصانع محتوى في وه. تقدر ترفع ريلز ومعارض صور تراثية من لوحة التحكم.'
-                      : currentUser?.creatorStatus === 'rejected'
-                        ? 'راجع سبب الرفض وعدّل بيانات طلبك لإعادة التقديم.'
-                        : 'طلبك محفوظ وجاري مراجعته من الإدارة. تابع حالتك أو حدّث ملفك من لوحة صانع المحتوى.'}
-                  </p>
-                  <div className="flex flex-col gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setActivePage('creator-dashboard')}
-                      className="w-full py-2.5 bg-primary hover:bg-[#3B1E0E] text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
-                    >
-                      <Sparkles className="w-4 h-4" />
-                      <span>لوحة تحكم صانع المحتوى</span>
-                    </button>
-                    {currentUser?.creatorStatus === 'rejected' && (
-                      <button
-                        type="button"
-                        onClick={() => setIsCreatorApplyModalOpen(true)}
-                        className="w-full py-2.5 bg-primary/10 hover:bg-primary/20 text-primary font-bold text-xs rounded-xl border border-primary/20 flex items-center justify-center gap-2 transition-colors cursor-pointer"
-                      >
-                        <RefreshCw className="w-3.5 h-3.5" />
-                        <span>تعديل وإعادة التقديم</span>
-                      </button>
-                    )}
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-bold text-xs">كن صانع محتوى في وه</h4>
-                    <span className="text-[10px] text-primary font-bold px-2 py-0.5 bg-primary/10 rounded-full">
-                      مجاني للجميع
-                    </span>
-                  </div>
-                  <p className="text-xs text-black/60 dark:text-white/60 leading-relaxed">
-                    بتصور معالم الصعيد، الأكلات الشعبية، أو الحرف اليدوية؟ انضم كصانع محتوى وانشر ريلز ومعارض صور تراثية باسمك مع الحفاظ على كل مزايا حسابك كمشتري.
-                  </p>
-                  <button
-                    type="button"
-                    id="open-apply-creator-modal-btn"
-                    onClick={() => setIsCreatorApplyModalOpen(true)}
-                    className="w-full py-2.5 bg-espresso hover:bg-[#3B1E0E] dark:bg-[#C99444] dark:text-[#1B1009] dark:hover:bg-primary-hover text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
-                  >
-                    <Sparkles className="w-4 h-4" />
-                    <span>انضم كصانع محتوى في وه</span>
                   </button>
                 </>
               )}

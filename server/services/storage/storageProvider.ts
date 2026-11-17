@@ -7,13 +7,12 @@ export interface UploadFileOptions {
   data: string | Buffer; // Base64 data-uri or raw buffer
   filename?: string;
   mimeType?: string;
-  folder?: 'products' | 'sellers' | 'categories' | 'receipts' | 'users' | 'reels' | 'videos' | 'admin' | 'creators';
+  folder?: 'products' | 'sellers' | 'categories' | 'receipts' | 'users' | 'reels' | 'videos' | 'admin';
   resourceType?: 'image' | 'video' | 'auto';
   productId?: string;
   userId?: string;
   sellerId?: string;
-  creatorId?: string;
-  role?: 'admin' | 'seller' | 'buyer' | 'creator' | string;
+  role?: 'admin' | 'seller' | 'buyer' | string;
   ownerId?: string;
   customPublicId?: string;
   overwrite?: boolean;
@@ -31,7 +30,7 @@ export interface UploadResult {
 
 export interface IStorageProvider {
   upload(options: UploadFileOptions): Promise<UploadResult>;
-  delete(fileKey: string, requestingUser?: { id: string; role: string; sellerId?: string; creatorId?: string }): Promise<boolean>;
+  delete(fileKey: string, requestingUser?: { id: string; role: string; sellerId?: string }): Promise<boolean>;
   getUrl(fileKey: string): string;
 }
 
@@ -145,7 +144,7 @@ export class LocalStorageProvider implements IStorageProvider {
     }
   }
 
-  async delete(fileKey: string, requestingUser?: { id: string; role: string; sellerId?: string; creatorId?: string }): Promise<boolean> {
+  async delete(fileKey: string, requestingUser?: { id: string; role: string; sellerId?: string }): Promise<boolean> {
     // Sanitization against path traversal
     const sanitizedKey = path.normalize(fileKey).replace(/^(\.\.[\/\\])+/, '');
     if (sanitizedKey.includes('..')) {
@@ -156,7 +155,7 @@ export class LocalStorageProvider implements IStorageProvider {
     if (requestingUser && requestingUser.role !== 'admin') {
       const parts = sanitizedKey.split('/');
       const filename = parts[parts.length - 1];
-      const allowedOwners = [requestingUser.id, requestingUser.sellerId, requestingUser.creatorId]
+      const allowedOwners = [requestingUser.id, requestingUser.sellerId]
         .filter(Boolean)
         .map((id) => id!.replace(/[^a-zA-Z0-9_-]/g, ''));
       if (!allowedOwners.some((ownerPrefix) => filename.startsWith(ownerPrefix) || sanitizedKey.includes(ownerPrefix))) {
@@ -217,7 +216,7 @@ class DelegatingStorageProvider implements IStorageProvider {
     return await localStorageProvider.upload(options);
   }
 
-  async delete(fileKey: string, requestingUser?: { id: string; role: string; sellerId?: string; creatorId?: string }): Promise<boolean> {
+  async delete(fileKey: string, requestingUser?: { id: string; role: string; sellerId?: string }): Promise<boolean> {
     if (!fileKey) return false;
 
     if (fileKey.startsWith('WAH/') && isCloudinaryAvailable()) {

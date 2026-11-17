@@ -62,13 +62,6 @@ const ADMIN_SECTION_LABELS: Record<string, string> = {
   'admin-settings': 'الإعدادات العامة للمنصة'
 };
 
-const CREATOR_SECTION_LABELS: Record<string, string> = {
-  'creator-reels': 'إدارة مقاطع الريلز',
-  'creator-photos': 'إدارة معارض الصور',
-  'creator-content': 'محتوى صانع المحتوى',
-  'creator-profile': 'ملف صانع المحتوى'
-};
-
 export const DynamicBreadcrumbs: React.FC = () => {
   const {
     activePage,
@@ -79,7 +72,6 @@ export const DynamicBreadcrumbs: React.FC = () => {
     selectedCategoryId,
     sellers,
     selectedSellerId,
-    selectedCreatorId,
     orders,
     selectedOrderId,
     selectedGovernorateSlug,
@@ -267,27 +259,6 @@ export const DynamicBreadcrumbs: React.FC = () => {
         id: 'current-seller',
         label: seller?.brandName || seller?.name || 'ملف الورشة',
         url: `${origin}/sellers/${selectedSellerId || ''}`,
-        isCurrent: true
-      });
-    } else if (activePage === 'creators') {
-      items.push({
-        id: 'creators',
-        label: 'دليل صنّاع المحتوى والمعارض التراثية',
-        url: `${origin}/creators`,
-        isCurrent: true
-      });
-    } else if (activePage === 'creator-public-profile') {
-      items.push({
-        id: 'creators-parent',
-        label: 'دليل صنّاع المحتوى',
-        page: 'creators',
-        url: `${origin}/creators`,
-        onClick: () => setActivePage('creators')
-      });
-      items.push({
-        id: 'current-creator',
-        label: 'ملف صانع المحتوى',
-        url: `${origin}/creators/${selectedCreatorId || ''}`,
         isCurrent: true
       });
     } else if (activePage === 'cart') {
@@ -542,27 +513,6 @@ export const DynamicBreadcrumbs: React.FC = () => {
       }
     }
 
-    // 3b. Creator Dashboard Flow
-    else if (activePage.startsWith('creator-')) {
-      items.push({
-        id: 'creator-dashboard-parent',
-        label: 'لوحة صانع المحتوى',
-        page: 'creator-dashboard',
-        url: `${origin}/creator-dashboard`,
-        onClick: activePage === 'creator-dashboard' ? undefined : () => setActivePage('creator-dashboard'),
-        isCurrent: activePage === 'creator-dashboard'
-      });
-
-      if (activePage !== 'creator-dashboard') {
-        items.push({
-          id: activePage,
-          label: CREATOR_SECTION_LABELS[activePage] || 'القسم',
-          url: `${origin}${PAGE_ROUTES[activePage] || `/${activePage}`}`,
-          isCurrent: true
-        });
-      }
-    }
-
     // 4. Admin Dashboard Flow
     else if (activePage.startsWith('admin-') || activePage === 'cultural-cms') {
       items.push({
@@ -609,7 +559,6 @@ export const DynamicBreadcrumbs: React.FC = () => {
     selectedCategoryId,
     sellers,
     selectedSellerId,
-    selectedCreatorId,
     orders,
     selectedOrderId,
     selectedGovernorateSlug,

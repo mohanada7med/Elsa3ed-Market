@@ -42,7 +42,7 @@ interface ReelUploadModalProps {
   artisanAvatar?: string;
   defaultGovernorate?: Governorate;
   sellerProducts?: Product[];
-  currentUser?: { id?: string; role?: string; sellerId?: string; creatorId?: string; creatorStatus?: string; name?: string; avatar?: string };
+  currentUser?: { id?: string; role?: string; sellerId?: string; name?: string; avatar?: string };
   allSellers?: any[];
 }
 
@@ -63,8 +63,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
     setIsAuthModalOpen,
     setAuthModalTab,
     setPostLoginRedirect,
-    setActivePage,
-    setIsCreatorApplyModalOpen
+    setActivePage
   } = useApp();
 
   const [mobileTab, setMobileTab] = useState<'form' | 'preview'>('form');
@@ -88,7 +87,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
   const [location, setLocation] = useState('');
   const [contentType, setContentType] = useState<string>('places');
   const [craftType, setCraftType] = useState('حرف وصناعات');
-  const [artisanName, setArtisanName] = useState(initialArtisanName || 'صانع محتوى صعيدي');
+  const [artisanName, setArtisanName] = useState(initialArtisanName || 'حرفي صعيدي');
   const [workshopName, setWorkshopName] = useState(sellerName || 'حكايات الصعيد');
   const [artisanAvatar, setArtisanAvatar] = useState(
     initialArtisanAvatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80'
@@ -111,16 +110,11 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Authorization Check: Approved creators, sellers, and admins can upload
+  // Authorization Check: Only sellers and admins can upload
   const isGuestUser = !currentUser || currentUser.role === 'guest' || currentUser.id === 'guest-visitor';
-  const isUnapprovedCreator =
-    currentUser?.role === 'creator' &&
-    Boolean((currentUser as any)?.creatorStatus) &&
-    (currentUser as any)?.creatorStatus !== 'approved';
   const isUnauthorized =
     isGuestUser ||
-    isUnapprovedCreator ||
-    (currentUser.role !== 'seller' && currentUser.role !== 'admin' && currentUser.role !== 'creator');
+    (currentUser.role !== 'seller' && currentUser.role !== 'admin');
 
   // Sync when product selection changes
   useEffect(() => {
@@ -270,26 +264,20 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
       '';
 
     try {
-      const isCreator = currentUser?.role === 'creator';
-      const isApprovedCreator = isCreator && (currentUser as any)?.creatorStatus === 'approved';
       const userParam = (currentUser as any) || {
         id: sellerId || 'seller-current',
         role: (currentUser as any)?.role || 'seller',
         sellerId: sellerId || (currentUser as any)?.sellerId,
-        creatorId: (currentUser as any)?.creatorId,
         name: artisanName
       };
 
       const createdReel = await craftReelsService.addReelAsync(userParam, {
         title: title.trim(),
-        artisanName: artisanName || currentUser?.name || 'صانع محتوى صعيدي',
+        artisanName: artisanName || currentUser?.name || 'حرفي صعيدي',
         artisanAvatar: artisanAvatar || currentUser?.avatar,
-        workshopName: isCreator ? (artisanName || 'محتوى صعيدي') : workshopName,
-        sellerId: isCreator ? undefined : (sellerId || currentUser?.sellerId || `seller-${Date.now()}`),
-        creatorId: isCreator ? ((currentUser as any)?.creatorId || currentUser?.id) : undefined,
-        creatorName: isCreator ? (artisanName || currentUser?.name) : undefined,
-        creatorAvatar: isCreator ? (artisanAvatar || currentUser?.avatar) : undefined,
-        status: isCreator ? (isApprovedCreator ? 'approved' : 'pending') : 'approved',
+        workshopName: workshopName,
+        sellerId: sellerId || currentUser?.sellerId || `seller-${Date.now()}`,
+        status: 'approved',
         governorate,
         location: location.trim() || governorate,
         contentType: contentType || 'places',
@@ -361,7 +349,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
           </button>
         </div>
 
-        {/* If Unauthorized (Guest, Buyer, or Unapproved Creator) -> Render Permission Guard Barrier Screen */}
+        {/* If Unauthorized (Guest or Buyer) -> Render Permission Guard Barrier Screen */}
         {isUnauthorized ? (
           <div className="p-6 sm:p-12 flex flex-col items-center justify-center text-center space-y-6 my-auto">
             <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-amber-100 dark:bg-amber-950/50 border border-amber-300 dark:border-amber-700 flex items-center justify-center text-amber-700 dark:text-amber-300 shadow-md">
@@ -370,16 +358,12 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
 
             <div className="max-w-lg space-y-2">
               <h3 className="text-lg sm:text-2xl font-bold text-[#3B1E0E] dark:text-[#FFF9EE] font-cairo">
-                {isUnapprovedCreator
-                  ? 'حساب صانع المحتوى في انتظار الاعتماد'
-                  : 'رفع مقاطع الفيديو متاح لصنّاع المحتوى والحرفيين'}
+                رفع مقاطع الفيديو متاح للحرفيين وأصحاب الورش
               </h3>
               <p className="text-xs sm:text-sm text-black/60 dark:text-white/60 dark:text-[#D6C6B1] leading-relaxed">
                 {isGuestUser
-                  ? 'عفواً، سجل دخولك أولاً أو أنشئ حساب صانع محتوى أو بائع لمشاركة فيديوهاتك وحكاياتك على منصة وه.'
-                  : isUnapprovedCreator
-                  ? 'طلب صانع المحتوى الخاص بك لم يُعتمد بعد من الإدارة. يمكنك متابعة حالة الطلب من لوحة التحكم.'
-                  : 'حسابك الحالي مسجل كـ "مشتري". يمكنك الانضمام كصانع محتوى لنشر الريلز والصور التراثية، أو التقديم لفتح ورشة بائع.'}
+                  ? 'عفواً، سجل دخولك أولاً أو أنشئ حساب بائع / ورشة لمشاركة فيديوهاتك وحكاياتك على منصة وه.'
+                  : 'حسابك الحالي مسجل كـ "مشتري". يمكنك التقديم لفتح ورشة بائع لمشاركة فيديوهات حرفك ومنتجاتك.'}
               </p>
             </div>
 
@@ -413,40 +397,8 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                     <span>إنشاء حساب جديد</span>
                   </button>
                 </>
-              ) : isUnapprovedCreator ? (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onClose();
-                      setActivePage('creator-dashboard');
-                    }}
-                    className="w-full py-3 px-4 bg-primary hover:bg-primary-hover text-white text-xs sm:text-sm font-bold rounded-xl shadow-lg flex items-center justify-center gap-2 cursor-pointer min-h-[44px] transition-all"
-                  >
-                    <Sparkles className="w-4 h-4" />
-                    <span>متابعة حالة الطلب</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={onClose}
-                    className="w-full py-3 px-4 bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-espresso dark:text-cream hover:bg-black/10 dark:hover:bg-white/10 text-xs sm:text-sm font-bold rounded-xl cursor-pointer min-h-[44px] transition-all"
-                  >
-                    <span>إلغاء وإغلاق</span>
-                  </button>
-                </>
               ) : (
                 <>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onClose();
-                      setIsCreatorApplyModalOpen(true);
-                    }}
-                    className="w-full py-3 px-4 bg-primary hover:bg-primary-hover text-white text-xs sm:text-sm font-bold rounded-xl shadow-lg flex items-center justify-center gap-2 cursor-pointer min-h-[44px] transition-all"
-                  >
-                    <Sparkles className="w-4 h-4" />
-                    <span>انضم كصانع محتوى</span>
-                  </button>
                   <button
                     type="button"
                     onClick={() => {

@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from 'react';
 import { CraftReel } from '../../types';
 import { ReelFeed } from './reels/ReelFeed';
 import { AnimatePresence, motion } from 'motion/react';
-import { useApp } from '../../context/AppContext';
 
 interface CraftReelsModalProps {
   reels: CraftReel[];
@@ -11,7 +10,6 @@ interface CraftReelsModalProps {
   onClose: () => void;
   onSelectProduct?: (productId: string) => void;
   onSelectSeller?: (sellerId: string) => void;
-  onSelectCreator?: (creatorId: string) => void;
   onDeleteReel?: (reelId: string) => void;
   hasBottomNav?: boolean;
 }
@@ -23,11 +21,9 @@ export const CraftReelsModal: React.FC<CraftReelsModalProps> = ({
   onClose,
   onSelectProduct,
   onSelectSeller,
-  onSelectCreator,
   onDeleteReel,
   hasBottomNav = false
 }) => {
-  const { navigateToCreator } = useApp();
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
 
@@ -84,7 +80,6 @@ export const CraftReelsModal: React.FC<CraftReelsModalProps> = ({
             initialReelId={initialReelId}
             onSelectProduct={onSelectProduct}
             onSelectSeller={onSelectSeller}
-            onSelectCreator={onSelectCreator || navigateToCreator}
             onDeleteReel={onDeleteReel}
             onClose={onClose}
             showCloseButton={true}

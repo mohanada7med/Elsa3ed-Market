@@ -160,7 +160,7 @@ class NotificationService {
    * For guests, returns empty list.
    */
   getNotifications(
-    role: UserRole | 'admin' | 'seller' | 'buyer' | 'guest' | 'creator',
+    role: UserRole | 'admin' | 'seller' | 'buyer' | 'guest',
     targetId?: string,
     secondaryId?: string
   ): AppNotification[] {

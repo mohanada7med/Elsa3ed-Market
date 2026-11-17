@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import type { UserRole, SellerStatus, CreatorStatus } from '../models/types.ts';
+import type { UserRole, SellerStatus } from '../models/types.ts';
 import { memoryDb, getDatabase } from '../db/mongodb.ts';
 import { verifyToken } from '../services/authService.ts';
 import { clearAuthCookie, getAuthTokenFromRequest } from '../config/authCookie.ts';
@@ -19,9 +19,6 @@ export interface AuthenticatedUser {
   governorate?: string;
   sellerId?: string;
   sellerStatus?: SellerStatus;
-  creatorId?: string;
-  creatorStatus?: CreatorStatus;
-  creator?: any;
   mustChangePassword?: boolean;
   hasPassword?: boolean;
   authProvider?: 'local' | 'google' | 'hybrid';
@@ -123,8 +120,6 @@ export async function authenticate(req: AuthenticatedRequest, res: Response, nex
       role: verified.role,
       sellerId: verified.sellerId,
       sellerStatus: verified.sellerStatus,
-      creatorId: verified.creatorId,
-      creatorStatus: verified.creatorStatus,
       authVersion: verified.authVersion ?? 0
     };
   }
@@ -177,57 +172,10 @@ export async function authenticate(req: AuthenticatedRequest, res: Response, nex
     }
   }
 
-  // Resolve Creator Status and Creator ID accurately
-  let creatorId = userProfile.creatorId || (userProfile.role === 'creator' ? userProfile.id : undefined);
-  let creatorStatus: CreatorStatus | undefined = userProfile.creatorStatus;
-  let creatorDetails: any = null;
-
-  if (creatorId || userProfile.role === 'creator' || userProfile.creatorStatus) {
-    let creatorDoc: any = null;
-    if (isMongo && db) {
-      try {
-        creatorDoc = await db.collection('creators').findOne({
-          $or: [{ id: creatorId }, { userId: userProfile.id }]
-        });
-      } catch (e) {
-        console.error('[Auth] Error querying creator details in MongoDB:', e);
-      }
-    }
-    if (!creatorDoc) {
-      creatorDoc = memoryDb.creators.find((c: any) => c.id === creatorId || c.userId === userProfile.id);
-    }
-
-    if (creatorDoc) {
-      creatorStatus = creatorDoc.status;
-      creatorId = creatorDoc.id;
-      creatorDetails = {
-        id: creatorDoc.id,
-        userId: creatorDoc.userId,
-        name: creatorDoc.name,
-        avatar: creatorDoc.avatar,
-        bio: creatorDoc.bio,
-        governorate: creatorDoc.governorate,
-        city: creatorDoc.city,
-        specialties: creatorDoc.specialties || [],
-        socialLinks: creatorDoc.socialLinks || {},
-        phone: creatorDoc.phone,
-        email: creatorDoc.email,
-        status: creatorDoc.status,
-        verified: creatorDoc.verified,
-        rejectionReason: creatorDoc.rejectionReason,
-        suspensionReason: creatorDoc.suspensionReason,
-        stats: creatorDoc.stats
-      };
-    }
-  }
-
   const authenticatedUser: AuthenticatedUser = {
     id: userProfile.id,
     sellerId,
     sellerStatus,
-    creatorId,
-    creatorStatus,
-    creator: creatorDetails,
     name: userProfile.name,
     username: userProfile.username,
     email: userProfile.email,
@@ -274,10 +222,10 @@ export function requireBuyer(req: AuthenticatedRequest, res: Response, next: Nex
     });
   }
 
-  if (req.user.role !== 'buyer' && req.user.role !== 'creator') {
+  if (req.user.role !== 'buyer') {
     return res.status(403).json({
       success: false,
-      error: 'معلش، السلة وإتمام الطلبات مخصصة لحسابات المشترين وصناع المحتوى بس',
+      error: 'معلش، السلة وإتمام الطلبات مخصصة لحسابات المشترين بس',
       code: 'FORBIDDEN_BUYER_ONLY'
     });
   }
@@ -289,7 +237,7 @@ export async function requireSeller(req: AuthenticatedRequest, res: Response, ne
   if (!req.user || !req.user.id) {
     return res.status(401).json({
       success: false,
-      error: 'سجّل دخولك بحساب بائع أو صانع عشان تقدر تكمل',
+      error: 'سجّل دخولك بحساب بائع عشان تقدر تكمل',
       code: 'UNAUTHORIZED'
     });
   }
@@ -386,131 +334,6 @@ export function requireAdmin(req: AuthenticatedRequest, res: Response, next: Nex
       success: false,
       error: 'المكان ده مخصص لإدارة منصة وه بس',
       code: 'FORBIDDEN_ADMIN_ONLY'
-    });
-  }
-
-  next();
-}
-
-export async function requireCreator(req: AuthenticatedRequest, res: Response, next: NextFunction) {
-  if (!req.user || !req.user.id) {
-    return res.status(401).json({
-      success: false,
-      error: 'سجّل دخولك بحساب صانع محتوى عشان تقدر تكمل',
-      code: 'UNAUTHORIZED'
-    });
-  }
-
-  if (req.user.role === 'admin') {
-    return next();
-  }
-
-  let creatorStatus = req.user.creatorStatus;
-  if (!creatorStatus) {
-    const { db, isMongo } = await getDatabase();
-    const creatorId = req.user.creatorId || req.user.id;
-    let creatorDoc: any = null;
-    if (isMongo && db) {
-      try {
-        creatorDoc = await db.collection('creators').findOne({
-          $or: [{ id: creatorId }, { userId: req.user.id }]
-        });
-      } catch (e) {
-        console.error('[requireCreator] MongoDB lookup error:', e);
-      }
-    }
-    if (!creatorDoc) {
-      creatorDoc = memoryDb.creators.find((c: any) => c.id === creatorId || c.userId === req.user!.id);
-    }
-    creatorStatus = creatorDoc?.status;
-    req.user.creatorStatus = creatorStatus;
-    if (creatorDoc && !req.user.creator) {
-      req.user.creator = creatorDoc;
-      req.user.creatorId = creatorDoc.id;
-    }
-  }
-
-  if (creatorStatus === 'pending') {
-    return res.status(403).json({
-      success: false,
-      error: 'طلب انضمامك كصانع محتوى قيد المراجعة والاعتماد حالياً من قبل الإدارة',
-      code: 'CREATOR_PENDING_APPROVAL',
-      creatorStatus: 'pending'
-    });
-  }
-
-  if (creatorStatus === 'rejected') {
-    return res.status(403).json({
-      success: false,
-      error: 'طلب انضمامك كصانع محتوى لم يحظَ بالاعتماد في الوقت الحالي',
-      code: 'CREATOR_REJECTED',
-      creatorStatus: 'rejected',
-      reason: req.user.creator?.rejectionReason
-    });
-  }
-
-  if (creatorStatus === 'suspended') {
-    return res.status(403).json({
-      success: false,
-      error: 'تم إيقاف حساب صانع المحتوى مؤقتاً، يرجى مراجعة إدارة منصة وه',
-      code: 'CREATOR_SUSPENDED',
-      creatorStatus: 'suspended'
-    });
-  }
-
-  if (req.user.role !== 'creator' || creatorStatus !== 'approved') {
-    return res.status(403).json({
-      success: false,
-      error: 'هذه الميزة مخصصة لصناع المحتوى المعتمدين في منصة وه فقط',
-      code: 'FORBIDDEN_CREATOR_ONLY',
-      creatorStatus
-    });
-  }
-
-  next();
-}
-
-export async function requireCreatorAccount(req: AuthenticatedRequest, res: Response, next: NextFunction) {
-  if (!req.user || !req.user.id) {
-    return res.status(401).json({
-      success: false,
-      error: 'سجّل دخولك بحساب صانع محتوى عشان تقدر تكمل',
-      code: 'UNAUTHORIZED'
-    });
-  }
-
-  if (req.user.role === 'admin') {
-    return next();
-  }
-
-  let creatorDoc = req.user.creator;
-  if (!creatorDoc) {
-    const { db, isMongo } = await getDatabase();
-    const creatorId = req.user.creatorId || req.user.id;
-    if (isMongo && db) {
-      try {
-        creatorDoc = await db.collection('creators').findOne({
-          $or: [{ id: creatorId }, { userId: req.user.id }]
-        });
-      } catch (e) {
-        console.error('[requireCreatorAccount] MongoDB lookup error:', e);
-      }
-    }
-    if (!creatorDoc) {
-      creatorDoc = memoryDb.creators.find((c: any) => c.id === creatorId || c.userId === req.user!.id);
-    }
-    if (creatorDoc) {
-      req.user.creator = creatorDoc;
-      req.user.creatorId = creatorDoc.id;
-      req.user.creatorStatus = creatorDoc.status;
-    }
-  }
-
-  if (req.user.role !== 'creator' && !creatorDoc) {
-    return res.status(403).json({
-      success: false,
-      error: 'هذا القسم مخصص لحسابات صناع المحتوى في منصة وه فقط',
-      code: 'FORBIDDEN_CREATOR_ACCOUNT_ONLY'
     });
   }
 

@@ -14,11 +14,10 @@ import {
   DEFAULT_USER_AVATAR
 } from './userService.ts';
 import { storageService } from './storage/storageProvider.ts';
-import type { UserDocument, UserRole, SellerStatus, CreatorStatus } from '../models/types.ts';
+import type { UserDocument, UserRole, SellerStatus } from '../models/types.ts';
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
 import { createAuditLog } from './auditService.ts';
 import { notifyAdminsOnSellerRequest } from './sellerService.ts';
-import { notifyAdminsOnCreatorRequest } from './creatorService.ts';
 import { Logger } from '../utils/logger.ts';
 
 const JWT_SECRET = process.env.AUTH_SECRET || process.env.JWT_SECRET || (process.env.NODE_ENV !== 'production' ? 'elsa3ed-dev-jwt-key' : '');
@@ -47,9 +46,6 @@ export interface AuthSession {
     governorate?: string;
     sellerId?: string;
     sellerStatus?: SellerStatus;
-    creatorId?: string;
-    creatorStatus?: CreatorStatus;
-    creator?: any;
     savedAddresses?: any[];
   };
 }
@@ -65,8 +61,6 @@ export function generateToken(user: UserDocument): string {
     role: user.role,
     sellerId: user.sellerId,
     sellerStatus: user.sellerStatus,
-    creatorId: (user as any).creatorId,
-    creatorStatus: (user as any).creatorStatus,
     authVersion: user.authVersion || 0,
     iat: now,
     exp: now + TOKEN_EXPIRATION_MS
@@ -83,8 +77,6 @@ export function verifyToken(token: string): {
   role: UserRole;
   sellerId?: string;
   sellerStatus?: SellerStatus;
-  creatorId?: string;
-  creatorStatus?: CreatorStatus;
   authVersion?: number;
   exp?: number;
 } | null {
@@ -128,10 +120,6 @@ export async function register(params: {
   governorate?: string;
   workshopName?: string;
   specialty?: string;
-  bio?: string;
-  city?: string;
-  specialties?: string[];
-  socialLinks?: Record<string, string>;
 }): Promise<AuthSession> {
   // 1. Validate username
   const usernameCheck = validateUsername(params.username);
@@ -156,8 +144,6 @@ export async function register(params: {
   const passwordHash = await hashPassword(params.password);
   const userId = `user-${params.role}-${Date.now()}`;
   let sellerId: string | undefined = undefined;
-  let creatorId: string | undefined = undefined;
-  let createdCreatorObj: any = null;
 
   // Handle avatar (dataURI upload to Cloudinary or fallback to DEFAULT_USER_AVATAR)
   let finalAvatar = DEFAULT_USER_AVATAR;
@@ -224,36 +210,6 @@ export async function register(params: {
     }
   }
 
-  // If role is creator, create creator profile in MongoDB `creators` collection
-  if (params.role === 'creator') {
-    creatorId = `creator-${Date.now()}`;
-    const { db, isMongo } = await getDatabase();
-    createdCreatorObj = {
-      id: creatorId,
-      userId,
-      name: params.name,
-      avatar: finalAvatar,
-      bio: params.bio?.trim() || `صانع محتوى يوثق حكايات ومعالم صعيد مصر في محافظة ${params.governorate || 'قنا'}.`,
-      governorate: params.governorate || 'قنا',
-      city: params.city?.trim() || 'الصعيد',
-      specialties: Array.isArray(params.specialties) && params.specialties.length > 0
-        ? params.specialties
-        : ['توثيق التراث والحرف', 'تصوير المعالم'],
-      socialLinks: params.socialLinks || {},
-      phone: params.phone,
-      email: params.email || '',
-      status: 'pending' as CreatorStatus,
-      verified: false,
-      createdAt: new Date().toISOString(),
-      stats: { reelsCount: 0, photosCount: 0, viewsCount: 0, likesCount: 0 }
-    };
-
-    if (isMongo && db) {
-      await db.collection('creators').insertOne(createdCreatorObj as any);
-    }
-    memoryDb.creators.push(createdCreatorObj as any);
-  }
-
   const createdUser = await createUser({
     id: userId,
     username: params.username,
@@ -267,8 +223,6 @@ export async function register(params: {
     governorate: params.governorate || 'قنا',
     sellerId,
     sellerStatus: params.role === 'seller' ? 'pending' : undefined,
-    creatorId,
-    creatorStatus: params.role === 'creator' ? 'pending' : undefined,
     savedAddresses: []
   });
 
@@ -287,13 +241,6 @@ export async function register(params: {
       userId,
       userName: params.name,
       workshopName: params.workshopName || `ورشة ${params.name}`,
-      governorate: params.governorate || 'قنا',
-      isReapply: false
-    });
-  } else if (params.role === 'creator') {
-    await notifyAdminsOnCreatorRequest({
-      userId,
-      userName: params.name,
       governorate: params.governorate || 'قنا',
       isReapply: false
     });
@@ -316,9 +263,6 @@ export async function register(params: {
       governorate: createdUser.governorate,
       sellerId: createdUser.sellerId,
       sellerStatus: createdUser.sellerStatus,
-      creatorId: createdUser.creatorId,
-      creatorStatus: createdUser.creatorStatus,
-      creator: createdCreatorObj,
       savedAddresses: createdUser.savedAddresses
     }
   };
@@ -410,34 +354,9 @@ export async function login(identifier: string, password: string): Promise<AuthS
     sellerStatus = sellerDoc?.status || user.sellerStatus || 'pending';
   }
 
-  // If role is creator or user has creatorId, query latest status from creators collection
-  let creatorStatus: CreatorStatus | undefined = (user as any).creatorStatus;
-  let creatorId: string | undefined = (user as any).creatorId;
-  let creatorDoc: any = null;
-  if (user.role === 'creator' || creatorId) {
-    const { db, isMongo } = await getDatabase();
-    const cId = creatorId || user.id;
-    if (isMongo && db) {
-      try {
-        creatorDoc = await db.collection('creators').findOne({
-          $or: [{ id: cId }, { userId: user.id }]
-        });
-      } catch (e) {
-        Logger.error('[AuthService] Error fetching creator status during login:', e);
-      }
-    }
-    if (!creatorDoc) {
-      creatorDoc = memoryDb.creators.find((c: any) => c.id === cId || c.userId === user.id);
-    }
-    creatorStatus = creatorDoc?.status || (user as any).creatorStatus || 'pending';
-    if (creatorDoc) creatorId = creatorDoc.id;
-  }
-
   const userWithStatus: UserDocument = {
     ...user,
-    sellerStatus,
-    creatorId,
-    creatorStatus
+    sellerStatus
   };
 
   await createAuditLog({
@@ -469,9 +388,6 @@ export async function login(identifier: string, password: string): Promise<AuthS
       governorate: user.governorate,
       sellerId: user.sellerId,
       sellerStatus: userWithStatus.sellerStatus,
-      creatorId,
-      creatorStatus,
-      creator: creatorDoc,
       savedAddresses: user.savedAddresses
     }
   };
@@ -673,15 +589,11 @@ async function generateUniqueUsername(displayName?: string, email?: string): Pro
 export async function authenticateWithGoogle(params: {
   idToken: string;
   mode?: 'login' | 'register';
-  role?: 'buyer' | 'seller' | 'creator';
+  role?: 'buyer' | 'seller';
   phone?: string;
   governorate?: string;
   workshopName?: string;
   specialty?: string;
-  bio?: string;
-  city?: string;
-  specialties?: string[];
-  socialLinks?: Record<string, string>;
 }): Promise<{ session: AuthSession; isNewUser: boolean }> {
   const verifiedGoogle = await verifyFirebaseGoogleIdToken(params.idToken);
 
@@ -746,35 +658,9 @@ export async function authenticateWithGoogle(params: {
       }
     }
 
-    let creatorStatus: CreatorStatus | undefined = (existingUser as any).creatorStatus;
-    let creatorId: string | undefined = (existingUser as any).creatorId;
-    let creatorDoc: any = null;
-    if (existingUser.role === 'creator' || creatorId) {
-      const { db, isMongo } = await getDatabase();
-      const cId = creatorId || existingUser.id;
-      if (isMongo && db) {
-        try {
-          creatorDoc = await db.collection('creators').findOne({
-            $or: [{ id: cId }, { userId: existingUser.id }]
-          });
-        } catch (e) {
-          Logger.error('[AuthService] Error fetching creator status during Google auth:', e);
-        }
-      }
-      if (!creatorDoc) {
-        creatorDoc = memoryDb.creators.find((c: any) => c.id === cId || c.userId === existingUser!.id);
-      }
-      if (creatorDoc?.status) {
-        creatorStatus = creatorDoc.status;
-      }
-      if (creatorDoc) creatorId = creatorDoc.id;
-    }
-
     const userWithStatus: UserDocument = {
       ...existingUser,
-      sellerStatus,
-      creatorId,
-      creatorStatus
+      sellerStatus
     };
 
     await createAuditLog({
@@ -808,9 +694,6 @@ export async function authenticateWithGoogle(params: {
           governorate: existingUser.governorate,
           sellerId: existingUser.sellerId,
           sellerStatus: userWithStatus.sellerStatus,
-          creatorId,
-          creatorStatus,
-          creator: creatorDoc,
           savedAddresses: existingUser.savedAddresses || []
         }
       }
@@ -818,14 +701,11 @@ export async function authenticateWithGoogle(params: {
   }
 
   // 2. New User Creation via Google
-  const requestedRole: 'buyer' | 'seller' | 'creator' =
-    params.role === 'seller' ? 'seller' : params.role === 'creator' ? 'creator' : 'buyer';
+  const requestedRole: 'buyer' | 'seller' =
+    params.role === 'seller' ? 'seller' : 'buyer';
   const cleanPhone = (params.phone || '').trim();
   const cleanWorkshop = (params.workshopName || '').trim();
   const cleanGovernorate = (params.governorate || '').trim() || 'قنا';
-  const cleanBio = (params.bio || '').trim();
-  const cleanCity = (params.city || '').trim() || cleanGovernorate;
-  const cleanSpecialties = Array.isArray(params.specialties) ? params.specialties.filter(Boolean) : [];
 
   if (requestedRole === 'seller') {
     if (cleanWorkshop.length < 2 || cleanPhone.length < 8) {
@@ -840,25 +720,10 @@ export async function authenticateWithGoogle(params: {
     }
   }
 
-  if (requestedRole === 'creator') {
-    if (cleanBio.length < 5 || cleanPhone.length < 8 || cleanSpecialties.length === 0) {
-      const err: any = new Error('للتسجيل كصانع محتوى عبر Google، يرجى إكمال النبذة التعريفية ورقم الموبايل والتخصصات أولاً.');
-      err.code = 'CREATOR_DETAILS_REQUIRED';
-      err.googleProfile = {
-        name: verifiedGoogle.name,
-        email: verifiedGoogle.email,
-        picture: verifiedGoogle.picture
-      };
-      throw err;
-    }
-  }
-
   const generatedUsername = await generateUniqueUsername(verifiedGoogle.name, verifiedGoogle.email);
   const userId = `user-${requestedRole}-${Date.now()}`;
   const finalAvatar = verifiedGoogle.picture || DEFAULT_USER_AVATAR;
   let sellerId: string | undefined = undefined;
-  let creatorId: string | undefined = undefined;
-  let createdCreatorObj: any = null;
 
   if (requestedRole === 'seller') {
     sellerId = `seller-${Date.now()}`;
@@ -894,35 +759,6 @@ export async function authenticateWithGoogle(params: {
     }
   }
 
-  if (requestedRole === 'creator') {
-    creatorId = `creator-${Date.now()}`;
-    const { db, isMongo } = await getDatabase();
-    const now = new Date().toISOString();
-    createdCreatorObj = {
-      id: creatorId,
-      userId,
-      name: verifiedGoogle.name,
-      avatar: finalAvatar,
-      bio: cleanBio,
-      governorate: cleanGovernorate,
-      city: cleanCity,
-      specialties: cleanSpecialties,
-      socialLinks: params.socialLinks || {},
-      phone: cleanPhone,
-      email: verifiedGoogle.email,
-      status: 'pending' as CreatorStatus,
-      verified: false,
-      stats: { reelsCount: 0, photosCount: 0, viewsCount: 0, likesCount: 0 },
-      createdAt: now,
-      updatedAt: now
-    };
-
-    if (isMongo && db) {
-      await db.collection('creators').insertOne(createdCreatorObj as any);
-    }
-    memoryDb.creators.push(createdCreatorObj as any);
-  }
-
   const createdUser = await createUser({
     id: userId,
     username: generatedUsername,
@@ -932,14 +768,12 @@ export async function authenticateWithGoogle(params: {
     googleUid: verifiedGoogle.uid,
     authProvider: 'google',
     phone: cleanPhone,
-    role: requestedRole === 'creator' ? 'creator' : 'buyer',
+    role: 'buyer',
     avatar: finalAvatar,
     profileImage: null,
     governorate: cleanGovernorate,
     sellerId,
     sellerStatus: requestedRole === 'seller' ? 'pending' : undefined,
-    creatorId,
-    creatorStatus: requestedRole === 'creator' ? 'pending' : undefined,
     savedAddresses: []
   });
 
@@ -958,13 +792,6 @@ export async function authenticateWithGoogle(params: {
       userId,
       userName: verifiedGoogle.name,
       workshopName: cleanWorkshop,
-      governorate: cleanGovernorate,
-      isReapply: false
-    });
-  } else if (requestedRole === 'creator') {
-    await notifyAdminsOnCreatorRequest({
-      userId,
-      userName: verifiedGoogle.name,
       governorate: cleanGovernorate,
       isReapply: false
     });
@@ -989,9 +816,6 @@ export async function authenticateWithGoogle(params: {
         governorate: createdUser.governorate,
         sellerId: createdUser.sellerId,
         sellerStatus: createdUser.sellerStatus,
-        creatorId: createdUser.creatorId,
-        creatorStatus: createdUser.creatorStatus,
-        creator: createdCreatorObj,
         savedAddresses: createdUser.savedAddresses
       }
     }

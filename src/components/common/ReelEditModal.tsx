@@ -269,8 +269,6 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
               <p className="text-xs text-black/60 dark:text-white/60 dark:text-[#D6C6B1]">
                 {isAdmin
                   ? 'تحكم إداري كامل بمحتوى الفيديو، رابط الكلاود، الحرفي، والمنتج المرتبط'
-                  : currentUser?.role === 'creator'
-                  ? 'تحديث تفاصيل الريل والمحتوى التراثي الخاص بك'
                   : 'تحديث تفاصيل الفيديو والمنتج الخاص بورشة عملك'}
               </p>
             </div>
@@ -289,12 +287,6 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
           <div className="mx-6 mt-4 p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/50 rounded-2xl text-xs text-rose-800 dark:text-rose-200">
             <span className="font-bold">سبب الرفض السابق: </span>
             <span>{reel.rejectionReason}</span>
-          </div>
-        )}
-
-        {!isAdmin && currentUser?.role === 'creator' && reel.status === 'rejected' && (
-          <div className="mx-6 mt-4 p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-2xl text-[11px] text-amber-800 dark:text-amber-300">
-            تنبيه: بعد تعديل المقطع المرفوض سيتم إعادة إرساله للمراجعة الإدارية لاعتماده ونشره للجمهور.
           </div>
         )}
 

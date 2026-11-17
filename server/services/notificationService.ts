@@ -104,7 +104,7 @@ export async function createNotification(params: {
   link?: string;
   actionPage?: string;
   metadata?: any;
-  recipientRole?: 'admin' | 'seller' | 'buyer' | 'creator' | 'all';
+  recipientRole?: 'admin' | 'seller' | 'buyer' | 'all';
 }): Promise<NotificationDocument> {
   const targetUserId = params.userId || params.recipientId || '';
   const doc: NotificationDocument = {

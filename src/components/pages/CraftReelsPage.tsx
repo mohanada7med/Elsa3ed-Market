@@ -199,29 +199,29 @@ const ReelCard = memo(function ReelCard({
           {reel.title}
         </h3>
 
-        {(reel.creatorName || reel.artisanName || reel.workshopName) && (
+        {(reel.artisanName || reel.workshopName) && (
           <button
             type="button"
             onClick={(e) => {
-              if (onOpenAuthor && (reel.creatorId || reel.sellerId)) {
+              if (onOpenAuthor && reel.sellerId) {
                 e.stopPropagation();
                 onOpenAuthor(reel);
               }
             }}
             className={`flex items-center gap-1.5 text-[10px] text-white/80 hover:text-amber-300 transition-colors max-w-full ${
-              reel.creatorId || reel.sellerId ? 'cursor-pointer' : 'cursor-default'
+              reel.sellerId ? 'cursor-pointer' : 'cursor-default'
             }`}
           >
-            {(reel.creatorAvatar || reel.artisanAvatar) && (
+            {reel.artisanAvatar && (
               <img
-                src={reel.creatorAvatar || reel.artisanAvatar}
-                alt={reel.creatorName || reel.artisanName || ''}
+                src={reel.artisanAvatar}
+                alt={reel.artisanName || ''}
                 referrerPolicy="no-referrer"
                 className="w-4 h-4 rounded-full object-cover border border-white/30 shrink-0"
               />
             )}
             <span className="truncate font-semibold">
-              {reel.creatorName || reel.artisanName || reel.workshopName}
+              {reel.artisanName || reel.workshopName}
             </span>
           </button>
         )}
@@ -252,16 +252,15 @@ interface PermissionState {
   isOpen: boolean;
   title: string;
   message: string;
-  type: 'unauthenticated' | 'buyer' | 'unapproved_creator';
+  type: 'unauthenticated' | 'buyer';
 }
 
 const PermissionModal: React.FC<{
   state: PermissionState;
   onClose: () => void;
   onLogin: () => void;
-  onApplyCreator: () => void;
-  onOpenCreatorDashboard: () => void;
-}> = ({ state, onClose, onLogin, onApplyCreator, onOpenCreatorDashboard }) => (
+  onOpenSellers: () => void;
+}> = ({ state, onClose, onLogin, onOpenSellers }) => (
   <AnimatePresence>
     {state.isOpen && (
       <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4">
@@ -310,15 +309,15 @@ const PermissionModal: React.FC<{
                   إلغاء
                 </button>
               </>
-            ) : state.type === 'buyer' ? (
+            ) : (
               <>
                 <button
                   type="button"
-                  onClick={onApplyCreator}
+                  onClick={onOpenSellers}
                   className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary hover:bg-primary-hover px-4 py-3 text-sm font-bold text-white cursor-pointer"
                 >
                   <Sparkles className="h-4 w-4" />
-                  انضم كصانع محتوى
+                  تصفح الورش وافتح ورشتك
                 </button>
                 <button
                   type="button"
@@ -326,24 +325,6 @@ const PermissionModal: React.FC<{
                   className="rounded-xl bg-black/5 px-4 py-3 text-xs font-bold text-black/70 dark:bg-white/5 dark:text-white/70 cursor-pointer"
                 >
                   إلغاء
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  type="button"
-                  onClick={onOpenCreatorDashboard}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary hover:bg-primary-hover px-4 py-3 text-sm font-bold text-white cursor-pointer"
-                >
-                  <Sparkles className="h-4 w-4" />
-                  متابعة حالة الحساب
-                </button>
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="rounded-xl bg-black/5 px-4 py-3 text-xs font-bold text-black/70 dark:bg-white/5 dark:text-white/70 cursor-pointer"
-                >
-                  فهمت
                 </button>
               </>
             )}
@@ -365,13 +346,11 @@ export const CraftReelsPage: React.FC = () => {
     addToast,
     navigateToProduct,
     navigateToSeller,
-    navigateToCreator,
     currentUser,
     isAuthenticated,
     setIsAuthModalOpen,
     setAuthModalTab,
     setPostLoginRedirect,
-    setIsCreatorApplyModalOpen,
     sellerProducts,
     sellers,
     confirmModal
@@ -472,7 +451,6 @@ export const CraftReelsPage: React.FC = () => {
           r.governorate,
           r.contentType,
           r.craftType,
-          r.creatorName,
           r.artisanName,
           r.workshopName,
           r.productTitle
@@ -625,7 +603,7 @@ export const CraftReelsPage: React.FC = () => {
         isOpen: true,
         title: 'سجّل الدخول لنشر حكايتك',
         message:
-          'نشر حكايات الصعيد متاح لصنّاع المحتوى والورش المعتمدة. سجّل الدخول أو أنشئ حساباً جديداً.',
+          'نشر حكايات الصعيد متاح للحرفيين والورش المعتمدة. سجّل الدخول أو أنشئ حساباً جديداً.',
         type: 'unauthenticated'
       });
       return;
@@ -633,27 +611,10 @@ export const CraftReelsPage: React.FC = () => {
     if (currentUser.role === 'buyer') {
       setPermissionAlert({
         isOpen: true,
-        title: 'النشر لصنّاع المحتوى والورش',
+        title: 'النشر متاح لأصحاب الورش والحرفيين',
         message:
-          'حسابك الحالي مسجل كـ "مشتري". يمكنك الانضمام كصانع محتوى في وه لنشر فيديوهات الريلز ومعارض الصور التراثية مجاناً.',
+          'حسابك الحالي مسجل كـ "مشتري". يمكنك التقديم لفتح ورشة بائع في وه لمشاركة فيديوهات حرفك ومنتجاتك.',
         type: 'buyer'
-      });
-      return;
-    }
-    if (currentUser.role === 'creator' && currentUser.creatorStatus !== 'approved') {
-      setPermissionAlert({
-        isOpen: true,
-        title:
-          currentUser.creatorStatus === 'rejected'
-            ? 'طلب الانضمام يحتاج لتعديل'
-            : currentUser.creatorStatus === 'suspended'
-              ? 'حساب صانع المحتوى موقوف مؤقتاً'
-              : 'حسابك قيد المراجعة الإدارية',
-        message:
-          currentUser.creatorStatus === 'rejected'
-            ? 'يمكنك تعديل بيانات طلبك وإعادة التقديم من لوحة صانع المحتوى.'
-            : 'ستتمكن من رفع ونشر الريلز فور اعتماد حسابك من إدارة منصة وه.',
-        type: 'unapproved_creator'
       });
       return;
     }
@@ -716,13 +677,9 @@ export const CraftReelsPage: React.FC = () => {
           setAuthModalTab('login');
           setIsAuthModalOpen(true);
         }}
-        onApplyCreator={() => {
+        onOpenSellers={() => {
           closePermission();
-          setIsCreatorApplyModalOpen(true);
-        }}
-        onOpenCreatorDashboard={() => {
-          closePermission();
-          setActivePage('creator-dashboard');
+          setActivePage('sellers');
         }}
       />
       <ReelEditModal
@@ -831,17 +788,8 @@ export const CraftReelsPage: React.FC = () => {
               initialReelId={feedInitialId}
               onSelectProduct={navigateToProduct}
               onSelectSeller={navigateToSeller}
-              onSelectCreator={(cid) => {
-                backToGrid();
-                navigateToCreator(cid);
-              }}
               onEditReel={(reel) => {
-                const isCreatorOwner =
-                  currentUser?.role === 'creator' &&
-                  currentUser?.creatorStatus === 'approved' &&
-                  reel.creatorId &&
-                  (currentUser.id === reel.creatorId || (currentUser as any).creatorId === reel.creatorId);
-                if (currentUser?.role === 'admin' || isCreatorOwner) {
+                if (currentUser?.role === 'admin') {
                   setReelBeingEdited(reel);
                 }
               }}
@@ -919,15 +867,6 @@ export const CraftReelsPage: React.FC = () => {
             >
               <Plus size={14} />
               <span>شارك حكايتك</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActivePage('creators')}
-              className="flex items-center gap-1.5 rounded-xl border border-primary/25 bg-primary/10 hover:bg-primary/15 text-primary px-3.5 py-2 text-xs font-bold transition-all cursor-pointer"
-            >
-              <Sparkles size={14} />
-              <span>دليل صنّاع المحتوى</span>
             </button>
           </div>
         </div>
@@ -1100,8 +1039,7 @@ export const CraftReelsPage: React.FC = () => {
                     onAdd={handleQuickAdd}
                     onDelete={handleAdminDeleteReel}
                     onOpenAuthor={(r) => {
-                      if (r.creatorId) navigateToCreator(r.creatorId);
-                      else if (r.sellerId) navigateToSeller(r.sellerId);
+                      if (r.sellerId) navigateToSeller(r.sellerId);
                     }}
                   />
                 ))}

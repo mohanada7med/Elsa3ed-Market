@@ -31,7 +31,6 @@ import {
 export const Footer: React.FC = () => {
   const {
     setActivePage,
-    navigateToCreatorsGallery,
     setShowIntroVideo,
     setShowOnboarding,
     isAuthenticated,
@@ -54,14 +53,8 @@ export const Footer: React.FC = () => {
       currentUser?.role === 'seller' ||
       currentUser?.sellerStatus === 'approved');
 
-  const isCreator =
-    !isAdmin &&
-    !isSeller &&
-    isAuthenticated &&
-    (currentRole === 'creator' || currentUser?.role === 'creator');
-
   const handleWorkshopRegister = () => {
-    if (isSeller || isAdmin || isCreator) {
+    if (isSeller || isAdmin) {
       return;
     }
 
@@ -116,14 +109,6 @@ export const Footer: React.FC = () => {
     }
 
     event.preventDefault();
-    if (page === 'creators-photos') {
-      navigateToCreatorsGallery('photos');
-      return;
-    }
-    if (page === 'creators') {
-      navigateToCreatorsGallery('creators');
-      return;
-    }
     setActivePage(page as ActivePage);
   };
 
@@ -146,26 +131,18 @@ export const Footer: React.FC = () => {
     { label: 'فعاليات ومواسم الصعيد', page: 'events' },
     { label: 'سوق وه الحرفي (المتجر)', page: 'products' },
     { label: 'شيوخ الصنعة والورش', page: 'sellers' },
-    { label: 'صنّاع المحتوى', page: 'creators' },
-    { label: 'معرض صور الصعيد', page: 'creators-photos' },
     { label: 'التصنيفات التراثية', page: 'categories' },
     { label: 'توريدات المؤسسات (B2B)', page: 'wholesale' },
   ];
 
   const clientServices = [
-    ...(isCreator
-      ? [
-          { label: 'لوحة صانع المحتوى', page: 'creator-dashboard' },
-          { label: 'مقاطع الريلز', page: 'creator-reels' },
-          { label: 'معارض الصور', page: 'creator-photos' },
-        ]
-      : isSeller || isAdmin
-        ? []
-        : [
-            { label: 'تابع شحنتك وطلباتك', page: 'orders' },
-            { label: 'سلة الشراء', page: 'cart' },
-            { label: 'الحاجات المحفوظة', page: 'favorites' },
-          ]),
+    ...(isSeller || isAdmin
+      ? []
+      : [
+          { label: 'تابع شحنتك وطلباتك', page: 'orders' },
+          { label: 'سلة الشراء', page: 'cart' },
+          { label: 'الحاجات المحفوظة', page: 'favorites' },
+        ]),
     { label: 'مضايفة وه (المساعدة والتواصل)', page: 'help' },
     { label: 'حسابك الشخصي', page: 'buyer-account' },
     { label: 'سياسة الخصوصية', page: 'privacy' },
@@ -216,7 +193,7 @@ export const Footer: React.FC = () => {
       <div className="relative z-10 max-w-[1720px] mx-auto px-4 sm:px-10 lg:px-16 py-6 sm:py-16">
 
         {/* شريط علوي ملكي: دعوة انضمام الحرفيين والورش + الفيلم التوثيقي */}
-        {!isSeller && !isAdmin && !isCreator && (
+        {!isSeller && !isAdmin && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-6 items-center pb-5 sm:pb-12 mb-6 sm:mb-14 border-b border-white/10">
 
             <div className="lg:col-span-8 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6">

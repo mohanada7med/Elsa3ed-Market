@@ -78,7 +78,6 @@ export const CraftReelsSection: React.FC = () => {
     currentRole,
     isAuthenticated,
     setIsAuthModalOpen,
-    navigateToCreator,
     navigateToSeller
   } = useApp();
   const canShop = !isAuthenticated || currentRole === 'buyer';
@@ -1213,24 +1212,23 @@ export const CraftReelsSection: React.FC = () => {
                             {reel.title}
                           </h3>
 
-                          {/* Creator / Artisan / Workshop Name */}
-                          {(reel.creatorName || reel.artisanName || reel.workshopName) && (
+                          {/* Artisan / Workshop Name */}
+                          {(reel.artisanName || reel.workshopName) && (
                             <button
                               type="button"
                               onClick={(e) => {
-                                if (reel.creatorId || reel.sellerId) {
+                                if (reel.sellerId) {
                                   e.stopPropagation();
-                                  if (reel.creatorId) navigateToCreator(reel.creatorId);
-                                  else if (reel.sellerId) navigateToSeller(reel.sellerId);
+                                  navigateToSeller(reel.sellerId);
                                 }
                               }}
                               className={`flex items-center gap-1.5 mt-1 text-[11px] text-stone-300 hover:text-[#E0C79B] transition-colors max-w-full ${
-                                reel.creatorId || reel.sellerId ? 'cursor-pointer' : 'cursor-default'
+                                reel.sellerId ? 'cursor-pointer' : 'cursor-default'
                               }`}
                             >
                               <BadgeCheck className="w-3.5 h-3.5 text-[#C99444] shrink-0" />
                               <span className="truncate">
-                                بواسطة: {reel.creatorName || reel.artisanName || reel.workshopName}
+                                بواسطة: {reel.artisanName || reel.workshopName}
                               </span>
                             </button>
                           )}
@@ -1346,9 +1344,9 @@ export const CraftReelsSection: React.FC = () => {
                           <h4 className="text-white text-xs sm:text-sm font-bold line-clamp-2">
                             {reel.title}
                           </h4>
-                          {(reel.creatorName || reel.artisanName || reel.workshopName) && (
+                          {(reel.artisanName || reel.workshopName) && (
                             <p className="text-[10px] text-stone-400 mt-1 truncate">
-                              بواسطة: {reel.creatorName || reel.artisanName || reel.workshopName}
+                              بواسطة: {reel.artisanName || reel.workshopName}
                             </p>
                           )}
                         </div>

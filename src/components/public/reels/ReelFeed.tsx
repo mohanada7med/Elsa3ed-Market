@@ -9,7 +9,6 @@ interface ReelFeedProps {
   initialReelId?: string;
   onSelectProduct?: (productId: string) => void;
   onSelectSeller?: (sellerId: string) => void;
-  onSelectCreator?: (creatorId: string) => void;
   onEditReel?: (reel: CraftReel) => void;
   onDeleteReel?: (reelId: string) => void;
   onClose?: () => void;
@@ -22,7 +21,6 @@ export const ReelFeed: React.FC<ReelFeedProps> = ({
   initialReelId,
   onSelectProduct,
   onSelectSeller,
-  onSelectCreator,
   onEditReel,
   onDeleteReel,
   onClose,
@@ -233,7 +231,6 @@ export const ReelFeed: React.FC<ReelFeedProps> = ({
                     onToggleMute={() => setIsMuted((prev) => !prev)}
                     onSelectProduct={onSelectProduct}
                     onSelectSeller={onSelectSeller}
-                    onSelectCreator={onSelectCreator}
                     onEditReel={onEditReel}
                     onDeleteReel={handleDeleteReel}
                     onClose={onClose}

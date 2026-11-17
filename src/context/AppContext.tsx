@@ -75,17 +75,11 @@ interface AppContextType {
   setSelectedCategoryId: (id: string | null) => void;
   selectedSellerId: string | null;
   setSelectedSellerId: (id: string | null) => void;
-  selectedCreatorId: string | null;
-  setSelectedCreatorId: (id: string | null) => void;
-  creatorsGalleryTab: 'creators' | 'photos';
-  setCreatorsGalleryTab: (tab: 'creators' | 'photos') => void;
-  navigateToCreatorsGallery: (tab?: 'creators' | 'photos') => void;
   selectedOrderId: string | null;
   setSelectedOrderId: (id: string | null) => void;
   navigateToProduct: (productIdOrObj: string | { id?: string; slug?: string }) => void;
   navigateToCategory: (categoryIdOrObj: string | { id?: string; slug?: string }) => void;
   navigateToSeller: (sellerIdOrObj: string | { id?: string }) => void;
-  navigateToCreator: (creatorIdOrObj: string | { id?: string }) => void;
   navigateToOrder: (orderIdOrObj: string | { id?: string }) => void;
 
   // WAH Cultural Ecosystem Navigation
@@ -141,15 +135,11 @@ interface AppContextType {
   loginWithGoogle: (params: {
     idToken: string;
     mode?: 'login' | 'register';
-    role?: 'buyer' | 'seller' | 'creator';
+    role?: 'buyer' | 'seller';
     phone?: string;
     governorate?: string;
-    city?: string;
     workshopName?: string;
     specialty?: string;
-    bio?: string;
-    specialties?: string[];
-    socialLinks?: Record<string, string>;
   }) => Promise<{ isNewUser?: boolean }>;
   register: (params: {
     username: string;
@@ -162,10 +152,6 @@ interface AppContextType {
     governorate?: string;
     workshopName?: string;
     specialty?: string;
-    bio?: string;
-    specialties?: string[];
-    city?: string;
-    socialLinks?: Record<string, string>;
   }) => Promise<void>;
   logout: (successMessage?: string) => void;
   deleteMyAccount: (password?: string) => Promise<boolean>;
@@ -177,8 +163,6 @@ interface AppContextType {
   setAuthModalTab: (tab: 'login' | 'register') => void;
   postLoginRedirect: ActivePage | null;
   setPostLoginRedirect: (page: ActivePage | null) => void;
-  isCreatorApplyModalOpen: boolean;
-  setIsCreatorApplyModalOpen: (open: boolean) => void;
 
   // Data & Entities
   products: Product[];
@@ -505,7 +489,6 @@ export const PAGE_ROUTES: Record<ActivePage, string> = {
   crafts: '/crafts',
 
   reels: '/reels',
-  creators: '/creators',
 
   sellers: '/sellers',
   'seller-details': '/sellers/:id',
@@ -533,16 +516,7 @@ export const PAGE_ROUTES: Record<ActivePage, string> = {
   'seller-analytics': '/seller-analytics',
   'seller-account': '/seller-account',
 
-  // Creator
-  'creator-dashboard': '/creator-dashboard',
-  'creator-reels': '/creator-reels',
-  'creator-photos': '/creator-photos',
-  'creator-profile': '/creator-profile',
-  'creator-content': '/creator-content',
-  'creator-public-profile': '/creators/:id',
-
   // Admin
-  'admin-creators': '/admin-creators',
   'admin-dashboard': '/admin-dashboard',
   'admin-cultural-cms': '/admin-cultural-cms',
   'admin-map-editor': '/admin-map-editor',
@@ -573,8 +547,6 @@ function getInitialNavigationState(): {
   productId: string | null;
   categoryId: string | null;
   sellerId: string | null;
-  creatorId?: string | null;
-  creatorsTab?: 'creators' | 'photos';
   orderId: string | null;
   searchQuery: string;
   governorateSlug?: string | null;
@@ -586,7 +558,7 @@ function getInitialNavigationState(): {
   eventSlug?: string | null;
 } {
   if (typeof window === 'undefined') {
-    return { page: 'home', productId: null, categoryId: null, sellerId: null, creatorId: null, orderId: null, searchQuery: '' };
+    return { page: 'home', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: '' };
   }
 
   const rawPath = window.location.pathname.replace(/\/+$/, '') || '/';
@@ -621,12 +593,7 @@ function getInitialNavigationState(): {
 
   const sellerId = params.get('seller') || params.get('sellerId') || (pageParam === 'seller-details' ? idFromQuery : null);
   if (sellerId) {
-    return { page: 'seller-details', productId: null, categoryId: null, sellerId, creatorId: null, orderId: null, searchQuery: queryTerm };
-  }
-
-  const creatorIdParam = params.get('creator') || params.get('creatorId') || (pageParam === 'creator-public-profile' ? idFromQuery : null);
-  if (creatorIdParam) {
-    return { page: 'creator-public-profile', productId: null, categoryId: null, sellerId: null, creatorId: creatorIdParam, orderId: null, searchQuery: queryTerm };
+    return { page: 'seller-details', productId: null, categoryId: null, sellerId, orderId: null, searchQuery: queryTerm };
   }
 
   const orderId = params.get('order') || params.get('orderId') || (pageParam === 'order-details' ? idFromQuery : null);
@@ -789,19 +756,6 @@ function getInitialNavigationState(): {
     return { page: 'sellers', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
-  // Creators & Upper Egypt Photos Gallery: /creators, /creators?tab=photos, or /creators/:id
-  if (rawPath === '/photos') {
-    return { page: 'creators', productId: null, categoryId: null, sellerId: null, creatorId: null, creatorsTab: 'photos', orderId: null, searchQuery: queryTerm };
-  }
-  if (rawPath === '/creators' || rawPath.startsWith('/creators/')) {
-    const crId = idFromQuery || (rawPath.startsWith('/creators/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
-    if (isValidRouteIdentifier(crId)) {
-      return { page: 'creator-public-profile', productId: null, categoryId: null, sellerId: null, creatorId: crId!.trim(), orderId: null, searchQuery: queryTerm };
-    }
-    const requestedTab = params.get('tab') === 'photos' ? 'photos' : 'creators';
-    return { page: 'creators', productId: null, categoryId: null, sellerId: null, creatorId: null, creatorsTab: requestedTab, orderId: null, searchQuery: queryTerm };
-  }
-
   // Orders: /orders or /orders/:id
   if (rawPath === '/orders' || rawPath.startsWith('/orders/')) {
     const ordId = idFromQuery || (rawPath.startsWith('/orders/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
@@ -829,7 +783,6 @@ function getInitialNavigationState(): {
         productId: sanitizeStoredSlug(sessionStorage.getItem('elsa3ed_selected_product_id')),
         categoryId: sanitizeStoredSlug(sessionStorage.getItem('elsa3ed_selected_category_id')),
         sellerId: sanitizeStoredSlug(sessionStorage.getItem('elsa3ed_selected_seller_id')),
-        creatorId: sanitizeStoredSlug(sessionStorage.getItem('elsa3ed_selected_creator_id')),
         orderId: sanitizeStoredSlug(sessionStorage.getItem('elsa3ed_selected_order_id')),
         searchQuery: queryTerm,
         governorateSlug: sanitizeStoredSlug(sessionStorage.getItem('wah_selected_governorate_slug')),
@@ -875,7 +828,6 @@ function getInitialNavigationState(): {
       productId: sessionStorage.getItem('elsa3ed_selected_product_id'),
       categoryId: sessionStorage.getItem('elsa3ed_selected_category_id'),
       sellerId: sessionStorage.getItem('elsa3ed_selected_seller_id'),
-      creatorId: sessionStorage.getItem('elsa3ed_selected_creator_id'),
       orderId: sessionStorage.getItem('elsa3ed_selected_order_id'),
       searchQuery: queryTerm,
       governorateSlug: sessionStorage.getItem('wah_selected_governorate_slug'),
@@ -898,8 +850,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [selectedProductId, setSelectedProductId] = useState<string | null>(initialNav.productId);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(initialNav.categoryId);
   const [selectedSellerId, setSelectedSellerId] = useState<string | null>(initialNav.sellerId);
-  const [selectedCreatorId, setSelectedCreatorId] = useState<string | null>(initialNav.creatorId || null);
-  const [creatorsGalleryTab, setCreatorsGalleryTab] = useState<'creators' | 'photos'>(initialNav.creatorsTab || 'creators');
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(initialNav.orderId);
 
   // WAH Cultural Ecosystem Selected Slugs
@@ -939,8 +889,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setSelectedCategoryFilter(nav.categoryId || 'all');
       }
       if (nav.sellerId !== undefined) setSelectedSellerId(nav.sellerId);
-      if (nav.creatorId !== undefined) setSelectedCreatorId(nav.creatorId);
-      if (nav.creatorsTab) setCreatorsGalleryTab(nav.creatorsTab);
       if (nav.orderId !== undefined) setSelectedOrderId(nav.orderId);
       if (nav.governorateSlug !== undefined) setSelectedGovernorateSlug(nav.governorateSlug);
       if (nav.placeSlug !== undefined) setSelectedPlaceSlug(nav.placeSlug);
@@ -960,7 +908,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     try {
       sessionStorage.setItem('elsa3ed_active_page', activePage);
       const isDynamicRoute = [
-        'product-details', 'product-detail', 'category-details', 'seller-details', 'creator-public-profile', 'order-details',
+        'product-details', 'product-detail', 'category-details', 'seller-details', 'order-details',
         'governorate-details', 'place-details',
         'person-details', 'food-details', 'event-details'
       ].includes(activePage);
@@ -1097,7 +1045,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalTab, setAuthModalTab] = useState<'login' | 'register'>('login');
   const [postLoginRedirect, setPostLoginRedirect] = useState<ActivePage | null>(null);
-  const [isCreatorApplyModalOpen, setIsCreatorApplyModalOpen] = useState(false);
 
   // Master Data - Initialized to empty state and fetched directly from real MongoDB Database
   const [products, setProducts] = useState<Product[]>([]);
@@ -1381,7 +1328,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Sync cart & favorites to localStorage (Buyers and guests only)
   useEffect(() => {
-    if (currentRole === 'seller' || currentRole === 'admin' || currentRole === 'creator') {
+    if (currentRole === 'seller' || currentRole === 'admin') {
       try {
         localStorage.removeItem('saeed_cart');
         localStorage.removeItem('saeed_favorites');
@@ -1394,7 +1341,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [cart, currentRole]);
 
   useEffect(() => {
-    if (currentRole === 'seller' || currentRole === 'admin' || currentRole === 'creator') {
+    if (currentRole === 'seller' || currentRole === 'admin') {
       return;
     }
     try {
@@ -1477,7 +1424,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           role: currentRole
         });
       } else {
-        // Guest, creator, or unauthenticated visitors have no orders — do NOT call /api/orders
+        // Guest or unauthenticated visitors have no orders — do NOT call /api/orders
         return;
       }
 
@@ -1649,7 +1596,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       } catch (e) {
         console.warn('[AppContext] Could not fetch remote cart:', e);
       }
-    } else if (currentRole === 'seller' || currentRole === 'admin' || currentRole === 'creator') {
+    } else if (currentRole === 'seller' || currentRole === 'admin') {
       setCart([]);
       setIsCartDrawerOpen(false);
       try {
@@ -1675,7 +1622,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       } catch (e) {
         console.warn('[AppContext] Could not fetch remote favorites:', e);
       }
-    } else if (currentRole === 'seller' || currentRole === 'admin' || currentRole === 'creator') {
+    } else if (currentRole === 'seller' || currentRole === 'admin') {
       setFavorites([]);
       try {
         localStorage.removeItem('saeed_favorites');
@@ -1718,10 +1665,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       refreshAdminProducts();
       refreshAuditLogs();
       refreshReviews();
-    } else if (currentRole === 'creator') {
-      setCart([]);
-      setFavorites([]);
-      setIsCartDrawerOpen(false);
     } else if (currentRole === 'buyer') {
       refreshOrders();
       refreshCart();
@@ -2046,15 +1989,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const loginWithGoogle = async (params: {
     idToken: string;
     mode?: 'login' | 'register';
-    role?: 'buyer' | 'seller' | 'creator';
+    role?: 'buyer' | 'seller';
     phone?: string;
     governorate?: string;
-    city?: string;
     workshopName?: string;
     specialty?: string;
-    bio?: string;
-    specialties?: string[];
-    socialLinks?: Record<string, string>;
   }) => {
     const data = await api.googleAuth(params);
     if (data && data.user) {
@@ -2065,13 +2004,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setIsAuthModalOpen(false);
 
       const isPendingSeller = data.user.sellerStatus === 'pending' || (data.isNewUser && params.role === 'seller');
-      const isCreator = data.user.role === 'creator';
       if (data.isNewUser) {
         addToast(
           'إنشاء الحساب عبر Google',
-          isCreator
-            ? 'تم تقديم طلب الانضمام كصانع محتوى عبر Google بنجاح! طلبك قيد المراجعة من إدارة المنصة.'
-            : isPendingSeller
+          isPendingSeller
             ? 'تم تسجيل طلب انضمام ورشتكم عبر Google بنجاح! طلبكم قيد المراجعة والاعتماد من قبل إدارة المنصة.'
             : `تم إنشاء حسابك عبر Google بنجاح! مرحباً بك يا ${data.user.username || data.user.name}.`,
           'success'
@@ -2100,9 +2036,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         refreshSellers();
       }
 
-      if (data.user.role === 'creator') {
-        setActivePage('creator-dashboard');
-      } else if (data.user.role === 'seller' && data.user.sellerStatus === 'approved') {
+      if (data.user.role === 'seller' && data.user.sellerStatus === 'approved') {
         if (postLoginRedirect) {
           const targetPage = postLoginRedirect;
           setPostLoginRedirect(null);
@@ -2143,10 +2077,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     governorate?: string;
     workshopName?: string;
     specialty?: string;
-    bio?: string;
-    specialties?: string[];
-    city?: string;
-    socialLinks?: Record<string, string>;
   }) => {
     let data;
     if (params.role === 'seller' && params.workshopName) {
@@ -2186,20 +2116,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
 
       const isPendingSeller = data.user.sellerStatus === 'pending' || params.role === 'seller';
-      const isCreator = data.user.role === 'creator';
       addToast(
         'إنشاء الحساب',
-        isCreator
-          ? 'تم تقديم طلب الانضمام كصانع محتوى بنجاح! طلبك قيد المراجعة والاعتماد من قبل إدارة المنصة.'
-          : isPendingSeller
+        isPendingSeller
           ? `تم تسجيل طلب انضمام ورشتكم بنجاح! طلبكم قيد المراجعة والاعتماد من قبل إدارة المنصة.`
           : `تم تسجيل حسابك بنجاح! مرحباً بك يا ${data.user.username || data.user.name}.`,
         'success'
       );
       refreshSellers();
-      if (data.user.role === 'creator') {
-        setActivePage('creator-dashboard');
-      } else if (data.user.role === 'seller' && data.user.sellerStatus === 'approved') {
+      if (data.user.role === 'seller' && data.user.sellerStatus === 'approved') {
         setActivePage('seller-dashboard');
       } else if (isPendingSeller) {
         setActivePage('buyer-account');
@@ -2322,7 +2247,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Cart operations
   const addToCart = async (product: Product, quantity = 1) => {
-    if (currentRole === 'seller' || currentRole === 'admin' || currentRole === 'creator') {
+    if (currentRole === 'seller' || currentRole === 'admin') {
       addToast('غير مصرح', 'عفواً، سلة المشتريات والتسوق مخصصة لحسابات المشترين فقط', 'error');
       return;
     }
@@ -2368,7 +2293,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const removeFromCart = async (productId: string) => {
-    if (currentRole === 'seller' || currentRole === 'admin' || currentRole === 'creator') {
+    if (currentRole === 'seller' || currentRole === 'admin') {
       return;
     }
 
@@ -2385,7 +2310,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const updateCartQuantity = async (productId: string, quantity: number) => {
-    if (currentRole === 'seller' || currentRole === 'admin' || currentRole === 'creator') {
+    if (currentRole === 'seller' || currentRole === 'admin') {
       return;
     }
 
@@ -2455,7 +2380,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Favorites (Syncs with Database)
   const toggleFavorite = async (productId: string) => {
-    if (currentRole === 'seller' || currentRole === 'admin' || currentRole === 'creator') {
+    if (currentRole === 'seller' || currentRole === 'admin') {
       addToast('غير مصرح', 'عفواً، قائمة المفضلة مخصصة لحسابات المشترين فقط', 'error');
       return;
     }
@@ -2584,34 +2509,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       sessionStorage.setItem('elsa3ed_selected_seller_id', sellerId);
       const targetUrl = `/sellers/${encodeURIComponent(sellerId)}`;
       window.history.pushState({ page: 'seller-details', sellerId }, '', targetUrl);
-    } catch { }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const navigateToCreator = (creatorIdOrObj: string | { id?: string }) => {
-    const creatorId = safeExtractIdentifier(creatorIdOrObj);
-    if (!creatorId) {
-      console.warn('Invalid creatorId passed to navigateToCreator:', creatorIdOrObj);
-      return;
-    }
-    setSelectedCreatorId(creatorId);
-    setActivePageState('creator-public-profile');
-    try {
-      sessionStorage.setItem('elsa3ed_active_page', 'creator-public-profile');
-      sessionStorage.setItem('elsa3ed_selected_creator_id', creatorId);
-      const targetUrl = `/creators/${encodeURIComponent(creatorId)}`;
-      window.history.pushState({ page: 'creator-public-profile', creatorId }, '', targetUrl);
-    } catch { }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const navigateToCreatorsGallery = (tab: 'creators' | 'photos' = 'creators') => {
-    setCreatorsGalleryTab(tab);
-    setActivePageState('creators');
-    try {
-      sessionStorage.setItem('elsa3ed_active_page', 'creators');
-      const targetUrl = tab === 'photos' ? '/creators?tab=photos' : '/creators';
-      window.history.pushState({ page: 'creators', tab }, '', targetUrl);
     } catch { }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -3528,17 +3425,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setSelectedCategoryId,
         selectedSellerId,
         setSelectedSellerId,
-        selectedCreatorId,
-        setSelectedCreatorId,
-        creatorsGalleryTab,
-        setCreatorsGalleryTab,
-        navigateToCreatorsGallery,
         selectedOrderId,
         setSelectedOrderId,
         navigateToProduct,
         navigateToCategory,
         navigateToSeller,
-        navigateToCreator,
         navigateToOrder,
 
         // WAH Cultural Ecosystem Navigation
@@ -3597,8 +3488,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setAuthModalTab,
         postLoginRedirect,
         setPostLoginRedirect,
-        isCreatorApplyModalOpen,
-        setIsCreatorApplyModalOpen,
 
         products,
         sellerProducts,

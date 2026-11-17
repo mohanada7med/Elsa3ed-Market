@@ -85,7 +85,7 @@ const HOMEPAGE_POSITIONS: { id: HomePromotionPosition; label: string; desc: stri
   {
     id: 'after-reels',
     label: 'بعد فيديوهات وريلز الحرف',
-    desc: 'يستهدف الجمهور المتفاعل مع فيديوهات الورش وصناع المحتوى الصعايدة.',
+    desc: 'يستهدف الجمهور المتفاعل مع فيديوهات وريلز الورش والحرفيين الصعايدة.',
     badge: 'تفاعل عالي 🎬'
   },
   {
