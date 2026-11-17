@@ -102,6 +102,8 @@ class MemoryStore {
   craftStories: CraftStoryDocument[] = [];
   reels: CraftReelDocument[] = [];
   reelLikes: Array<{ userId: string; reelId: string; createdAt: string }> = [];
+  creators: import('../models/types.ts').CreatorDocument[] = [];
+  creatorPhotos: import('../models/types.ts').CreatorPhotoDocument[] = [];
   conversations: ConversationDocument[] = [];
   messages: MessageDocument[] = [];
   passwordResets: import('../models/types.ts').PasswordResetRequestDocument[] = [];
@@ -613,6 +615,14 @@ async function seedMongoDatabase(database: Db) {
       database.collection('reels').createIndex({ id: 1 }, { unique: true }),
       database.collection('reels').createIndex({ sellerId: 1, createdAt: -1 }),
       database.collection('reels').createIndex({ isFeatured: 1, createdAt: -1 }),
+      database.collection('reels').createIndex({ creatorId: 1, createdAt: -1 }),
+      database.collection('reels').createIndex({ status: 1, createdAt: -1 }),
+      database.collection('creators').createIndex({ id: 1 }, { unique: true }),
+      database.collection('creators').createIndex({ userId: 1 }, { unique: true }),
+      database.collection('creators').createIndex({ status: 1 }),
+      database.collection('creator_photos').createIndex({ id: 1 }, { unique: true }),
+      database.collection('creator_photos').createIndex({ creatorId: 1, createdAt: -1 }),
+      database.collection('creator_photos').createIndex({ status: 1, createdAt: -1 }),
       database.collection('reel_likes').createIndex({ userId: 1, reelId: 1 }, { unique: true }),
       database.collection('reel_likes').createIndex({ reelId: 1 }),
       database.collection('reel_likes').createIndex({ userId: 1 }),

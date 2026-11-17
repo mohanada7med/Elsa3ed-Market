@@ -7,7 +7,7 @@ export interface UploadFileOptions {
   data: string | Buffer; // Base64 data-uri or raw buffer
   filename?: string;
   mimeType?: string;
-  folder?: 'products' | 'sellers' | 'categories' | 'receipts' | 'users' | 'reels' | 'videos' | 'admin';
+  folder?: 'products' | 'sellers' | 'categories' | 'receipts' | 'users' | 'reels' | 'videos' | 'admin' | 'creators';
   resourceType?: 'image' | 'video' | 'auto';
   productId?: string;
   userId?: string;

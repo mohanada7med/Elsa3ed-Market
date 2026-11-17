@@ -35,7 +35,7 @@ function isValidEmail(email: string): boolean {
 // POST /api/auth/register (Standard registration - Buyer or Seller)
 router.post('/register', async (req: Request, res: Response) => {
   try {
-    const { username, name, email, password, phone, role, governorate, workshopName, specialty, avatar } = req.body;
+    const { username, name, email, password, phone, role, governorate, workshopName, specialty, avatar, bio, city, specialties, socialLinks } = req.body;
 
     // Server-side validation
     if (!username || typeof username !== 'string' || !username.trim()) {
@@ -82,8 +82,16 @@ router.post('/register', async (req: Request, res: Response) => {
     }
 
     // Role enforcement: Never trust admin role from client
-    let assignedRole: 'buyer' | 'seller' = 'buyer';
-    if (role === 'seller' || workshopName) {
+    let assignedRole: 'buyer' | 'seller' | 'creator' = 'buyer';
+    if (role === 'creator') {
+      assignedRole = 'creator';
+      if (!bio || typeof bio !== 'string' || bio.trim().length < 5) {
+        return res.status(400).json({
+          success: false,
+          error: 'النبذة التعريفية مطلوبة لطلب صانع المحتوى (على الأقل 5 أحرف)'
+        });
+      }
+    } else if (role === 'seller' || workshopName) {
       assignedRole = 'seller';
       if (!workshopName || typeof workshopName !== 'string' || workshopName.trim().length < 2) {
         return res.status(400).json({
@@ -103,7 +111,11 @@ router.post('/register', async (req: Request, res: Response) => {
       avatar: typeof avatar === 'string' && avatar.trim() ? avatar.trim() : undefined,
       governorate: governorate || 'قنا',
       workshopName: workshopName?.trim(),
-      specialty: specialty?.trim()
+      specialty: specialty?.trim(),
+      bio: bio?.trim(),
+      city: city?.trim(),
+      specialties: Array.isArray(specialties) ? specialties : undefined,
+      socialLinks: typeof socialLinks === 'object' && socialLinks !== null ? socialLinks : undefined
     });
 
     // Set secure HTTP-only authentication cookie
@@ -111,7 +123,9 @@ router.post('/register', async (req: Request, res: Response) => {
 
     res.status(201).json({
       success: true,
-      message: assignedRole === 'seller'
+      message: assignedRole === 'creator'
+        ? 'تم تقديم طلب الانضمام كصانع محتوى بنجاح، وهو قيد المراجعة والاعتماد من قبل إدارة منصة وه'
+        : assignedRole === 'seller'
         ? 'تم تسجيل حساب الورشة بنجاح، وهو قيد المراجعة والاعتماد من قبل إدارة المنصة'
         : 'تم إنشاء الحساب بنجاح',
       data: session
@@ -321,8 +335,12 @@ router.get('/me', async (req: AuthenticatedRequest, res: Response) => {
         mustChangePassword: Boolean(user.mustChangePassword),
         hasPassword: user.hasPassword !== undefined ? user.hasPassword : true,
         authProvider: user.authProvider || 'local',
+        sellerId: user.sellerId,
         sellerStatus: user.sellerStatus || (user.role === 'seller' ? 'pending' : undefined),
-        seller: user.seller || null
+        seller: user.seller || null,
+        creatorId: user.creatorId,
+        creatorStatus: user.creatorStatus || (user.role === 'creator' ? 'pending' : undefined),
+        creator: user.creator || null
       }
     });
   }
@@ -389,6 +407,31 @@ router.get('/me', async (req: AuthenticatedRequest, res: Response) => {
     }
   }
 
+  let creatorId = (user as any).creatorId || (user.role === 'creator' ? user.id : undefined);
+  let creatorStatus = (user as any).creatorStatus;
+  let creatorDetails: any = null;
+  let creatorDoc: any = null;
+
+  if (creatorId || user.role === 'creator' || (user as any).creatorStatus) {
+    const { db, isMongo } = await getDatabase();
+    if (isMongo && db) {
+      try {
+        creatorDoc = await db.collection('creators').findOne({
+          $or: [{ id: creatorId }, { userId: user.id }]
+        });
+      } catch (e) {
+        console.error('[authRoutes /me] Creator error:', e);
+      }
+    }
+    if (!creatorDoc) {
+      creatorDoc = memoryDb.creators.find((c: any) => c.id === creatorId || c.userId === user.id);
+    }
+    if (creatorDoc) {
+      creatorStatus = creatorDoc.status;
+      creatorDetails = { ...creatorDoc };
+    }
+  }
+
   res.json({
     success: true,
     data: {
@@ -397,7 +440,10 @@ router.get('/me', async (req: AuthenticatedRequest, res: Response) => {
       hasPassword: Boolean(passwordHash),
       authProvider: user.authProvider || (passwordHash ? 'local' : (user.googleUid ? 'google' : 'local')),
       sellerStatus: sellerStatus || (sellerDoc ? sellerDoc.status : undefined),
-      seller: sellerDetails
+      seller: sellerDetails,
+      creatorId,
+      creatorStatus: creatorStatus || (creatorDoc ? creatorDoc.status : undefined),
+      creator: creatorDetails
     }
   });
 });

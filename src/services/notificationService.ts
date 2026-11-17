@@ -1,4 +1,4 @@
-import { Governorate, OrderStatus, ProductStatus } from '../types.ts';
+import { Governorate, OrderStatus, ProductStatus, UserRole } from '../types.ts';
 import { browserNotificationService } from './browserNotificationService.ts';
 import { api } from './api.ts';
 
@@ -160,7 +160,7 @@ class NotificationService {
    * For guests, returns empty list.
    */
   getNotifications(
-    role: 'admin' | 'seller' | 'buyer' | 'guest',
+    role: UserRole | 'admin' | 'seller' | 'buyer' | 'guest' | 'creator',
     targetId?: string,
     secondaryId?: string
   ): AppNotification[] {

@@ -107,12 +107,13 @@ router.post('/', uploadLimiter, requireAuth, async (req: AuthenticatedRequest, r
       });
     }
 
-    // 5. Batch Image Upload (Enforce limit)
+    // 5. Batch Image Upload (Enforce limit: 10 for creators, 5 for products)
     const imageList = images as string[];
-    if (imageList.length > MAX_PRODUCT_IMAGES) {
+    const maxAllowedImages = folder === 'creators' ? 10 : MAX_PRODUCT_IMAGES;
+    if (imageList.length > maxAllowedImages) {
       return res.status(400).json({
         success: false,
-        error: `أكتر حاجة مسموحة لصور المنتج هي ${MAX_PRODUCT_IMAGES} صور بس`,
+        error: `أكتر عدد صور مسموح به في المرة الواحدة هو ${maxAllowedImages} صور فقط`,
         code: 'MAX_IMAGES_EXCEEDED'
       });
     }

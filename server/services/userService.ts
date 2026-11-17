@@ -219,6 +219,8 @@ export async function createUser(userData: {
   governorate?: string;
   sellerId?: string;
   sellerStatus?: import('../models/types.ts').SellerStatus;
+  creatorId?: string;
+  creatorStatus?: import('../models/types.ts').CreatorStatus;
   savedAddresses?: UserAddress[];
 }): Promise<UserDocument> {
   const now = new Date().toISOString();
@@ -242,6 +244,8 @@ export async function createUser(userData: {
     governorate: userData.governorate || 'قنا',
     sellerId: userData.sellerId,
     sellerStatus: userData.sellerStatus || (userData.role === 'seller' ? 'pending' : undefined),
+    creatorId: userData.creatorId,
+    creatorStatus: userData.creatorStatus || (userData.role === 'creator' ? 'pending' : undefined),
     savedAddresses: userData.savedAddresses || [],
     createdAt: now,
     updatedAt: now

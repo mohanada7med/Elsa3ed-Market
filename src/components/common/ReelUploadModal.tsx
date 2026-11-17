@@ -105,9 +105,9 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Authorization Check: Only seller and admin can upload
+  // Authorization Check: Sellers, admins, and creators can upload
   const isGuestUser = !currentUser || currentUser.role === 'guest' || currentUser.id === 'guest-visitor';
-  const isUnauthorized = isGuestUser || (currentUser.role !== 'seller' && currentUser.role !== 'admin');
+  const isUnauthorized = isGuestUser || (currentUser.role !== 'seller' && currentUser.role !== 'admin' && currentUser.role !== 'creator');
 
   // Sync when product selection changes
   useEffect(() => {
@@ -257,19 +257,25 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
       'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=800&q=80';
 
     try {
+      const isCreator = currentUser?.role === 'creator';
       const userParam = (currentUser as any) || {
         id: sellerId || 'seller-current',
         role: (currentUser as any)?.role || 'seller',
         sellerId: sellerId || (currentUser as any)?.sellerId,
+        creatorId: (currentUser as any)?.creatorId,
         name: artisanName
       };
 
       const createdReel = await craftReelsService.addReelAsync(userParam, {
         title: title.trim(),
-        artisanName,
-        artisanAvatar,
-        workshopName,
-        sellerId: sellerId || currentUser?.sellerId || `seller-${Date.now()}`,
+        artisanName: artisanName || currentUser?.name || 'صانع محتوى صعيدي',
+        artisanAvatar: artisanAvatar || currentUser?.avatar,
+        workshopName: isCreator ? (artisanName || 'محتوى صعيدي') : workshopName,
+        sellerId: isCreator ? undefined : (sellerId || currentUser?.sellerId || `seller-${Date.now()}`),
+        creatorId: isCreator ? ((currentUser as any)?.creatorId || currentUser?.id) : undefined,
+        creatorName: isCreator ? (artisanName || currentUser?.name) : undefined,
+        creatorAvatar: isCreator ? (artisanAvatar || currentUser?.avatar) : undefined,
+        status: isCreator ? 'pending' : (currentUser?.role === 'admin' ? 'approved' : 'pending'),
         governorate,
         location: location.trim() || governorate,
         contentType: contentType || 'places',
@@ -314,7 +320,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
         {/* Header */}
         <div className="p-4 sm:p-6 border-b border-black/10 dark:border-white/10 flex items-center justify-between bg-gradient-to-r from-black/5 via-white/80 to-black/5 dark:from-[#1B1009] dark:via-[#26160D] dark:to-[#1B1009] shrink-0">
           <div className="flex items-center gap-2.5 sm:gap-3">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary dark:text-[#E66A2E] shadow-inner shrink-0">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary dark:bg-primary hover:bg-primary-hover text-white shadow-inner shrink-0">
               <Film className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div>
@@ -421,7 +427,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                 type="button"
                 onClick={() => setMobileTab('form')}
                 className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer min-h-[40px] ${mobileTab === 'form'
-                  ? 'bg-white dark:bg-[#26160D] text-primary dark:text-[#E66A2E] shadow-xs'
+                  ? 'bg-white dark:bg-[#26160D] text-primary dark:bg-primary hover:bg-primary-hover text-white shadow-xs'
                   : 'text-black/60 dark:text-white/60 dark:text-[#D6C6B1]'
                   }`}
               >
@@ -432,7 +438,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                 type="button"
                 onClick={() => setMobileTab('preview')}
                 className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer min-h-[40px] ${mobileTab === 'preview'
-                  ? 'bg-white dark:bg-[#26160D] text-primary dark:text-[#E66A2E] shadow-xs'
+                  ? 'bg-white dark:bg-[#26160D] text-primary dark:bg-primary hover:bg-primary-hover text-white shadow-xs'
                   : 'text-black/60 dark:text-white/60 dark:text-[#D6C6B1]'
                   }`}
               >
@@ -465,7 +471,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                         type="button"
                         onClick={() => setSourceType('upload')}
                         className={`py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl sm:rounded-2xl border text-[11px] sm:text-xs font-bold flex flex-col items-center gap-1 transition-all cursor-pointer min-h-[44px] justify-center ${sourceType === 'upload'
-                          ? 'border-primary bg-primary/10 text-primary dark:text-[#E66A2E] shadow-xs'
+                          ? 'border-primary bg-primary/10 text-primary dark:bg-primary hover:bg-primary-hover text-white shadow-xs'
                           : 'border-black/10 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#26160D]'
                           }`}
                       >
@@ -477,7 +483,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                         type="button"
                         onClick={() => setSourceType('url')}
                         className={`py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl sm:rounded-2xl border text-[11px] sm:text-xs font-bold flex flex-col items-center gap-1 transition-all cursor-pointer min-h-[44px] justify-center ${sourceType === 'url'
-                          ? 'border-primary bg-primary/10 text-primary dark:text-[#E66A2E] shadow-xs'
+                          ? 'border-primary bg-primary/10 text-primary dark:bg-primary hover:bg-primary-hover text-white shadow-xs'
                           : 'border-black/10 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#26160D]'
                           }`}
                       >
@@ -489,7 +495,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                         type="button"
                         onClick={() => setSourceType('preset')}
                         className={`py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl sm:rounded-2xl border text-[11px] sm:text-xs font-bold flex flex-col items-center gap-1 transition-all cursor-pointer min-h-[44px] justify-center ${sourceType === 'preset'
-                          ? 'border-primary bg-primary/10 text-primary dark:text-[#E66A2E] shadow-xs'
+                          ? 'border-primary bg-primary/10 text-primary dark:bg-primary hover:bg-primary-hover text-white shadow-xs'
                           : 'border-black/10 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#26160D]'
                           }`}
                       >
@@ -574,7 +580,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                             type="button"
                             onClick={() => handleSelectPreset(preset)}
                             className={`p-2.5 rounded-2xl border text-right transition-all flex items-center gap-2 cursor-pointer ${videoUrl === preset.videoUrl
-                              ? 'border-primary bg-primary/10 text-primary dark:text-[#E66A2E]'
+                              ? 'border-primary bg-primary/10 text-primary dark:bg-primary hover:bg-primary-hover text-white'
                               : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-cream/5 text-espresso dark:text-cream hover:border-primary/50'
                               }`}
                           >

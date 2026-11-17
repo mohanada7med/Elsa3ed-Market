@@ -176,7 +176,7 @@ export const HelpAndContactPage: React.FC = () => {
           aria-hidden="true"
         />
         <div className="absolute top-0 right-1/4 w-96 h-96 rounded-full bg-[#C99444]/15 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/4 w-80 h-80 rounded-full bg-[#E66A2E]/15 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-1/4 w-80 h-80 rounded-full bg-primary /15 blur-3xl pointer-events-none" />
 
         <div className="relative max-w-5xl mx-auto text-center space-y-6">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#C99444]/20 border border-[#C99444]/40 text-[#E0C79B] text-xs font-bold backdrop-blur-md">

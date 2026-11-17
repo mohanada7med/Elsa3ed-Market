@@ -75,11 +75,14 @@ interface AppContextType {
   setSelectedCategoryId: (id: string | null) => void;
   selectedSellerId: string | null;
   setSelectedSellerId: (id: string | null) => void;
+  selectedCreatorId: string | null;
+  setSelectedCreatorId: (id: string | null) => void;
   selectedOrderId: string | null;
   setSelectedOrderId: (id: string | null) => void;
   navigateToProduct: (productIdOrObj: string | { id?: string; slug?: string }) => void;
   navigateToCategory: (categoryIdOrObj: string | { id?: string; slug?: string }) => void;
   navigateToSeller: (sellerIdOrObj: string | { id?: string }) => void;
+  navigateToCreator: (creatorIdOrObj: string | { id?: string }) => void;
   navigateToOrder: (orderIdOrObj: string | { id?: string }) => void;
 
   // WAH Cultural Ecosystem Navigation
@@ -135,11 +138,13 @@ interface AppContextType {
   loginWithGoogle: (params: {
     idToken: string;
     mode?: 'login' | 'register';
-    role?: 'buyer' | 'seller';
+    role?: 'buyer' | 'seller' | 'creator';
     phone?: string;
     governorate?: string;
     workshopName?: string;
     specialty?: string;
+    bio?: string;
+    specialties?: string[];
   }) => Promise<{ isNewUser?: boolean }>;
   register: (params: {
     username: string;
@@ -152,6 +157,10 @@ interface AppContextType {
     governorate?: string;
     workshopName?: string;
     specialty?: string;
+    bio?: string;
+    specialties?: string[];
+    city?: string;
+    socialLinks?: Record<string, string>;
   }) => Promise<void>;
   logout: (successMessage?: string) => void;
   deleteMyAccount: (password?: string) => Promise<boolean>;
@@ -516,7 +525,16 @@ export const PAGE_ROUTES: Record<ActivePage, string> = {
   'seller-analytics': '/seller-analytics',
   'seller-account': '/seller-account',
 
+  // Creator
+  'creator-dashboard': '/creator-dashboard',
+  'creator-reels': '/creator-reels',
+  'creator-photos': '/creator-photos',
+  'creator-profile': '/creator-profile',
+  'creator-content': '/creator-content',
+  'creator-public-profile': '/creators/:id',
+
   // Admin
+  'admin-creators': '/admin-creators',
   'admin-dashboard': '/admin-dashboard',
   'admin-cultural-cms': '/admin-cultural-cms',
   'admin-map-editor': '/admin-map-editor',
@@ -850,6 +868,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [selectedProductId, setSelectedProductId] = useState<string | null>(initialNav.productId);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(initialNav.categoryId);
   const [selectedSellerId, setSelectedSellerId] = useState<string | null>(initialNav.sellerId);
+  const [selectedCreatorId, setSelectedCreatorId] = useState<string | null>(null);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(initialNav.orderId);
 
   // WAH Cultural Ecosystem Selected Slugs
@@ -1984,11 +2003,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const loginWithGoogle = async (params: {
     idToken: string;
     mode?: 'login' | 'register';
-    role?: 'buyer' | 'seller';
+    role?: 'buyer' | 'seller' | 'creator';
     phone?: string;
     governorate?: string;
     workshopName?: string;
     specialty?: string;
+    bio?: string;
+    specialties?: string[];
   }) => {
     const data = await api.googleAuth(params);
     if (data && data.user) {
@@ -1999,10 +2020,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setIsAuthModalOpen(false);
 
       const isPendingSeller = data.user.sellerStatus === 'pending' || (data.isNewUser && params.role === 'seller');
+      const isCreator = data.user.role === 'creator';
       if (data.isNewUser) {
         addToast(
           'إنشاء الحساب عبر Google',
-          isPendingSeller
+          isCreator
+            ? 'تم تقديم طلب الانضمام كصانع محتوى عبر Google بنجاح! طلبك قيد المراجعة من إدارة المنصة.'
+            : isPendingSeller
             ? 'تم تسجيل طلب انضمام ورشتكم عبر Google بنجاح! طلبكم قيد المراجعة والاعتماد من قبل إدارة المنصة.'
             : `تم إنشاء حسابك عبر Google بنجاح! مرحباً بك يا ${data.user.username || data.user.name}.`,
           'success'
@@ -2031,7 +2055,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         refreshSellers();
       }
 
-      if (data.user.role === 'seller' && data.user.sellerStatus === 'approved') {
+      if (data.user.role === 'creator') {
+        setActivePage('creator-dashboard');
+      } else if (data.user.role === 'seller' && data.user.sellerStatus === 'approved') {
         if (postLoginRedirect) {
           const targetPage = postLoginRedirect;
           setPostLoginRedirect(null);
@@ -2072,6 +2098,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     governorate?: string;
     workshopName?: string;
     specialty?: string;
+    bio?: string;
+    specialties?: string[];
+    city?: string;
+    socialLinks?: Record<string, string>;
   }) => {
     let data;
     if (params.role === 'seller' && params.workshopName) {
@@ -2111,15 +2141,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
 
       const isPendingSeller = data.user.sellerStatus === 'pending' || params.role === 'seller';
+      const isCreator = data.user.role === 'creator';
       addToast(
         'إنشاء الحساب',
-        isPendingSeller
+        isCreator
+          ? 'تم تقديم طلب الانضمام كصانع محتوى بنجاح! طلبك قيد المراجعة والاعتماد من قبل إدارة المنصة.'
+          : isPendingSeller
           ? `تم تسجيل طلب انضمام ورشتكم بنجاح! طلبكم قيد المراجعة والاعتماد من قبل إدارة المنصة.`
           : `تم تسجيل حسابك بنجاح! مرحباً بك يا ${data.user.username || data.user.name}.`,
         'success'
       );
       refreshSellers();
-      if (data.user.role === 'seller' && data.user.sellerStatus === 'approved') {
+      if (data.user.role === 'creator') {
+        setActivePage('creator-dashboard');
+      } else if (data.user.role === 'seller' && data.user.sellerStatus === 'approved') {
         setActivePage('seller-dashboard');
       } else if (isPendingSeller) {
         setActivePage('buyer-account');
@@ -2504,6 +2539,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       sessionStorage.setItem('elsa3ed_selected_seller_id', sellerId);
       const targetUrl = `/sellers/${encodeURIComponent(sellerId)}`;
       window.history.pushState({ page: 'seller-details', sellerId }, '', targetUrl);
+    } catch { }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const navigateToCreator = (creatorIdOrObj: string | { id?: string }) => {
+    const creatorId = safeExtractIdentifier(creatorIdOrObj);
+    if (!creatorId) {
+      console.warn('Invalid creatorId passed to navigateToCreator:', creatorIdOrObj);
+      return;
+    }
+    setSelectedCreatorId(creatorId);
+    setActivePageState('creator-public-profile');
+    try {
+      sessionStorage.setItem('elsa3ed_active_page', 'creator-public-profile');
+      sessionStorage.setItem('elsa3ed_selected_creator_id', creatorId);
+      const targetUrl = `/creators/${encodeURIComponent(creatorId)}`;
+      window.history.pushState({ page: 'creator-public-profile', creatorId }, '', targetUrl);
     } catch { }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -3420,11 +3472,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setSelectedCategoryId,
         selectedSellerId,
         setSelectedSellerId,
+        selectedCreatorId,
+        setSelectedCreatorId,
         selectedOrderId,
         setSelectedOrderId,
         navigateToProduct,
         navigateToCategory,
         navigateToSeller,
+        navigateToCreator,
         navigateToOrder,
 
         // WAH Cultural Ecosystem Navigation

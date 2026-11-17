@@ -144,6 +144,12 @@ const AdminMapEditorPage = lazyWithRetry(() =>
 const AdminEventsManagerPage = lazyWithRetry(() =>
   import('./components/pages/AdminEventsManagerPage').then((m) => ({ default: m.default || m.AdminEventsManagerPage }))
 );
+const CreatorDashboard = lazyWithRetry(() =>
+  import('./components/creator/CreatorDashboard').then((m) => ({ default: m.CreatorDashboard }))
+);
+const PublicCreatorProfilePage = lazyWithRetry(() =>
+  import('./components/creator/PublicCreatorProfilePage').then((m) => ({ default: m.PublicCreatorProfilePage }))
+);
 
 const SkeletonBlock: React.FC<{ className: string }> = ({ className }) => (
   <div aria-hidden="true" className={`skeleton-pulse ${className}`} />
@@ -154,6 +160,7 @@ const LazySectionFallback: React.FC = () => {
   const isDashboard =
     activePage.startsWith('seller') ||
     activePage.startsWith('admin') ||
+    activePage.startsWith('creator') ||
     activePage === 'buyer-account' ||
     activePage === 'profile';
   const isListing = [
@@ -272,6 +279,8 @@ const MainContent: React.FC = () => {
     setActivePage,
     selectedProductId,
     selectedSellerId,
+    selectedCreatorId,
+    navigateToCreator,
     products,
     isAuthChecking,
     isAuthenticated,
@@ -447,6 +456,22 @@ const MainContent: React.FC = () => {
           schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'الشروط والأحكام' }])
         });
         break;
+      case 'creator-public-profile':
+        updatePageSEO({
+          title: 'صانع محتوى صعيدي | وه',
+          description: 'استكشف إبداعات وتوثيقات صناع المحتوى لمعالم وحرف وتراث صعيد مصر.'
+        });
+        break;
+      case 'creator-dashboard':
+      case 'creator-reels':
+      case 'creator-photos':
+      case 'creator-content':
+      case 'creator-profile':
+        updatePageSEO({
+          title: 'لوحة تحكم صانع المحتوى | وه',
+          description: 'إدارة ونشر مقاطع الريلز ومعارض الصور التراثية في منصة وه.'
+        });
+        break;
       default:
         break;
     }
@@ -456,6 +481,7 @@ const MainContent: React.FC = () => {
   const isProtectedRoute =
     activePage.startsWith('admin') ||
     activePage.startsWith('seller') ||
+    (activePage.startsWith('creator') && activePage !== 'creator-public-profile') ||
     activePage === 'buyer-account' ||
     activePage === 'profile';
 
@@ -756,9 +782,79 @@ const MainContent: React.FC = () => {
                 )
               )}
 
+              {/* Public Creator Profile */}
+              {activePage === 'creator-public-profile' && (
+                <React.Suspense fallback={<LazySectionFallback />}>
+                  <PublicCreatorProfilePage
+                    creatorId={selectedCreatorId || (currentUser?.role === 'creator' ? ((currentUser as any).creatorId || currentUser.id) : '')}
+                    onBack={() => setActivePage('home')}
+                  />
+                </React.Suspense>
+              )}
+
+              {/* Creator Dashboard & Pages */}
+              {(activePage.startsWith('creator-') && activePage !== 'creator-public-profile') && (
+                isAuthenticated && (currentRole === 'creator' || currentRole === 'admin') ? (
+                  <React.Suspense fallback={<LazySectionFallback />}>
+                    <CreatorDashboard
+                      initialTab={
+                        activePage === 'creator-reels'
+                          ? 'reels'
+                          : activePage === 'creator-photos'
+                            ? 'photos'
+                            : activePage === 'creator-content'
+                              ? 'content'
+                              : activePage === 'creator-profile'
+                                ? 'profile'
+                                : 'overview'
+                      }
+                      onNavigateToPublic={(id) => navigateToCreator(id)}
+                    />
+                  </React.Suspense>
+                ) : (
+                  <div className="max-w-md mx-auto my-16 p-8 bg-white/80 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 shadow-xl text-center space-y-4" dir="rtl">
+                    <div className="w-16 h-16 rounded-2xl bg-primary /15 text-[#E66A2E] flex items-center justify-center mx-auto text-2xl border border-[#E66A2E]/20">
+                      ✨
+                    </div>
+                    <h2 className="text-xl font-bold text-espresso dark:text-cream">لوحة تحكم صناع المحتوى</h2>
+                    <p className="text-sm text-black/60 dark:text-white/60 leading-relaxed">
+                      هذه اللوحة مخصصة لصناع المحتوى المعتمدين في منصة وه لتوثيق معالم وحرف وتراث الصعيد. يرجى تسجيل الدخول بحساب صانع المحتوى أو تقديم طلب انضمام.
+                    </p>
+                    <div className="pt-2 flex flex-col gap-2.5">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPostLoginRedirect('creator-dashboard');
+                          setAuthModalTab('login');
+                          setIsAuthModalOpen(true);
+                        }}
+                        className="w-full py-3.5 bg-primary  text-white hover:bg-primary-hover font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
+                      >
+                        تسجيل دخول صانع المحتوى
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (isAuthenticated) {
+                            setActivePage('creator-dashboard');
+                          } else {
+                            setPostLoginRedirect('creator-dashboard');
+                            setAuthModalTab('register');
+                            setIsAuthModalOpen(true);
+                          }
+                        }}
+                        className="w-full py-2.5 bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-espresso dark:text-cream font-bold rounded-xl text-xs hover:bg-black/10 dark:hover:bg-white/10 transition-all cursor-pointer"
+                      >
+                        انضم كصانع محتوى في وه
+                      </button>
+                    </div>
+                  </div>
+                )
+              )}
+
               {activePage === 'reset-password' && <ResetPasswordPage />}
 
-              
+
               {activePage === 'wholesale' && (
                 <React.Suspense fallback={<LazySectionFallback />}>
                   <WholesalePage />

@@ -706,7 +706,7 @@ export const CraftReelsSection: React.FC = () => {
             absolute -bottom-20 right-10
             w-[250px] sm:w-[450px]
             h-[250px] sm:h-[450px]
-            bg-[#E66A2E]/10 dark:bg-[#E66A2E]/8 rounded-full
+            bg-primary /10 dark:bg-primary /8 rounded-full
             blur-[120px]
           "
         />
@@ -773,7 +773,7 @@ export const CraftReelsSection: React.FC = () => {
                       </span>
 
                       {/* Camera Button */}
-                      <span className="absolute right-2 top-1 h-1.5 w-1.5 rounded-full bg-[#E66A2E] shadow-[0_0_6px_rgba(230,106,46,0.7)]" />
+                      <span className="absolute right-2 top-1 h-1.5 w-1.5 rounded-full bg-primary  shadow-[0_0_6px_rgba(230,106,46,0.7)]" />
 
                       {/* Camera Grip */}
                       <span className="absolute bottom-1 left-2 h-1 w-3 rounded-full bg-[#F3D5A3]/50" />

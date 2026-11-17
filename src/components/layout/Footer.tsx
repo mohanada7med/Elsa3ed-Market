@@ -172,7 +172,7 @@ export const Footer: React.FC = () => {
       {/* خلفية جمالية متحفية فاخرة */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
         <div className="absolute -top-32 right-1/4 w-[600px] h-[600px] rounded-full bg-[#C99444]/10 blur-[150px]" />
-        <div className="absolute -bottom-32 left-1/4 w-[500px] h-[500px] rounded-full bg-[#E66A2E]/10 blur-[140px]" />
+        <div className="absolute -bottom-32 left-1/4 w-[500px] h-[500px] rounded-full bg-primary /10 blur-[140px]" />
 
         {/* Authentic WAH Heritage Icons Ambient Wallpaper (أكبر شوية في الخلفية كختم ونقشة نهاية الموقع) */}
         <div

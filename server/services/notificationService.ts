@@ -102,8 +102,9 @@ export async function createNotification(params: {
   | 'chat_message'
   | 'system_alert';
   link?: string;
+  actionPage?: string;
   metadata?: any;
-  recipientRole?: 'admin' | 'seller' | 'buyer' | 'all';
+  recipientRole?: 'admin' | 'seller' | 'buyer' | 'creator' | 'all';
 }): Promise<NotificationDocument> {
   const targetUserId = params.userId || params.recipientId || '';
   const doc: NotificationDocument = {
@@ -115,6 +116,7 @@ export async function createNotification(params: {
     type: (params.type || 'system') as any,
     isRead: false,
     link: params.link,
+    actionPage: params.actionPage,
     metadata: params.metadata,
     recipientRole: params.recipientRole,
     createdAt: new Date().toISOString()

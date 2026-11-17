@@ -42,7 +42,12 @@ import {
   PaidPromotion,
   PaidPromotionRequest,
   SellerFollowState,
-  HomePromotionPosition
+  HomePromotionPosition,
+  Creator,
+  CreatorStatus,
+  CreatorPhoto,
+  CreatorPublicProfile,
+  ContentStatus
 } from '../types.ts';
 
 
@@ -84,7 +89,7 @@ export interface ApiResponse<T> {
   count?: number;
 }
 
-function getAuthHeaders(user?: { id?: string; role?: string; sellerId?: string }, extraHeaders?: Record<string, string>): HeadersInit {
+function getAuthHeaders(user?: { id?: string; role?: string; sellerId?: string; creatorId?: string }, extraHeaders?: Record<string, string>): HeadersInit {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(extraHeaders || {})
@@ -105,10 +110,13 @@ function getAuthHeaders(user?: { id?: string; role?: string; sellerId?: string }
   if (user?.sellerId) {
     headers['x-seller-id'] = user.sellerId;
   }
+  if (user?.creatorId) {
+    headers['x-creator-id'] = user.creatorId;
+  }
   return headers;
 }
 
-function getAuthHeadersRaw(user?: { id?: string; role?: string; sellerId?: string }): HeadersInit {
+function getAuthHeadersRaw(user?: { id?: string; role?: string; sellerId?: string; creatorId?: string }): HeadersInit {
   const headers: Record<string, string> = {};
   const token = getStoredToken();
   if (token) {
@@ -123,6 +131,9 @@ function getAuthHeadersRaw(user?: { id?: string; role?: string; sellerId?: strin
   }
   if (user?.sellerId) {
     headers['x-seller-id'] = user.sellerId;
+  }
+  if (user?.creatorId) {
+    headers['x-creator-id'] = user.creatorId;
   }
   return headers;
 }
@@ -992,6 +1003,313 @@ export async function getPaymentStatus(
   const json: ApiResponse<any> = await res.json();
   return json.data || null;
 }
+
+export const creatorApi = {
+  // 1. Get creator status
+  async getCreatorStatus(user?: any): Promise<{ status: CreatorStatus | 'none'; creator?: Creator | null }> {
+    const res = await fetch(`${API_BASE}/creators/status`, {
+      headers: getAuthHeaders(user),
+      cache: 'no-store'
+    });
+    const json = await res.json();
+    return {
+      status: json.creatorStatus || 'none',
+      creator: json.data || null
+    };
+  },
+
+  // 2. Apply for creator role
+  async applyForCreator(user: any, data: {
+    name: string;
+    avatar?: string;
+    bio: string;
+    governorate: string;
+    city: string;
+    specialties: string[];
+    socialLinks?: any;
+    phone?: string;
+    email?: string;
+  }): Promise<Creator> {
+    const res = await fetch(`${API_BASE}/creators/apply`, {
+      method: 'POST',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(data)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'فشل تقديم طلب الانضمام كصانع محتوى');
+    return json.data;
+  },
+
+  // 3. Get creator's own profile
+  async getCreatorProfile(user: any): Promise<Creator | null> {
+    const res = await fetch(`${API_BASE}/creators/me`, {
+      headers: getAuthHeaders(user),
+      cache: 'no-store'
+    });
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json.data || null;
+  },
+
+  // 4. Update creator's own profile
+  async updateCreatorProfile(user: any, data: Partial<Creator>): Promise<Creator> {
+    const res = await fetch(`${API_BASE}/creators/me`, {
+      method: 'PUT',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(data)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'فشل تحديث بيانات الملف الشخصي');
+    return json.data;
+  },
+
+  // 5. Get creator's own reels
+  async getCreatorOwnReels(user: any, status?: string): Promise<CraftReel[]> {
+    const query = status && status !== 'all' ? `?status=${encodeURIComponent(status)}` : '';
+    const res = await fetch(`${API_BASE}/creators/my-reels${query}`, {
+      headers: getAuthHeaders(user),
+      cache: 'no-store'
+    });
+    const json = await res.json();
+    return json.data || [];
+  },
+
+  // 6. Get creator's own photos
+  async getCreatorOwnPhotos(user: any, status?: string): Promise<CreatorPhoto[]> {
+    const query = status && status !== 'all' ? `?status=${encodeURIComponent(status)}` : '';
+    const res = await fetch(`${API_BASE}/creators/my-photos${query}`, {
+      headers: getAuthHeaders(user),
+      cache: 'no-store'
+    });
+    const json = await res.json();
+    return json.data || [];
+  },
+
+  // 7. Create creator photo post
+  async createCreatorPhoto(user: any, data: {
+    title: string;
+    caption: string;
+    images: string[];
+    category: string;
+    governorate: string;
+    location?: string;
+    tags?: string[];
+  }): Promise<CreatorPhoto> {
+    const res = await fetch(`${API_BASE}/creators/photos`, {
+      method: 'POST',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(data)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'فشل نشر ألبوم الصور');
+    return json.data;
+  },
+
+  // 8. Update creator photo post
+  async updateCreatorPhoto(user: any, id: string, data: Partial<CreatorPhoto>): Promise<CreatorPhoto> {
+    const res = await fetch(`${API_BASE}/creators/photos/${id}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(data)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'فشل تحديث ألبوم الصور');
+    return json.data;
+  },
+
+  // 9. Delete creator photo post
+  async deleteCreatorPhoto(user: any, id: string): Promise<boolean> {
+    const res = await fetch(`${API_BASE}/creators/photos/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(user)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'فشل حذف ألبوم الصور');
+    return true;
+  },
+
+  // 10. Public: List approved creators
+  async getPublicCreators(params?: { governorate?: string; specialty?: string; search?: string; verifiedOnly?: boolean }): Promise<Creator[]> {
+    const q = new URLSearchParams();
+    if (params?.governorate && params.governorate !== 'all') q.append('governorate', params.governorate);
+    if (params?.specialty && params.specialty !== 'all') q.append('specialty', params.specialty);
+    if (params?.search) q.append('search', params.search);
+    if (params?.verifiedOnly) q.append('verifiedOnly', 'true');
+    const queryStr = q.toString() ? `?${q.toString()}` : '';
+    const res = await fetch(`${API_BASE}/creators/public${queryStr}`, { cache: 'no-store' });
+    const json = await res.json();
+    return json.data || [];
+  },
+
+  // 11. Public: Get creator profile + their approved content
+  async getPublicCreatorProfile(id: string): Promise<CreatorPublicProfile | null> {
+    const res = await fetch(`${API_BASE}/creators/public/${id}`, { cache: 'no-store' });
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json.data || null;
+  },
+
+  // 12. Public: List approved photos gallery
+  async getPublicPhotos(params?: { category?: string; governorate?: string; search?: string; limit?: number }): Promise<CreatorPhoto[]> {
+    const q = new URLSearchParams();
+    if (params?.category && params.category !== 'all') q.append('category', params.category);
+    if (params?.governorate && params.governorate !== 'all') q.append('governorate', params.governorate);
+    if (params?.search) q.append('search', params.search);
+    if (params?.limit) q.append('limit', String(params.limit));
+    const queryStr = q.toString() ? `?${q.toString()}` : '';
+    const res = await fetch(`${API_BASE}/creators/photos/public${queryStr}`, { cache: 'no-store' });
+    const json = await res.json();
+    return json.data || [];
+  },
+
+  // 13. Public: Like photo
+  async likeCreatorPhoto(id: string): Promise<{ likesCount: number }> {
+    const res = await fetch(`${API_BASE}/creators/photos/${id}/like`, { method: 'POST' });
+    const json = await res.json();
+    return { likesCount: json.likesCount || 0 };
+  },
+
+  // 14. Public: View photo
+  async viewCreatorPhoto(id: string): Promise<void> {
+    await fetch(`${API_BASE}/creators/photos/${id}/view`, { method: 'POST' }).catch(() => {});
+  },
+
+  // 15. Admin: List creator applications
+  async adminListCreators(user: any, params?: { status?: string; search?: string }): Promise<Creator[]> {
+    const q = new URLSearchParams();
+    if (params?.status && params.status !== 'all') q.append('status', params.status);
+    if (params?.search) q.append('search', params.search);
+    const queryStr = q.toString() ? `?${q.toString()}` : '';
+    const res = await fetch(`${API_BASE}/admin/creators${queryStr}`, {
+      headers: getAuthHeaders(user),
+      cache: 'no-store'
+    });
+    const json = await res.json();
+    return json.data || [];
+  },
+
+  // 16. Admin: Get creator by ID
+  async adminGetCreatorById(user: any, id: string): Promise<Creator | null> {
+    const res = await fetch(`${API_BASE}/admin/creators/${id}`, {
+      headers: getAuthHeaders(user),
+      cache: 'no-store'
+    });
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json.data || null;
+  },
+
+  // 17. Admin: Update creator status (approve, reject, suspend, pending)
+  async adminUpdateCreatorStatus(user: any, id: string, status: CreatorStatus, reason?: string): Promise<Creator> {
+    const res = await fetch(`${API_BASE}/admin/creators/${id}/status`, {
+      method: 'PATCH',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify({ status, reason })
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'فشل تحديث حالة صانع المحتوى');
+    return json.data;
+  },
+
+  // 18. Admin: Toggle verification
+  async adminToggleCreatorVerification(user: any, id: string, verified: boolean): Promise<Creator> {
+    const res = await fetch(`${API_BASE}/admin/creators/${id}/verify`, {
+      method: 'PATCH',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify({ verified })
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'فشل تحديث شارة التوثيق');
+    return json.data;
+  },
+
+  // 19. Admin: Get pending content for moderation (reels & photos)
+  async adminGetPendingContent(user: any): Promise<{ reels: CraftReel[]; photos: CreatorPhoto[] }> {
+    const res = await fetch(`${API_BASE}/admin/creators/content/pending`, {
+      headers: getAuthHeaders(user),
+      cache: 'no-store'
+    });
+    const json = await res.json();
+    return json.data || { reels: [], photos: [] };
+  },
+
+  // 20. Admin: Moderate Reel
+  async adminModerateReel(user: any, id: string, action: 'approve' | 'reject', reason?: string): Promise<CraftReel> {
+    const res = await fetch(`${API_BASE}/admin/creators/content/reels/${id}/moderate`, {
+      method: 'PATCH',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify({ action, reason })
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'فشل مراجعة الفيديو');
+    return json.data;
+  },
+
+  // 21. Admin: Moderate Photo
+  async adminModeratePhoto(user: any, id: string, action: 'approve' | 'reject', reason?: string): Promise<CreatorPhoto> {
+    const res = await fetch(`${API_BASE}/admin/creators/content/photos/${id}/moderate`, {
+      method: 'PATCH',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify({ action, reason })
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'فشل مراجعة الصور');
+    return json.data;
+  },
+
+  // 22. Admin: Delete photo
+  async adminDeleteCreatorPhoto(user: any, id: string): Promise<boolean> {
+    const res = await fetch(`${API_BASE}/admin/creators/content/photos/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(user)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'فشل حذف منشور الصور');
+    return true;
+  },
+
+  // 23. Upload single image for Creator
+  async uploadCreatorImage(user: any, imageDataUri: string, filename?: string): Promise<{ url: string; fileKey: string }> {
+    const res = await fetch(`${API_BASE}/upload`, {
+      method: 'POST',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify({
+        image: imageDataUri,
+        filename,
+        folder: 'creators'
+      })
+    });
+    const json = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل رفع الصورة');
+    }
+    return {
+      url: json.data.url,
+      fileKey: json.data.fileKey
+    };
+  },
+
+  // 24. Upload multiple images for Creator photo album
+  async uploadCreatorImages(user: any, imagesDataUris: string[]): Promise<{ urls: string[]; keys: string[] }> {
+    const res = await fetch(`${API_BASE}/upload`, {
+      method: 'POST',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify({
+        images: imagesDataUris,
+        folder: 'creators'
+      })
+    });
+    const json = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل رفع الصور');
+    }
+    const results = json.data as Array<{ url: string; fileKey: string }>;
+    return {
+      urls: results.map(r => r.url),
+      keys: results.map(r => r.fileKey)
+    };
+  }
+};
 
 export const api = {
   // Public Products
@@ -3070,11 +3388,13 @@ export const api = {
   async googleAuth(params: {
     idToken: string;
     mode?: 'login' | 'register';
-    role?: 'buyer' | 'seller';
+    role?: 'buyer' | 'seller' | 'creator';
     phone?: string;
     governorate?: string;
     workshopName?: string;
     specialty?: string;
+    bio?: string;
+    specialties?: string[];
   }): Promise<{ user: any; token?: string; isNewUser?: boolean }> {
     const res = await fetch(`${API_BASE}/auth/google`, {
       method: 'POST',
@@ -3148,6 +3468,10 @@ export const api = {
     workshopName?: string;
     specialty?: string;
     avatar?: string;
+    bio?: string;
+    specialties?: string[];
+    city?: string;
+    socialLinks?: Record<string, string>;
   }): Promise<{ user: any; token?: string }> {
     const res = await fetch(`${API_BASE}/auth/register`, {
       method: 'POST',
@@ -4556,6 +4880,7 @@ export const api = {
     return json;
   },
 
+  ...creatorApi,
   ...adminMediaApi
 };
 

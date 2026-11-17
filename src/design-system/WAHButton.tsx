@@ -61,7 +61,7 @@ export const WAHButton: React.FC<WAHButtonProps> = ({
     destructive:
       'bg-[#B9382B]/10 hover:bg-[#B9382B]/20 text-[#B9382B] border border-[#B9382B]/30 active:scale-[0.98]',
     cta:
-      'bg-[#E66A2E] hover:bg-[#C99444] text-[#FFF9EE] shadow-md hover:shadow-lg active:scale-[0.98]',
+      'bg-primary  hover:bg-[#C99444] text-[#FFF9EE] shadow-md hover:shadow-lg active:scale-[0.98]',
     icon:
       'bg-[#F8EBD7] dark:bg-[#3B1E0E] hover:bg-[#FFF9EE] dark:hover:bg-[#4A2715] text-[#3B1E0E] dark:text-[#FFF9EE] border border-[#E0C79B] dark:border-[#6B3A1F] hover:border-[#C99444]'
   };

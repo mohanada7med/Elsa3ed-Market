@@ -64,7 +64,9 @@ export const AuthModal: React.FC = () => {
   } = useApp();
 
   const [roleType, setRoleType] =
-    useState<'buyer' | 'seller'>('buyer');
+    useState<'buyer' | 'seller' | 'creator'>('buyer');
+  const [creatorBio, setCreatorBio] =
+    useState('');
 
   const [username, setUsername] =
     useState('');
@@ -84,7 +86,6 @@ export const AuthModal: React.FC = () => {
   const [governorate, setGovernorate] =
     useState('');
 
-  // المحافظة التي يكتبها المستخدم يدويًا عند اختيار "أخرى"
   const [customGovernorate, setCustomGovernorate] =
     useState('');
 
@@ -575,6 +576,16 @@ export const AuthModal: React.FC = () => {
       return;
     }
 
+    if (
+      roleType === 'creator' &&
+      creatorBio.trim().length < 5
+    ) {
+      setError(
+        'من فضلك اكتب نبذة عن محتواك أو نشاطك الإبداعي (5 أحرف على الأقل).'
+      );
+      return;
+    }
+
     try {
       setSubmitting(true);
 
@@ -610,13 +621,20 @@ export const AuthModal: React.FC = () => {
             ? normalizedWorkshop
             : undefined,
 
+        bio:
+          roleType === 'creator'
+            ? creatorBio.trim()
+            : undefined,
+
         avatar:
           avatarPreview ||
           DEFAULT_AVATAR,
       });
 
       addToast(
-        'تم إنشاء الحساب بنجاح 🎉',
+        roleType === 'creator'
+          ? 'تم تقديم طلب الانضمام كصانع محتوى بنجاح 🎉'
+          : 'تم إنشاء الحساب بنجاح 🎉',
         'success'
       );
 
@@ -630,6 +648,7 @@ export const AuthModal: React.FC = () => {
       setGovernorate('');
       setCustomGovernorate('');
       setWorkshopName('');
+      setCreatorBio('');
 
       setRoleType('buyer');
 
@@ -701,6 +720,10 @@ export const AuthModal: React.FC = () => {
           mode === 'register' && roleType === 'seller' && workshopName.trim()
             ? workshopName.trim()
             : undefined,
+        bio:
+          mode === 'register' && roleType === 'creator' && creatorBio.trim()
+            ? creatorBio.trim()
+            : undefined,
       });
 
       setPendingGoogleSeller(null);
@@ -713,6 +736,7 @@ export const AuthModal: React.FC = () => {
       setGovernorate('');
       setCustomGovernorate('');
       setWorkshopName('');
+      setCreatorBio('');
       setRoleType('buyer');
       setError('');
     } catch (err: any) {
@@ -2053,7 +2077,7 @@ export const AuthModal: React.FC = () => {
                         هتستخدم وه إزاي؟
                       </label>
 
-                      <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
+                      <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
                         {/* Buyer */}
 
                         <button
@@ -2075,7 +2099,7 @@ export const AuthModal: React.FC = () => {
                             sm:gap-2
                             rounded-2xl
                             border
-                            px-2
+                            px-1.5
                             transition-all
                             cursor-pointer
                             ${roleType === 'buyer'
@@ -2097,18 +2121,18 @@ export const AuthModal: React.FC = () => {
                           `}
                         >
                           {roleType === 'buyer' && (
-                            <span className="absolute left-2.5 top-2.5 flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-primary text-white">
-                              <Check size={13} />
+                            <span className="absolute left-2 top-2 flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-primary text-white">
+                              <Check size={11} />
                             </span>
                           )}
 
-                          <UserRound size={22} />
+                          <UserRound size={20} />
 
-                          <span className="text-[14px] sm:text-[15px] font-black">
+                          <span className="text-[13px] sm:text-[14px] font-black">
                             مشتري
                           </span>
 
-                          <span className="text-[10px] sm:text-[11px] opacity-70 font-medium">
+                          <span className="text-[9px] sm:text-[10px] opacity-70 font-medium text-center">
                             أكتشف واشتري
                           </span>
                         </button>
@@ -2134,7 +2158,7 @@ export const AuthModal: React.FC = () => {
                             sm:gap-2
                             rounded-2xl
                             border
-                            px-2
+                            px-1.5
                             transition-all
                             cursor-pointer
                             ${roleType === 'seller'
@@ -2159,19 +2183,81 @@ export const AuthModal: React.FC = () => {
                           `}
                         >
                           {roleType === 'seller' && (
-                            <span className="absolute left-2.5 top-2.5 flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-espresso text-white dark:bg-cream dark:text-black">
-                              <Check size={13} />
+                            <span className="absolute left-2 top-2 flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-espresso text-white dark:bg-cream dark:text-black">
+                              <Check size={11} />
                             </span>
                           )}
 
-                          <Store size={22} />
+                          <Store size={20} />
 
-                          <span className="text-[14px] sm:text-[15px] font-black">
+                          <span className="text-[13px] sm:text-[14px] font-black">
                             بائع
                           </span>
 
-                          <span className="text-[10px] sm:text-[11px] opacity-70 font-medium">
+                          <span className="text-[9px] sm:text-[10px] opacity-70 font-medium text-center">
                             أعرض منتجاتي
+                          </span>
+                        </button>
+
+                        {/* Creator */}
+
+                        <button
+                          id="role-creator-select"
+                          type="button"
+                          onClick={() =>
+                            setRoleType('creator')
+                          }
+                          className={`
+                            relative
+                            flex
+                            min-h-[84px]
+                            sm:min-h-[92px]
+                            min-w-0
+                            flex-col
+                            items-center
+                            justify-center
+                            gap-1.5
+                            sm:gap-2
+                            rounded-2xl
+                            border
+                            px-1.5
+                            transition-all
+                            cursor-pointer
+                            ${roleType === 'creator'
+                              ? `
+                                    border-espresso
+                                    dark:border-white
+                                    bg-espresso/10
+                                    dark:bg-cream/10
+                                    text-espresso
+                                    dark:text-white
+                                    shadow-sm
+                                  `
+                              : `
+                                    border-black/10
+                                    dark:border-white/10
+                                    bg-white/60
+                                    dark:bg-cream/5
+                                    text-black/70
+                                    dark:text-white/70
+                                    hover:border-black/30
+                                  `}
+                          `}
+                        >
+                          {roleType === 'creator' && (
+                            <span className="absolute left-2 top-2 flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full  bg-espresso text-white dark:bg-cream dark:text-black">
+                              <Check size={11} />
+                            </span>
+                          )}
+
+                          <Camera size={20} />
+
+                          <span className="text-[13px] sm:text-[14px] font-black truncate max-w-full">
+                            صانع محتوى
+                          </span>
+
+                          <span className="text-[9px] sm:text-[10px] opacity-70 font-medium text-center line-clamp-1">
+                            أوثق الصعيد
                           </span>
                         </button>
                       </div>
@@ -2281,7 +2367,9 @@ export const AuthModal: React.FC = () => {
                           <span className="flex-1 text-center">
                             {roleType === 'seller'
                               ? 'إنشاء حساب بائع عبر Google'
-                              : 'التسجيل السريع باستخدام Google'}
+                              : roleType === 'creator'
+                                ? 'الانضمام كصانع محتوى عبر Google'
+                                : 'التسجيل السريع باستخدام Google'}
                           </span>
 
                           {/* سهم بيتحرك عند الـ hover */}
@@ -2598,6 +2686,45 @@ export const AuthModal: React.FC = () => {
                             autoComplete="organization"
                           />
                         </div>
+                      </div>
+                    )}
+
+                    {/* Creator Bio */}
+
+                    {roleType === 'creator' && (
+                      <div>
+                        <label
+                          htmlFor="register-creator-bio-input"
+                          className={labelClass}
+                        >
+                          نبذة عن محتواك أو نشاطك التوثيقي
+                          <span className="mr-1 text-primary">
+                            *
+                          </span>
+                        </label>
+
+                        <div className="relative">
+                          <Sparkles
+                            size={20}
+                            className={`${iconClass} top-3.5`}
+                          />
+
+                          <textarea
+                            id="register-creator-bio-input"
+                            rows={3}
+                            value={creatorBio}
+                            onChange={(e) =>
+                              setCreatorBio(
+                                e.target.value
+                              )
+                            }
+                            placeholder="احكِ لنا باختصار عن المحتوى التراثي أو الحرفي أو المعالم التي توثقها في صعيد مصر..."
+                            className={`${inputClass} !h-auto py-2.5 resize-none`}
+                          />
+                        </div>
+                        <p className="mt-1 text-[11px] text-black/50 dark:text-white/50">
+                          سيتم مراجعة طلبك واعتماده من قبل إدارة منصة وه قبل إتاحة النشر العام.
+                        </p>
                       </div>
                     )}
 

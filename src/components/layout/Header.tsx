@@ -27,6 +27,7 @@ import {
   Check,
   Flame,
   Film,
+  Image as ImageIcon,
   AlertTriangle,
   Calendar,
   Landmark,
@@ -493,7 +494,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
     try {
       const saved = localStorage.getItem('wah_recent_searches');
       if (saved) setRecentSearches(JSON.parse(saved));
-    } catch {}
+    } catch { }
   }, []);
 
   const saveRecentSearch = (term: string) => {
@@ -501,14 +502,14 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
     if (!clean) return;
     setRecentSearches(prev => {
       const updated = [clean, ...prev.filter(t => t !== clean)].slice(0, 6);
-      try { localStorage.setItem('wah_recent_searches', JSON.stringify(updated)); } catch {}
+      try { localStorage.setItem('wah_recent_searches', JSON.stringify(updated)); } catch { }
       return updated;
     });
   };
 
   const clearRecentSearches = () => {
     setRecentSearches([]);
-    try { localStorage.removeItem('wah_recent_searches'); } catch {}
+    try { localStorage.removeItem('wah_recent_searches'); } catch { }
   };
 
   // Debounced Live Search Effect
@@ -616,7 +617,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
 
   const isAdmin = currentRole === 'admin' || currentUser?.role === 'admin';
   const isSeller = currentRole === 'seller' || currentUser?.role === 'seller';
-  const isStaff = isSeller || isAdmin;
+  const isCreator = currentRole === 'creator' || currentUser?.role === 'creator';
+  const isStaff = isSeller || isAdmin || isCreator;
 
   useEffect(() => {
     const handleClickOutside = (event: PointerEvent) => {
@@ -868,8 +870,11 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
   }, [navigate]);
 
   const getAccountPage = useCallback((): ActivePage => {
+    if (isAdmin) return 'admin-dashboard';
+    if (isSeller) return 'seller-dashboard';
+    if (isCreator) return 'creator-dashboard';
     return 'buyer-account';
-  }, []);
+  }, [isAdmin, isSeller, isCreator]);
 
   const profileMenuItems = useMemo(() => {
     if (isAdmin) {
@@ -878,6 +883,12 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
           id: 'admin-dashboard',
           label: 'لوحة التحكم العامة',
           icon: LayoutDashboard,
+          badge: null,
+        },
+        {
+          id: 'admin-creators',
+          label: 'إدارة صناع المحتوى',
+          icon: Sparkles,
           badge: null,
         },
         {
@@ -990,6 +1001,53 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
       ];
     }
 
+    if (isCreator) {
+      return [
+        {
+          id: 'creator-dashboard',
+          label: 'لوحة تحكم صانع المحتوى',
+          icon: LayoutDashboard,
+          badge: null,
+        },
+        {
+          id: 'creator-reels',
+          label: 'فيديوهاتي والريلز',
+          icon: Film,
+          badge: null,
+        },
+        {
+          id: 'creator-photos',
+          label: 'معارض صوري التراثية',
+          icon: ImageIcon,
+          badge: null,
+        },
+        {
+          id: 'creator-content',
+          label: 'إدارة كل المحتوى',
+          icon: Layers,
+          badge: null,
+        },
+        {
+          id: 'creator-profile',
+          label: 'بيانات صانع المحتوى',
+          icon: UserCircle,
+          badge: null,
+        },
+        {
+          id: 'creator-public-profile',
+          label: 'معاينة صفحتي العامة',
+          icon: Sparkles,
+          badge: null,
+        },
+        {
+          id: 'notifications',
+          label: 'الإشعارات',
+          icon: Bell,
+          badge: unreadNotificationsCount > 0 ? (unreadNotificationsCount > 99 ? '99+' : unreadNotificationsCount) : null,
+        },
+      ];
+    }
+
     // Buyer / Regular User
     return [
       {
@@ -997,6 +1055,12 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
         label: 'الملف الشخصي',
         icon: UserCircle,
         badge: null,
+      },
+      {
+        id: 'creator-dashboard',
+        label: 'انضم كصانع محتوى في وه',
+        icon: Sparkles,
+        badge: 'جديد',
       },
       {
         id: 'orders',
@@ -1023,7 +1087,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
         badge: unreadNotificationsCount > 0 ? (unreadNotificationsCount > 99 ? '99+' : unreadNotificationsCount) : null,
       },
     ];
-  }, [isAdmin, isSeller, unreadNotificationsCount, chatUnreadCount, favorites.length]);
+  }, [isAdmin, isSeller, isCreator, unreadNotificationsCount, chatUnreadCount, favorites.length]);
 
   const displayName = currentUser?.name || currentUser?.username || 'حسابي';
   const profileImage =
@@ -1367,7 +1431,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               >
                 <Heart size={18} />
                 {favorites.length > 0 && (
-                  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold bg-[#E66A2E] text-white">
+                  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold bg-primary  text-white">
                     {favorites.length > 99 ? '99+' : favorites.length}
                   </span>
                 )}
@@ -1384,7 +1448,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               >
                 <MessageCircle size={18} />
                 {chatUnreadCount > 0 && (
-                  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold bg-[#E66A2E] text-white">
+                  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold bg-primary  text-white">
                     {chatUnreadCount > 99 ? '99+' : chatUnreadCount}
                   </span>
                 )}
@@ -1411,7 +1475,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               >
                 <ShoppingBag size={18} />
                 {cartCount > 0 && (
-                  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold bg-[#E66A2E] text-white">
+                  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold bg-primary  text-white">
                     {cartCount > 99 ? '99+' : cartCount}
                   </span>
                 )}
@@ -1437,7 +1501,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   <div className="flex flex-col text-right leading-tight">
                     <span className="max-w-[110px] truncate text-sm font-black">{displayName}</span>
                     <span className="text-[10px] font-semibold opacity-70" style={{ color: secondaryText }}>
-                      {currentRole === 'admin' ? 'الإدارة' : isSeller ? 'صاحب ورشة' : 'حسابي'}
+                      {currentRole === 'admin' ? 'الإدارة' : isSeller ? 'صاحب ورشة' : isCreator ? 'صانع محتوى' : 'حسابي'}
                     </span>
                   </div>
                   <ChevronDown size={15} className={`text-primary transition-transform duration-300 ${userDropdownOpen ? 'rotate-180' : ''}`} />
@@ -1469,7 +1533,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-black">{displayName}</p>
                           <p className="text-xs font-semibold opacity-70" style={{ color: secondaryText }}>
-                            {currentRole === 'admin' ? 'إدارة وه' : isSeller ? 'شيخ صنعة / بائع' : 'ابن البلد / زبون'}
+                            {currentRole === 'admin' ? 'إدارة وه' : isSeller ? 'شيخ صنعة / بائع' : isCreator ? 'صانع محتوى صعيدي' : 'ابن البلد / زبون'}
                           </p>
                         </div>
                       </div>
@@ -1502,7 +1566,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                 <span>{item.label}</span>
                               </div>
                               {item.badge && (
-                                <span className="flex h-4.5 min-w-4.5 items-center justify-center rounded-full px-1.5 text-[10px] font-bold bg-[#E66A2E] text-white">
+                                <span className="flex h-4.5 min-w-4.5 items-center justify-center rounded-full px-1.5 text-[10px] font-bold bg-primary  text-white">
                                   {item.badge}
                                 </span>
                               )}
@@ -1638,7 +1702,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 <Heart size={18} />
 
                 {favorites.length > 0 && (
-                  <span className="absolute -right-0.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full px-1 text-[8px] font-bold bg-[#E66A2E] text-white">
+                  <span className="absolute -right-0.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full px-1 text-[8px] font-bold bg-primary  text-white">
                     {favorites.length > 99 ? '99+' : favorites.length}
                   </span>
                 )}
@@ -1731,7 +1795,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                 <span>{item.label}</span>
                               </div>
                               {item.badge && (
-                                <span className="flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold bg-[#E66A2E] text-white">
+                                <span className="flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold bg-primary  text-white">
                                   {item.badge}
                                 </span>
                               )}
@@ -1940,11 +2004,10 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         key={tab.id}
                         type="button"
                         onClick={() => setSearchCategory(tab.id as any)}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer shrink-0 ${
-                          searchCategory === tab.id
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer shrink-0 ${searchCategory === tab.id
                             ? 'bg-primary text-white shadow-xs'
                             : 'bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-foreground-secondary'
-                        }`}
+                          }`}
                       >
                         {tab.icon && <tab.icon size={12} />}
                         <span>{tab.label}</span>
@@ -2476,7 +2539,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                       </span>
 
                                       {link.isNew && (
-                                        <span className="rounded-full bg-[#E66A2E] px-2 py-0.5 text-[8px] font-bold text-white">
+                                        <span className="rounded-full bg-primary  px-2 py-0.5 text-[8px] font-bold text-white">
                                           جديد
                                         </span>
                                       )}

@@ -82,10 +82,11 @@ function normalizeReelMedia(reel: CraftReelDocument): CraftReelDocument {
 // GET /api/reels - Get all reels with optional filters
 router.get('/', async (req, res: Response) => {
   try {
-    const { sellerId, governorate, craftType, contentType, search, featuredOnly, limit = 50 } = req.query;
+    const { sellerId, creatorId, governorate, craftType, contentType, search, featuredOnly, limit = 50, status } = req.query;
     const { db, isMongo } = await getDatabase();
 
     const rawSellerId = sellerId && sellerId !== 'all' ? String(sellerId).trim() : null;
+    const rawCreatorId = creatorId && creatorId !== 'all' ? String(creatorId).trim() : null;
     let sellerTargetIds: string[] = [];
 
     if (rawSellerId) {
@@ -124,6 +125,22 @@ router.get('/', async (req, res: Response) => {
             { sellerId: { $in: sellerTargetIds } },
             { userId: { $in: sellerTargetIds } }
           ]
+        });
+      }
+      if (rawCreatorId) {
+        conditions.push({
+          $or: [
+            { creatorId: rawCreatorId },
+            { sellerId: rawCreatorId }
+          ]
+        });
+      }
+      if (status && status !== 'all') {
+        conditions.push({ status });
+      } else if (!rawSellerId && !rawCreatorId) {
+        // Public feed: strictly only show approved or legacy un-moderated reels
+        conditions.push({
+          $or: [{ status: 'approved' }, { status: { $exists: false } }]
         });
       }
       if (governorate && governorate !== 'all') {
@@ -173,6 +190,14 @@ router.get('/', async (req, res: Response) => {
       let memoryList = [...memoryDb.reels];
       if (rawSellerId) {
         memoryList = memoryList.filter((r) => r.sellerId && sellerTargetIds.includes(r.sellerId));
+      }
+      if (rawCreatorId) {
+        memoryList = memoryList.filter((r) => r.creatorId === rawCreatorId || r.sellerId === rawCreatorId);
+      }
+      if (status && status !== 'all') {
+        memoryList = memoryList.filter((r) => (r.status || 'approved') === status);
+      } else if (!rawSellerId && !rawCreatorId) {
+        memoryList = memoryList.filter((r) => !r.status || r.status === 'approved');
       }
       if (governorate && governorate !== 'all') {
         memoryList = memoryList.filter((r) => r.governorate === governorate);
@@ -676,15 +701,23 @@ router.get('/:id', async (req, res: Response) => {
   }
 });
 
-// POST /api/reels - Create new reel (Seller or Admin)
+// POST /api/reels - Create new reel (Seller, Creator, or Admin)
 router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const user = req.user!;
-    if (user.role !== 'seller' && user.role !== 'admin') {
+    if (user.role !== 'seller' && user.role !== 'admin' && user.role !== 'creator') {
       return res.status(403).json({
         success: false,
-        error: 'عفواً، إضافة مقاطع الفيديو متاح فقط للحرفيين البائعين وإدارة المنصة',
+        error: 'عفواً، إضافة مقاطع الفيديو متاح للحرفيين وصناع المحتوى المعتمدين وإدارة المنصة',
         code: 'FORBIDDEN'
+      });
+    }
+
+    if (user.role === 'creator' && user.creatorStatus !== 'approved') {
+      return res.status(403).json({
+        success: false,
+        error: 'حسابك كصانع محتوى غير معتمد لنشر الفيديوهات حالياً',
+        code: 'CREATOR_NOT_APPROVED'
       });
     }
 
@@ -743,10 +776,10 @@ router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =
     // Role Ownership Resolution
     let effectiveSellerId: string | undefined;
     if (user.role === 'seller') {
-      // Strictly bind to seller's own authenticated id
       effectiveSellerId = user.sellerId || user.id;
+    } else if (user.role === 'creator') {
+      effectiveSellerId = requestedSellerId || undefined;
     } else {
-      // Admin can assign to any seller or platform-admin
       effectiveSellerId = requestedSellerId || user.sellerId || undefined;
     }
 
@@ -756,18 +789,23 @@ router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =
       undefined;
 
     const hasProduct = Boolean(productId && productId !== 'none' && productTitle?.trim());
+    const initialStatus = user.role === 'admin' ? 'approved' : user.role === 'creator' ? 'pending' : 'approved';
+    const nowIso = new Date().toISOString();
 
     const newReel: CraftReelDocument = {
       id: `reel-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
       title: title.trim(),
       contentType: contentType || 'places',
       location: location?.trim() || governorate || 'الصعيد',
-      artisanName: artisanName?.trim() || undefined,
+      artisanName: artisanName?.trim() || (user.role === 'creator' ? user.name : undefined),
       artisanAvatar:
         artisanAvatar ||
-        undefined,
-      workshopName: workshopName?.trim() || undefined,
+        (user.role === 'creator' ? user.avatar : undefined),
+      workshopName: workshopName?.trim() || (user.role === 'creator' ? `حكايات ${user.name}` : undefined),
       sellerId: effectiveSellerId,
+      creatorId: user.role === 'creator' ? (user.creatorId || user.id) : undefined,
+      creatorName: user.role === 'creator' ? user.name : undefined,
+      creatorAvatar: user.role === 'creator' ? user.avatar : undefined,
       governorate: governorate || user.governorate || 'قنا',
       craftType: craftType || undefined,
       videoUrl: videoUrl.trim(),
@@ -797,7 +835,11 @@ router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =
       musicTrack: musicTrack || undefined,
       isVerifiedArtisan: isVerifiedArtisan ?? true,
       isFeatured: user.role === 'admin' ? Boolean(isFeatured) : false,
-      createdAt: new Date().toISOString().split('T')[0],
+      status: initialStatus,
+      submittedAt: nowIso,
+      approvedAt: initialStatus === 'approved' ? nowIso : undefined,
+      approvedBy: initialStatus === 'approved' ? user.name : undefined,
+      createdAt: nowIso.split('T')[0],
       comments: []
     };
 
@@ -817,15 +859,17 @@ router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =
       resource: 'craft_reels',
       resourceId: newReel.id,
       status: 'نجاح',
-      details: `تم إضافة الفيديو "${newReel.title}" للورشة "${newReel.workshopName}" (${newReel.governorate}) [${newReel.id}]`
+      details: `تم إضافة الفيديو "${newReel.title}" بواسطة (${user.name}) للحالة (${initialStatus}) [${newReel.id}]`
     }).catch(() => {});
 
-    Logger.info(`[Reels] Created new reel: ${newReel.id} by ${user.role} (${user.id}) - Cloudinary Public ID: ${resolvedPublicId || 'N/A'}`);
+    Logger.info(`[Reels] Created new reel: ${newReel.id} by ${user.role} (${user.id}) - Status: ${initialStatus}`);
 
     return res.status(201).json({
       success: true,
       data: newReel,
-      message: 'تم إضافة مقطع الفيديو بنجاح وحفظه في قاعدة البيانات'
+      message: user.role === 'creator'
+        ? 'تم إرسال مقطع الفيديو للمراجعة والاعتماد، وسيظهر للجمهور فور موافقة الإدارة'
+        : 'تم إضافة مقطع الفيديو بنجاح وحفظه في قاعدة البيانات'
     });
   } catch (err: any) {
     Logger.error('[Reels] Error creating reel:', err);
@@ -837,13 +881,13 @@ router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =
   }
 });
 
-// PUT /api/reels/:id - Edit Reel (Seller edits ONLY their own, Admin edits ALL)
+// PUT /api/reels/:id - Edit Reel (Seller edits ONLY their own, Creator edits ONLY their own, Admin edits ALL)
 router.put('/:id', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const user = req.user!;
     const { id } = req.params;
 
-    if (user.role !== 'seller' && user.role !== 'admin') {
+    if (user.role !== 'seller' && user.role !== 'admin' && user.role !== 'creator') {
       return res.status(403).json({
         success: false,
         error: 'غير مصرح لك بتعديل مقاطع الفيديو',
@@ -876,6 +920,19 @@ router.put('/:id', requireAuth, async (req: AuthenticatedRequest, res: Response)
         return res.status(403).json({
           success: false,
           error: 'غير مصرح لك بتعديل فيديو يخص ورشة بائع آخر. يمكنك فقط التحكم في فيديوهات ورشتك.',
+          code: 'FORBIDDEN_OWNERSHIP'
+        });
+      }
+    }
+
+    // Strict Creator Ownership Check
+    if (user.role === 'creator') {
+      const creatorOwnId = user.creatorId || user.id;
+      const isOwner = existingReel.creatorId === creatorOwnId || existingReel.sellerId === user.id;
+      if (!isOwner) {
+        return res.status(403).json({
+          success: false,
+          error: 'غير مصرح لك بتعديل فيديو يخص صانعاً آخر. يمكنك فقط تعديل فيديوهاتك الخاصة.',
           code: 'FORBIDDEN_OWNERSHIP'
         });
       }
@@ -948,11 +1005,20 @@ router.put('/:id', requireAuth, async (req: AuthenticatedRequest, res: Response)
     if (updates.inStock !== undefined) sanitizedUpdates.inStock = Boolean(updates.inStock);
 
     // Admin-Only Privileges
+    if (user.role === 'creator') {
+      // RULE 9: Editing approved content must trigger moderation again when the edit changes public-facing content.
+      sanitizedUpdates.status = 'pending';
+      sanitizedUpdates.rejectionReason = null;
+      sanitizedUpdates.submittedAt = new Date().toISOString();
+    }
+
     if (user.role === 'admin') {
       if (updates.artisanName !== undefined) sanitizedUpdates.artisanName = updates.artisanName;
       if (updates.workshopName !== undefined) sanitizedUpdates.workshopName = updates.workshopName;
       if (updates.artisanAvatar !== undefined) sanitizedUpdates.artisanAvatar = updates.artisanAvatar;
       if (updates.sellerId !== undefined) sanitizedUpdates.sellerId = updates.sellerId;
+      if (updates.status !== undefined) sanitizedUpdates.status = updates.status;
+      if (updates.rejectionReason !== undefined) sanitizedUpdates.rejectionReason = updates.rejectionReason;
       if (updates.isFeatured !== undefined) sanitizedUpdates.isFeatured = Boolean(updates.isFeatured);
       if (updates.isPinned !== undefined) sanitizedUpdates.isPinned = Boolean(updates.isPinned);
       if (updates.isVerifiedArtisan !== undefined) sanitizedUpdates.isVerifiedArtisan = Boolean(updates.isVerifiedArtisan);
@@ -1020,7 +1086,7 @@ router.delete('/:id', requireAuth, async (req: AuthenticatedRequest, res: Respon
     const user = req.user!;
     const { id } = req.params;
 
-    if (user.role !== 'seller' && user.role !== 'admin') {
+    if (user.role !== 'seller' && user.role !== 'admin' && user.role !== 'creator') {
       return res.status(403).json({
         success: false,
         error: 'غير مصرح لك بحذف مقاطع الفيديو',
@@ -1053,6 +1119,19 @@ router.delete('/:id', requireAuth, async (req: AuthenticatedRequest, res: Respon
         return res.status(403).json({
           success: false,
           error: 'غير مصرح لك بحذف فيديو يخص ورشة بائع آخر. يمكنك فقط إدارة مقاطع ورشتك.',
+          code: 'FORBIDDEN_OWNERSHIP'
+        });
+      }
+    }
+
+    // Strict Creator Ownership Check
+    if (user.role === 'creator') {
+      const creatorOwnId = user.creatorId || user.id;
+      const isOwner = existingReel.creatorId === creatorOwnId || existingReel.sellerId === user.id;
+      if (!isOwner) {
+        return res.status(403).json({
+          success: false,
+          error: 'غير مصرح لك بحذف فيديو يخص صانعاً آخر.',
           code: 'FORBIDDEN_OWNERSHIP'
         });
       }

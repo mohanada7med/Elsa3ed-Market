@@ -13,6 +13,7 @@ import { AdminMediaUploader } from '../common/AdminMediaUploader.tsx';
 import { AdminMediaLibraryPage } from './AdminMediaLibraryPage.tsx';
 import { AdminReportsManager } from './AdminReportsManager.tsx';
 import { PaidPromotionRequestsPanel } from './PaidPromotionRequestsPanel.tsx';
+import { AdminCreatorsManager } from './AdminCreatorsManager.tsx';
 import {
   Calendar,
   AlertTriangle,
@@ -57,6 +58,7 @@ import {
   Wallet,
   Upload,
   Image as ImageIcon,
+  Camera,
   ExternalLink,
   Film,
   Play,
@@ -157,7 +159,7 @@ export const AdminDashboard: React.FC = () => {
   } = useApp();
 
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'approvals' | 'categories' | 'craft-stories' | 'craft-reels' | 'weekly-story' | 'reviews' | 'sellers' | 'payouts' | 'orders' | 'coupons' | 'audit' | 'users' | 'password-resets' | 'payment-settings' | 'shipping-settings' | 'notifications' | 'media-library' | 'reports' | 'promotion-requests'
+    'overview' | 'approvals' | 'categories' | 'craft-stories' | 'craft-reels' | 'weekly-story' | 'reviews' | 'sellers' | 'payouts' | 'orders' | 'coupons' | 'audit' | 'users' | 'password-resets' | 'payment-settings' | 'shipping-settings' | 'notifications' | 'media-library' | 'reports' | 'promotion-requests' | 'creators'
   >('overview');
 
 
@@ -351,6 +353,7 @@ export const AdminDashboard: React.FC = () => {
   // Synchronize activeTab when navigation changes via URL or Header links
   useEffect(() => {
     if (activePage === 'admin-sellers') setActiveTab('sellers');
+    else if (activePage === 'admin-creators') setActiveTab('creators');
     else if (activePage === 'admin-products') setActiveTab('approvals');
     else if (activePage === 'admin-buyers') setActiveTab('users');
     else if (activePage === 'admin-orders') setActiveTab('orders');
@@ -1772,7 +1775,13 @@ export const AdminDashboard: React.FC = () => {
           icon: Layers,
           elementId: 'admin-tab-categories'
         },
-
+        {
+          id: 'creators' as const,
+          label: 'إدارة صناع المحتوى',
+          sublabel: 'الطلبات، التوثيق، واعتماد المحتوى',
+          icon: Camera,
+          elementId: 'admin-tab-creators'
+        },
         {
           id: 'craft-reels' as const,
           label: 'فيديوهات الحرفيين (Reels)',
@@ -1849,6 +1858,7 @@ export const AdminDashboard: React.FC = () => {
     { id: 'overview' as const, label: 'المؤشرات', icon: TrendingUp },
     { id: 'approvals' as const, label: 'فحص المنتجات', icon: Package, badge: pendingProducts.length },
     { id: 'sellers' as const, label: 'الورش', icon: Store, badge: pendingSellersCount },
+    { id: 'creators' as const, label: 'صناع المحتوى', icon: Camera },
     { id: 'orders' as const, label: 'الشحنات', icon: Truck },
     { id: 'reports' as const, label: 'البلاغات والشكاوى', icon: AlertTriangle, badge: pendingReportsCount > 0 ? pendingReportsCount : undefined },
     { id: 'craft-reels' as const, label: 'الريلز', icon: Film },
@@ -3524,6 +3534,17 @@ export const AdminDashboard: React.FC = () => {
                     </button>
                   </div>
                 </div>
+              </div>
+            )}
+
+            {/* TAB: CREATORS MANAGEMENT & MODERATION */}
+            {activeTab === 'creators' && (
+              <div className="animate-in fade-in">
+                <AdminCreatorsManager
+                  onNavigateToPublicProfile={(creatorId) => {
+                    setActivePage('creator-public-profile');
+                  }}
+                />
               </div>
             )}
 

@@ -112,7 +112,7 @@ export const CartPage: React.FC = () => {
         className="pointer-events-none absolute inset-x-0 top-0 h-[440px] overflow-hidden"
       >
         <div className="absolute -right-24 -top-20 h-72 w-72 rounded-full bg-[#C99444]/10 blur-3xl dark:bg-[#C99444]/[0.07]" />
-        <div className="absolute -left-20 top-24 h-64 w-64 rounded-full bg-[#E66A2E]/[0.07] blur-3xl dark:bg-[#E66A2E]/[0.05]" />
+        <div className="absolute -left-20 top-24 h-64 w-64 rounded-full bg-primary /[0.07] blur-3xl dark:bg-primary /[0.05]" />
 
         <div className="absolute inset-x-0 top-0 h-80 bg-gradient-to-b from-[#E9D5B5]/35 to-transparent dark:from-[#6B3A1F]/15" />
 
