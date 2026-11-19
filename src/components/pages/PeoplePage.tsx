@@ -385,11 +385,6 @@ export const PeoplePage: React.FC = () => {
               <Film size={17} />
               <span>WAH ORIGINAL DOCUMENTARY SERIES</span>
             </div>
-
-            <div className="flex items-center gap-2 text-[10px] text-black/40 dark:text-white/40">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary dark:bg-primary-hover" />
-              DIGITAL HERITAGE ARCHIVE
-            </div>
           </div>
 
           <div className="grid items-center gap-12 lg:grid-cols-[1fr_400px]">
