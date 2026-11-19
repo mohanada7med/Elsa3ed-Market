@@ -18,6 +18,7 @@ import {
 import FloatingDock from '../common/FloatingDock';
 import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner';
 import { ArchiveStatsCard } from '../common/ArchiveStatsCard';
+import { BrandPatternBackground } from '../layout/BrandPatternBackground';
 
 export const ProductsPage: React.FC = () => {
   const {
@@ -34,6 +35,9 @@ export const ProductsPage: React.FC = () => {
   ).length;
 
   return (
+    <>
+      <BrandPatternBackground />
+
     <main
       dir="rtl"
       className="
@@ -48,6 +52,7 @@ export const ProductsPage: React.FC = () => {
         dark:text-cream
       "
     >
+      
       <FloatingDock count={products.length} label="منتج يدوي" />
 
       {/* =====================================================
@@ -147,7 +152,7 @@ export const ProductsPage: React.FC = () => {
               font-bold
               transition-colors
               hover:text-primary dark:text-primary-hover
-              dark:hover:text-primary dark:text-primary-hover-hover
+              dark:hover:text-primary dark:text-primary-hover
               cursor-pointer
               min-h-[38px]
             "
@@ -266,7 +271,7 @@ export const ProductsPage: React.FC = () => {
                   tracking-[0.28em]
                   text-primary dark:text-primary-hover
 
-                  dark:text-primary dark:text-primary-hover-hover
+                  dark:text-primary dark:text-primary-hover
                 "
               >
                 <span
@@ -310,7 +315,7 @@ export const ProductsPage: React.FC = () => {
                     lg:mr-16
                     text-primary dark:text-primary-hover
 
-                    dark:text-primary dark:text-primary-hover-hover
+                    dark:text-primary dark:text-primary-hover
                   "
                 >
                   الصعيد
@@ -327,30 +332,7 @@ export const ProductsPage: React.FC = () => {
                   sm:grid-cols-[90px_1fr]
                 "
               >
-                <div className="hidden sm:block">
-                  <div
-                    className="
-                      text-[9px]
-                      font-black
-                      tracking-[0.2em]
-                      text-black/35
-
-                      dark:text-white/30
-                    "
-                  >
-                    01
-                  </div>
-
-                  <div
-                    className="
-                      mt-3
-                      h-px
-                      w-12
-                      bg-primary
-
-                      dark:bg-[#C99444]
-                    "
-                  />
+                <div className="hidden sm:block"> 
                 </div>
 
                 <p
@@ -644,7 +626,7 @@ export const ProductsPage: React.FC = () => {
               className="
                 text-primary dark:text-primary-hover
 
-                dark:text-primary dark:text-primary-hover-hover
+                dark:text-primary dark:text-primary-hover
               "
             />
 
@@ -672,7 +654,7 @@ export const ProductsPage: React.FC = () => {
               className="
                 text-primary dark:text-primary-hover
 
-                dark:text-primary dark:text-primary-hover-hover
+                dark:text-primary dark:text-primary-hover
               "
             />
 
@@ -732,7 +714,7 @@ export const ProductsPage: React.FC = () => {
                 tracking-[0.25em]
                 text-primary dark:text-primary-hover
 
-                dark:text-primary dark:text-primary-hover-hover
+                dark:text-primary dark:text-primary-hover
               "
             >
               HANDPICKED COLLECTION
@@ -773,7 +755,7 @@ export const ProductsPage: React.FC = () => {
 
       <div className="h-20 sm:h-12" />
     </main>
-  );
+    </>);
 };
 
 export default ProductsPage;

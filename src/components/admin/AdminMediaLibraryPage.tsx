@@ -158,7 +158,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-black/10 dark:border-white/10">
           <div>
             <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-xl bg-primary/10 dark:bg-[#C99444]/10 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 dark:bg-[#C99444]/10 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover flex items-center justify-center">
                 <ImageIcon className="w-5 h-5" />
               </div>
               <div>
@@ -264,7 +264,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
 
         {/* Stats bar */}
         <div className="flex items-center justify-between mt-4 text-xs text-black/60 dark:text-white/60">
-          <span>إجمالي الصور الموثقة: <strong className="text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">{totalItems}</strong></span>
+          <span>إجمالي الصور الموثقة: <strong className="text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">{totalItems}</strong></span>
           <span>صفحة {currentPage} من {totalPages}</span>
         </div>
       </div>
@@ -385,7 +385,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
                     <div className="pt-2 border-t border-black/10 dark:border-white/10 flex items-center justify-between gap-2 mt-2">
                       <button
                         onClick={() => handleCopy(url, `url-${item.id || item.publicId}`)}
-                        className="text-[11px] font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover hover:underline flex items-center gap-1"
+                        className="text-[11px] font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover hover:underline flex items-center gap-1"
                       >
                         {copiedPublicId === `url-${item.id || item.publicId}` ? (
                           <>

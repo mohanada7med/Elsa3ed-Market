@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
-import { ArrowLeft, BadgeCheck, MapPin, Sparkles, Store } from 'lucide-react';
+import { ArrowLeft, BadgeCheck, FireExtinguisher, Flame, MapPin, Sparkles, Store, Workflow } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { Product } from '../../types';
 import { api, wahApi } from '../../services/api';
@@ -90,7 +90,7 @@ export const ProductOfWeekSection: React.FC = () => {
             <Sparkles size={18} />
           </span>
           <div>
-            <p className="text-[10px] font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">اختيار إدارة وه</p>
+            <p className="text-[10px] font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">اختيار إدارة وه</p>
             <h2 className="text-lg font-black text-foreground sm:text-2xl">حكاية الأسبوع</h2>
           </div>
         </div>
@@ -126,13 +126,10 @@ export const ProductOfWeekSection: React.FC = () => {
       className="relative mx-auto w-full max-w-[1600px] overflow-hidden px-4 py-4 sm:px-8 sm:py-14 lg:px-12"
     >
     <div className="mb-3 flex items-center gap-2 sm:mb-7 sm:gap-3">
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-primary/25 bg-gradient-to-br from-primary/15 to-primary/5 text-primary dark:text-primary-hover shadow-sm dark:text-primary dark:text-primary-hover-hover sm:h-11 sm:w-11 sm:rounded-2xl">
-        <Sparkles size={18} />
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-primary/25 bg-gradient-to-br from-primary/15 to-primary/5 text-primary dark:text-primary-hover shadow-sm dark:text-primary dark:text-primary-hover sm:h-11 sm:w-11 sm:rounded-2xl">
+        <Flame size={18} />
         </span>
         <div>
-          <p className="text-[10px] font-black tracking-[0.18em] text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
-            اختيار إدارة وه
-          </p>
         <h2 className="mt-0.5 text-base font-black text-foreground sm:text-2xl">
             حكاية الأسبوع
           </h2>
@@ -179,11 +176,11 @@ export const ProductOfWeekSection: React.FC = () => {
               />
             ) : (
               <div className="flex h-full min-h-[145px] w-full items-center justify-center sm:min-h-[260px]">
-                <Sparkles className="h-16 w-16 text-primary dark:text-primary-hover-hover/70" />
+                <Sparkles className="h-16 w-16 text-primary dark:text-primary-hover/70" />
               </div>
             )}
-            <div className="absolute right-4 top-4 z-[3] flex items-center gap-1.5 rounded-full border border-primary/20 bg-white/80 px-2.5 py-1.5 text-[10px] font-black text-primary dark:text-primary-hover shadow-md backdrop-blur-md dark:bg-[#1B1009]/75 dark:text-primary dark:text-primary-hover-hover sm:right-7 sm:top-7 sm:gap-2 sm:px-3 sm:py-2 sm:text-xs">
-              <Sparkles size={13} className="text-primary dark:text-primary-hover-hover sm:h-[15px] sm:w-[15px]" />
+            <div className="absolute right-4 top-4 z-[3] flex items-center gap-1.5 rounded-full border border-primary/20 bg-white/80 px-2.5 py-1.5 text-[10px] font-black text-primary dark:text-primary-hover shadow-md backdrop-blur-md dark:bg-[#1B1009]/75 dark:text-primary dark:text-primary-hover sm:right-7 sm:top-7 sm:gap-2 sm:px-3 sm:py-2 sm:text-xs">
+              <Sparkles size={13} className="text-primary dark:text-primary-hover sm:h-[15px] sm:w-[15px]" />
               منتج الأسبوع
             </div>
             <div aria-hidden="true" className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#1B1009]/75 to-transparent px-4 pb-3 pt-8 sm:hidden">
@@ -212,7 +209,7 @@ export const ProductOfWeekSection: React.FC = () => {
               {product.title}
             </h3>
 
-            <p className="mt-2 text-[9px] font-black tracking-[0.16em] text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover sm:mt-5 sm:text-[10px]">
+            <p className="mt-2 text-[9px] font-black tracking-[0.16em] text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover sm:mt-5 sm:text-[10px]">
               عن المنتج
             </p>
             <p className="mt-1 line-clamp-2 text-[11px] font-semibold leading-5 text-foreground-secondary sm:mt-2 sm:line-clamp-5 sm:text-base sm:leading-8">
@@ -238,7 +235,7 @@ export const ProductOfWeekSection: React.FC = () => {
               className="mt-2.5 flex w-full items-center gap-2 rounded-xl border border-primary/15 bg-background/55 p-2 text-right transition hover:border-primary/35 hover:bg-background/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:mt-6 sm:gap-3 sm:rounded-2xl sm:p-3"
               aria-label={`زيارة ورشة ${makerName}`}
             >
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-primary/10 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover sm:h-11 sm:w-11 sm:rounded-xl">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-primary/10 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover sm:h-11 sm:w-11 sm:rounded-xl">
                 {seller?.avatar ? (
                   <img
                     src={seller.avatar}
@@ -258,7 +255,7 @@ export const ProductOfWeekSection: React.FC = () => {
                   {makerName}
                 </span>
               </span>
-              <span className="flex shrink-0 items-center gap-1 text-[9px] font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover sm:text-[10px]">
+              <span className="flex shrink-0 items-center gap-1 text-[9px] font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover sm:text-[10px]">
                 <MapPin size={11} className="sm:h-[13px] sm:w-[13px]" />
                 {makerGovernorate}
               </span>
@@ -269,7 +266,7 @@ export const ProductOfWeekSection: React.FC = () => {
                 <p className="text-[9px] font-bold text-foreground-secondary sm:text-[10px]">
                   {product.inStock ? 'متاح من ورشة الصانع' : 'غير متاح حاليًا'}
                 </p>
-                <p className="mt-0.5 text-base font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover sm:mt-1 sm:text-xl">
+                <p className="mt-0.5 text-base font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover sm:mt-1 sm:text-xl">
                   {product.price.toLocaleString('ar-EG')} ج.م
                 </p>
               </div>

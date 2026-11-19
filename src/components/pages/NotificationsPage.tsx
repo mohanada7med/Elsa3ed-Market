@@ -50,7 +50,7 @@ export const NotificationsPage: React.FC = () => {
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-5 sm:pb-6">
           <div>
-            <div className="flex items-center gap-2 text-xs font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover mb-1">
+            <div className="flex items-center gap-2 text-xs font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover mb-1">
               <Bell className="w-4 h-4" />
               <span>نظام التنبيهات المباشر</span>
               {unreadNotificationsCount > 0 && !isGuest && (
@@ -83,7 +83,7 @@ export const NotificationsPage: React.FC = () => {
         {/* Guest prompt if not logged in */}
         {isGuest ? (
           <div className="max-w-md mx-auto my-12 p-8 bg-white/80 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 shadow-xl text-center space-y-4">
-            <div className="w-16 h-16 rounded-2xl bg-primary/15 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover flex items-center justify-center mx-auto text-2xl border border-primary/20">
+            <div className="w-16 h-16 rounded-2xl bg-primary/15 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover flex items-center justify-center mx-auto text-2xl border border-primary/20">
               🔔
             </div>
             <h2 className="text-xl font-bold text-espresso dark:text-cream">

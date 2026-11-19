@@ -210,18 +210,13 @@ export const WahEcosystemPortalSection: React.FC = () => {
           {/* Typography */}
 
           <div className="relative z-10 py-3 sm:py-8">
-            <div className="mb-3 flex items-center gap-2 sm:mb-5 sm:gap-3">
-              <span className="h-px w-9 bg-accent" />
-              <span className="text-[10px] font-bold tracking-wide text-foreground-secondary sm:text-xs">
-                تعالى نكتشف حكاية الصعيد
-              </span>
-            </div>
+            
 
             <h1 className="relative text-4xl font-normal leading-[1.1] tracking-tight sm:text-8xl sm:leading-[1.15] lg:text-[8.5rem]">
               <span className="block">أبواب</span>
 
               <span className="relative mt-1 inline-flex items-center gap-2 sm:gap-7">
-                <span className="relative z-10 font-main text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
+                <span className="relative z-10 font-main text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
                   وه
                 </span>
 
@@ -256,7 +251,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
                     7 أبواب تراثية رئيسية
                   </strong>
                   . في كل باب، هتلاقي{' '}
-                  <strong className="font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
+                  <strong className="font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
                     «عم وه»
                   </strong>{' '}
                   متقمص دوراً أصيلاً وموثقاً حكايته بيده!
@@ -292,7 +287,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
                 <div className="text-[10px] font-bold text-foreground-secondary">
                   دليلك في كل حكاية
                 </div>
-                <div className="mt-1 text-sm font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
+                <div className="mt-1 text-sm font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
                   وكل مكان
                 </div>
               </div>
@@ -633,19 +628,6 @@ export const WahEcosystemPortalSection: React.FC = () => {
         })}
       </div>
 
-      {/* ================= FOOTER ================= */}
-
-      <div className="mt-8 flex flex-col items-center justify-center gap-3 border-t border-border/60 pt-6 text-center sm:mt-12 sm:flex-row">
-        <span className="text-xs font-bold text-primary dark:text-primary-hover">
-          WAH — وه
-        </span>
-
-        <span className="hidden h-1 w-1 rounded-full bg-primary/40 sm:block" />
-
-        <p className="text-xs leading-6 text-foreground-secondary">
-          الصعيد مش مجرد مكان.. الصعيد حكاية وأصل وناس.
-        </p>
-      </div>
     </section>
   );
 };

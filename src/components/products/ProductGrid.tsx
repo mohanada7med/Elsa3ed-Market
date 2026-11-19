@@ -242,7 +242,7 @@ const ProductCard: React.FC<{
           </a>
         </h3>
         <div className="mt-1.5 flex items-center justify-between gap-2">
-          <span className="text-base font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
+          <span className="text-base font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
             {formatPrice(price)} <span className="text-[10px] font-bold">جنيه</span>
           </span>
           <button
@@ -373,7 +373,7 @@ const ProductCard: React.FC<{
         {/* caption */}
         <div className="mt-4 pl-[4.75rem]">
           {category && (
-            <span className="block truncate text-[11px] font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">{category}</span>
+            <span className="block truncate text-[11px] font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">{category}</span>
           )}
 
           <h3 className="mt-1 line-clamp-2 min-h-[2.75rem] text-base font-black leading-snug text-espresso dark:text-cream sm:text-lg">
@@ -386,7 +386,7 @@ const ProductCard: React.FC<{
             <p className="mt-1.5 flex min-w-0 items-center gap-1.5 text-[11px] font-bold text-[#8C6F53] dark:text-[#D6C6B1]">
               <Store size={12} className="shrink-0" />
               <span className="truncate">{seller}</span>
-              <BadgeCheck size={12} className="shrink-0 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover" />
+              <BadgeCheck size={12} className="shrink-0 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover" />
             </p>
           )}
         </div>
@@ -542,7 +542,7 @@ const QuickView: React.FC<{
           {/* details */}
           <div className="flex flex-col">
             {category && (
-              <span className="text-xs font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">{category}</span>
+              <span className="text-xs font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">{category}</span>
             )}
 
             <h2 className="mt-2 text-3xl font-black leading-tight sm:text-4xl">{title}</h2>
@@ -552,7 +552,7 @@ const QuickView: React.FC<{
             )}
 
             <div className="mt-6 flex items-baseline gap-3">
-              <span className="text-4xl font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
+              <span className="text-4xl font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
                 {formatPrice(price)}
                 <span className="mr-1 text-sm">جنيه</span>
               </span>
@@ -744,7 +744,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
   if (!sourceProducts || sourceProducts.length === 0) {
     return (
       <div className="flex min-h-[420px] flex-col items-center justify-center rounded-[2rem] border border-dashed border-black/10 px-6 text-center dark:border-white/10">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary dark:text-primary-hover dark:bg-[#C99444]/10 dark:text-primary dark:text-primary-hover-hover">
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary dark:text-primary-hover dark:bg-[#C99444]/10 dark:text-primary dark:text-primary-hover">
           <Package size={25} />
         </div>
         <h3 className="mt-6 text-xl font-black">مفيش منتجات لسه</h3>

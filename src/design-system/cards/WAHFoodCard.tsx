@@ -80,7 +80,7 @@ export const WAHFoodCard: React.FC<WAHFoodCardProps> = ({
           </p>
         </div>
 
-        <div className="pt-3 mt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover relative z-10">
+        <div className="pt-3 mt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover relative z-10">
           <span className="flex items-center gap-1">
             <Utensils className="w-3.5 h-3.5" />
             <span>وصفة وسر المطبخ</span>

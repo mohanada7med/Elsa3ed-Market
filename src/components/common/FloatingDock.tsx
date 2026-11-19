@@ -30,7 +30,7 @@ export const FloatingDock: React.FC<FloatingDockProps> = ({
                 <button
                     type="button"
                     onClick={scrollToTop}
-                    className="cursor-pointer text-xs font-black text-primary dark:text-primary-hover hover:opacity-80 dark:text-primary dark:text-primary-hover-hover"
+                    className="cursor-pointer text-xs font-black text-primary dark:text-primary-hover hover:opacity-80 dark:text-primary dark:text-primary-hover"
                 >
                     لأعلى الصفحة ↑
                 </button>

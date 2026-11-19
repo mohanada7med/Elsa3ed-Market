@@ -1357,7 +1357,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 cursor-pointer"
               style={{ backgroundColor: hoverBg, color: mainText }}
             >
-              {isDark ? <Sun size={18} className="text-primary dark:text-primary-hover-hover" /> : <Moon size={18} />}
+              {isDark ? <Sun size={18} className="text-primary dark:text-primary-hover" /> : <Moon size={18} />}
             </button>
 
             {!isShopBlockedStaff && (
@@ -1574,20 +1574,20 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               onClick={() => setMobileMenuOpen(true)}
               aria-label="القائمة"
               title="القائمة"
-              className="flex h-10 w-10 items-center justify-center rounded-full cursor-pointer touch-manipulation active:scale-95"
+              className="flex h-11 w-11 items-center justify-center rounded-full cursor-pointer touch-manipulation active:scale-95"
               style={{ backgroundColor: hoverBg, color: mainText }}
             >
-              <Menu size={18} className="text-primary dark:text-primary-hover-hover" />
+              <Menu size={18} className="text-primary dark:text-primary-hover" />
             </button>
             <button
               type="button"
               onClick={toggleTheme}
               aria-label="تغيير المظهر"
               title="تغيير المظهر"
-              className="flex h-10 w-10 items-center justify-center rounded-full cursor-pointer touch-manipulation transition-transform active:scale-95"
+              className="flex h-11 w-11 items-center justify-center rounded-full cursor-pointer touch-manipulation transition-transform active:scale-95"
               style={{ backgroundColor: hoverBg, color: mainText }}
             >
-              {isDark ? <Sun size={18} className="text-primary dark:text-primary-hover-hover" /> : <Moon size={18} />}
+              {isDark ? <Sun size={18} className="text-primary dark:text-primary-hover" /> : <Moon size={18} />}
             </button>
 
             <button
@@ -1595,7 +1595,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               onClick={() => setSearchOverlayOpen(true)}
               aria-label="البحث"
               title="البحث"
-              className="flex h-10 w-10 items-center justify-center rounded-full cursor-pointer touch-manipulation active:scale-95"
+              className="flex h-11 w-11 items-center justify-center rounded-full cursor-pointer touch-manipulation active:scale-95"
               style={{ backgroundColor: hoverBg, color: mainText }}
             >
               <Search size={18} />

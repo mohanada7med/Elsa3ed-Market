@@ -53,7 +53,7 @@ export const WAHGovernorateCard: React.FC<WAHGovernorateCardProps> = ({
         <h3 className="font-bold text-espresso dark:text-cream text-sm group-hover:text-primary dark:text-primary-hover dark:group-hover:text-[#C99444] transition-colors">
           محافظة {name}
         </h3>
-        <p className="text-[11px] font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover leading-snug">
+        <p className="text-[11px] font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover leading-snug">
           {famousCraft}
         </p>
         <p className="text-[10px] text-black/60 dark:text-white/60 leading-tight line-clamp-2">

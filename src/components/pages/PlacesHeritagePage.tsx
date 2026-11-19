@@ -20,6 +20,8 @@ import { PlaceEditorModal } from './PlaceEditorModal';
 import FloatingDock from '../common/FloatingDock';
 import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner';
 import { ArchiveStatsCard } from '../common/ArchiveStatsCard';
+import { PageNavigationBar } from '../layout/PageNavigationBar';
+import { BrandPatternBackground } from '../layout/BrandPatternBackground';
 
 const CATEGORY_MAP: Record<string, string[]> = {
   فرعوني: ['temple', 'tomb', 'pharaonic', 'فرعوني'],
@@ -478,45 +480,14 @@ export const PlacesHeritagePage: React.FC = () => {
         dark:text-cream
       "
     >
+      <BrandPatternBackground />
       <FloatingDock count={places.length} label="أماكن التراث" />
-      {/* NAVBAR */}
-      <header className="relative z-50 border-b border-black/10 dark:border-white/10">
-        <div className="mx-auto flex h-[76px] max-w-[1600px] items-center justify-between px-5 sm:px-8 lg:px-12">
-          <button
-            onClick={() => setActivePage('home')}
-            className="
-              group flex items-center gap-3
-              text-sm font-bold
-              transition-all
-              hover:text-primary dark:text-primary-hover
-              cursor-pointer
-            "
-          >
-            <span
-              className="
-                flex h-10 w-10 items-center justify-center
-                rounded-full
-                border border-black/10
-                bg-white/60
-                transition-all
-                group-hover:bg-espresso
-                group-hover:text-white
-                dark:border-white/10
-                dark:bg-cream/5
-                dark:group-hover:bg-white
-                dark:group-hover:text-black
-              "
-            >
-              <ArrowLeft
-                size={17}
-                className="transition-transform group-hover:-translate-x-1"
-              />
-            </span>
-            <span className="hidden sm:block">الرئيسية</span>
-          </button>
-
-
-          <button
+      <PageNavigationBar
+        backLabel="الرئيسية"
+        onBack={() => setActivePage('home')}
+        title="أماكن التراث"
+      >
+        <button
             onClick={() => setActivePage('map')}
             className="
               flex items-center gap-2
@@ -536,8 +507,7 @@ export const PlacesHeritagePage: React.FC = () => {
             <span className="hidden sm:block">الخريطة</span>
             <Compass size={15} />
           </button>
-        </div>
-      </header>
+      </PageNavigationBar>
 
       {/* HERO SECTION */}
       <section className="relative overflow-hidden">
@@ -547,14 +517,7 @@ export const PlacesHeritagePage: React.FC = () => {
         <div className="mx-auto max-w-[1600px] px-5 pb-12 pt-16 sm:px-8 sm:pb-16 sm:pt-24 lg:px-12 lg:pb-20 lg:pt-32">
           <div className="relative z-10 grid items-center gap-10 lg:grid-cols-[1fr_420px]">
             <div>
-              <div className="mb-8 flex items-center gap-3">
-                <Sparkles size={16} className="text-primary dark:text-primary-hover" />
-                <span className="text-[10px] font-bold uppercase tracking-[0.35em] text-primary dark:text-primary-hover">
-                  Digital Heritage Archive / Places
-                </span>
-              </div>
-              <br /><br />
-              <br />
+
               <h1
                 className="
                   max-w-5xl
@@ -569,13 +532,13 @@ export const PlacesHeritagePage: React.FC = () => {
               >
                 أماكن
                 <br />
-                <span className="mr-[8vw] text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover lg:mr-28">بتحكى</span>
+                <span className="mr-[8vw] text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover lg:mr-28">بتحكى</span>
               </h1>
               <br />
               <br />
 
-              <div className="mt-10 flex max-w-2xl items-start gap-5">
-                <div className="mt-2 h-16 w-px bg-primary" />
+              <div className="mt-5 flex max-w-2xl items-start gap-4">
+                <div className="mr-10 max-w-2xl text-sm font-medium leading-8 text-black/55 sm:text-base sm:leading-9 dark:text-white/55" />
                 <p className="text-sm leading-8 text-black/55 dark:text-white/55 sm:text-base">
                   أماكن الصعيد ليها هيبة وحكاية؛ من المعابد والآثار العتيقة، للأديرة والمساجد، والقرى اللي عايشة على شط النيل.
                 </p>

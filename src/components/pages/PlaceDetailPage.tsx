@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { wahApi } from '../../services/api';
 import { HeritagePlace } from '../../types';
 import { VisitorMediaGallery } from '../common/VisitorMediaGallery';
+import { PageNavigationBar } from '../layout/PageNavigationBar';
 import { updatePageSEO, generatePlaceSchema } from '../../utils/seo';
 
 import {
@@ -286,53 +287,12 @@ export const PlaceDetailPage: React.FC = () => {
         font-cairo
       "
     >
-      {/* =========================================================
-          NAVBAR
-      ========================================================= */}
-      <header className="relative z-50 border-b border-black/10 dark:border-white/10">
-        <div className="mx-auto flex h-[76px] max-w-[1600px] items-center justify-between px-5 sm:px-8 lg:px-12">
-          <button
-            onClick={() => setActivePage('places')}
-            className="
-              group flex items-center gap-3
-              text-sm font-bold
-              transition-all
-              hover:text-primary dark:text-primary-hover
-              cursor-pointer
-            "
-          >
-            <span
-              className="
-                flex h-10 w-10 items-center justify-center
-                rounded-full
-                border border-black/10
-                bg-white/60
-                transition-all
-                group-hover:bg-espresso
-                group-hover:text-white
-                dark:border-white/10
-                dark:bg-white/5
-                dark:group-hover:bg-white
-                dark:group-hover:text-black
-              "
-            >
-              <ArrowLeft
-                size={17}
-                className="transition-transform group-hover:-translate-x-1"
-              />
-            </span>
-            <span className="hidden sm:block">المعالم</span>
-          </button>
-
-          <div className="absolute left-1/2 -translate-x-1/2 text-center">
-            <div className="text-[9px] font-bold tracking-[0.35em] text-primary dark:text-primary-hover">
-              WAH ARCHIVE
-            </div>
-            <div className="mt-1 text-sm font-main font-black">تفاصيل المعلم</div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {isAdmin && (
+      <PageNavigationBar
+        backLabel="المعالم"
+        onBack={() => setActivePage('places')}
+        title="تفاصيل المعلم"
+      >
+        {isAdmin && (
               <>
                 <button
                   type="button"
@@ -436,9 +396,7 @@ export const PlaceDetailPage: React.FC = () => {
             >
               <Share2 className="w-4 h-4" />
             </button>
-          </div>
-        </div>
-      </header>
+      </PageNavigationBar>
       {/* =========================================================
           HERO (بالمحافظة على شكل الصورة المطلوبة تماماً)
       ========================================================= */}
@@ -1041,7 +999,7 @@ export const PlaceDetailPage: React.FC = () => {
                     className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${place.visitInfo.visitStatus === 'closed_to_public'
                       ? 'bg-red-500/20 text-red-600 dark:text-red-400'
                       : place.visitInfo.visitStatus === 'closed_for_restoration'
-                        ? 'bg-amber-500/20 text-amber-600 dark:text-primary dark:text-primary-hover-hover'
+                        ? 'bg-amber-500/20 text-amber-600 dark:text-primary dark:text-primary-hover'
                         : place.visitInfo.visitStatus === 'public_landmark'
                           ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400'
                           : place.visitInfo.visitStatus === 'active_institution'
@@ -1182,10 +1140,10 @@ export const PlaceDetailPage: React.FC = () => {
               {place.visitorTips && (
                 <div className="mt-4 p-5 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-start gap-4">
                   <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center shrink-0">
-                    <Info className="w-5 h-5 text-amber-600 dark:text-primary dark:text-primary-hover-hover" />
+                    <Info className="w-5 h-5 text-amber-600 dark:text-primary dark:text-primary-hover" />
                   </div>
                   <div>
-                    <span className="block text-[10px] font-black tracking-widest text-amber-600 dark:text-primary dark:text-primary-hover-hover mb-1">
+                    <span className="block text-[10px] font-black tracking-widest text-amber-600 dark:text-primary dark:text-primary-hover mb-1">
                       نصيحة ذهبية للزائر
                     </span>
                     <p className="text-sm leading-relaxed text-black/80 dark:text-white/80 break-words">

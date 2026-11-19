@@ -567,7 +567,7 @@ const MainContent: React.FC = () => {
                   <ChatView isSellerMode={currentRole === 'seller'} />
                 ) : (
                   <div className="max-w-md mx-auto my-16 p-8 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xl text-center space-y-4">
-                    <div className="w-16 h-16 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-primary dark:text-primary-hover-hover flex items-center justify-center mx-auto">
+                    <div className="w-16 h-16 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-primary dark:text-primary-hover flex items-center justify-center mx-auto">
                       <MessageCircle size={30} strokeWidth={1.7} />
                     </div>
                     <h2 className="text-xl font-bold text-stone-900 dark:text-stone-100">مراسلة إدارة منصة وه (الدعم الفني)</h2>
@@ -595,7 +595,7 @@ const MainContent: React.FC = () => {
                   <BuyerAccountPage />
                 ) : (
                   <div className="max-w-md mx-auto my-16 p-8 bg-white/80 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 shadow-xl text-center space-y-4">
-                    <div className="w-16 h-16 rounded-2xl bg-primary/15 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover flex items-center justify-center mx-auto border border-primary/20">
+                    <div className="w-16 h-16 rounded-2xl bg-primary/15 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover flex items-center justify-center mx-auto border border-primary/20">
                       <UserRound size={30} strokeWidth={1.7} />
                     </div>
                     <h2 className="text-xl font-bold text-espresso dark:text-cream">إعدادات الحساب الشخصي</h2>
@@ -624,7 +624,7 @@ const MainContent: React.FC = () => {
                 </React.Suspense>
               ) : isAuthenticated && currentUser?.sellerStatus === 'pending' ? (
                 <div className="max-w-lg mx-auto my-16 p-8 bg-white/80 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] border border-amber-500/20 shadow-xl text-center space-y-4" dir="rtl">
-                  <div className="w-16 h-16 rounded-2xl bg-amber-500/15 text-amber-600 dark:text-primary dark:text-primary-hover-hover flex items-center justify-center mx-auto text-2xl border border-amber-500/20">
+                  <div className="w-16 h-16 rounded-2xl bg-amber-500/15 text-amber-600 dark:text-primary dark:text-primary-hover flex items-center justify-center mx-auto text-2xl border border-amber-500/20">
                     ⏳
                   </div>
                   <span className="inline-block px-3 py-1 bg-amber-500/10 text-amber-700 dark:text-amber-300 rounded-full text-xs font-bold">
@@ -686,7 +686,7 @@ const MainContent: React.FC = () => {
                 </div>
               ) : (
                 <div className="max-w-md mx-auto my-16 p-8 bg-white/80 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 shadow-xl text-center space-y-4" dir="rtl">
-                  <div className="w-16 h-16 rounded-2xl bg-primary/15 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover flex items-center justify-center mx-auto text-2xl border border-primary/20">
+                  <div className="w-16 h-16 rounded-2xl bg-primary/15 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover flex items-center justify-center mx-auto text-2xl border border-primary/20">
                     🏺
                   </div>
                   <h2 className="text-xl font-bold text-espresso dark:text-cream">لوحة تحكم ورش الصعيد</h2>
@@ -734,7 +734,7 @@ const MainContent: React.FC = () => {
                   </React.Suspense>
                 ) : (
                   <div className="max-w-md mx-auto my-16 p-8 bg-white/80 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 shadow-xl text-center space-y-4">
-                    <div className="w-16 h-16 rounded-2xl bg-primary/15 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover flex items-center justify-center mx-auto text-2xl border border-primary/20">
+                    <div className="w-16 h-16 rounded-2xl bg-primary/15 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover flex items-center justify-center mx-auto text-2xl border border-primary/20">
                       🛡️
                     </div>
                     <h2 className="text-xl font-bold text-espresso dark:text-cream">منطقة الإدارة العليا</h2>

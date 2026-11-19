@@ -103,7 +103,7 @@ export const WAHEditorialCard: React.FC<WAHEditorialCardProps> = ({
 
         <div className="relative z-10 space-y-2">
           {subtitle && (
-            <p className="text-xs font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover line-clamp-1">
+            <p className="text-xs font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover line-clamp-1">
               {subtitle}
             </p>
           )}
@@ -120,7 +120,7 @@ export const WAHEditorialCard: React.FC<WAHEditorialCardProps> = ({
         </div>
 
         {/* Action Link Footer */}
-        <div className="pt-4 mt-4 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover group-hover:text-[#3B1E0E] dark:group-hover:text-[#C99444] relative z-10">
+        <div className="pt-4 mt-4 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover group-hover:text-[#3B1E0E] dark:group-hover:text-[#C99444] relative z-10">
           <span>اكتشف المزيد</span>
           <ArrowLeft className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" />
         </div>

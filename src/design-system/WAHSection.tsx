@@ -60,7 +60,7 @@ export const WAHSection: React.FC<WAHSectionProps> = ({
           >
             <div className="space-y-2 max-w-2xl text-right">
               {badgeContent && (
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/15 border border-primary/30 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover text-xs font-bold">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/15 border border-primary/30 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover text-xs font-bold">
                   {renderedBadgeIcon}
                   <span>{badgeContent}</span>
                 </div>

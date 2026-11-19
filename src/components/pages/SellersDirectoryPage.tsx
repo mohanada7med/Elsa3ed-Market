@@ -6,14 +6,17 @@ import {
   MapPin,
   Star,
   CheckCircle2,
-  ChevronRight,
   Search,
   Sparkles,
   ArrowUpLeft,
   Package,
+  Flame,
 } from 'lucide-react';
 import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner';
 import { PaidPromotionSection } from '../public/PaidPromotionSection';
+import { ArchiveStatsCard } from '../common/ArchiveStatsCard';
+import { PageNavigationBar } from '../layout/PageNavigationBar';
+import { BrandPatternBackground } from '../layout/BrandPatternBackground';
 
 const GOVERNORATES: (Governorate | 'all')[] = [
   'all',
@@ -70,50 +73,70 @@ export const SellersDirectoryPage: React.FC = () => {
         min-h-screen
         w-full
         overflow-x-hidden
-        bg-background
-        text-foreground
+        bg-cream
+        text-espresso
+        dark:bg-espresso-900
+        dark:text-cream
         transition-colors duration-500
       "
     >
-      {/* Authentic WAH Brand Watermark (شيوخ الصنعة والورش الحرفية) */}
-      <div
-        className="pointer-events-none fixed inset-0 z-0 opacity-[0.035] dark:opacity-[0.05] mix-blend-multiply dark:mix-blend-screen"
-        style={{
-          backgroundImage: "url('/pattern/pat2.png')",
-          backgroundRepeat: 'repeat',
-          backgroundSize: '520px auto',
-          backgroundPosition: 'center',
-          maskImage: 'radial-gradient(ellipse at 50% 25%, black 40%, transparent 85%)',
-          WebkitMaskImage: 'radial-gradient(ellipse at 50% 25%, black 40%, transparent 85%)'
-        }}
-        aria-hidden="true"
+      <BrandPatternBackground />
+
+      <PageNavigationBar
+        backLabel="الرئيسية"
+        onBack={() => setActivePage('home')}
+        title="شيوخ الصنعة والورش"
       />
 
       {/* =========================================================
           PAGE CONTAINER
       ========================================================= */}
       <div className="w-full max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-14 py-6 sm:py-8 lg:py-10">
+        {/* UNCLE WAH HERO BANNER - MASTER OF SELLERS & WORKSHOPS */}
 
         {/* =========================================================
-            BREADCRUMB
+            TOP INTRO
         ========================================================= */}
-        <nav className="flex items-center gap-2 mb-7 text-[11px] sm:text-xs font-medium text-foreground-disabled">
-          <button
-            type="button"
-            onClick={() => setActivePage('home')}
-            className="hover:text-primary dark:text-primary-hover transition-colors cursor-pointer"
-          >
-            الرئيسية
-          </button>
+      <section className="relative z-10 mx-auto max-w-[1700px] px-4 pb-8 pt-8 sm:px-8 sm:pb-14 sm:pt-14 lg:px-12 lg:pb-16 lg:pt-20 xl:px-16">
+        <div className="grid gap-14 lg:grid-cols-[1fr_420px] lg:items-end lg:gap-20">
+          <div>
 
-          <ChevronRight className="w-3.5 h-3.5 rotate-180 opacity-50" />
+            <h1 className="max-w-6xl text-5xl font-black leading-[0.92] tracking-tight sm:text-7xl lg:text-[8rem] xl:text-[9.5rem]">
+              فنانين
+              <br />
+              <span className="mr-3 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover sm:mr-6 lg:mr-16">
+                الصعيد
+              </span>
+            </h1>
 
-          <span className="font-bold text-foreground/80">
-            ناس الصنعة في الصعيد
-          </span>
-        </nav>
+            <div className="mt-5 flex max-w-2xl items-start gap-4">
+              <div className="hidden sm:block">
+              </div>
+              <p className="mr-10 max-w-2xl text-sm font-medium leading-8 text-black/55 sm:text-base sm:leading-9 dark:text-white/55">
+                ناس الصنعة اللي حافظوا على شغل إيديهم،
+                وخلّوا حكايات الصعيد تعيش في كل قطعة بيعملوها.
+              </p>
+            </div>
+          </div>
 
-        {/* UNCLE WAH HERO BANNER - MASTER OF SELLERS & WORKSHOPS */}
+          <ArchiveStatsCard
+            eyebrow="THE HERITAGE PANTRY"
+            icon={Flame}
+            stats={[
+              {
+                value: sellers.length,
+                label: <>فني<br />متوثق</>,
+              },
+              {
+                value: GOVERNORATES.length,
+                label: <>محافظة<br />صعيدية</>,
+              },
+            ]}
+            footer="من قعر الطاجن ودفا الفرن البلدي"
+          />
+        </div>
+      </section>
+
         <div className="mb-8">
           <UncleWahHeroBanner
             doorTitle="دليل ورش وشيوخ صنعة الصعيد"
@@ -124,54 +147,6 @@ export const SellersDirectoryPage: React.FC = () => {
             statsText={`${sellers.length} ورشة ودكان متوثق`}
           />
         </div>
-        <div className="mb-8">
-          <PaidPromotionSection directory />
-        </div>
-
-        {/* =========================================================
-            TOP INTRO
-        ========================================================= */}
-        <section className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-6 lg:gap-10 items-end mb-8">
-
-          {/* Title */}
-          <div className="max-w-4xl">
-            <div className="inline-flex items-center gap-2 mb-4 text-primary dark:text-primary-hover">
-              <span className="w-8 h-px bg-primary" />
-              <span className="text-[11px] sm:text-xs font-black tracking-wide">
-                من قلب الصعيد
-              </span>
-              <Sparkles className="w-3.5 h-3.5" />
-            </div>
-
-            <h1
-              className="
-                text-4xl
-                sm:text-5xl
-                lg:text-6xl
-                xl:text-7xl
-                font-main
-                font-black
-                leading-[0.98]
-                tracking-tight
-              "
-            >
-              شيوخ الكار
-            </h1>
-
-            <p className="
-              mt-5
-              max-w-2xl
-              text-sm
-              sm:text-base
-              leading-8
-              text-foreground-muted
-            ">
-              ناس الصنعة اللي حافظوا على شغل إيديهم،
-              وخلّوا حكايات الصعيد تعيش في كل قطعة بيعملوها.
-            </p>
-          </div>
-
-        </section>
 
         {/* =========================================================
             SEARCH + FILTER AREA
@@ -185,9 +160,11 @@ export const SellersDirectoryPage: React.FC = () => {
             p-2
             sm:p-2.5
             rounded-2xl
-            bg-surface-subtle/85
+            bg-white/80
+            dark:bg-espresso-900/85
             border
-            border-border-subtle
+            border-black/10
+            dark:border-white/10
             shadow-lg
             shadow-black/5
             backdrop-blur-xl
@@ -205,7 +182,8 @@ export const SellersDirectoryPage: React.FC = () => {
                   -translate-y-1/2
                   w-4
                   h-4
-                  text-foreground-disabled
+                  text-black/50
+                  dark:text-white/50
                 "
               />
 
@@ -220,13 +198,17 @@ export const SellersDirectoryPage: React.FC = () => {
                   pr-11
                   pl-4
                   rounded-xl
-                  bg-background
+                  bg-cream/90
+                  dark:bg-espresso-800
                   border
-                  border-border-subtle
+                  border-black/10
+                  dark:border-white/10
                   text-sm
-                  text-foreground
+                  text-espresso
+                  dark:text-cream
                   outline-none
-                  placeholder:text-foreground-disabled
+                  placeholder:text-black/40
+                  dark:placeholder:text-white/40
                   focus:border-primary/50
                   focus:ring-2
                   focus:ring-primary/10
@@ -267,7 +249,7 @@ export const SellersDirectoryPage: React.FC = () => {
                       cursor-pointer
                       ${active
                         ? 'bg-primary text-white shadow-md shadow-primary/20 scale-[1.02]'
-                        : 'bg-transparent text-foreground-muted hover:bg-black/5 dark:hover:bg-white/5 hover:text-foreground'
+                        : 'bg-transparent text-black/60 hover:bg-black/5 hover:text-espresso dark:text-white/60 dark:hover:bg-white/5 dark:hover:text-cream'
                       }
                     `}
                   >
@@ -278,21 +260,23 @@ export const SellersDirectoryPage: React.FC = () => {
             </div>
           </div>
         </section>
-
+<div className="mb-8">
+          <PaidPromotionSection directory />
+        </div>
         {/* =========================================================
             RESULTS HEADER
         ========================================================= */}
         <div className="flex items-center justify-between mb-5 px-1">
           <div>
-            <h2 className="text-lg sm:text-xl font-main font-black text-foreground">
+            <h2 className="text-lg sm:text-xl font-main font-black text-espresso dark:text-cream">
               الحرفيين والورش
             </h2>
-            <p className="text-[11px] sm:text-xs text-foreground-disabled mt-0.5">
+            <p className="text-[11px] sm:text-xs text-black/50 dark:text-white/50 mt-0.5">
               شغل أصيل من إيد ناسه
             </p>
           </div>
 
-          <div className="text-[11px] font-bold text-foreground-disabled">
+          <div className="text-[11px] font-bold text-black/50 dark:text-white/50">
             {filteredSellers.length} نتيجة
           </div>
         </div>
@@ -311,9 +295,11 @@ export const SellersDirectoryPage: React.FC = () => {
               text-center
               px-6
               rounded-3xl
-              bg-surface-subtle
+              bg-white/70
+              dark:bg-espresso-800/70
               border
-              border-border-subtle
+              border-black/10
+              dark:border-white/10
             "
           >
             <div
@@ -332,11 +318,11 @@ export const SellersDirectoryPage: React.FC = () => {
               <Store className="w-7 h-7" />
             </div>
 
-            <h3 className="text-lg font-cairo font-bold text-foreground">
+            <h3 className="text-lg font-cairo font-bold text-espresso dark:text-cream">
               مفيش صنعة مطابقة للبحث
             </h3>
 
-            <p className="max-w-md mt-2 text-xs sm:text-sm leading-7 text-foreground-muted">
+            <p className="max-w-md mt-2 text-xs sm:text-sm leading-7 text-black/55 dark:text-white/55">
               جرّب تغيّر كلمة البحث أو اختار محافظة تانية.
             </p>
 
@@ -382,9 +368,11 @@ export const SellersDirectoryPage: React.FC = () => {
                   grid
                   grid-cols-[40%_60%]
                   rounded-3xl
-                  bg-surface-subtle
+                  bg-white/75
+                  dark:bg-espresso-800/75
                   border
-                  border-border-subtle
+                  border-black/10
+                  dark:border-white/10
                   cursor-pointer
                   transition-all
                   duration-500
@@ -468,7 +456,8 @@ export const SellersDirectoryPage: React.FC = () => {
                           border-2
                           border-white/90
                           shadow-xl
-                          bg-surface-subtle
+                          bg-white/75
+                          dark:bg-espresso-800/75
                           group-hover:scale-105
                           transition-transform
                           duration-300
@@ -518,16 +507,18 @@ export const SellersDirectoryPage: React.FC = () => {
                           px-2.5
                           py-1
                           rounded-lg
-                          bg-background
+                          bg-cream/80
                           border
-                          border-border-subtle
+                          border-black/10
+                          dark:bg-espresso-900/60
+                          dark:border-white/10
                           text-[10px]
                           font-black
                         "
                       >
                         <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
-                        <span className="text-foreground">{seller.rating}</span>
-                        <span className="text-foreground-disabled font-normal">
+                        <span className="text-espresso dark:text-cream">{seller.rating}</span>
+                        <span className="text-black/50 dark:text-white/50 font-normal">
                           ({seller.salesCount})
                         </span>
                       </div>
@@ -538,13 +529,16 @@ export const SellersDirectoryPage: React.FC = () => {
                           w-8
                           h-8
                           rounded-xl
-                          bg-background
+                          bg-cream/80
                           border
-                          border-border-subtle
+                          border-black/10
+                          dark:bg-espresso-900/60
+                          dark:border-white/10
                           flex
                           items-center
                           justify-center
-                          text-foreground-disabled
+                          text-black/50
+                          dark:text-white/50
                           group-hover:text-primary dark:text-primary-hover
                           group-hover:border-primary/30
                           group-hover:-translate-x-1
@@ -565,7 +559,8 @@ export const SellersDirectoryPage: React.FC = () => {
                         font-bold
                         font-cairo
                         leading-tight
-                        text-foreground
+                        text-espresso
+                        dark:text-cream
                         group-hover:text-primary dark:text-primary-hover
                         transition-colors
                       "
@@ -578,9 +573,10 @@ export const SellersDirectoryPage: React.FC = () => {
                       mt-1
                       text-[11px]
                       font-medium
-                      text-foreground-disabled
+                      text-black/50
+                      dark:text-white/50
                     ">
-                      بإشراف الصانع: <span className="text-foreground/75 font-bold">{seller.name}</span>
+                      بإشراف الصانع: <span className="text-espresso/75 dark:text-cream/75 font-bold">{seller.name}</span>
                     </p>
 
                     {/* Bio */}
@@ -589,7 +585,8 @@ export const SellersDirectoryPage: React.FC = () => {
                         mt-3
                         text-xs
                         leading-6
-                        text-foreground-muted
+                        text-black/55
+                        dark:text-white/55
                         line-clamp-3
                       "
                     >
@@ -598,7 +595,7 @@ export const SellersDirectoryPage: React.FC = () => {
                   </div>
 
                   {/* Bottom Footer Info */}
-                  <div className="mt-5 pt-3.5 border-t border-border-subtle">
+                  <div className="mt-5 pt-3.5 border-t border-black/10 dark:border-white/10">
                     <div className="flex items-center justify-between gap-2">
                       <span
                         className="
@@ -631,7 +628,8 @@ export const SellersDirectoryPage: React.FC = () => {
                           gap-1.5
                           text-[10px]
                           font-semibold
-                          text-foreground-disabled
+                          text-black/50
+                          dark:text-white/50
                           whitespace-nowrap
                         "
                       >

@@ -702,8 +702,8 @@ export const BuyerAccountPage: React.FC = () => {
           {isAdmin ? (
             <div className="bg-white/75 dark:bg-espresso-900/90 p-6 rounded-[2rem] border border-primary/20 space-y-3 text-right shadow-lg backdrop-blur-xl">
               <div className="flex items-center justify-between">
-                <h4 className="font-bold text-xs text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">لوحة الإدارة العليا</h4>
-                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover border border-primary/20">
+                <h4 className="font-bold text-xs text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">لوحة الإدارة العليا</h4>
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover border border-primary/20">
                   <ShieldCheck className="w-3 h-3" />
                   مدير المنصة
                 </span>
@@ -779,12 +779,12 @@ export const BuyerAccountPage: React.FC = () => {
                 <>
                   <div className="flex items-center justify-between">
                     <h4 className="font-bold text-xs">حالة اعتماد الورشة</h4>
-                    <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-700 dark:text-primary dark:text-primary-hover-hover border border-amber-500/20">
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-700 dark:text-primary dark:text-primary-hover border border-amber-500/20">
                       <Clock className="w-3 h-3" />
                       قيد المراجعة والتدقيق
                     </span>
                   </div>
-                  <div className="p-3 bg-amber-500/5 dark:bg-amber-500/10 rounded-xl border border-amber-500/20 text-xs text-amber-900 dark:text-primary dark:text-primary-hover-hover space-y-1">
+                  <div className="p-3 bg-amber-500/5 dark:bg-amber-500/10 rounded-xl border border-amber-500/20 text-xs text-amber-900 dark:text-primary dark:text-primary-hover space-y-1">
                     <p className="font-bold">{currentUser.seller?.brandName || workshopName || 'ورشة مسجلة'}</p>
                     <p className="text-[11px] opacity-80">
                       محافظة {currentUser.seller?.governorate || applyGovernorate} • {currentUser.seller?.specialty || specialty}
@@ -855,7 +855,7 @@ export const BuyerAccountPage: React.FC = () => {
           {/* Complaints & Support Center Card */}
           <div className="bg-white/80 dark:bg-espresso-900/90 p-5 rounded-[2rem] border border-amber-500/20 text-xs space-y-3 shadow-lg backdrop-blur-xl">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
+              <div className="flex items-center gap-2 font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
                 <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                 <span>مركز المساعدة والبلاغات</span>
               </div>

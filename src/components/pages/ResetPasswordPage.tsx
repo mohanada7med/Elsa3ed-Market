@@ -170,7 +170,7 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ initialTok
           {/* Invalid / Expired / Missing Token state */}
           {!isCheckingToken && !isSuccess && tokenStatus !== 'valid' && (
             <div className="space-y-6 text-center py-4">
-              <div className="mx-auto w-16 h-16 rounded-full bg-amber-500/10 text-amber-600 dark:text-primary dark:text-primary-hover-hover flex items-center justify-center">
+              <div className="mx-auto w-16 h-16 rounded-full bg-amber-500/10 text-amber-600 dark:text-primary dark:text-primary-hover flex items-center justify-center">
                 <AlertCircle size={36} />
               </div>
 

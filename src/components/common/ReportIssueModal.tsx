@@ -296,7 +296,7 @@ export const ReportIssueModal: React.FC = () => {
             <div>
               <h2 className="text-lg sm:text-xl font-black text-black dark:text-white flex items-center gap-2">
                 <span>مركز البلاغات والدعم الفني</span>
-                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
+                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
                   إدارة منصة وه
                 </span>
               </h2>
@@ -323,7 +323,7 @@ export const ReportIssueModal: React.FC = () => {
             onClick={() => setActiveTab('new')}
             className={`pb-3 px-4 font-bold text-sm transition-all border-b-2 flex items-center gap-2 ${
               activeTab === 'new'
-                ? 'border-primary text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover'
+                ? 'border-primary text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover'
                 : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
             }`}
           >
@@ -336,7 +336,7 @@ export const ReportIssueModal: React.FC = () => {
             onClick={() => setActiveTab('history')}
             className={`pb-3 px-4 font-bold text-sm transition-all border-b-2 flex items-center gap-2 ${
               activeTab === 'history'
-                ? 'border-primary text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover'
+                ? 'border-primary text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover'
                 : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
             }`}
           >
@@ -613,7 +613,7 @@ export const ReportIssueModal: React.FC = () => {
                       >
                         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-black/5 dark:border-white/5 pb-2.5">
                           <div className="flex items-center gap-2">
-                            <span className="text-xs font-black font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover bg-black/5 dark:bg-white/10 px-2 py-0.5 rounded-md">
+                            <span className="text-xs font-black font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover bg-black/5 dark:bg-white/10 px-2 py-0.5 rounded-md">
                               #{ticket.ticketNumber}
                             </span>
                             {getStatusBadge(ticket.status)}

@@ -61,7 +61,7 @@ export const FavoritesPage: React.FC = () => {
 
               <h1 className="text-espresso dark:text-cream text-[clamp(2.5rem,6vw,4.8rem)] font-black leading-[1.08] tracking-tight">
                 الحاجات <br />
-                <span className="relative inline-block text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
+                <span className="relative inline-block text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
                   اللي انت حبيتها
                   <svg className="absolute -bottom-2 left-0 w-full h-3 text-primary dark:text-primary-hover/30" viewBox="0 0 100 20" preserveAspectRatio="none">
                     <path d="M0 10 Q 50 20 100 10" stroke="currentColor" strokeWidth="4" fill="none" />
@@ -82,7 +82,7 @@ export const FavoritesPage: React.FC = () => {
                     <Bookmark className="h-5 w-5 fill-primary" />
                   </div>
                   <div>
-                    <div className="text-xl font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
+                    <div className="text-xl font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
                       {favoriteProducts.length} قطعة
                     </div>
                     <div className="text-[11px] font-bold text-espresso/50 dark:text-cream/50">

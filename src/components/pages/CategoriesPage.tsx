@@ -7,12 +7,13 @@ import {
   Sparkles,
   LayoutGrid,
   Rows3,
-  ChevronRight,
   ShieldCheck,
   ChevronDown,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner';
+import { PageNavigationBar } from '../layout/PageNavigationBar';
+import { BrandPatternBackground } from '../layout/BrandPatternBackground';
 
 export const CategoriesPage: React.FC = () => {
   const { categories, navigateToCategory, setActivePage } = useApp();
@@ -30,54 +31,43 @@ export const CategoriesPage: React.FC = () => {
   const selectedCategory = categories.find((c) => c.id === selectedCatId) || categories[0];
 
   return (
-    <div
-      dir="rtl"
-      className="min-h-screen bg-cream text-espresso dark:bg-espresso-900 dark:text-cream max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12 pt-6 sm:pt-8 pb-28 lg:pb-12 space-y-8 sm:space-y-10"
-    >
-      {/* مسار الصفحة وأزرار التبديل */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-5">
-        <nav className="flex items-center gap-2 text-xs text-espresso/60 dark:text-cream/60 font-medium">
-          <button
-            type="button"
-            onClick={() => setActivePage('home')}
-            className="hover:text-primary dark:text-primary-hover dark:hover:text-[#C99444] transition-colors cursor-pointer"
-          >
-            الرئيسية
-          </button>
-          <ChevronRight className="w-3.5 h-3.5 rotate-180 opacity-50" />
-          <span className="text-espresso dark:text-cream font-bold">
-            أطلس حرف وفنون الصعيد
-          </span>
-        </nav>
-
-        {/* زر التبديل بين الأنماط */}
-        <div className="inline-flex items-center bg-black/5 dark:bg-cream/5 p-1 rounded-2xl border border-black/10 dark:border-white/10 self-start sm:self-auto">
+    <div dir="rtl" className="min-h-screen bg-cream text-espresso dark:bg-espresso-900 dark:text-cream">
+      <BrandPatternBackground />
+      <PageNavigationBar
+        backLabel="الرئيسية"
+        onBack={() => setActivePage('home')}
+        title="تصنيفات منتجات الصعيد"
+      >
+        <div className="inline-flex items-center rounded-2xl border border-black/10 bg-black/5 p-1 dark:border-white/10 dark:bg-cream/5">
           <button
             type="button"
             onClick={() => setViewMode('interactive')}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${viewMode === 'interactive'
-              ? 'bg-white dark:bg-espresso-900 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover shadow-sm'
+            aria-label="عرض الأطلس التفاعلي"
+            className={`flex min-h-10 items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs font-bold transition-all cursor-pointer sm:px-3.5 ${viewMode === 'interactive'
+              ? 'bg-white dark:bg-espresso-900 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover shadow-sm'
               : 'text-espresso/70 dark:text-cream/70 hover:text-espresso dark:hover:text-cream'
               }`}
           >
             <Rows3 className="w-4 h-4" />
-            <span>عرض الأطلس التفاعلي</span>
+            <span className="hidden sm:inline">عرض الأطلس التفاعلي</span>
           </button>
 
           <button
             type="button"
             onClick={() => setViewMode('grid')}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${viewMode === 'grid'
-              ? 'bg-white dark:bg-espresso-900 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover shadow-sm'
+            aria-label="عرض الشبكة"
+            className={`flex min-h-10 items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs font-bold transition-all cursor-pointer sm:px-3.5 ${viewMode === 'grid'
+              ? 'bg-white dark:bg-espresso-900 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover shadow-sm'
               : 'text-espresso/70 dark:text-cream/70 hover:text-espresso dark:hover:text-cream'
               }`}
           >
             <LayoutGrid className="w-4 h-4" />
-            <span>عرض الشبكة</span>
+            <span className="hidden sm:inline">عرض الشبكة</span>
           </button>
         </div>
-      </div>
+      </PageNavigationBar>
 
+      <div className="mx-auto max-w-[1600px] space-y-8 px-4 pb-28 pt-6 sm:space-y-10 sm:px-8 sm:pt-8 lg:px-12 lg:pb-12">
       {/* UNCLE WAH HERO BANNER - MASTER OF CATEGORIES */}
       <UncleWahHeroBanner
         doorTitle="أطلس وتصنيفات حِرف وفنون الصعيد"
@@ -128,7 +118,7 @@ export const CategoriesPage: React.FC = () => {
                       }`}
                   >
                     <div className="flex items-center gap-4">
-                      <span className={`font-black text-xs font-bold px-2.5 py-1 rounded-lg ${isSelected ? 'bg-primary/15 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover' : 'bg-black/5 dark:bg-cream/5 text-espresso/60 dark:text-cream/60'
+                      <span className={`font-black text-xs font-bold px-2.5 py-1 rounded-lg ${isSelected ? 'bg-primary/15 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover' : 'bg-black/5 dark:bg-cream/5 text-espresso/60 dark:text-cream/60'
                         }`}>
                         0{idx + 1}
                       </span>
@@ -136,7 +126,7 @@ export const CategoriesPage: React.FC = () => {
                       <div>
                         <h3
                           className={`text-lg font-cairo font-bold transition-colors ${isSelected
-                            ? 'text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover'
+                            ? 'text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover'
                             : 'text-espresso dark:text-cream'
                             }`}
                         >
@@ -153,7 +143,7 @@ export const CategoriesPage: React.FC = () => {
                       )}
                       <ArrowUpLeft
                         className={`w-4 h-4 transition-transform duration-300 ${isSelected
-                          ? 'text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover -translate-x-1 -translate-y-1'
+                          ? 'text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover -translate-x-1 -translate-y-1'
                           : 'text-espresso/30 dark:text-cream/30 group-hover:opacity-100'
                           }`}
                       />
@@ -256,7 +246,7 @@ export const CategoriesPage: React.FC = () => {
                     <div className="flex items-center gap-3">
                       <span
                         className={`font-black text-xs font-bold px-2.5 py-1 rounded-lg transition-colors ${isOpen
-                          ? 'bg-primary/15 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover'
+                          ? 'bg-primary/15 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover'
                           : 'bg-black/5 dark:bg-cream/5 text-espresso/60 dark:text-cream/60'
                           }`}
                       >
@@ -277,7 +267,7 @@ export const CategoriesPage: React.FC = () => {
                       )}
                       <div
                         className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${isOpen
-                          ? 'bg-primary/15 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover'
+                          ? 'bg-primary/15 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover'
                           : 'text-espresso/40 dark:text-cream/40'
                           }`}
                       >
@@ -338,7 +328,7 @@ export const CategoriesPage: React.FC = () => {
                           </p>
 
                           {cat.heritageNote && (
-                            <div className="p-3.5 rounded-xl bg-primary/10 border border-primary/20 flex items-start gap-2.5 text-xs text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
+                            <div className="p-3.5 rounded-xl bg-primary/10 border border-primary/20 flex items-start gap-2.5 text-xs text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
                               <Sparkles className="w-4 h-4 text-primary dark:text-primary-hover shrink-0 mt-0.5" />
                               <span className="text-[11px] leading-relaxed italic font-light">
                                 {cat.heritageNote}
@@ -410,6 +400,7 @@ export const CategoriesPage: React.FC = () => {
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 };

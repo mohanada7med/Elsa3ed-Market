@@ -202,7 +202,7 @@ export const WholesalePage: React.FC = () => {
               الشريحة الأولى: كميات صغيرة
             </div>
             <h3 className="text-xl font-cairo font-bold text-espresso dark:text-cream">من 5 إلى 15 قطعة</h3>
-            <p className="text-3xl font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">خصم 15%</p>
+            <p className="text-3xl font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">خصم 15%</p>
             <p className="text-xs text-espresso/70 dark:text-cream/70 leading-relaxed">
               مثالية للمتاجر الناشئة، البازارات الصغيرة، وهدايا الفعاليات الخاصة.
             </p>
@@ -227,11 +227,11 @@ export const WholesalePage: React.FC = () => {
             <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-primary text-white text-[11px] font-black py-1 px-4 rounded-full shadow-md">
               الأكثر طلباً للفنادق والمطاعم
             </div>
-            <div className="inline-block px-3 py-1 rounded-full bg-primary/15 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover text-xs font-bold mt-2">
+            <div className="inline-block px-3 py-1 rounded-full bg-primary/15 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover text-xs font-bold mt-2">
               الشريحة الثانية: كميات متوسطة
             </div>
             <h3 className="text-xl font-cairo font-bold text-espresso dark:text-cream">من 16 إلى 50 قطعة</h3>
-            <p className="text-3xl font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">خصم 25%</p>
+            <p className="text-3xl font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">خصم 25%</p>
             <p className="text-xs text-espresso/70 dark:text-cream/70 leading-relaxed">
               تناسب تأثيث وتجهيز الفنادق التراثية، المطاعم، والمجموعات الديكورية.
             </p>
@@ -257,7 +257,7 @@ export const WholesalePage: React.FC = () => {
               الشريحة الكبرى: توريدات وتصدير
             </div>
             <h3 className="text-xl font-cairo font-bold text-espresso dark:text-cream">أكثر من 50 قطعة</h3>
-            <p className="text-3xl font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">تسعير ورش مخصص</p>
+            <p className="text-3xl font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">تسعير ورش مخصص</p>
             <p className="text-xs text-espresso/70 dark:text-cream/70 leading-relaxed">
               لكبار المستوردين، الشركات الهندسية، وسلاسل القرى السياحية العالمية.
             </p>
@@ -298,7 +298,7 @@ export const WholesalePage: React.FC = () => {
 
             {/* Direct Contact Card */}
             <div className="p-5 bg-black/5 dark:bg-cream/5 rounded-[1.5rem] border border-black/10 dark:border-white/10 space-y-3">
-              <p className="text-xs font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">أو تواصل معنا مباشرة:</p>
+              <p className="text-xs font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">أو تواصل معنا مباشرة:</p>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                   <MessageCircle className="w-5 h-5" />

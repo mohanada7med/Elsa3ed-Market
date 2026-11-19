@@ -102,7 +102,7 @@ export const ReelProductPill: React.FC<ReelProductPillProps> = ({
           </span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="text-[11px] font-extrabold text-primary dark:text-primary-hover-hover">
+          <span className="text-[11px] font-extrabold text-primary dark:text-primary-hover">
             {productPrice} ج.م
           </span>
           {reel.productOriginalPrice && reel.productOriginalPrice > productPrice && (

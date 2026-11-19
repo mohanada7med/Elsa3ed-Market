@@ -64,7 +64,7 @@ const ProductPreview: React.FC<{
       <span className="mt-1 block truncate text-[11px] font-semibold text-foreground-secondary">
         {product.categoryName || product.specifications?.craftsmanship || 'صنعة صعيدية'}
       </span>
-      <span className="mt-1 block text-xs font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
+      <span className="mt-1 block text-xs font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
         {product.price.toLocaleString('ar-EG')} ج.م
       </span>
     </span>
@@ -101,7 +101,7 @@ const ArtisanPreview: React.FC<{
         {seller.specialty || 'ورشة صعيدية'} · {seller.governorate}
       </span>
       {seller.verified && (
-        <span className="mt-1 inline-flex items-center gap-1 text-[10px] font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
+        <span className="mt-1 inline-flex items-center gap-1 text-[10px] font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
           <Check size={12} />
           ورشة موثقة
         </span>
@@ -353,11 +353,11 @@ export const WahOnboardingExperience: React.FC = () => {
           <div className="pointer-events-none absolute inset-0 opacity-[0.055]" style={{ backgroundImage: "url('/pattern/pat2.png')", backgroundSize: '380px auto' }} />
           <header className="relative z-10 flex shrink-0 items-center justify-between border-b border-primary/10 px-3 py-2.5 sm:px-7 sm:py-4">
             <div className="flex min-w-0 items-center gap-2.5">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
                 <Compass size={18} />
               </span>
               <div className="min-w-0">
-                <p className="truncate text-[10px] font-black tracking-[0.16em] text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover sm:text-xs">
+                <p className="truncate text-[10px] font-black tracking-[0.16em] text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover sm:text-xs">
                   WAH · جولة في ديارنا
                 </p>
                 <p className="mt-0.5 text-[10px] font-semibold text-foreground-secondary">
@@ -392,7 +392,7 @@ export const WahOnboardingExperience: React.FC = () => {
                   {activeStep === 0 && (
                     <div className="grid min-h-full flex-1 items-center gap-2.5 sm:grid-cols-[1fr_0.9fr] sm:gap-8">
                       <div className="order-2 space-y-3 text-center sm:order-1 sm:space-y-4 sm:text-right">
-                        <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1.5 text-[10px] font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
+                        <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1.5 text-[10px] font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
                           <Sparkles size={13} />
                           {ONBOARDING_STEPS[0].eyebrow}
                         </div>
@@ -400,12 +400,12 @@ export const WahOnboardingExperience: React.FC = () => {
                           افتح الباب وادخل
                           <br className="sm:hidden" />
                           <span className="hidden sm:inline"> </span>
-                          <span className="text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">البيت بيتك</span>
+                          <span className="text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">البيت بيتك</span>
                         </h1>
                         <p className="mx-auto max-w-md text-xs font-semibold leading-6 text-foreground-secondary sm:mx-0 sm:text-base sm:leading-7">
                            من هنا تبدأ الحكاية.. اكتشف بلاد الصعيد، واتعرّف على ناسه وحرفه وتراثه، وشوف كل حكاية مخبّية ورا كل مكان.
                         </p>
-                        <div className="flex items-center justify-center gap-2 text-xs font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover sm:justify-start">
+                        <div className="flex items-center justify-center gap-2 text-xs font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover sm:justify-start">
                           <span className="h-px w-8 bg-primary/40" />
                           تراث عايش من إيد لإيد
                           <span className="h-px w-8 bg-primary/40" />
@@ -467,7 +467,7 @@ export const WahOnboardingExperience: React.FC = () => {
                             )}
                           </div>
                           <motion.div
-                            className="absolute -bottom-1 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full border border-primary/15 bg-surface/90 px-3 py-1 text-[10px] font-black text-primary dark:text-primary-hover shadow-md dark:text-primary dark:text-primary-hover-hover"
+                            className="absolute -bottom-1 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full border border-primary/15 bg-surface/90 px-3 py-1 text-[10px] font-black text-primary dark:text-primary-hover shadow-md dark:text-primary dark:text-primary-hover"
                             animate={reduceMotion ? undefined : { y: [0, -4, 0] }}
                             transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
                           >
@@ -495,7 +495,7 @@ export const WahOnboardingExperience: React.FC = () => {
                                 type="button"
                                 onClick={toggleIntroAudio}
                                 disabled={!introAudioRef.current}
-                                className="inline-flex min-h-11 touch-manipulation items-center justify-center gap-2 rounded-full border border-primary/25 px-4 text-xs font-bold text-primary dark:text-primary-hover transition hover:bg-primary/5 disabled:opacity-50 dark:text-primary dark:text-primary-hover-hover"
+                                className="inline-flex min-h-11 touch-manipulation items-center justify-center gap-2 rounded-full border border-primary/25 px-4 text-xs font-bold text-primary dark:text-primary-hover transition hover:bg-primary/5 disabled:opacity-50 dark:text-primary dark:text-primary-hover"
                                 aria-label={audioMuted ? 'إلغاء كتم الأغنية' : 'كتم الأغنية'}
                               >
                                 {audioMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
@@ -504,7 +504,7 @@ export const WahOnboardingExperience: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={playIntroAudio}
-                                className="inline-flex min-h-11 touch-manipulation items-center justify-center gap-2 rounded-full border border-primary/25 px-4 text-xs font-bold text-primary dark:text-primary-hover transition hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:text-primary dark:text-primary-hover-hover"
+                                className="inline-flex min-h-11 touch-manipulation items-center justify-center gap-2 rounded-full border border-primary/25 px-4 text-xs font-bold text-primary dark:text-primary-hover transition hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:text-primary dark:text-primary-hover"
                               >
                                 <RotateCcw size={14} />
                                 إعادة الأغنية
@@ -530,7 +530,7 @@ export const WahOnboardingExperience: React.FC = () => {
                   {activeStep === 1 && (
                     <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col justify-center">
                       <div className="mb-5 text-center sm:mb-7">
-                        <span className="inline-flex items-center gap-2 text-xs font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
+                        <span className="inline-flex items-center gap-2 text-xs font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
                           <MapPin size={15} />
                           {ONBOARDING_STEPS[1].eyebrow}
                         </span>
@@ -601,7 +601,7 @@ export const WahOnboardingExperience: React.FC = () => {
                   {activeStep === 2 && (
                     <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col justify-center">
                       <div className="mb-5 text-center sm:mb-7">
-                        <span className="inline-flex items-center gap-2 text-xs font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
+                        <span className="inline-flex items-center gap-2 text-xs font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
                           <Hammer size={15} />
                           {ONBOARDING_STEPS[2].eyebrow}
                         </span>
@@ -656,7 +656,7 @@ export const WahOnboardingExperience: React.FC = () => {
                                 handleDismissOnboarding();
                                 setActivePage('sellers');
                               }}
-                              className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-primary/25 px-4 text-xs font-black text-primary dark:text-primary-hover transition hover:bg-primary/5 dark:text-primary dark:text-primary-hover-hover"
+                              className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-primary/25 px-4 text-xs font-black text-primary dark:text-primary-hover transition hover:bg-primary/5 dark:text-primary dark:text-primary-hover"
                             >
                               استكشف كل الورش
                               <ArrowLeft size={14} />
@@ -700,7 +700,7 @@ export const WahOnboardingExperience: React.FC = () => {
                           <Check size={18} />
                         </span>
                       </motion.div>
-                      <span className="inline-flex items-center gap-2 text-xs font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
+                      <span className="inline-flex items-center gap-2 text-xs font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
                         <Sparkles size={15} />
                         {ONBOARDING_STEPS[3].eyebrow}
                       </span>
@@ -725,7 +725,7 @@ export const WahOnboardingExperience: React.FC = () => {
                             handleDismissOnboarding();
                             setActivePage('products');
                           }}
-                          className="flex min-h-12 flex-1 items-center justify-center gap-2 rounded-full border border-primary/25 px-6 text-sm font-black text-primary dark:text-primary-hover transition hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:text-primary dark:text-primary-hover-hover"
+                          className="flex min-h-12 flex-1 items-center justify-center gap-2 rounded-full border border-primary/25 px-6 text-sm font-black text-primary dark:text-primary-hover transition hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:text-primary dark:text-primary-hover"
                         >
                           <ShoppingBag size={16} />
                           اكتشف سوق وه
@@ -787,7 +787,7 @@ export const WahOnboardingExperience: React.FC = () => {
                     setDoorOpened(false);
                     setAudioError(false);
                   }}
-                  className="flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-full px-3 text-xs font-bold text-primary dark:text-primary-hover transition hover:bg-primary/5 dark:text-primary dark:text-primary-hover-hover sm:min-w-24"
+                  className="flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-full px-3 text-xs font-bold text-primary dark:text-primary-hover transition hover:bg-primary/5 dark:text-primary dark:text-primary-hover sm:min-w-24"
                   aria-label="إعادة الجولة"
                 >
                   <RotateCcw size={15} />

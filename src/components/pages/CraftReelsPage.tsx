@@ -28,7 +28,6 @@ import {
   Trash2,
   Loader2,
   LayoutGrid,
-  ChevronRight,
   Sparkles,
   Compass,
   SlidersHorizontal,
@@ -38,6 +37,9 @@ import { motion, AnimatePresence } from 'motion/react';
 import { getOptimizedVideoPoster } from '../../utils/cloudinaryMedia.ts';
 import FloatingDock from '../common/FloatingDock.tsx';
 import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner.tsx';
+import { ArchiveStatsCard } from '../common/ArchiveStatsCard.tsx';
+import { PageNavigationBar } from '../layout/PageNavigationBar.tsx';
+import { BrandPatternBackground } from '../layout/BrandPatternBackground.tsx';
 
 /* ------------------------------------------------------------------ */
 /* Constants (outside the component so they are created once)          */
@@ -821,55 +823,73 @@ export const CraftReelsPage: React.FC = () => {
     >
       <FloatingDock count={filteredReels.length} label="حكاية مصورة" />
 
-      {/* Decorative Background Rings */}
-      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-        <div className="absolute -right-[260px] top-[18%] h-[600px] w-[600px] rounded-full border border-primary/[0.07] dark:border-[#C99444]/[0.06]" />
-        <div className="absolute -left-[300px] top-[55%] h-[700px] w-[700px] rounded-full border border-primary/[0.05] dark:border-[#C99444]/[0.05]" />
-        <div className="absolute right-[15%] top-[42%] h-2 w-2 rounded-full bg-primary/30 dark:bg-[#C99444]/30" />
-      </div>
+      <BrandPatternBackground />
+
+      <PageNavigationBar
+        backLabel="الرئيسية"
+        onBack={() => setActivePage('home')}
+        title="ريلز وحكايات الصعيد"
+      >
+        <button
+          type="button"
+          onClick={() =>
+            filteredReels.length > 0
+              ? openReelInFeed(filteredReels[0].id)
+              : setViewMode('feed')
+          }
+          className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-bold text-white shadow-sm transition-all hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] dark:hover:text-[#1B1009] cursor-pointer"
+        >
+          <Play size={14} className="fill-current" />
+          <span>شاهد بالشاشة الكاملة</span>
+        </button>
+        <button
+          type="button"
+          onClick={handleOpenUpload}
+          className="flex items-center gap-1.5 rounded-xl border border-black/15 bg-white/60 px-3.5 py-2 text-xs font-bold transition-all hover:bg-black/5 dark:border-white/15 dark:bg-espresso-900/60 dark:hover:bg-white/10 cursor-pointer"
+        >
+          <Plus size={14} />
+          <span>شارك حكايتك</span>
+        </button>
+      </PageNavigationBar>
 
       <div className="relative z-10 mx-auto max-w-[1600px] px-4 sm:px-8 lg:px-12 pt-6 sm:pt-8 pb-28 lg:pb-16 space-y-8 sm:space-y-10">
-        {/* Page Path & Quick Actions */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-5">
-          <nav className="flex items-center gap-2 text-xs text-espresso/60 dark:text-cream/60 font-medium">
-            <button
-              type="button"
-              onClick={() => setActivePage('home')}
-              className="hover:text-primary dark:text-primary-hover dark:hover:text-[#C99444] transition-colors cursor-pointer"
-            >
-              الرئيسية
-            </button>
-            <ChevronRight className="w-3.5 h-3.5 rotate-180 opacity-50" />
-            <span className="text-espresso dark:text-cream font-bold">
-              ريلز وحكايات الصعيد
-            </span>
-          </nav>
+      <section className="relative z-10 mx-auto max-w-[1700px] px-4 pb-8 pt-0 sm:px-8 sm:pb-14 sm:pt-0 lg:px-12 lg:pb-16 lg:pt-0 xl:px-16">
+  <div className="grid gap-14 lg:grid-cols-[1fr_420px] lg:items-end lg:gap-20">
+    <div>
+            <h1 className="max-w-6xl text-5xl font-black leading-[0.92] tracking-tight sm:text-7xl lg:text-[8rem] xl:text-[9.5rem]">
+             ريلز
+              <br />
+              <span className="mr-3 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover sm:mr-6 lg:mr-16">
+                الصعيد
+              </span>
+            </h1>
 
-          {/* Quick Actions */}
-          <div className="flex items-center gap-2.5 flex-wrap">
-            <button
-              type="button"
-              onClick={() =>
-                filteredReels.length > 0
-                  ? openReelInFeed(filteredReels[0].id)
-                  : setViewMode('feed')
-              }
-              className="flex items-center gap-2 rounded-xl bg-primary hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] dark:hover:text-[#1B1009] px-4 py-2 text-xs font-bold text-white shadow-sm transition-all cursor-pointer"
-            >
-              <Play size={14} className="fill-current" />
-              <span>شاهد بالشاشة الكاملة</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={handleOpenUpload}
-              className="flex items-center gap-1.5 rounded-xl border border-black/15 dark:border-white/15 bg-white/60 dark:bg-espresso-900/60 hover:bg-black/5 dark:hover:bg-white/10 px-3.5 py-2 text-xs font-bold transition-all cursor-pointer"
-            >
-              <Plus size={14} />
-              <span>شارك حكايتك</span>
-            </button>
+            <div className="mt-5 flex max-w-2xl items-start gap-4">
+              <div className="hidden sm:block">
+              </div>
+              <p className="mr-10 max-w-2xl text-sm font-medium leading-8 text-black/55 sm:text-base sm:leading-9 dark:text-white/55">
+              شاهد كبار شيوخ الصنعة وحرفيي صعيد مصر في ورشهم؛ أسرار الطين والحرير والنحاس والخوص، وتقدر تشتري القطعة مباشرة من الورشة مع كل حكاية.
+              </p>
+            </div>
           </div>
+
+          <ArchiveStatsCard
+            eyebrow="THE HERITAGE PANTRY"
+            icon={Flame}
+            stats={[
+              {
+                value: reels.length,
+                label: <>حكاية<br />مصورة</>,
+              },
+              {
+                value: GOVERNORATES.length,
+                label: <>محافظة<br />صعيدية</>,
+              },
+            ]}
+            footer="من قعر الطاجن ودفا الفرن البلدي"
+          />
         </div>
+      </section>
 
         {/* UNCLE WAH HERO BANNER - MASTER OF REELS */}
         <UncleWahHeroBanner
@@ -883,25 +903,6 @@ export const CraftReelsPage: React.FC = () => {
           onAction={handleOpenUpload}
         />
 
-        <section className="grid gap-8 lg:grid-cols-[1fr_420px] lg:items-end lg:gap-14">
-          <div>
-            <div className="mb-7 flex items-center gap-3 text-[9px] font-black tracking-[0.28em] text-primary dark:text-primary-hover">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 dark:bg-primary/15">
-                <Film size={14} />
-              </span>
-              حكايات الصنعة.. صوت وصورة من قلب الورشة
-            </div>
-            <h1 className="max-w-6xl text-4xl font-black leading-[0.92] tracking-tight sm:text-6xl lg:text-7xl">
-              ريلز وحكايات
-              <br />
-              <span className="text-primary dark:text-primary-hover">من قلب الصعيد</span>
-            </h1>
-            <p className="mt-8 max-w-2xl border-r-2 border-primary pr-5 text-sm font-medium leading-8 text-black/55 dark:text-white/55 sm:text-base">
-              شاهد كبار شيوخ الصنعة وحرفيي صعيد مصر في ورشهم؛ أسرار الطين والحرير والنحاس والخوص، وتقدر تشتري القطعة مباشرة من الورشة مع كل حكاية.
-            </p>
-          </div>
-
-        </section>
 
         {/* Unified Search & Filters Bar */}
         <div className="space-y-4 rounded-2xl bg-white/60 dark:bg-espresso-900/60 p-4 sm:p-6 border border-black/10 dark:border-white/10 shadow-sm backdrop-blur-md">

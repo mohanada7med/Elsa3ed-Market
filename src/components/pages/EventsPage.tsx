@@ -25,6 +25,8 @@ import { EventImageLightboxModal } from '../common/EventImageLightboxModal';
 import FloatingDock from '../common/FloatingDock';
 import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner';
 import { ArchiveStatsCard } from '../common/ArchiveStatsCard';
+import { PageNavigationBar } from '../layout/PageNavigationBar';
+import { BrandPatternBackground } from '../layout/BrandPatternBackground';
 
 const AdminEventsManagerComponent = React.lazy(() =>
   import('./AdminEventsManagerPage').then((m) => ({ default: m.AdminEventsManagerComponent }))
@@ -142,63 +144,15 @@ export const EventsPage: React.FC = () => {
         font-cairo
       "
     >
-      {/* Authentic WAH Brand Watermark (الأحداث والمواسم) */}
-      <div
-        className="pointer-events-none fixed inset-0 z-0 opacity-[0.035] dark:opacity-[0.05] mix-blend-multiply dark:mix-blend-screen"
-        style={{
-          backgroundImage: "url('/pattern/pat2.png')",
-          backgroundRepeat: 'repeat',
-          backgroundSize: '520px auto',
-          backgroundPosition: 'center',
-          maskImage: 'radial-gradient(ellipse at 50% 30%, black 40%, transparent 85%)',
-          WebkitMaskImage: 'radial-gradient(ellipse at 50% 30%, black 40%, transparent 85%)'
-        }}
-        aria-hidden="true"
-      />
+      <BrandPatternBackground />
 
       <FloatingDock count={filteredEvents.length} label="موسم تراثي" />
 
-      {/* =====================================================
-          NAVBAR (Consistent with Food & Places Pages)
-      ===================================================== */}
-      <header className="sticky top-0 z-50 border-b border-black/10 dark:border-white/10 backdrop-blur-xl bg-white/80 dark:bg-espresso-900/90">
-        <div className="mx-auto flex h-[76px] max-w-[1600px] items-center justify-between px-5 sm:px-8 lg:px-12">
-          <button
-            type="button"
-            onClick={() => setActivePage('home')}
-            className="
-              group flex items-center gap-3
-              text-sm font-bold
-              transition-all
-              hover:text-primary dark:text-primary-hover
-              cursor-pointer
-            "
-          >
-            <span
-              className="
-                flex h-10 w-10 items-center justify-center
-                rounded-full
-                border border-black/10
-                bg-white/60
-                transition-all
-                group-hover:bg-espresso
-                group-hover:text-white
-                dark:border-white/10
-                dark:bg-cream/5
-                dark:group-hover:bg-white
-                dark:group-hover:text-black
-              "
-            >
-              <ArrowLeft
-                size={17}
-                className="transition-transform group-hover:-translate-x-1"
-              />
-            </span>
-            <span className="hidden sm:block">الرئيسية</span>
-          </button>
-
-
-          <div className="flex items-center gap-2 sm:gap-3">
+      <PageNavigationBar
+        backLabel="الرئيسية"
+        onBack={() => setActivePage('home')}
+        title="مواسم الصعيد"
+      >
             {isAdmin && (
               <button
                 type="button"
@@ -256,9 +210,7 @@ export const EventsPage: React.FC = () => {
               <span className="hidden sm:block">خريطة الصعيد</span>
               <ArrowUpLeft size={14} className="hidden sm:block" />
             </button>
-          </div>
-        </div>
-      </header>
+      </PageNavigationBar>
 
       {/* =====================================================
           MAIN BODY: SWITCH BETWEEN ADMIN MANAGER & VISITOR VIEW
@@ -280,61 +232,42 @@ export const EventsPage: React.FC = () => {
           {/* =====================================================
               HERO SECTION (Matching Prestige Heritage Quality)
           ===================================================== */}
-          <section className="relative overflow-hidden">
-            <div className="pointer-events-none absolute -right-40 top-20 h-[500px] w-[500px] rounded-full border border-black/5 dark:border-white/5" />
-            <div className="pointer-events-none absolute -left-32 bottom-0 h-[350px] w-[350px] rounded-full border border-black/5 dark:border-white/5" />
+<section className="relative overflow-hidden">
+  <div className="pointer-events-none absolute -right-40 top-20 h-[500px] w-[500px] rounded-full border border-black/5 dark:border-white/5" />
+  <div className="pointer-events-none absolute -left-32 bottom-0 h-[350px] w-[350px] rounded-full border border-black/5 dark:border-white/5" />
 
-            <div className="mx-auto max-w-[1600px] px-5 pb-12 pt-14 sm:px-8 sm:pb-16 sm:pt-20 lg:px-12 lg:pb-20 lg:pt-28">
-              <div className="relative z-10 grid items-center gap-10 lg:grid-cols-[1fr_420px]">
-                <div>
-                  <div className="mb-6 flex items-center gap-3">
-                    <Sparkles size={16} className="text-primary dark:text-primary-hover animate-pulse" />
-                    <span className="text-[10px] font-bold uppercase tracking-[0.35em] text-primary dark:text-primary-hover">
-                      Upper Egypt Seasons & Layali / التراث الشعبي الحي
-                    </span>
-                  </div>
+  {/* قللنا الـ padding العلوي والسفلي عشان ميبقاش فيه فراغ مهدر */}
+  <div className="mx-auto max-w-[1600px] px-5 py-8 sm:px-8 sm:py-10 lg:px-12 lg:py-12">
+    <div className="relative z-10 grid items-center gap-8 lg:grid-cols-[1fr_420px]">
+      <div>
+        <h1 className="max-w-6xl text-5xl font-black leading-[0.92] tracking-tight sm:text-7xl lg:text-[8rem] xl:text-[9.5rem]">
+              مواسم
+              <br />
+              <span className="mr-3 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover sm:mr-6 lg:mr-16">
+                الصعيد
+              </span>
+            </h1>
+          <br />
 
-                  <h1
-                    className="
-    max-w-4xl
-    font-main
-    text-[9vw]
-    leading-[0.95]
-    tracking-normal
-    sm:text-[7vw]
-    md:text-6xl
-    lg:text-7xl
-    xl:text-[5.5rem]
-  "
-                  >
-                    مواسم
-                    <br />
-                    <br />
-                    <span className="mr-[4vw] text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover font-main lg:mr-8">
-                      البهجة والليالي
-                    </span>
-                  </h1>
-                  <div className="mt-8 flex max-w-2xl items-start gap-5">
-                    <div className="mt-2 h-16 w-px bg-primary shrink-0" />
-                    <p className="text-sm leading-8 text-black/75 dark:text-white/75 sm:text-base">
-                      دليل موثق بالعامية الصعيدية لأعرق موالد ومواسم وأفراح الصعيد؛ من ليلة القنائي وأبو الحجاج وسيدي أبو الحسن الشاذلي، لمواسم كسر القصب وعصير العسل الأسود، وحصاد البلح، والمرماح وألعاب الفروسية والتحطيب.
-                    </p>
-                  </div>
-                </div>
+        <div className="mt-5 flex max-w-2xl items-start gap-4">
+          <p className="mr-10 max-w-2xl text-sm font-medium leading-8 text-black/55 sm:text-base sm:leading-9 dark:text-white/55">
+  دليل موثق بالعامية الصعيدية لأعرق موالد ومواسم وأفراح الصعيد؛ من ليلة القنائي وأبو الحجاج وسيدي أبو الحسن الشاذلي، لمواسم كسر القصب وعصير العسل الأسود، وحصاد البلح، والمرماح وألعاب الفروسية والتحطيب.
+</p>
+        </div>
+      </div>
 
-                <ArchiveStatsCard
-                  eyebrow="HERITAGE CALENDAR"
-                  icon={Calendar}
-                  stats={[
-                    { value: events.length, label: <>ليلة وموسم<br />موثق</> },
-                    { value: governorates.length || 9, label: <>محافظة<br />صعيدية</> },
-                  ]}
-                  footer="من بركة الموالد ودفا ليالي السمر والنفحة"
-                />
-              </div>
-            </div>
-          </section>
-
+      <ArchiveStatsCard
+        eyebrow="HERITAGE CALENDAR"
+        icon={Calendar}
+        stats={[
+          { value: events.length, label: <>ليلة وموسم<br />موثق</> },
+          { value: governorates.length || 9, label: <>محافظة<br />صعيدية</> },
+        ]}
+        footer="من بركة الموالد ودفا ليالي السمر والنفحة"
+      />
+    </div>
+  </div>
+</section>
           {/* UNCLE WAH HERO BANNER - MASTER OF EVENTS & SEASONS */}
           <div className="relative z-20 mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12 -mt-4 mb-8">
             <UncleWahHeroBanner
@@ -412,7 +345,7 @@ export const EventsPage: React.FC = () => {
                         <span>فتح الغلاف بحجم كامل</span>
                       </button>
 
-                      <div className="flex items-center gap-2 text-xs font-bold text-primary dark:text-primary-hover-hover">
+                      <div className="flex items-center gap-2 text-xs font-bold text-primary dark:text-primary-hover">
                         <Clock size={14} />
                         <span>{featuredEvent.timeOfYear || featuredEvent.eventDate}</span>
                       </div>
@@ -425,7 +358,7 @@ export const EventsPage: React.FC = () => {
                       <span>{featuredEvent.locationName || featuredEvent.governorateName}</span>
                     </div>
 
-                    <h2 className="text-2xl sm:text-4xl lg:text-5xl font-main font-black tracking-tight leading-tight group-hover:text-primary dark:text-primary-hover-hover transition-colors">
+                    <h2 className="text-2xl sm:text-4xl lg:text-5xl font-main font-black tracking-tight leading-tight group-hover:text-primary dark:text-primary-hover transition-colors">
                       {featuredEvent.title}
                     </h2>
 
@@ -433,7 +366,7 @@ export const EventsPage: React.FC = () => {
                       {featuredEvent.description}
                     </p>
 
-                    <div className="mt-6 flex items-center gap-3 text-xs font-bold text-primary dark:text-primary-hover-hover">
+                    <div className="mt-6 flex items-center gap-3 text-xs font-bold text-primary dark:text-primary-hover">
                       <span>تعال نقرأ حكاية الليلة وطقوسها بالعامية</span>
                       <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 group-hover:bg-primary group-hover:text-black transition-all">
                         <ArrowUpLeft size={16} />

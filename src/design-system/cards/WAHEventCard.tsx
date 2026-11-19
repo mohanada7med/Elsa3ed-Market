@@ -68,7 +68,7 @@ export const WAHEventCard: React.FC<WAHEventCardProps> = ({
           </p>
         </div>
 
-        <div className="pt-3 mt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover relative z-10">
+        <div className="pt-3 mt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover relative z-10">
           <span>تفاصيل الفعالية ومواعيدها</span>
           <span className="text-[11px] group-hover:-translate-x-1 transition-transform">←</span>
         </div>

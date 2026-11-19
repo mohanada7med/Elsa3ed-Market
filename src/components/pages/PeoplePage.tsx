@@ -31,6 +31,8 @@ import {
 import FloatingDock from '../common/FloatingDock';
 import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner';
 import { ArchiveStatsCard } from '../common/ArchiveStatsCard';
+import { PageNavigationBar } from '../layout/PageNavigationBar';
+import { BrandPatternBackground } from '../layout/BrandPatternBackground';
 
 const GOVERNORATES = [
   'قنا',
@@ -329,37 +331,19 @@ export const PeoplePage: React.FC = () => {
       dir="rtl"
       className="min-h-screen overflow-x-hidden bg-cream text-espresso transition-colors duration-500 dark:bg-espresso-900 dark:text-cream"
     >
-      {/* Documentary texture */}
-      <div
-        className="pointer-events-none fixed inset-0 z-0 opacity-[0.035] dark:opacity-[0.025]"
-        style={{
-          backgroundImage: "url('/pattern/pat2.png')",
-          backgroundRepeat: 'repeat',
-          backgroundSize: '480px auto',
-        }}
-      />
+      <BrandPatternBackground />
 
       <FloatingDock
         count={people.length}
         label="ذاكرة الجنوب"
       />
 
-      {/* NAVIGATION */}
-      <header className="relative z-40 border-b border-black/10 bg-cream/90 backdrop-blur-xl dark:border-white/10 dark:bg-espresso-900/90">
-        <div className="mx-auto flex h-[72px] max-w-[1600px] items-center justify-between px-5 sm:px-10">
-          <button
-            onClick={() => setActivePage('home')}
-            className="group flex items-center gap-3 text-sm font-bold transition hover:text-primary dark:hover:text-primary-hover"
-          >
-            <span className="flex h-10 w-10 items-center justify-center rounded-full border border-current/15 transition group-hover:bg-primary group-hover:text-white">
-              <ArrowLeft size={17} />
-            </span>
-            <span className="hidden sm:block">الرئيسية</span>
-          </button>
-
-          
-
-          <button
+      <PageNavigationBar
+        backLabel="الرئيسية"
+        onBack={() => setActivePage('home')}
+        title="ذاكرة الجنوب"
+      >
+        <button
             onClick={handleRefresh}
             disabled={isRefreshing}
             className="flex items-center gap-2 rounded-full border border-current/10 px-4 py-2 text-xs font-bold transition hover:bg-primary hover:text-white"
@@ -370,8 +354,7 @@ export const PeoplePage: React.FC = () => {
             />
             <span className="hidden sm:inline">تحديث الأرشيف</span>
           </button>
-        </div>
-      </header>
+      </PageNavigationBar>
 
       {/* DOCUMENTARY INTRO */}
       <section className="relative overflow-hidden text-espresso transition-colors duration-500 dark:text-cream">
@@ -380,20 +363,8 @@ export const PeoplePage: React.FC = () => {
         <div className="pointer-events-none absolute -right-20 bottom-0 h-[350px] w-[350px] rounded-full bg-primary/10 blur-[100px]" />
 
         <div className="relative mx-auto max-w-[1600px] px-5 pb-16 pt-16 sm:px-10 sm:pb-24 sm:pt-24">
-          <div className="mb-12 flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-3 text-[10px] font-bold tracking-[0.25em] text-primary dark:text-primary-hover">
-              <Film size={17} />
-              <span>WAH ORIGINAL DOCUMENTARY SERIES</span>
-            </div>
-          </div>
-
           <div className="grid items-center gap-12 lg:grid-cols-[1fr_400px]">
             <div>
-              <div className="mb-6 flex items-center gap-3 text-xs font-bold text-primary dark:text-primary-hover">
-                <span className="h-px w-10 bg-primary dark:bg-primary-hover" />
-                حكايات لا ينساها الزمن
-              </div>
-
               <h1 className="text-[17vw] font-black leading-[0.95] tracking-[-0.07em] sm:text-[12vw] lg:text-[9rem]">
                 ذاكرة
                 <br />
@@ -402,7 +373,7 @@ export const PeoplePage: React.FC = () => {
                 </span>
               </h1>
 
-              <p className="mt-10 max-w-xl border-r-2 border-primary pr-5 text-sm leading-9 text-black/55 dark:text-white/55 sm:text-base">
+              <p className="mr-10 max-w-2xl text-sm font-medium leading-8 text-black/55 sm:text-base sm:leading-9 dark:text-white/55">
                 مش مجرد أسماء في كتب التاريخ...
                 دول ناس عاشوا واشتغلوا وحلموا، وسابوا
                 في بلادهم حكايات تستاهل تفضل عايشة.
@@ -431,7 +402,7 @@ export const PeoplePage: React.FC = () => {
                   label: <>شخصية في<br />الأرشيف</>,
                 },
                 {
-                  value: governorates.length.toString().padStart(2, '0'),
+                  value: GOVERNORATES.length.toString().padStart(2, '0'),
                   label: <>محافظة<br />صعيدية ممثلة</>,
                 },
               ]}

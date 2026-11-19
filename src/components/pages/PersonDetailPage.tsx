@@ -5,6 +5,7 @@ import { LocalPerson } from '../../types';
 import { getOptimizedVideoPoster, getOptimizedVideoUrl } from '../../utils/cloudinaryMedia';
 import { getYouTubeVideoId } from '../../utils/youtube';
 import { PersonEditorModal } from './PersonEditorModal';
+import { PageNavigationBar } from '../layout/PageNavigationBar';
 import {
   MapPin,
   ArrowLeft,
@@ -323,52 +324,34 @@ export const PersonDetailPage: React.FC = () => {
       <div className="fixed top-0 inset-x-0 h-2 sm:h-3 bg-stone-950 z-50 border-b border-white/5" />
       <div className="fixed bottom-0 inset-x-0 h-2 sm:h-3 bg-stone-950 z-50 border-t border-white/5" />
 
-      {/* =====================================================
-          CINEMATIC HUD / NAVBAR
-      ===================================================== */}
-      <header className="relative z-40 pt-4">
-        <div className="mx-auto flex h-20 max-w-[1600px] items-center justify-between px-6 sm:px-12">
-
+      <PageNavigationBar
+        backLabel="سجل ناس الصعيد"
+        onBack={() => setActivePage('people')}
+        title="حكاية شخصية"
+      >
+        <span className="flex items-center gap-2 text-[10px] font-black tracking-[0.3em] text-stone-500 dark:text-white/40">
+          <span className="h-2 w-2 shrink-0 rounded-full bg-red-600 animate-pulse" aria-hidden="true" />
+          <span className="hidden sm:inline">DOCUMENTARY 24FPS</span>
+        </span>
+        {isAdmin && (
           <button
-            onClick={() => setActivePage('people')}
-            className="group flex items-center gap-3.5 text-xs font-semibold text-stone-700 dark:text-white/70 hover:text-amber-600 dark:hover:text-amber-400 transition-all cursor-pointer"
+            type="button"
+            onClick={() => setIsEditingPerson(true)}
+            className="group flex items-center gap-2 rounded-full border border-amber-600/30 bg-amber-500/10 px-4 py-2.5 text-xs font-bold text-amber-800 transition hover:bg-amber-600 hover:text-white dark:border-amber-400/30 dark:text-amber-300 dark:hover:bg-amber-400 dark:hover:text-black"
           >
-            <span className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 dark:border-white/10 bg-white/70 dark:bg-white/[0.03] backdrop-blur-md transition-all duration-300 group-hover:border-amber-500/50 group-hover:bg-amber-500/10 shadow-sm">
-              <ArrowLeft size={16} className="transition-transform duration-300 group-hover:-translate-x-1 text-stone-800 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400" />
-            </span>
-            <span className="hidden sm:inline-block tracking-wider">سجل ناس الصعيد</span>
+            <Pencil size={14} />
+            <span>تعديل البيانات</span>
           </button>
-
-          {/* Documentary Recording Indicator */}
-          <div className="flex items-center gap-2.5">
-            <span className="h-2 w-2 rounded-full bg-red-600 animate-pulse" />
-            <div className="text-[10px] font-black tracking-[0.45em] text-stone-500 dark:text-white/40 uppercase">
-              DOCUMENTARY 24FPS
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {isAdmin && (
-              <button
-                type="button"
-                onClick={() => setIsEditingPerson(true)}
-                className="group flex items-center gap-2 rounded-full border border-amber-600/30 bg-amber-500/10 px-4 py-2.5 text-xs font-bold text-amber-800 transition hover:bg-amber-600 hover:text-white dark:border-amber-400/30 dark:text-amber-300 dark:hover:bg-amber-400 dark:hover:text-black"
-              >
-                <Pencil size={14} />
-                <span>تعديل البيانات</span>
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={handleShare}
-              className="group flex items-center gap-2.5 rounded-full border border-stone-200 dark:border-white/10 bg-white/70 dark:bg-white/[0.03] px-5 py-2.5 text-xs font-medium backdrop-blur-md hover:border-amber-500/40 hover:bg-amber-500/10 text-stone-700 dark:text-white/80 hover:text-amber-700 dark:hover:text-amber-300 transition-all cursor-pointer shadow-sm"
-            >
-              <span className="hidden sm:inline">نشر القصة</span>
-              <Share2 size={14} className="transition-transform group-hover:scale-110" />
-            </button>
-          </div>
-        </div>
-      </header>
+        )}
+        <button
+          type="button"
+          onClick={handleShare}
+          className="group flex items-center gap-2.5 rounded-full border border-stone-200 dark:border-white/10 bg-white/70 dark:bg-white/[0.03] px-5 py-2.5 text-xs font-medium backdrop-blur-md hover:border-amber-500/40 hover:bg-amber-500/10 text-stone-700 dark:text-white/80 hover:text-amber-700 dark:hover:text-amber-300 transition-all cursor-pointer shadow-sm"
+        >
+          <span className="hidden sm:inline">نشر القصة</span>
+          <Share2 size={14} className="transition-transform group-hover:scale-110" />
+        </button>
+      </PageNavigationBar>
 
 
 

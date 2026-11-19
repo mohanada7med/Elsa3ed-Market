@@ -6,6 +6,7 @@ import { UpperEgyptFood } from '../../types';
 import { ArrowLeft, ArrowRight, Check, Clock, Edit3, MapPin, RotateCcw, Share2, Utensils } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { EventImageLightboxModal } from '../common/EventImageLightboxModal';
+import { PageNavigationBar } from '../layout/PageNavigationBar';
 
 const fallbackCover = '/mascot/welcoming.webp';
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -562,14 +563,11 @@ export const FoodDetailPage: React.FC = () => {
     <main dir="rtl" className={`${shell} overflow-x-hidden`}>
       <style>{themeCss}</style>
 
-      {/* ===== الشريط العلوي ===== */}
-      <header className="sticky top-0 z-40 border-b border-[var(--line)] bg-[var(--bg)]/85 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3 sm:px-8">
-          <button type="button" onClick={() => setActivePage('food')} className={glassBtn}>
-            <ArrowRight size={15} />
-            <span>كل الأكلات</span>
-          </button>
-          <div className="flex items-center gap-2">
+      <PageNavigationBar
+        backLabel="كل الأكلات"
+        onBack={() => setActivePage('food')}
+        title={food?.title || 'تفاصيل الأكلة'}
+      >
             {isAdmin && (
               <button
                 type="button"
@@ -588,9 +586,7 @@ export const FoodDetailPage: React.FC = () => {
               <Share2 size={14} />
               <span>شارك</span>
             </button>
-          </div>
-        </div>
-      </header>
+      </PageNavigationBar>
 
       {/* ===== الكتاب ===== */}
       <section ref={bookRef} className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-20 pt-8 sm:px-8">

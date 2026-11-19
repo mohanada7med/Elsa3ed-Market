@@ -79,7 +79,7 @@ export const HeroSection: React.FC = () => {
         className="
           relative
           w-full
-          min-h-[calc(100dvh-9.25rem-env(safe-area-inset-bottom,0px))]
+          wah-mobile-home-hero
           flex
           flex-col
           justify-between
@@ -212,6 +212,7 @@ export const HeroSection: React.FC = () => {
         w-auto
         object-contain
         drop-shadow-[0_15px_18px_rgba(0,0,0,0.55)]
+        max-w-[42vw]
       "
               style={{ imageRendering: "crisp-edges" }}
             />
@@ -241,8 +242,9 @@ export const HeroSection: React.FC = () => {
               }}
               dir="rtl"
               className="
-        absolute bottom-5 left-4
+        absolute bottom-3 left-2 sm:left-4
         z-20 min-w-[200px]
+        max-w-[58vw]
         rounded-full
         border border-white/15
         bg-black/45
@@ -273,9 +275,9 @@ export const HeroSection: React.FC = () => {
 
         <div className="relative z-10 space-y-2.5 sm:space-y-3.5 max-[380px]:space-y-2">
           <div className="space-y-1.5 text-right">
-            <h1 className="text-4xl xs:text-4xl sm:text-5xl md:text-8xl font-black leading-tight tracking-tight text-foreground font-heading">
+            <h1 className="text-[clamp(2.25rem,12vw,3.25rem)] sm:text-5xl font-black leading-tight tracking-tight text-foreground font-heading">
               الصعيد{' '}
-              <span className="text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
+              <span className="text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
                 بيحكي
               </span>
             </h1>
@@ -334,7 +336,7 @@ export const HeroSection: React.FC = () => {
           {/* MOBILE STATS */}
           <div className="flex items-center justify-between border-t border-foreground/15 pt-2 sm:pt-2.5 max-[380px]:pt-1.5 text-center text-foreground">
             <div>
-              <span className="block text-sm font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
+              <span className="block text-sm font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
                 {wahStats?.governoratesCount || 10}
               </span>
               <span className="text-[10px] text-foreground-muted">
@@ -345,7 +347,7 @@ export const HeroSection: React.FC = () => {
             <div className="h-3.5 w-px bg-foreground/15" />
 
             <div>
-              <span className="block text-sm font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
+              <span className="block text-sm font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
                 +{wahStats?.placesCount || 45}
               </span>
               <span className="text-[10px] text-foreground-muted">
@@ -356,7 +358,7 @@ export const HeroSection: React.FC = () => {
             <div className="h-3.5 w-px bg-foreground/15" />
 
             <div>
-              <span className="block text-sm font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
+              <span className="block text-sm font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
                 {wahStats?.productsCount || 250}
               </span>
               <span className="text-[10px] text-foreground-muted">
@@ -578,7 +580,7 @@ export const HeroSection: React.FC = () => {
             mx-auto
             flex
             min-h-[min(82vh,760px)]
-            max-w-375
+            max-w-[1280px] xl:max-w-[1380px] 2xl:max-w-[1600px]
             items-center
             px-12
             py-20
@@ -649,9 +651,6 @@ export const HeroSection: React.FC = () => {
               <WAHBadge
                 variant="terracotta"
                 size="md"
-                icon={
-                  <Sparkles className="h-3.5 w-3.5 text-primary dark:text-primary-hover" />
-                }
               >
                 «كل الصعيد في وه: شغل يدوي أصيل · ريلز · حكاوي زمان»
               </WAHBadge>
@@ -684,7 +683,7 @@ export const HeroSection: React.FC = () => {
   drop-shadow-sm
 ">
               الصعيد
-              <span className="mr-5 inline text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
+              <span className="mr-5 inline text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
                 بيحكي
               </span>
             </motion.h1>
@@ -984,7 +983,7 @@ export const HeroSection: React.FC = () => {
                     block
                     text-2xl
                     font-black
-                    text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover
+                    text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover
                   "
                 >
                   {wahStats?.governoratesCount}
@@ -998,7 +997,7 @@ export const HeroSection: React.FC = () => {
                     
                   "
                 >
-                  محافظة فـ الصعيد
+                  محافظات فى الصعيد
                 </span>
               </div>
 
@@ -1015,7 +1014,7 @@ export const HeroSection: React.FC = () => {
                     block
                     text-2xl
                     font-black
-                    text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover
+                    text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover
                   "
                 >
                   {wahStats?.placesCount}+
@@ -1045,7 +1044,7 @@ export const HeroSection: React.FC = () => {
                     block
                     text-2xl
                     font-black
-                    text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover
+                    text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover
                   "
                 >
                   {wahStats?.productsCount}

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { wahApi } from '../../services/api';
 import { MapGovernorateData, MapMarkerItem, MapMarkerType, MapPayload } from '../../types';
+import { PageNavigationBar } from '../layout/PageNavigationBar';
 import {
   MapPin,
   Compass,
@@ -158,31 +159,19 @@ export const AdminMapEditorPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-cream text-espresso dark:bg-espresso-900 dark:text-cream font-sans pb-16">
-      {/* Top Header */}
-      <header className="border-b border-black/10 dark:border-white/10 dark:border-[#6B3A1F] bg-white/80 dark:bg-[#26160D]/80 backdrop-blur-md sticky top-0 z-30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4 flex-wrap">
-          <div className="flex items-center gap-2 text-xs sm:text-sm text-black/60 dark:text-white/60 dark:text-[#D6C6B1]">
-            <button
-              onClick={() => setActivePage('admin-dashboard')}
-              className="hover:text-primary dark:text-primary-hover transition-colors cursor-pointer"
-            >
-              لوحة الإدارة
-            </button>
-            <span>/</span>
-            <span className="text-primary dark:text-primary-hover font-bold">محرر وضبط إحداثيات الخريطة (GIS)</span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
+      <PageNavigationBar
+        backLabel="لوحة الإدارة"
+        onBack={() => setActivePage('admin-dashboard')}
+        title="محرر وضبط إحداثيات الخريطة (GIS)"
+      >
+        <button
               onClick={() => setActivePage('map')}
               className="flex items-center gap-1.5 text-xs font-bold text-white bg-primary hover:bg-primary-hover px-3.5 py-2 rounded-xl transition-all cursor-pointer shadow-xs"
             >
               <MapIcon className="w-3.5 h-3.5" />
               <span>معاينة الخريطة التفاعلية</span>
             </button>
-          </div>
-        </div>
-      </header>
+      </PageNavigationBar>
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">

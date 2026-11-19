@@ -1446,6 +1446,37 @@ h6 {
   }
 }
 
+@media (max-width: 1023px) {
+  .wah-mobile-home-hero {
+    height: auto;
+    min-height: clamp(620px, calc(100dvh - 64px - env(safe-area-inset-bottom, 0px)), 720px);
+  }
+
+  .wah-home-page {
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  #mobile-bottom-navigation {
+    min-height: 72px;
+  }
+
+  #wah-app-shell header .flex.lg\:hidden {
+    height: 64px;
+  }
+}
+
+@media (max-width: 380px) {
+  .wah-mobile-home-hero {
+    min-height: clamp(590px, calc(100dvh - 64px - env(safe-area-inset-bottom, 0px)), 680px);
+  }
+}
+
+@media (min-width: 1024px) {
+  .wah-home-page {
+    padding-bottom: 0;
+  }
+}
+
 @media (min-width: 1536px) {
   #wah-app-shell [class~="max-w-7xl"],
   #wah-app-shell [class~="max-w-[1200px]"],

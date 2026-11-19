@@ -722,14 +722,14 @@ export const CraftReelsSection: React.FC = () => {
       <div className="relative z-10 max-w-[1550px] mx-auto px-3 sm:px-6 lg:px-8">
         {/* ================= HEADER SECTION ================= */}
         <div className="relative z-10 mb-5 sm:mb-14">
-          <div className="grid gap-4 sm:gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
-            <div>
+          <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+            <div className="min-w-0">
 
               <h1 className="max-w-6xl text-4xl sm:text-7xl lg:text-[8rem] font-black leading-[0.95] tracking-tight">
                 <span className="block">ريلز</span>
 
                 <span className="flex items-center gap-3 sm:gap-5">
-                  <span className="text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
+                  <span className="text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
                     وه
                   </span>
 
@@ -784,7 +784,11 @@ export const CraftReelsSection: React.FC = () => {
 
               {/* Accurate Category Filter Pills */}
               {availableCategories.length > 0 && (
-                <div className="mt-4 flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none sm:mt-6 sm:gap-2">
+                <div
+                  role="group"
+                  aria-label="تصنيفات الريلز"
+                  className="mt-4 flex w-full min-w-0 flex-nowrap items-center gap-1.5 overflow-x-auto overscroll-x-contain pb-2 scrollbar-none touch-pan-x sm:mt-6 sm:gap-2"
+                >
                   <button
                     type="button"
                     onClick={() => {
@@ -792,7 +796,7 @@ export const CraftReelsSection: React.FC = () => {
                       setActiveIndex(0);
                     }}
                     className={`
-                      px-3 py-1 rounded-full text-[10px] font-bold whitespace-nowrap transition-all cursor-pointer sm:px-3.5 sm:py-1.5 sm:text-xs
+                      shrink-0 px-3 py-1 rounded-full text-[10px] font-bold whitespace-nowrap transition-all cursor-pointer sm:px-3.5 sm:py-1.5 sm:text-xs
                       ${activeCategory === 'all'
                         ? 'bg-[#C99444] text-[#1B1009] shadow-md shadow-[#C99444]/30'
                         : 'bg-white/90 hover:bg-white text-[#5C3A21] border border-[#E0C79B] shadow-sm dark:bg-white/5 dark:hover:bg-white/10 dark:text-stone-300 dark:border-white/10 dark:shadow-none'
@@ -813,7 +817,7 @@ export const CraftReelsSection: React.FC = () => {
                           setActiveIndex(0);
                         }}
                         className={`
-                          px-3 py-1 rounded-full text-[10px] font-bold whitespace-nowrap transition-all cursor-pointer sm:px-3.5 sm:py-1.5 sm:text-xs
+                          shrink-0 px-3 py-1 rounded-full text-[10px] font-bold whitespace-nowrap transition-all cursor-pointer sm:px-3.5 sm:py-1.5 sm:text-xs
                           ${activeCategory === cat
                             ? 'bg-[#C99444] text-[#1B1009] shadow-md shadow-[#C99444]/30'
                             : 'bg-white/90 hover:bg-white text-[#5C3A21] border border-[#E0C79B] shadow-sm dark:bg-white/5 dark:hover:bg-white/10 dark:text-stone-300 dark:border-white/10 dark:shadow-none'

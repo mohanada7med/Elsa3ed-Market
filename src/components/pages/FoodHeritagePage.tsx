@@ -23,6 +23,8 @@ import {
 import FloatingDock from '../common/FloatingDock';
 import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner';
 import { ArchiveStatsCard } from '../common/ArchiveStatsCard';
+import { PageNavigationBar } from '../layout/PageNavigationBar';
+import { BrandPatternBackground } from '../layout/BrandPatternBackground';
 
 // كاش في الذاكرة لتفادي ضرب السيرفر عند الرجوع للصفحة
 let cachedFoods: UpperEgyptFood[] | null = null;
@@ -155,77 +157,50 @@ export const FoodHeritagePage: React.FC = () => {
       dir="rtl"
       className="min-h-screen overflow-x-hidden bg-cream text-espresso transition-colors duration-500 selection:bg-primary selection:text-white dark:bg-espresso-900 dark:text-cream"
     >
-      {/* Decorative Background Rings */}
-      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-        <div className="absolute -right-[260px] top-[18%] h-[600px] w-[600px] rounded-full border border-primary/[0.07] dark:border-[#C99444]/[0.06]" />
-        <div className="absolute -left-[300px] top-[55%] h-[700px] w-[700px] rounded-full border border-primary/[0.05] dark:border-[#C99444]/[0.05]" />
-        <div className="absolute right-[15%] top-[42%] h-2 w-2 rounded-full bg-primary/30 dark:bg-[#C99444]/30" />
-      </div>
+      <BrandPatternBackground />
 
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 border-b border-black/[0.06] bg-cream/70 backdrop-blur-md transition-colors dark:border-white/[0.06] dark:bg-espresso-900/70">
-        <div className="mx-auto flex h-14 max-w-[1700px] items-center justify-between px-4 sm:px-8 lg:px-12 xl:px-16">
-          <button
-            onClick={() => setActivePage('home')}
-            className="group flex min-h-[38px] cursor-pointer items-center gap-2 text-xs font-bold transition-colors hover:text-primary dark:text-primary-hover dark:hover:text-primary dark:text-primary-hover-hover"
-          >
-            <span className="flex h-7 w-7 items-center justify-center rounded-full border border-black/10 transition-colors group-hover:bg-espresso group-hover:text-white dark:border-white/10 dark:group-hover:bg-white dark:group-hover:text-black">
-              <ArrowLeft size={13} className="transition-transform group-hover:-translate-x-0.5" />
-            </span>
-            <span className="text-[11px] sm:text-xs">الرئيسية</span>
-          </button>
+      <PageNavigationBar
+        backLabel="الرئيسية"
+        onBack={() => setActivePage('home')}
+        title="طعم الصعيد"
+      >
+        <button
+          onClick={handleRandomPick}
+          className="group flex min-h-[34px] cursor-pointer items-center gap-1.5 rounded-full border border-black/10 px-3 py-1 text-[10px] font-bold transition-colors hover:bg-espresso hover:text-white dark:border-white/10 dark:hover:bg-white dark:hover:text-black sm:px-3.5 sm:py-1.5 sm:text-xs"
+          title="يختار لك أكلة صعيدية عشوائية"
+        >
+          <Shuffle size={12} className="text-primary dark:text-primary-hover dark:text-[#C99444]" />
+          <span>أكلة على البركة!</span>
+        </button>
 
-         
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleRandomPick}
-              className="group flex min-h-[34px] cursor-pointer items-center gap-1.5 rounded-full border border-black/10 px-3 py-1 text-[10px] font-bold transition-colors hover:bg-espresso hover:text-white dark:border-white/10 dark:hover:bg-white dark:hover:text-black sm:px-3.5 sm:py-1.5 sm:text-xs"
-              title="يختار لك أكلة صعيدية عشوائية"
-            >
-              <Shuffle size={12} className="text-primary dark:text-primary-hover dark:text-[#C99444]" />
-              <span>أكلة على البركة!</span>
-            </button>
-
-            <button
-              onClick={() => setActivePage('map')}
-              className="group flex min-h-[34px] cursor-pointer items-center gap-1.5 rounded-full border border-black/10 px-3 py-1 text-[10px] font-bold transition-colors hover:bg-espresso hover:text-white dark:border-white/10 dark:hover:bg-white dark:hover:text-black sm:px-3.5 sm:py-1.5 sm:text-xs"
-            >
-              <Compass size={12} />
-              <span className="hidden sm:inline">خريطة الصعيد</span>
-              <ArrowUpLeft size={12} className="transition-transform group-hover:-translate-x-0.5" />
-            </button>
-          </div>
-        </div>
-      </nav>
+        <button
+          onClick={() => setActivePage('map')}
+          className="group flex min-h-[34px] cursor-pointer items-center gap-1.5 rounded-full border border-black/10 px-3 py-1 text-[10px] font-bold transition-colors hover:bg-espresso hover:text-white dark:border-white/10 dark:hover:bg-white dark:hover:text-black sm:px-3.5 sm:py-1.5 sm:text-xs"
+        >
+          <Compass size={12} />
+          <span className="hidden sm:inline">خريطة الصعيد</span>
+          <ArrowUpLeft size={12} className="transition-transform group-hover:-translate-x-0.5" />
+        </button>
+      </PageNavigationBar>
 
       {/* Hero Section */}
       <section className="relative z-10 mx-auto max-w-[1700px] px-4 pb-8 pt-8 sm:px-8 sm:pb-14 sm:pt-14 lg:px-12 lg:pb-16 lg:pt-20 xl:px-16">
         <div className="grid gap-14 lg:grid-cols-[1fr_420px] lg:items-end lg:gap-20">
           <div>
-            <div className="mb-7 flex items-center gap-3 text-[9px] font-black tracking-[0.28em] text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 dark:bg-[#C99444]/10">
-                <Sparkles size={13} />
-              </span>
-              UPPER EGYPT CUISINE / TRADITIONS
-            </div>
+            
 
             <h1 className="max-w-6xl text-5xl font-black leading-[0.92] tracking-tight sm:text-7xl lg:text-[8rem] xl:text-[9.5rem]">
               طعم
               <br />
-              <span className="mr-3 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover sm:mr-6 lg:mr-16">
+              <span className="mr-3 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover sm:mr-6 lg:mr-16">
                 الصعيد
               </span>
             </h1>
 
-            <div className="mt-10 grid max-w-3xl gap-7 sm:grid-cols-[90px_1fr]">
+            <div className="mt-5 flex max-w-2xl items-start gap-4">
               <div className="hidden sm:block">
-                <div className="text-[9px] font-black tracking-[0.2em] text-black/35 dark:text-white/30">
-                  01
-                </div>
-                <div className="mt-3 h-px w-12 bg-primary dark:bg-[#C99444]" />
               </div>
-              <p className="max-w-2xl text-sm font-medium leading-8 text-black/55 sm:text-base sm:leading-9 dark:text-white/55">
+              <p className="mr-10 max-w-2xl text-sm font-medium leading-8 text-black/55 sm:text-base sm:leading-9 dark:text-white/55">
                 أكلات الصعيد مش مجرد وجبة، دي حكاية موروثة في قعر الطواجن ودفا الأفران البلدي؛ من خبيز العيش الشمسي والفايش، للويكا المفروكة والكشك، لحد عصارات القصب في قلب النيل.
               </p>
             </div>
@@ -375,7 +350,7 @@ export const FoodHeritagePage: React.FC = () => {
           {(selectedCategory !== 'all' || selectedGovernorate !== 'all' || searchQuery) && (
             <button
               onClick={clearFilters}
-              className="shrink-0 cursor-pointer text-xs font-bold text-primary dark:text-primary-hover underline underline-offset-4 hover:opacity-80 dark:text-primary dark:text-primary-hover-hover"
+              className="shrink-0 cursor-pointer text-xs font-bold text-primary dark:text-primary-hover underline underline-offset-4 hover:opacity-80 dark:text-primary dark:text-primary-hover"
             >
               تفريغ الفلاتر
             </button>
@@ -597,11 +572,11 @@ export const FoodHeritagePage: React.FC = () => {
                     />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5 text-[10px] font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
+                    <div className="flex items-center gap-1.5 text-[10px] font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
                       <span>{food.governorateName}</span>
                       {food.prepTime && <span>• {food.prepTime}</span>}
                     </div>
-                    <h4 className="truncate text-base font-black transition-colors group-hover:text-primary dark:text-primary-hover dark:group-hover:text-primary dark:text-primary-hover-hover">
+                    <h4 className="truncate text-base font-black transition-colors group-hover:text-primary dark:text-primary-hover dark:group-hover:text-primary dark:text-primary-hover">
                       {title}
                     </h4>
                     <p className="truncate text-xs text-black/50 dark:text-white/45">

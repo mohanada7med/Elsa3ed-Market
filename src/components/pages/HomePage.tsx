@@ -21,6 +21,7 @@ export const HomePage: React.FC = () => {
         bg-background
         text-foreground
         transition-colors duration-500
+        wah-home-page
       "
     >
       <div className="relative z-10 space-y-3 sm:space-y-6 [&_section]:bg-transparent">

@@ -27,6 +27,7 @@ import {
   Maximize2
 } from 'lucide-react';
 import { EventImageLightboxModal } from '../common/EventImageLightboxModal';
+import { PageNavigationBar } from '../layout/PageNavigationBar';
 import { EventEditorModal } from './AdminEventsManagerPage';
 
 export const EventDetailPage: React.FC = () => {
@@ -236,7 +237,7 @@ export const EventDetailPage: React.FC = () => {
                 animate-pulse
                 text-primary dark:text-primary-hover
 
-                dark:text-primary dark:text-primary-hover-hover
+                dark:text-primary dark:text-primary-hover
               "
             />
           </div>
@@ -302,7 +303,7 @@ export const EventDetailPage: React.FC = () => {
               className="
                 text-primary dark:text-primary-hover
 
-                dark:text-primary dark:text-primary-hover-hover
+                dark:text-primary dark:text-primary-hover
               "
             />
           </div>
@@ -467,120 +468,11 @@ export const EventDetailPage: React.FC = () => {
           NAVBAR
       ===================================================== */}
 
-      <header
-        className="
-          sticky
-          top-0
-          z-[100]
-          border-b
-          border-black/[0.07]
-          bg-cream/85
-          backdrop-blur-2xl
-
-          dark:border-white/[0.08]
-          dark:bg-espresso-900/85
-        "
+      <PageNavigationBar
+        backLabel="كل الفعاليات"
+        onBack={() => setActivePage('events')}
+        title="حكاية فعالية"
       >
-        <div
-          className="
-            mx-auto
-            flex
-            h-[72px]
-            max-w-[1500px]
-            items-center
-            justify-between
-            px-4
-
-            sm:px-6
-
-            lg:px-10
-          "
-        >
-          <button
-            type="button"
-            onClick={() => setActivePage('events')}
-            className="
-              group
-              flex
-              items-center
-              gap-2.5
-              text-xs
-              font-bold
-              transition
-              hover:text-primary dark:text-primary-hover
-
-              dark:hover:text-primary dark:text-primary-hover-hover
-
-              cursor-pointer
-            "
-          >
-            <span
-              className="
-                flex
-                h-9
-                w-9
-                items-center
-                justify-center
-                rounded-full
-                border
-                border-black/10
-                bg-white/50
-                transition-all
-
-                group-hover:border-primary/30
-                group-hover:bg-[#201c17]
-                group-hover:text-white
-
-                dark:border-white/10
-                dark:bg-cream/[0.035]
-
-                dark:group-hover:bg-white
-                dark:group-hover:text-black
-              "
-            >
-              <ArrowLeft
-                size={15}
-                className="
-                  transition-transform
-                  group-hover:translate-x-0.5
-                "
-              />
-            </span>
-
-            <span className="hidden sm:block">
-              كل الفعاليات
-            </span>
-          </button>
-
-          {/* CENTER BRAND */}
-
-          <div
-            className="
-              absolute
-              left-1/2
-              -translate-x-1/2
-              text-center
-              pointer-events-none
-              hidden xs:block
-            "
-          >
-            <div
-              className="
-                text-[9px]
-                font-black
-                tracking-[0.5em]
-                text-primary dark:text-primary-hover
-                dark:text-primary dark:text-primary-hover-hover
-              "
-            >
-              WAH
-            </div>
-
-            <div className="mt-1 text-xs font-black">
-              حكاية فعالية
-            </div>
-          </div>
-
           <div className="flex items-center gap-2">
             {isAdmin && (
               <button
@@ -653,8 +545,7 @@ export const EventDetailPage: React.FC = () => {
               />
             </button>
           </div>
-        </div>
-      </header>
+      </PageNavigationBar>
 
 
       {/* =====================================================
@@ -1002,7 +893,7 @@ export const EventDetailPage: React.FC = () => {
                   text-primary dark:text-primary-hover
 
                   dark:bg-[#C99444]/10
-                  dark:text-primary dark:text-primary-hover-hover
+                  dark:text-primary dark:text-primary-hover
                 "
               >
                 <Clock3 size={18} />
@@ -1059,7 +950,7 @@ export const EventDetailPage: React.FC = () => {
                   text-primary dark:text-primary-hover
 
                   dark:bg-[#C99444]/10
-                  dark:text-primary dark:text-primary-hover-hover
+                  dark:text-primary dark:text-primary-hover
                 "
               >
                 <MapPin size={18} />
@@ -1110,7 +1001,7 @@ export const EventDetailPage: React.FC = () => {
                   text-primary dark:text-primary-hover
 
                   dark:bg-[#C99444]/10
-                  dark:text-primary dark:text-primary-hover-hover
+                  dark:text-primary dark:text-primary-hover
                 "
               >
                 <Users size={18} />
@@ -1187,7 +1078,7 @@ export const EventDetailPage: React.FC = () => {
                     tracking-[0.25em]
                     text-primary dark:text-primary-hover
 
-                    dark:text-primary dark:text-primary-hover-hover
+                    dark:text-primary dark:text-primary-hover
                   "
                 >
                   <Feather size={12} />
@@ -1556,7 +1447,7 @@ export const EventDetailPage: React.FC = () => {
                 mb-5
                 text-primary dark:text-primary-hover
 
-                dark:text-primary dark:text-primary-hover-hover
+                dark:text-primary dark:text-primary-hover
               "
             />
 
@@ -1656,7 +1547,7 @@ export const EventDetailPage: React.FC = () => {
                     text-[9px]
                     font-black
                     tracking-[0.25em]
-                    text-primary dark:text-primary-hover-hover
+                    text-primary dark:text-primary-hover
                   "
                 >
                   EXPLORE THE REGION

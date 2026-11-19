@@ -274,15 +274,15 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
       case 'product_rejected':
         return <XCircle className="w-5 h-5 text-rose-600 dark:text-rose-400" />;
       case 'product_pending_review':
-        return <Sparkles className="w-5 h-5 text-amber-600 dark:text-primary dark:text-primary-hover-hover" />;
+        return <Sparkles className="w-5 h-5 text-amber-600 dark:text-primary dark:text-primary-hover" />;
       case 'low_stock':
-        return <AlertTriangle className="w-5 h-5 text-amber-500 dark:text-primary dark:text-primary-hover-hover" />;
+        return <AlertTriangle className="w-5 h-5 text-amber-500 dark:text-primary dark:text-primary-hover" />;
       case 'payout_requested':
       case 'payout_approved':
       case 'payout_paid':
         return <Wallet className="w-5 h-5 text-purple-600 dark:text-purple-400" />;
       case 'new_review':
-        return <Star className="w-5 h-5 text-primary dark:text-primary-hover-hover " />;
+        return <Star className="w-5 h-5 text-primary dark:text-primary-hover " />;
       case 'new_seller_registered':
         return <UserPlus className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />;
       case 'password_reset_requested':

@@ -5,6 +5,7 @@ import {
   BadgeCheck,
   Clock3,
   MapPin,
+  Pin,
   Sparkles,
   Star,
 } from 'lucide-react';
@@ -12,6 +13,7 @@ import { useApp } from '../../context/AppContext';
 import { api } from '../../services/api';
 import type { HomePromotionPosition, PaidPromotion } from '../../types';
 import { p } from 'motion/react-client';
+import SellerProfileView from '../pages/SellerProfileView';
 
 let promotionRequest: Promise<PaidPromotion | null> | null = null;
 
@@ -149,12 +151,12 @@ export const PaidPromotionSection: React.FC<PaidPromotionSectionProps> = ({
               />
             ) : (
               <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#FFF9EE] to-[#EAD5B8] dark:from-[#26160D] dark:to-[#3B1E0E]">
-                <Sparkles className="h-16 w-16 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover" />
+                <Sparkles className="h-16 w-16 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover" />
               </div>
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-[#1B1009]/75 via-transparent to-[#1B1009]/10" />
             <div className="absolute right-4 top-4 flex items-center gap-1.5 rounded-full border border-white/30 bg-[#1B1009]/45 px-3 py-1.5 text-[10px] font-black text-white shadow-lg backdrop-blur-md sm:right-5 sm:top-5 sm:gap-2 sm:px-4 sm:py-2 sm:text-xs">
-              <Sparkles size={13} className="text-primary dark:text-primary-hover-hover sm:h-[15px] sm:w-[15px]" />
+              <Sparkles size={13} className="text-primary dark:text-primary-hover sm:h-[15px] sm:w-[15px]" />
               قطعة مختارة من وه
             </div>
             <div className="absolute bottom-4 right-4 left-4 flex items-end justify-between gap-3 text-white sm:bottom-7 sm:right-7 sm:left-7 sm:gap-4">
@@ -171,14 +173,14 @@ export const PaidPromotionSection: React.FC<PaidPromotionSectionProps> = ({
           <div className="relative order-2 flex flex-col justify-center p-3 sm:p-9 lg:p-12">
             <div aria-hidden="true" className="pointer-events-none absolute -left-20 -top-20 h-56 w-56 rounded-full border border-primary/15 dark:border-primary-hover/10" />
             <div className="relative">
-              <div className="mb-2.5 inline-flex items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-[9px] font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover sm:mb-6 sm:gap-2 sm:px-3.5 sm:py-2 sm:text-[11px]">
+              <div className="mb-2.5 inline-flex items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-[9px] font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover sm:mb-6 sm:gap-2 sm:px-3.5 sm:py-2 sm:text-[11px]">
                 <BadgeCheck size={13} className="sm:h-[15px] sm:w-[15px]" />
                 مساحة ترشيح وه
                 <span className="h-1 w-1 rounded-full bg-primary dark:bg-primary-hover" />
                 حكاية قطعة
               </div>
 
-              <p className="text-xs font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover sm:text-sm">
+              <p className="text-xs font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover sm:text-sm">
                 صناعة يدوية من قلب الصعيد
               </p>
               <h2 className="sr-only mt-1.5 text-xl font-black leading-[1.35] text-espresso dark:text-cream sm:not-sr-only sm:mt-2 sm:text-4xl">
@@ -194,7 +196,7 @@ export const PaidPromotionSection: React.FC<PaidPromotionSectionProps> = ({
                   {avatar ? (
                     <img src={avatar} alt={sellerName} loading="lazy" className="h-full w-full object-cover" />
                   ) : (
-                    <span className="flex h-full w-full items-center justify-center text-xl font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
+                    <span className="flex h-full w-full items-center justify-center text-xl font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
                       {sellerName.charAt(0)}
                     </span>
                   )}
@@ -204,7 +206,7 @@ export const PaidPromotionSection: React.FC<PaidPromotionSectionProps> = ({
                   <span className="mt-0.5 block truncate text-xs font-black text-espresso dark:text-cream sm:text-sm">{sellerName}</span>
                   <span className="mt-0.5 block truncate text-[9px] font-bold text-espresso/60 dark:text-cream/60 sm:text-[10px]">{specialty}</span>
                 </span>
-                <span className="flex shrink-0 items-center gap-1 text-[9px] font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover sm:text-[10px]">
+                <span className="flex shrink-0 items-center gap-1 text-[9px] font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover sm:text-[10px]">
                   <MapPin size={11} className="sm:h-[13px] sm:w-[13px]" />
                   {governorate}
                 </span>
@@ -258,22 +260,20 @@ export const PaidPromotionSection: React.FC<PaidPromotionSectionProps> = ({
               </div>
 
               <div>
-                <p className="text-[10px] font-black tracking-[0.18em] text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
-                  WAH SELECTED
-                </p>
+                
                 <p className="mt-0.5 text-[10px] font-bold text-espresso/65 dark:text-cream/65 sm:text-xs">
                   اختيار وه لهذا الأسبوع
                 </p>
               </div>
 
-              <div className="mr-auto rotate-[-12deg] rounded-lg border-2 border-primary/60 px-2.5 py-0.5 text-[9px] font-black text-primary dark:text-primary-hover dark:border-primary-hover/70 dark:text-primary dark:text-primary-hover-hover sm:px-3 sm:py-1 sm:text-[10px]">
+              <div className="mr-auto rotate-[-12deg] rounded-lg border-2 border-primary/60 px-2.5 py-0.5 text-[9px] font-black text-primary dark:text-primary-hover dark:border-primary-hover/70 dark:text-primary dark:text-primary-hover sm:px-3 sm:py-1 sm:text-[10px]">
                 ترشيح خاص
               </div>
             </div>
 
             {/* Main heading */}
             <div className="relative">
-              <p className="mb-1.5 text-[11px] font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover sm:mb-3 sm:text-sm">
+              <p className="mb-1.5 text-[11px] font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover sm:mb-3 sm:text-sm">
                 {isProduct ? 'حكاية قطعة' : 'وراء كل صنعة حكاية'}
               </p>
 
@@ -286,8 +286,12 @@ export const PaidPromotionSection: React.FC<PaidPromotionSectionProps> = ({
 
             {/* Seller info */}
             <div className="mt-3 flex items-center gap-2 sm:mt-8 sm:gap-3">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary dark:text-primary-hover dark:bg-primary-hover/10 dark:text-primary dark:text-primary-hover-hover sm:h-12 sm:w-12">
-                <Star size={15} className="sm:h-5 sm:w-5" />
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/10 text-primary dark:text-primary-hover dark:bg-primary-hover/10 dark:text-primary dark:text-primary-hover sm:h-12 sm:w-12">
+                {avatar ? (
+                  <img src={avatar} alt={sellerName} className="h-full w-full rounded-full object-cover" />
+                ) : (
+                  <span className="text-xs font-black sm:text-base">{sellerName.charAt(0)}</span>
+                )}
               </div>
 
               <div className="min-w-0">
@@ -295,7 +299,7 @@ export const PaidPromotionSection: React.FC<PaidPromotionSectionProps> = ({
                   <h3 className="text-xs font-black text-espresso dark:text-cream sm:text-base">
                     {sellerName}
                   </h3>
-                  <BadgeCheck size={16} className="text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover" />
+                  <BadgeCheck size={16} className="text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover" />
                 </div>
 
                 <p className="mt-0.5 text-[10px] font-bold text-espresso/65 dark:text-cream/65 sm:mt-1 sm:text-xs">
@@ -306,7 +310,7 @@ export const PaidPromotionSection: React.FC<PaidPromotionSectionProps> = ({
 
             {/* Governorate */}
             <div className="mt-2 flex items-center gap-1.5 text-[10px] font-bold text-espresso/65 dark:text-cream/65 sm:mt-5 sm:gap-2 sm:text-xs">
-              <MapPin size={13} className="text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover sm:h-[15px] sm:w-[15px]" />
+              <MapPin size={13} className="text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover sm:h-[15px] sm:w-[15px]" />
               {governorate}
             </div>
 
@@ -360,7 +364,7 @@ export const PaidPromotionSection: React.FC<PaidPromotionSectionProps> = ({
                       className="h-full w-full object-cover"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center text-3xl font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover sm:text-5xl">
+                    <div className="flex h-full w-full items-center justify-center text-3xl font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover sm:text-5xl">
                       {sellerName.charAt(0)}
                     </div>
                   )}
@@ -383,8 +387,8 @@ export const PaidPromotionSection: React.FC<PaidPromotionSectionProps> = ({
                 )}
 
                 {/* Stamp */}
-                <div className="absolute -right-7 -top-4 flex h-12 w-12 rotate-12 flex-col items-center justify-center rounded-full border-2 border-primary-hover bg-[#FFF9EE] text-center text-primary dark:text-primary-hover shadow-xl dark:border-primary-hover dark:bg-[#26160D] dark:text-primary dark:text-primary-hover-hover sm:-right-12 sm:-top-7 sm:h-20 sm:w-20">
-                  <Sparkles size={11} className="sm:h-[15px] sm:w-[15px]" />
+                <div className="absolute -right-7 -top-4 flex h-12 w-12 rotate-12 flex-col items-center justify-center rounded-full border-2 border-primary-hover bg-[#FFF9EE] text-center text-primary dark:text-primary-hover shadow-xl dark:border-primary-hover dark:bg-[#26160D] dark:text-primary dark:text-primary-hover sm:-right-12 sm:-top-7 sm:h-20 sm:w-20">
+                  <Pin size={11} className="sm:h-[15px] sm:w-[15px]" />
                   <span className="mt-0.5 text-[6px] font-black sm:mt-1 sm:text-[10px]">
                    صعيدى اصلى
                   </span>

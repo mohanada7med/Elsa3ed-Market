@@ -8,11 +8,11 @@ export const NotFoundPage: React.FC = () => {
   return (
     <div className="min-h-[75vh] flex items-center justify-center px-5 sm:px-8 py-16" dir="rtl">
       <div className="max-w-lg w-full bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] p-8 sm:p-12 text-center border border-black/10 dark:border-white/10 shadow-xl">
-        <div className="w-20 h-20 bg-primary/15 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover rounded-2xl flex items-center justify-center mx-auto mb-6 border border-primary/25">
+        <div className="w-20 h-20 bg-primary/15 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover rounded-2xl flex items-center justify-center mx-auto mb-6 border border-primary/25">
           <Compass className="w-10 h-10" aria-hidden="true" />
         </div>
 
-        <span className="inline-block px-3.5 py-1 bg-primary/15 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover rounded-full text-xs font-bold tracking-wider uppercase mb-3 border border-primary/25">
+        <span className="inline-block px-3.5 py-1 bg-primary/15 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover rounded-full text-xs font-bold tracking-wider uppercase mb-3 border border-primary/25">
           كود الخطأ: 404
         </span>
 

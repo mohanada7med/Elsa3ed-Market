@@ -31,6 +31,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner';
+import { PageNavigationBar } from '../layout/PageNavigationBar';
 
 const LOGO_URL =
   'https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png';
@@ -558,22 +559,11 @@ if (isLoading) {
         dir="rtl"
         className="min-h-screen overflow-x-hidden bg-cream text-espresso transition-colors duration-500 dark:bg-espresso-900 dark:text-cream"
       >
-        {/* الرأس */}
-        <header className="border-b border-black/10 dark:border-white/10">
-          <div className="mx-auto flex h-[68px] max-w-[1400px] items-center justify-between px-5 sm:px-8">
-            <button
-              onClick={() => setActivePage('home')}
-              className="group flex items-center gap-3 text-sm font-bold transition-colors hover:text-primary dark:text-primary-hover cursor-pointer"
-            >
-              <span className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white/60 transition-colors group-hover:bg-espresso group-hover:text-white dark:border-white/10 dark:bg-cream/5 dark:group-hover:bg-white dark:group-hover:text-black">
-                <ArrowLeft size={17} className="transition-transform group-hover:-translate-x-1" />
-              </span>
-              <span className="hidden sm:block">الرئيسية</span>
-            </button>
-            
-            <div className="w-10 sm:w-24" aria-hidden />
-          </div>
-        </header>
+        <PageNavigationBar
+          backLabel="الرئيسية"
+          onBack={() => setActivePage('home')}
+          title="خريطة الصعيد"
+        />
 
         <main className="mx-auto max-w-[1400px] px-5 pb-24 pt-8 sm:px-8 sm:pt-12">
           <div className="mb-12">

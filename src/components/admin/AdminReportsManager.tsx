@@ -402,7 +402,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
               type="button"
               onClick={() => setStatusFilter(st.id as any)}
               className={`px-3 py-1 text-xs font-bold rounded-lg border transition-all cursor-pointer ${statusFilter === st.id
-                ? 'border-primary bg-primary/15 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover'
+                ? 'border-primary bg-primary/15 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover'
                 : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
                 }`}
             >
@@ -443,7 +443,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
                 {/* Top Row: Meta Info & Status Badges */}
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-black/5 dark:border-white/5 pb-3">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-black font-black text-xs bg-black/5 dark:bg-white/10 px-2.5 py-1 rounded-lg text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover">
+                    <span className="font-black font-black text-xs bg-black/5 dark:bg-white/10 px-2.5 py-1 rounded-lg text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
                       #{ticket.ticketNumber}
                     </span>
 
@@ -490,7 +490,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
                   <div className="flex flex-wrap items-center gap-3">
                     <a
                       href={`tel:${ticket.userPhone}`}
-                      className="text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover-hover font-black font-bold flex items-center gap-1 hover:underline"
+                      className="text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover font-black font-bold flex items-center gap-1 hover:underline"
                     >
                       <Phone className="w-3.5 h-3.5" />
                       <span>{ticket.userPhone}</span>
