@@ -29,6 +29,7 @@ import { PLATFORM_CATEGORIES } from '../config/platformCategories.ts';
 import { INITIAL_PLATFORM_SETTINGS } from './wahSeedData.ts';
 import { AUTHENTIC_WAH_FOOD } from './authenticWahFoodData.ts';
 import { AUTHENTIC_WAH_EVENTS } from './authenticWahEventsData.ts';
+import { RESEARCHED_NEW_VALLEY_PEOPLE } from './researchedNewValleyPeopleData.ts';
 import { AUTHENTIC_WAH_GOVERNORATE_VIDEOS, GOVERNORATE_VIDEO_RESEARCH_VERSION } from './authenticWahGovernorateVideosData.ts';
 import { AUTHENTIC_WAH_PLACE_VIDEOS, PLACE_VIDEO_RESEARCH_VERSION } from './authenticWahPlaceVideosData.ts';
 import { AUTHENTIC_WAH_PERSON_VIDEOS, PERSON_VIDEO_RESEARCH_VERSION } from './authenticWahPersonVideosData.ts';
@@ -317,6 +318,22 @@ async function seedMongoDatabase(database: Db) {
       { $setOnInsert: INITIAL_PLATFORM_SETTINGS },
       { upsert: true }
     );
+
+    const newValleyPeopleInsertions = await database
+      .collection<LocalPersonDoc>('wah_local_people')
+      .bulkWrite(
+        RESEARCHED_NEW_VALLEY_PEOPLE.map((person) => ({
+          updateOne: {
+            filter: { id: person.id },
+            update: { $setOnInsert: person },
+            upsert: true
+          }
+        })),
+        { ordered: false }
+      );
+    if (newValleyPeopleInsertions.upsertedCount > 0) {
+      Logger.info(`[MongoDB] Added ${newValleyPeopleInsertions.upsertedCount} sourced New Valley people`);
+    }
 
     // Initialize authentic Upper Egypt food database if empty
     const foodCount = await database.collection('wah_food').countDocuments().catch(() => 1);

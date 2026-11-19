@@ -216,7 +216,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
               <span className="block">أبواب</span>
 
               <span className="relative mt-1 inline-flex items-center gap-2 sm:gap-7">
-                <span className="relative z-10 font-main text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
+                <span className="ps-7 mr-3 sm:mr-9 lg:mr-55 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover ">
                   وه
                 </span>
 
@@ -238,10 +238,6 @@ export const WahEcosystemPortalSection: React.FC = () => {
 
             <div className="mt-3 grid max-w-2xl grid-cols-[25px_1fr] gap-2 sm:mt-12 sm:grid-cols-[65px_1fr] sm:gap-6">
               <div className="flex flex-col items-center">
-                <span className="text-[10px] font-black tracking-widest text-accent">
-                  WAH
-                </span>
-                <span className="mt-3 h-full min-h-16 w-px bg-gradient-to-b from-accent/60 to-transparent sm:min-h-20" />
               </div>
 
               <div>

@@ -369,7 +369,7 @@ export const PeoplePage: React.FC = () => {
                 ذاكرة
                 <br />
                 <span className="mr-[10vw] text-primary dark:text-primary-hover lg:mr-32">
-                  الجنوب
+                  الصعيد
                 </span>
               </h1>
 
@@ -402,7 +402,7 @@ export const PeoplePage: React.FC = () => {
                   label: <>شخصية في<br />الأرشيف</>,
                 },
                 {
-                  value: GOVERNORATES.length.toString().padStart(2, '0'),
+                  value: governorates.length.toString().padStart(2, '0'),
                   label: <>محافظة<br />صعيدية ممثلة</>,
                 },
               ]}

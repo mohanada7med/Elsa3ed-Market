@@ -729,7 +729,7 @@ export const CraftReelsSection: React.FC = () => {
                 <span className="block">ريلز</span>
 
                 <span className="flex items-center gap-3 sm:gap-5">
-                  <span className="text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
+                  <span className="ps-7 mr-3 sm:mr-8 lg:mr-20 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover ">
                     وه
                   </span>
 
