@@ -23,17 +23,17 @@ export const ArchiveStatsCard: React.FC<ArchiveStatsCardProps> = ({
   stats,
   footer,
 }) => (
-  <div className="mx-auto grid w-full max-w-md grid-cols-2 items-start gap-3">
+  <div className="mx-auto grid w-full max-w-md grid-cols-2 items-start gap-2.5 sm:gap-3">
     {/* بلاطة 1 */}
-    <div className="flex aspect-square flex-col justify-end rounded-[2rem] rounded-br-lg bg-primary p-5 text-white transition-transform duration-300 hover:-translate-y-1 rtl:rounded-br-[2rem] rtl:rounded-bl-lg">
-      <div className="text-6xl font-black leading-none sm:text-7xl wah-num">{stats[0].value}</div>
-      <div className="mt-3 text-sm leading-6 text-white/85">{stats[0].label}</div>
+    <div className="flex aspect-square flex-col justify-end rounded-[1.5rem] rounded-br-lg bg-primary p-3.5 text-white transition-transform duration-300 hover:-translate-y-1 rtl:rounded-br-[1.5rem] rtl:rounded-bl-lg sm:rounded-[2rem] sm:p-5">
+      <div className="text-5xl font-black leading-none sm:text-7xl wah-num">{stats[0].value}</div>
+      <div className="mt-2 text-xs leading-5 text-white/85 sm:mt-3 sm:text-sm sm:leading-6">{stats[0].label}</div>
     </div>
 
     {/* بلاطة 2 (نازلة شوية) */}
-    <div className="mt-8 flex aspect-square flex-col justify-end rounded-[2rem] rounded-tl-lg bg-[#C99444] p-5 text-espresso transition-transform duration-300 hover:-translate-y-1 rtl:rounded-tl-[2rem] rtl:rounded-tr-lg">
-      <div className="text-6xl font-black leading-none sm:text-7xl wah-num">{stats[1].value}</div>
-      <div className="mt-3 text-sm leading-6 text-espresso/80">{stats[1].label}</div>
+    <div className="mt-6 flex aspect-square flex-col justify-end rounded-[1.5rem] rounded-tl-lg bg-[#C99444] p-3.5 text-espresso transition-transform duration-300 hover:-translate-y-1 rtl:rounded-tl-[1.5rem] rtl:rounded-tr-lg sm:mt-8 sm:rounded-[2rem] sm:p-5">
+      <div className="text-5xl font-black leading-none sm:text-7xl wah-num">{stats[1].value}</div>
+      <div className="mt-2 text-xs leading-5 text-espresso/80 sm:mt-3 sm:text-sm sm:leading-6">{stats[1].label}</div>
     </div>
 
     {/* الكبسولة */}

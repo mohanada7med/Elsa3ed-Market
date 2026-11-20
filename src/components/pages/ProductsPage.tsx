@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ProductFilters } from '../products/ProductFilters';
 import { ProductGrid } from '../products/ProductGrid';
@@ -21,6 +21,10 @@ import { ArchiveStatsCard } from '../common/ArchiveStatsCard';
 import { BrandPatternBackground } from '../layout/BrandPatternBackground';
 
 export const ProductsPage: React.FC = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
+
   const {
 
     setActivePage,
@@ -297,7 +301,7 @@ export const ProductsPage: React.FC = () => {
                 className="
                   max-w-6xl
                   font-black
-                  text-4xl
+                  text-3xl
                   sm:text-7xl
                   lg:text-[8rem]
                   xl:text-[9.5rem]

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatArabicNumber } from '../../utils/arabicNumbers';
 
@@ -452,14 +452,48 @@ const QuickView: React.FC<{
   const { addToCart, setIsCartDrawerOpen, currentRole, isAuthenticated } = useApp();
   const canShop = !isAuthenticated || currentRole === 'buyer';
   const [imageIndex, setImageIndex] = useState(0);
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
   useEffect(() => {
+    sheetRef.current?.scrollTo({ top: 0, behavior: 'instant' });
+    const scrollY = window.scrollY;
+    const originalHtmlOverflow = document.documentElement.style.overflow;
+    const originalBodyOverflow = document.body.style.overflow;
+    const originalBodyPosition = document.body.style.position;
+    const originalBodyTop = document.body.style.top;
+    const originalBodyLeft = document.body.style.left;
+    const originalBodyWidth = document.body.style.width;
+    const originalBodyPaddingRight = document.body.style.paddingRight;
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.left = '0';
+    document.body.style.width = '100%';
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    }
+
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
+      if (event.key === 'Escape') onCloseRef.current();
     };
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.documentElement.style.overflow = originalHtmlOverflow;
+      document.body.style.overflow = originalBodyOverflow;
+      document.body.style.position = originalBodyPosition;
+      document.body.style.top = originalBodyTop;
+      document.body.style.left = originalBodyLeft;
+      document.body.style.width = originalBodyWidth;
+      document.body.style.paddingRight = originalBodyPaddingRight;
+      window.scrollTo(0, scrollY);
+    };
+  }, []);
 
   const images = getImages(product);
   const title = text(product, ['title', 'name', 'productName'], 'منتج تراثي');
@@ -488,26 +522,31 @@ const QuickView: React.FC<{
       role="dialog"
       aria-modal="true"
       aria-label={title}
-      className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/70 p-4 backdrop-blur-md sm:p-6"
+      className="fixed inset-0 z-[1000] flex items-end justify-center bg-black/75 p-0 backdrop-blur-md sm:items-center sm:p-6"
       onClick={onClose}
     >
       <div
-        className="relative max-h-[94vh] w-full max-w-4xl overflow-y-auto rounded-[2rem] bg-[#f8f3ea] text-espresso shadow-2xl dark:bg-[#11110f] dark:text-white"
+        ref={sheetRef}
+        className="relative max-h-[88dvh] w-full max-w-4xl overflow-y-auto rounded-t-[1.75rem] bg-[#f8f3ea] text-espresso shadow-2xl dark:bg-[#11110f] dark:text-white sm:max-h-[94vh] sm:rounded-[2rem]"
         onClick={(event) => event.stopPropagation()}
       >
+        <div
+          aria-hidden="true"
+          className="sticky top-2 z-30 mx-auto mt-2 h-1 w-12 rounded-full bg-black/20 dark:bg-white/20 sm:hidden"
+        />
         <button
           type="button"
           onClick={onClose}
           aria-label="إغلاق"
-          className="absolute left-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-black/70 text-white backdrop-blur-md transition hover:bg-white hover:text-black"
+          className="absolute left-3 top-3 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-white/50 bg-black/70 text-white shadow-lg backdrop-blur-md transition hover:bg-white hover:text-black sm:left-4 sm:top-4 sm:h-11 sm:w-11"
         >
           <X size={18} />
         </button>
 
-        <div className="grid gap-8 p-6 sm:p-10 lg:grid-cols-[360px_1fr] lg:gap-12">
+        <div className="grid gap-4 px-4 pb-24 pt-4 sm:gap-8 sm:p-10 lg:grid-cols-[360px_1fr] lg:gap-12">
           {/* arch image */}
           <div className="relative mx-auto w-full max-w-[360px]">
-            <div className="aspect-[4/5] overflow-hidden rounded-[1.75rem] bg-[#ddd3c3] dark:bg-[#181715]">
+            <div className="aspect-[16/10] overflow-hidden rounded-[1.25rem] bg-[#ddd3c3] sm:aspect-[4/5] sm:rounded-[1.75rem] dark:bg-[#181715]">
               <img
                 src={images[imageIndex]}
                 alt={title}
@@ -546,14 +585,14 @@ const QuickView: React.FC<{
               <span className="text-xs font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">{category}</span>
             )}
 
-            <h2 className="mt-2 text-3xl font-black leading-tight sm:text-4xl">{title}</h2>
+            <h2 className="mt-1.5 text-2xl font-black leading-tight sm:mt-2 sm:text-4xl">{title}</h2>
 
             {description && (
-              <p className="mt-5 text-sm leading-8 text-black/60 dark:text-white/55">{description}</p>
+              <p className="mt-3 line-clamp-3 text-xs leading-6 text-black/60 dark:text-white/55 sm:mt-5 sm:line-clamp-none sm:text-sm sm:leading-8">{description}</p>
             )}
 
-            <div className="mt-6 flex items-baseline gap-3">
-              <span className="text-4xl sm:text-5xl font-black font-price text-primary dark:text-primary-hover">
+            <div className="mt-4 flex items-baseline gap-3 sm:mt-6">
+              <span className="text-3xl sm:text-5xl font-black font-price text-primary dark:text-primary-hover">
                 {formatPrice(price)}
                 <span className="mr-1.5 text-base font-bold">جنيه</span>
               </span>
@@ -575,7 +614,7 @@ const QuickView: React.FC<{
               </dl>
             )}
 
-            <div className="mt-auto flex flex-col gap-3 pt-8 sm:flex-row">
+            <div className="sticky bottom-0 -mx-4 mt-auto flex gap-2 border-t border-black/[0.07] bg-[#f8f3ea]/95 px-4 py-3 backdrop-blur-md dark:border-white/[0.08] dark:bg-[#11110f]/95 sm:relative sm:mx-0 sm:flex-row sm:border-0 sm:bg-transparent sm:px-0 sm:pt-8 sm:backdrop-blur-none">
               {canShop && (
                 <button
                   type="button"

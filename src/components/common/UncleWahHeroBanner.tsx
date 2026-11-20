@@ -152,7 +152,7 @@ export const UncleWahHeroBanner: React.FC<UncleWahHeroBannerProps> = ({
       dir="rtl"
       onPointerMove={onMove}
       onPointerLeave={onLeave}
-      className={`relative overflow-hidden rounded-[2rem] rounded-tl-[6rem] bg-primary text-white shadow-2xl ${className}`}
+      className={`relative overflow-hidden rounded-[1.5rem] rounded-tl-[4rem] bg-primary text-white shadow-2xl sm:rounded-[2rem] sm:rounded-tl-[6rem] ${className}`}
     >
       {/* Giant background title, scrolling in opposite directions */}
       <div dir="ltr" className="pointer-events-none absolute inset-0 flex flex-col justify-around" aria-hidden="true">
@@ -183,21 +183,21 @@ export const UncleWahHeroBanner: React.FC<UncleWahHeroBannerProps> = ({
         </motion.span>
       ))}
 
-      <div className="relative z-10 grid items-center gap-8 px-5 py-8 sm:px-10 sm:py-10 md:grid-cols-[1.1fr_0.9fr] md:gap-4">
+      <div className="relative z-10 grid items-center gap-4 px-4 py-6 sm:gap-8 sm:px-10 sm:py-10 md:grid-cols-[1.1fr_0.9fr] md:gap-4">
         {/* ── Words ── */}
-        <div className="min-w-0 space-y-5 text-right">
+        <div className="min-w-0 space-y-3 text-right sm:space-y-5">
           <motion.p
             initial={reduce ? false : { opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="inline-flex items-center gap-1.5 text-xs font-black text-amber-300"
+            className="inline-flex items-center gap-1.5 text-[10px] font-black text-amber-300 sm:text-xs"
           >
             <Sparkles size={13} aria-hidden="true" />
             «عم وه» صاحب وموثّق المنصة
           </motion.p>
 
           <div>
-            <h2 className="flex flex-wrap gap-x-3 font-main text-3xl leading-[1.25] sm:text-4xl lg:text-5xl">
+            <h2 className="flex flex-wrap gap-x-2 font-main text-2xl leading-[1.25] sm:gap-x-3 sm:text-4xl lg:text-5xl">
               {titleWords.map((w, i) => (
                 <span key={i} className="overflow-hidden pb-1">
                   <motion.span
@@ -226,12 +226,12 @@ export const UncleWahHeroBanner: React.FC<UncleWahHeroBannerProps> = ({
             animate={{ opacity: 1, y: 0, rotate: -1.5 }}
             whileHover={reduce ? undefined : { rotate: 0, y: -4, scale: 1.01 }}
             transition={{ type: 'spring', stiffness: 120, damping: 14, delay: 0.6 }}
-            className="relative max-w-xl rounded-2xl bg-background p-5 pt-6 text-foreground shadow-xl"
+            className="relative max-w-xl rounded-2xl bg-background p-3 pt-5 text-foreground shadow-xl sm:p-5 sm:pt-6"
           >
             <span aria-hidden="true" className="absolute -top-2.5 right-8 h-5 w-16 -rotate-6 rounded-sm bg-amber-500/80" />
             <span aria-hidden="true" className="absolute -top-2.5 left-10 h-5 w-14 rotate-6 rounded-sm bg-amber-500/80" />
 
-            <blockquote className="relative text-sm font-bold leading-8 sm:text-base sm:leading-9" aria-label={quote}>
+            <blockquote className="relative text-xs font-bold leading-7 sm:text-base sm:leading-9" aria-label={quote}>
               <span className="invisible" aria-hidden="true">{`"${quote}"`}</span>
               <span className="absolute inset-0" aria-hidden="true">
                 {`"${quote.slice(0, typed)}${typing ? '' : '"'}`}
@@ -245,7 +245,7 @@ export const UncleWahHeroBanner: React.FC<UncleWahHeroBannerProps> = ({
               </span>
             </blockquote>
 
-            <figcaption className="mt-3 flex items-center gap-1.5 border-t border-dashed border-border-subtle pt-2.5 text-[11px] font-black text-primary dark:text-primary-hover">
+            <figcaption className="mt-2 hidden items-center gap-1.5 border-t border-dashed border-border-subtle pt-2 text-[11px] font-black text-primary dark:text-primary-hover sm:flex">
               <span className="h-1.5 w-1.5 rounded-full bg-primary" />
               — عم وه، صاحب وموثّق حكاوي وتراث الصعيد
             </figcaption>
@@ -278,7 +278,7 @@ export const UncleWahHeroBanner: React.FC<UncleWahHeroBannerProps> = ({
         </div>
 
         {/* ── Mascot stage ── */}
-        <div className="relative mx-auto h-80 w-full max-w-sm sm:h-[26rem]">
+        <div className="relative mx-auto h-56 w-full max-w-sm sm:h-[26rem]">
           {/* Morphing amber blob */}
           <motion.div style={{ x: blobX, y: blobY }} className="absolute inset-0 flex items-center justify-center">
             <motion.div
