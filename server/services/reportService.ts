@@ -103,41 +103,65 @@ export async function createReport(
   return ticket;
 }
 
+export interface GetMyReportsOptions {
+  userId?: string;
+  id?: string;
+  phone?: string;
+  ticketIds?: string[];
+}
+
 export async function getMyReports(
-  user: { id?: string; phone?: string }
+  options: GetMyReportsOptions
 ): Promise<ReportTicketDocument[]> {
   const { db, isMongo } = await getDatabase();
+  const userId = options.userId || options.id;
+  const phone = options.phone;
+  const ticketIds = options.ticketIds;
 
-  if (isMongo && db) {
-    const query: any = {};
-    if (user.id && user.id !== 'guest') {
-      if (user.phone) {
-        query.$or = [{ userId: user.id }, { userPhone: user.phone }];
-      } else {
-        query.userId = user.id;
-      }
-    } else if (user.phone) {
-      query.userPhone = user.phone;
-    } else {
-      return [];
+  // 1. Authenticated User (Registered Buyer or Seller): STRICT isolation by userId
+  if (userId && userId !== 'guest') {
+    if (isMongo && db) {
+      const items = await db
+        .collection<ReportTicketDocument>('reports')
+        .find({ userId })
+        .sort({ createdAt: -1 })
+        .toArray();
+      return items;
     }
 
-    const items = await db
-      .collection<ReportTicketDocument>('reports')
-      .find(query)
-      .sort({ createdAt: -1 })
-      .toArray();
-    return items;
+    return memoryDb.reports
+      .filter((r) => r.userId === userId)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }
 
-  // In-memory fallback
-  return memoryDb.reports
-    .filter((r) => {
-      if (user.id && user.id !== 'guest' && r.userId === user.id) return true;
-      if (user.phone && r.userPhone === user.phone) return true;
-      return false;
-    })
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  // 2. Guest User: Only retrieve tickets matching the exact ticket IDs submitted in their browser session
+  if (ticketIds && ticketIds.length > 0) {
+    const cleanIds = ticketIds.filter(Boolean);
+    if (cleanIds.length === 0) return [];
+
+    if (isMongo && db) {
+      const query: any = {
+        id: { $in: cleanIds },
+        userId: 'guest'
+      };
+      if (phone) {
+        query.userPhone = phone;
+      }
+      const items = await db
+        .collection<ReportTicketDocument>('reports')
+        .find(query)
+        .sort({ createdAt: -1 })
+        .toArray();
+      return items;
+    }
+
+    return memoryDb.reports
+      .filter((r) => cleanIds.includes(r.id) && r.userId === 'guest' && (!phone || r.userPhone === phone))
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  // 3. Fallback: No authenticated userId and no guest ticket IDs provided -> return empty array
+  return [];
 }
 
 export async function getAdminReports(filter?: {

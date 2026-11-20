@@ -147,18 +147,49 @@ export const ReportIssueModal: React.FC = () => {
     }
   }, [reportModalState, currentUser]);
 
-  // Fetch ticket history
+  // Clear tickets if the user account changes
+  useEffect(() => {
+    setMyTickets([]);
+  }, [currentUser?.id]);
+
+  // Fetch ticket history with strict user data isolation
   const fetchMyTickets = async () => {
     setIsLoadingHistory(true);
     try {
+      let guestIds: string[] = [];
+      if (!currentUser) {
+        try {
+          guestIds = JSON.parse(localStorage.getItem('wah_guest_ticket_ids') || '[]');
+        } catch {
+          guestIds = [];
+        }
+        // If guest has not submitted any tickets from this browser session, show empty state immediately
+        if (guestIds.length === 0) {
+          setMyTickets([]);
+          setIsLoadingHistory(false);
+          return;
+        }
+      }
+
       const tickets = await api.getMyReports({
         id: currentUser?.id,
-        phone: currentUser?.phone || phone,
-        role: currentUser?.role
+        phone: currentUser?.phone || (!currentUser ? phone.trim() : undefined),
+        role: currentUser?.role,
+        ticketIds: !currentUser ? guestIds : undefined
       });
-      setMyTickets(tickets || []);
+
+      // Strict client-side isolation filter: Every user strictly sees only their own tickets
+      const safeTickets = (tickets || []).filter((ticket) => {
+        if (currentUser) {
+          return ticket.userId === currentUser.id;
+        }
+        return guestIds.includes(ticket.id);
+      });
+
+      setMyTickets(safeTickets);
     } catch (err: any) {
       console.error('Failed to load tickets history:', err);
+      setMyTickets([]);
     } finally {
       setIsLoadingHistory(false);
     }
@@ -218,6 +249,19 @@ export const ReportIssueModal: React.FC = () => {
         },
         { id: currentUser?.id, role: currentUser?.role }
       );
+
+      // If submitted as guest, store the created ticket ID in localStorage for tracking
+      if (!currentUser && res.data?.id) {
+        try {
+          const stored: string[] = JSON.parse(localStorage.getItem('wah_guest_ticket_ids') || '[]');
+          if (!stored.includes(res.data.id)) {
+            stored.push(res.data.id);
+            localStorage.setItem('wah_guest_ticket_ids', JSON.stringify(stored));
+          }
+        } catch {
+          // Ignore localStorage errors
+        }
+      }
 
       addToast(
         'تم تسجيل بلاغك بنجاح',
@@ -566,7 +610,9 @@ export const ReportIssueModal: React.FC = () => {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <p className="text-xs text-black/60 dark:text-white/60">
-                  سجل البلاغات والشكاوى التي قمت بتقديمها وردود إدارة منصة وه عليها:
+                  {currentUser
+                    ? `سجل البلاغات والشكاوى الخاصة بحسابك (${currentUser.name}) ومتابعة ردود الإدارة:`
+                    : 'سجل البلاغات والشكاوى التي قمت بتقديمها من هذا الجهاز ومتابعة ردود الإدارة:'}
                 </p>
                 <button
                   onClick={fetchMyTickets}

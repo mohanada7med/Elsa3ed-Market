@@ -13,27 +13,30 @@ import { createAuditLog } from '../services/auditService.ts';
 
 const router = express.Router();
 
+// Parse authentication cookies / Bearer tokens on all report routes
+router.use(authenticate);
+
 /**
  * Helper to get user info if authenticated or from headers/body
  */
 function resolveSubmitter(req: AuthenticatedRequest) {
-  if (req.user) {
+  if (req.user && req.user.id) {
     return {
       id: req.user.id,
       name: req.user.name,
       role: req.user.role,
-      phone: req.user.phone,
-      email: req.user.email,
-      governorate: req.user.governorate
+      phone: req.user.phone || '',
+      email: req.user.email || '',
+      governorate: req.user.governorate || ''
     };
   }
   return {
-    id: (req.headers['x-user-id'] as string) || req.body.userId || 'guest',
-    name: (req.headers['x-user-name'] as string) || req.body.userName || 'زائر',
-    role: ((req.headers['x-user-role'] as string) || req.body.userRole || 'buyer') as any,
-    phone: (req.headers['x-user-phone'] as string) || req.body.userPhone || '',
-    email: req.body.userEmail || '',
-    governorate: req.body.userGovernorate || ''
+    id: (req.headers['x-user-id'] as string) || req.body?.userId || 'guest',
+    name: (req.headers['x-user-name'] as string) || req.body?.userName || 'زائر',
+    role: ((req.headers['x-user-role'] as string) || req.body?.userRole || 'guest') as any,
+    phone: (req.headers['x-user-phone'] as string) || req.body?.userPhone || '',
+    email: req.body?.userEmail || '',
+    governorate: req.body?.userGovernorate || ''
   };
 }
 
@@ -129,16 +132,21 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
 
 /**
  * GET /api/reports/my
- * Get current user's submitted reports
+ * Get current user's submitted reports.
+ * STRICT ISOLATION: Authenticated users only see tickets matching their userId.
+ * Guests only see tickets matching specific session ticket IDs.
  */
 router.get('/my', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const user = resolveSubmitter(req);
-    const queryPhone = (req.query.phone as string) || user.phone;
+    const rawTicketIds = req.query.ticketIds as string | undefined;
+    const ticketIds = rawTicketIds ? rawTicketIds.split(',').map((s) => s.trim()).filter(Boolean) : undefined;
+    const queryPhone = (req.query.phone as string) || undefined;
 
     const reports = await getMyReports({
-      id: user.id,
-      phone: queryPhone
+      userId: user.id !== 'guest' ? user.id : undefined,
+      phone: user.id !== 'guest' ? user.phone : queryPhone,
+      ticketIds
     });
 
     return res.json({
@@ -153,16 +161,10 @@ router.get('/my', async (req: AuthenticatedRequest, res: Response) => {
 
 /**
  * GET /api/reports/admin
- * Admin: Get all tickets with filtering
+ * Admin: Get all tickets with filtering (Requires Admin Authentication)
  */
-router.get('/admin', async (req: AuthenticatedRequest, res: Response) => {
+router.get('/admin', requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    // Check if admin
-    const userRole = (req.user?.role || req.headers['x-user-role'] || req.query.userRole) as string;
-    if (userRole !== 'admin') {
-      return res.status(403).json({ success: false, error: 'غير مصرح لك بالوصول لإدارة البلاغات' });
-    }
-
     const { status, category, role, q } = req.query;
 
     const reports = await getAdminReports({
@@ -184,15 +186,10 @@ router.get('/admin', async (req: AuthenticatedRequest, res: Response) => {
 
 /**
  * PATCH /api/reports/admin/:id
- * Admin: Update status, admin response, or internal notes
+ * Admin: Update status, admin response, or internal notes (Requires Admin Authentication)
  */
-router.patch('/admin/:id', async (req: AuthenticatedRequest, res: Response) => {
+router.patch('/admin/:id', requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const userRole = (req.user?.role || req.headers['x-user-role'] || req.body.userRole) as string;
-    if (userRole !== 'admin') {
-      return res.status(403).json({ success: false, error: 'صلاحيات الإدارة مطلوبة' });
-    }
-
     const reportId = req.params.id;
     const { status, adminResponse, internalNotes } = req.body;
 
@@ -226,15 +223,10 @@ router.patch('/admin/:id', async (req: AuthenticatedRequest, res: Response) => {
 
 /**
  * DELETE /api/reports/admin/:id
- * Admin: Delete a report
+ * Admin: Delete a report (Requires Admin Authentication)
  */
-router.delete('/admin/:id', async (req: AuthenticatedRequest, res: Response) => {
+router.delete('/admin/:id', requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const userRole = (req.user?.role || req.headers['x-user-role'] || req.query.userRole) as string;
-    if (userRole !== 'admin') {
-      return res.status(403).json({ success: false, error: 'صلاحيات الإدارة مطلوبة' });
-    }
-
     const reportId = req.params.id;
     const success = await deleteAdminReport(reportId);
 
