@@ -20,11 +20,23 @@ export const SUPPORT_PHONE_NUMBER = '01158969931';
 export const WHATSAPP_NUMBER = '01158969931';
 export const WHATSAPP_INT_NUMBER = '201158969931';
 
-export function getWhatsAppUrl(customMessage?: string): string {
+export function formatWhatsAppNumber(phone?: string): string {
+  if (!phone) return WHATSAPP_INT_NUMBER;
+  const digits = phone.replace(/[^0-9]/g, '');
+  if (!digits) return WHATSAPP_INT_NUMBER;
+  if (digits.startsWith('002')) return digits.slice(2);
+  if (digits.startsWith('20')) return digits;
+  if (digits.startsWith('0')) return `20${digits.slice(1)}`;
+  if (digits.length === 10) return `20${digits}`;
+  return digits;
+}
+
+export function getWhatsAppUrl(customMessage?: string, phoneNumber?: string): string {
   const defaultMsg =
     'السلام عليكم يا عم وه، أود الاستفسار عن منصة وه ومنتجات سوق وه التراثية.';
   const text = encodeURIComponent(customMessage || defaultMsg);
-  return `https://wa.me/${WHATSAPP_INT_NUMBER}?text=${text}`;
+  const targetPhone = formatWhatsAppNumber(phoneNumber);
+  return `https://wa.me/${targetPhone}?text=${text}`;
 }
 
 export const AmWahSupportButton: React.FC = () => {

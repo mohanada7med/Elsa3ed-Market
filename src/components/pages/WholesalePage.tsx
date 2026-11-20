@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import {
   Building2,
@@ -17,7 +17,40 @@ import { WHATSAPP_NUMBER, getWhatsAppUrl } from '../common/WhatsAppButton';
 import { Governorate } from '../../types';
 
 export const WholesalePage: React.FC = () => {
-  const { setActivePage, addToast } = useApp();
+  const { setActivePage, addToast, products, sellers, selectedProductId } = useApp();
+
+  const currentProduct = useMemo(() => {
+    let pid = selectedProductId;
+    if (!pid && typeof window !== 'undefined') {
+      try {
+        pid = sessionStorage.getItem('elsa3ed_selected_product_id');
+      } catch {}
+    }
+    if (!pid) return null;
+    return products.find((p) => p.id === pid) || null;
+  }, [products, selectedProductId]);
+
+  const currentSeller = useMemo(() => {
+    if (!currentProduct) return null;
+    return (
+      sellers.find(
+        (s) =>
+          s.id === currentProduct.sellerId ||
+          s.userId === currentProduct.sellerId ||
+          (currentProduct.sellerName && (s.brandName === currentProduct.sellerName || s.name === currentProduct.sellerName))
+      ) || null
+    );
+  }, [currentProduct, sellers]);
+
+  const sellerPhone =
+    (currentProduct as any)?.sellerPhone ||
+    currentSeller?.phone ||
+    WHATSAPP_NUMBER;
+  const sellerName =
+    currentSeller?.brandName ||
+    currentSeller?.name ||
+    currentProduct?.sellerName ||
+    'مبيعات الجملة والتوريدات';
 
   const [companyName, setCompanyName] = useState('');
   const [contactName, setContactName] = useState('');
@@ -68,6 +101,7 @@ export const WholesalePage: React.FC = () => {
     setIsSubmitting(true);
 
     const message = `*طلب عرض أسعار بيع بالجملة وتوريدات - سوق وه* 🏺\n\n` +
+      (currentProduct ? `🏺 *المنتج المطلوب:* ${currentProduct.title} (ورشة ${sellerName})\n` : '') +
       `🏢 *اسم المؤسسة/الشركة:* ${companyName}\n` +
       `👤 *المسؤول:* ${contactName}\n` +
       `📞 *رقم الهاتف:* ${phone}\n` +
@@ -83,7 +117,7 @@ export const WholesalePage: React.FC = () => {
       addToast('تم تجهيز طلب عرض السعر بالجملة بنجاح!', 'success');
 
       // Open WhatsApp directly with full structured request
-      const url = getWhatsAppUrl(message);
+      const url = getWhatsAppUrl(message, sellerPhone);
       window.open(url, '_blank', 'noopener,noreferrer');
     }, 600);
   };
@@ -137,13 +171,18 @@ export const WholesalePage: React.FC = () => {
               </a>
 
               <a
-                href={getWhatsAppUrl('السلام عليكم، نود الاستفسار عن تفاصيل وأسعار طلبيات الجملة والتوريدات لـ (اسم المنشأة)...')}
+                href={getWhatsAppUrl(
+                  currentProduct
+                    ? `السلام عليكم، نود الاستفسار عن تفاصيل وأسعار طلبيات الجملة والتوريدات لمنتج "${currentProduct.title}" (كود: ${currentProduct.id}) من ورشة ${sellerName}...`
+                    : 'السلام عليكم، نود الاستفسار عن تفاصيل وأسعار طلبيات الجملة والتوريدات لـ (اسم المنشأة)...',
+                  sellerPhone
+                )}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-7 py-3.5 rounded-[1.25rem] bg-[#25D366] hover:bg-[#20ba59] text-white font-black text-sm shadow-lg shadow-emerald-900/20 transition-all hover:scale-105 flex items-center gap-2"
               >
                 <MessageCircle className="w-4 h-4" />
-                <span>محادثة واتساب: {WHATSAPP_NUMBER}</span>
+                <span>محادثة واتساب: {sellerPhone}</span>
               </a>
             </div>
           </div>
@@ -281,6 +320,43 @@ export const WholesalePage: React.FC = () => {
 
       {/* Interactive Quotation Form Section */}
       <div id="quotation-form" className="bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-10 shadow-xl">
+        {currentProduct && (
+          <div className="mb-8 p-4 sm:p-5 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              {currentProduct.images?.[0] && (
+                <img
+                  src={currentProduct.images[0]}
+                  alt={currentProduct.title}
+                  className="w-14 h-14 rounded-xl object-cover border border-amber-500/30 shrink-0"
+                />
+              )}
+              <div>
+                <span className="text-xs font-bold text-amber-800 dark:text-amber-300 block">
+                  طلب توريد مباشر لمنتج محدد:
+                </span>
+                <h4 className="text-base font-bold text-espresso dark:text-cream">
+                  {currentProduct.title}
+                </h4>
+                <p className="text-xs text-espresso/70 dark:text-cream/70">
+                  الورشة: <span className="font-semibold text-primary dark:text-primary-hover">{sellerName}</span> • رقم واتساب البائع: <span className="font-bold text-emerald-600 dark:text-emerald-400 dir-ltr">{sellerPhone}</span>
+                </p>
+              </div>
+            </div>
+            <a
+              href={getWhatsAppUrl(
+                `السلام عليكم، أود الاستفسار عن طلب كمية جملة لمنتج "${currentProduct.title}" (كود: ${currentProduct.id}) من ورشة ${sellerName}`,
+                sellerPhone
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white text-xs font-bold flex items-center gap-1.5 shadow-md shadow-emerald-900/20 transition-all hover:scale-105"
+            >
+              <MessageCircle className="w-4 h-4" />
+              <span>محادثة واتساب البائع: {sellerPhone}</span>
+            </a>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-5 space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 text-xs font-bold">
@@ -298,20 +374,27 @@ export const WholesalePage: React.FC = () => {
 
             {/* Direct Contact Card */}
             <div className="p-5 bg-black/5 dark:bg-cream/5 rounded-[1.5rem] border border-black/10 dark:border-white/10 space-y-3">
-              <p className="text-xs font-bold text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">أو تواصل معنا مباشرة:</p>
+              <p className="text-xs font-bold text-primary dark:text-primary-hover">أو تواصل معنا مباشرة:</p>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                   <MessageCircle className="w-5 h-5" />
                 </div>
                 <div>
-                  <span className="text-xs text-espresso/60 dark:text-cream/60 block">واتساب مبيعات الجملة:</span>
+                  <span className="text-xs text-espresso/60 dark:text-cream/60 block">
+                    {currentProduct ? `واتساب ورشة ${sellerName}:` : 'واتساب مبيعات الجملة:'}
+                  </span>
                   <a
-                    href={`https://wa.me/201158969931`}
+                    href={getWhatsAppUrl(
+                      currentProduct
+                        ? `السلام عليكم، بخصوص طلب جملة وتوريدات لمنتج "${currentProduct.title}" (كود: ${currentProduct.id}) من ورشة ${sellerName}`
+                        : 'السلام عليكم، أود التواصل بخصوص طلب جملة وتوريدات',
+                      sellerPhone
+                    )}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-base font-black font-black text-emerald-700 dark:text-emerald-400 hover:underline"
+                    className="text-base font-black text-emerald-700 dark:text-emerald-400 hover:underline"
                   >
-                    01158969931
+                    {sellerPhone}
                   </a>
                 </div>
               </div>
@@ -393,7 +476,7 @@ export const WholesalePage: React.FC = () => {
                     <select
                       value={businessType}
                       onChange={(e) => setBusinessType(e.target.value)}
-                      className="w-full text-xs bg-black/5 dark:bg-cream/5 text-espresso dark:text-cream px-4 py-3 rounded-[1rem] border border-black/10 dark:border-white/10 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
+                      className="w-full text-xs bg-[#FDFBF7] dark:bg-[#241E1A] text-[#241E1A] dark:text-[#FAF7F2] px-4 py-3 rounded-[1rem] border border-black/10 dark:border-white/10 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
                     >
                       {businessTypes.map((b) => (
                         <option key={b.id} value={b.id}>
@@ -412,8 +495,7 @@ export const WholesalePage: React.FC = () => {
                     <select
                       value={governorate}
                       onChange={(e) => setGovernorate(e.target.value as Governorate)}
-                      className="w-full text-xs bg-black/5 dark:bg-cream/5 text-espresso dark:text-cream px-4 py-3 rounded-[1rem] border border-black/10 dark:border-white/10 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
-                    >
+                      className="w-full text-xs bg-[#FDFBF7] dark:bg-[#241E1A] text-[#241E1A] dark:text-[#FAF7F2] px-4 py-3 rounded-[1rem] border border-black/10 dark:border-white/10 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"                    >
                       <option value="القاهرة">القاهرة</option>
                       <option value="الجيزة">الجيزة</option>
                       <option value="الإسكندرية">الإسكندرية</option>
@@ -437,8 +519,7 @@ export const WholesalePage: React.FC = () => {
                     <select
                       value={estimatedQuantity}
                       onChange={(e) => setEstimatedQuantity(e.target.value)}
-                      className="w-full text-xs bg-black/5 dark:bg-cream/5 text-espresso dark:text-cream px-4 py-3 rounded-[1rem] border border-black/10 dark:border-white/10 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
-                    >
+                      className="w-full text-xs bg-[#FDFBF7] dark:bg-[#241E1A] text-[#241E1A] dark:text-[#FAF7F2] px-4 py-3 rounded-[1rem] border border-black/10 dark:border-white/10 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"                    >
                       <option value="5-15 قطعة (شريحة أولى)">5 - 15 قطعة (خصم 15%)</option>
                       <option value="16-50 قطعة (شريحة ثانية)">16 - 50 قطعة (خصم 25%)</option>
                       <option value="51-100 قطعة">51 - 100 قطعة (تسعير خاص)</option>

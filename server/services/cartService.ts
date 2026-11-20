@@ -7,6 +7,7 @@ import type {
 } from '../models/types.ts';
 import { calculateShipping } from './shippingService.ts';
 import { validateAndCalculateDiscount } from './discountService.ts';
+import { getEffectiveUnitPrice } from '../utils/wholesalePricing.ts';
 
 export interface CartSummary {
   id: string;
@@ -155,7 +156,10 @@ export async function getCart(
       isAllAvailable = false;
     }
 
-    const itemSubtotal = product.price * item.quantity;
+    const effectiveUnitPrice = getEffectiveUnitPrice(product, item.quantity);
+    const itemSubtotal = effectiveUnitPrice * item.quantity;
+    const isWholesaleApplied = effectiveUnitPrice < product.price;
+
     if (isApproved && product.inStock) {
       subtotal += itemSubtotal;
       cartCount += item.quantity;
@@ -166,7 +170,9 @@ export async function getCart(
       quantity: item.quantity,
       selectedColor: item.selectedColor,
       customNote: item.customNote,
+      unitPrice: effectiveUnitPrice,
       itemSubtotal,
+      isWholesaleApplied,
       isAvailable: isApproved && isStockValid,
       stockCount: product.stockCount,
       warning: itemWarning

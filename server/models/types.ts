@@ -36,6 +36,12 @@ export type PaymentStatus =
   | 'refunded'
   | 'cash_on_delivery';
 
+export interface WholesaleTier {
+  minQty: number;
+  price: number;
+  label?: string;
+}
+
 export interface ProductDocument {
   id: string;
   title: string;
@@ -68,6 +74,10 @@ export interface ProductDocument {
   isFeatured?: boolean;
   isProductOfWeek?: boolean;
   isNewArrival?: boolean;
+  wholesaleEnabled?: boolean;
+  wholesalePrice?: number;
+  wholesaleMinQty?: number;
+  wholesaleTiers?: WholesaleTier[];
   createdAt: string;
   updatedAt?: string;
   approvalStatus: ProductStatus;
@@ -147,7 +157,9 @@ export interface PopulatedCartItem {
   quantity: number;
   selectedColor?: string;
   customNote?: string;
+  unitPrice?: number;
   itemSubtotal: number;
+  isWholesaleApplied?: boolean;
   isAvailable: boolean;
   stockCount: number;
   warning?: string;
@@ -163,6 +175,7 @@ export interface OrderItemSnapshot {
   quantity: number;
   unitPrice: number; // Historical price snapshot at order creation
   subtotal: number;
+  isWholesaleApplied?: boolean;
   selectedColor?: string;
   customNote?: string;
 }

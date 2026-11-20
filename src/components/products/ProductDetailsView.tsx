@@ -4,6 +4,7 @@ import { ProductCard } from './ProductCard';
 import { updatePageSEO, generateProductSchema } from '../../utils/seo';
 import { getOptimizedImageUrl } from '../../utils/cloudinaryMedia';
 import { formatArabicNumber, toArabicDigits } from '../../utils/arabicNumbers';
+import { getEffectiveUnitPrice, getActiveWholesaleTier, getNextWholesaleTier } from '../../utils/wholesalePricing';
 import { api } from '../../services/api';
 import type { Review } from '../../types';
 
@@ -43,13 +44,15 @@ import {
   X,
 } from 'lucide-react';
 
-import { getWhatsAppUrl } from '../common/WhatsAppButton';
+import { getWhatsAppUrl, WHATSAPP_NUMBER } from '../common/WhatsAppButton';
 import { QrCodeModal } from '../common/QrCodeModal';
 
 export const ProductDetailsView: React.FC = () => {
   const {
     products,
+    sellers,
     selectedProductId,
+    setSelectedProductId,
     setActivePage,
     addToCart,
     toggleFavorite,
@@ -91,6 +94,18 @@ export const ProductDetailsView: React.FC = () => {
   const [reviewsError, setReviewsError] = useState<string | null>(null);
   const [relatedFilter, setRelatedFilter] = useState<'all' | 'artisan' | 'category' | 'governorate'>('all');
   const isOwner = currentRole === 'seller' && (currentUser?.sellerId === product?.sellerId || currentUser?.id === product?.sellerId);
+
+  const seller = useMemo(() => {
+    if (!product) return undefined;
+    return sellers.find(
+      (s) =>
+        (product.sellerId && (s.id === product.sellerId || s.userId === product.sellerId)) ||
+        (product.sellerName && (s.brandName === product.sellerName || s.name === product.sellerName))
+    );
+  }, [sellers, product]);
+
+  const sellerPhone = (product as any)?.sellerPhone || seller?.phone || WHATSAPP_NUMBER;
+  const sellerName = seller?.brandName || seller?.name || product?.sellerName || 'الورشة';
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -312,7 +327,11 @@ export const ProductDetailsView: React.FC = () => {
 
   const stockCount = product?.stockCount || 0;
 
-  const totalPrice = product ? product.price * quantity : 0;
+  const basePrice = product?.price || 0;
+  const effectiveUnitPrice = product ? getEffectiveUnitPrice(product, quantity) : 0;
+  const totalPrice = effectiveUnitPrice * quantity;
+  const activeWholesaleTier = product ? getActiveWholesaleTier(product, quantity) : null;
+  const nextWholesaleTier = product ? getNextWholesaleTier(product, quantity) : null;
 
   const discountAmount =
     product &&
@@ -1359,8 +1378,15 @@ export const ProductDetailsView: React.FC = () => {
             <div className="mt-7 rounded-2xl border border-primary/15 bg-primary/[0.045] p-4 sm:p-5">
               <div className="flex items-end justify-between gap-4">
                 <div>
-                  <div className="text-[10px] font-bold text-black/40 dark:text-white/35">
-                    السعر
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold text-black/40 dark:text-white/35">
+                      {activeWholesaleTier ? 'سعر الجملة للقطعة' : 'السعر'}
+                    </span>
+                    {activeWholesaleTier && (
+                      <span className="rounded-md bg-emerald-500/15 px-2 py-0.5 text-[10px] font-black text-emerald-700 dark:text-emerald-400">
+                         خصم جملة {activeWholesaleTier.discountPercent}%
+                      </span>
+                    )}
                   </div>
 
                   <div className="mt-1 flex items-baseline gap-2">
@@ -1373,17 +1399,27 @@ export const ProductDetailsView: React.FC = () => {
                         text-primary dark:text-primary-hover
                       "
                     >
-                      {formatArabicNumber(product.price)}
+                      {formatArabicNumber(effectiveUnitPrice)}
                     </span>
 
                     <span className="text-sm font-bold">
                       جنيه مصري
                     </span>
                   </div>
+
+                  {activeWholesaleTier && (
+                    <div className="mt-1.5 flex items-center gap-2 text-xs font-bold text-emerald-700 dark:text-emerald-400">
+                      <span className="line-through text-black/40 dark:text-white/40">
+                        قطاعي: {formatArabicNumber(basePrice)} ج.م
+                      </span>
+                      <span>•</span>
+                      <span>إجمالي التوفير: {formatArabicNumber(activeWholesaleTier.totalSavings)} ج.م</span>
+                    </div>
+                  )}
                 </div>
 
                 {product.originalPrice &&
-                  product.originalPrice > product.price ? (
+                  product.originalPrice > product.price && !activeWholesaleTier ? (
                   <div className="text-left">
                     <div className="text-[11px] text-black/45 dark:text-white/40">
                       السعر قبل الخصم
@@ -1400,6 +1436,100 @@ export const ProductDetailsView: React.FC = () => {
                 ) : null}
               </div>
             </div>
+
+            {/* Wholesale Tiers Section */}
+            {((product.wholesaleTiers && product.wholesaleTiers.length > 0) || product.wholesalePrice) && (
+              <div className="mt-4 rounded-2xl border border-primary/20 bg-gradient-to-br from-[#FFF9EE] via-[#F8F0E2] to-[#EAD5B8] p-4 text-espresso shadow-xs dark:from-[#26160D] dark:via-[#1B1009] dark:to-[#341B0E] dark:text-cream">
+                <div className="flex items-center justify-between gap-2 border-b border-primary/15 pb-2.5">
+                  <div className="flex items-center gap-2">
+                    <Building2 className="h-4 w-4 text-primary dark:text-primary-hover" />
+                    <span className="text-xs font-black">شرائح أسعار الجملة للورشة</span>
+                  </div>
+                  <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary dark:text-primary-hover">
+                    وفّر مع زيادة الكمية
+                  </span>
+                </div>
+
+                <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
+                  {(product.wholesaleTiers && product.wholesaleTiers.length > 0
+                    ? product.wholesaleTiers
+                    : [
+                        {
+                          minQty: product.wholesaleMinQty || 5,
+                          price: product.wholesalePrice || Math.round(product.price * 0.85),
+                          label: 'سعر الجملة'
+                        }
+                      ]
+                  ).map((tier, idx) => {
+                    const tierMinQty = Number(tier.minQty);
+                    const tierPrice = Number(tier.price);
+                    const isCurrentTier = activeWholesaleTier?.tier?.minQty === tierMinQty;
+                    const tierDiscount = basePrice > 0 ? Math.round(((basePrice - tierPrice) / basePrice) * 100) : 0;
+
+                    return (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setQuantity(tierMinQty)}
+                        className={`group relative flex flex-col justify-between rounded-xl border p-3 text-right transition-all cursor-pointer ${
+                          isCurrentTier
+                            ? 'border-primary bg-primary/10 shadow-sm ring-2 ring-primary/30'
+                            : 'border-black/10 bg-white/60 hover:border-primary/50 hover:bg-white/90 dark:border-white/10 dark:bg-black/20 dark:hover:bg-black/35'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="text-[11px] font-bold">
+                            من {formatArabicNumber(tierMinQty)} قطع فأكثر
+                          </span>
+                          {tierDiscount > 0 && (
+                            <span className="rounded bg-emerald-500/15 px-1.5 py-0.5 text-[9px] font-black text-emerald-700 dark:text-emerald-400">
+                              خصم {tierDiscount}%
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="mt-2 flex items-baseline justify-between">
+                          <span className="text-base font-black font-price text-primary dark:text-primary-hover">
+                            {formatArabicNumber(tierPrice)} ج.م
+                          </span>
+                          <span className="text-[10px] text-espresso/60 dark:text-cream/60">
+                            للقطعة
+                          </span>
+                        </div>
+
+                        {tier.label && (
+                          <div className="mt-1 text-[9px] text-espresso/60 dark:text-cream/60 truncate">
+                            {tier.label}
+                          </div>
+                        )}
+
+                        {isCurrentTier && (
+                          <div className="mt-2 flex items-center gap-1 text-[9px] font-black text-emerald-600 dark:text-emerald-400">
+                            <CheckCircle2 className="h-3 w-3" />
+                            <span>مفعلة على كميتك الحالية</span>
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {nextWholesaleTier && (
+                  <div className="mt-3 flex items-center justify-between gap-2 rounded-xl bg-white/70 px-3 py-2 text-xs dark:bg-black/20">
+                    <span className="text-[11px] font-bold text-primary dark:text-primary-hover">
+                      💡 أضف {formatArabicNumber(nextWholesaleTier.itemsNeeded)} {nextWholesaleTier.itemsNeeded === 1 ? 'قطعة' : 'قطع'} لتخفيض سعر القطعة إلى {formatArabicNumber(nextWholesaleTier.potentialUnitPrice)} ج.م (خصم {nextWholesaleTier.discountPercent}%)!
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setQuantity(nextWholesaleTier.tier.minQty)}
+                      className="shrink-0 rounded-lg bg-primary px-2.5 py-1 text-[10px] font-black text-white transition hover:bg-primary-hover cursor-pointer"
+                    >
+                      اختر {formatArabicNumber(nextWholesaleTier.tier.minQty)} قطعة
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Stock */}
 
@@ -1486,20 +1616,36 @@ export const ProductDetailsView: React.FC = () => {
                   </div>
 
                   {/* Chat */}
-                  <button
-                    type="button"
-                    onClick={() =>
-                      openChatWithArtisan({
-                        sellerId: product.sellerId,
-                        productId: product.id,
-                        initialMessage: `السلام عليكم، أود التواصل مع الورشة حول منتج "${product.title}" وموعد وتفاصيل الشحن.`,
-                      })
-                    }
-                    className="mt-3 flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl border border-primary/20 bg-primary/5 px-4 text-xs font-bold text-[#7b542b] transition hover:bg-primary/10 dark:border-[#C99444]/20 dark:bg-[#C99444]/5 dark:text-primary dark:text-primary-hover dark:hover:bg-primary-hover/10"
-                  >
-                    <MessageSquare size={16} />
-                    تواصل مع البائع / الورشة حول هذا المنتج
-                  </button>
+                  <div className="mt-3 flex flex-col sm:flex-row gap-2">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        openChatWithArtisan({
+                          sellerId: product.sellerId,
+                          productId: product.id,
+                          initialMessage: `السلام عليكم، أود التواصل مع الورشة حول منتج "${product.title}" وموعد وتفاصيل الشحن.`,
+                        })
+                      }
+                      className="flex min-h-12 flex-1 cursor-pointer items-center justify-center gap-2 rounded-2xl border border-primary/20 bg-primary/5 px-4 text-xs font-bold text-[#7b542b] transition hover:bg-primary/10 dark:border-[#C99444]/20 dark:bg-[#C99444]/5 dark:text-primary dark:text-primary-hover dark:hover:bg-primary-hover/10"
+                    >
+                      <MessageSquare size={16} />
+                      <span>تواصل داخل المنصة</span>
+                    </button>
+
+                    <a
+                      href={getWhatsAppUrl(
+                        `السلام عليكم، أود التواصل بخصوص منتج "${product.title}" (كود: ${product.id}) من ورشة ${sellerName}`,
+                        sellerPhone
+                      )}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/30 px-4 text-xs font-bold text-emerald-800 dark:text-emerald-300 transition"
+                      title={`محادثة واتساب البائع: ${sellerPhone}`}
+                    >
+                      <MessageCircle size={16} className="text-[#25D366]" />
+                      <span>واتساب: {sellerPhone}</span>
+                    </a>
+                  </div>
                 </>
               ) : isOwner ? (
                 /* 2. لو بائع وهو صاحب هذا المنتج حصراً */
@@ -1671,7 +1817,8 @@ export const ProductDetailsView: React.FC = () => {
             <div className="flex flex-col gap-2 sm:flex-row">
               <a
                 href={getWhatsAppUrl(
-                  `السلام عليكم، نود طلب عرض أسعار جملة لمنتج: "${product.title}" (كود: ${product.id})`
+                  `السلام عليكم، نود طلب عرض أسعار جملة وتوريدات لمنتج: "${product.title}" (كود: ${product.id}) من ورشة ${sellerName}`,
+                  sellerPhone
                 )}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -1682,22 +1829,28 @@ export const ProductDetailsView: React.FC = () => {
                   justify-center
                   gap-2
                   rounded-xl
-                  bg-primary-hover
+                  bg-[#25D366] hover:bg-[#20ba59]
                   px-6
                   text-xs
                   font-black
                   text-white
                   transition
-                  hover:bg-white
+                  shadow-md
                 "
               >
                 <MessageCircle size={16} />
-                طلب عرض جملة
+                <span>محادثة واتساب: {sellerPhone}</span>
               </a>
 
               <button
                 type="button"
-                onClick={() => setActivePage('wholesale')}
+                onClick={() => {
+                  setSelectedProductId(product.id);
+                  try {
+                    sessionStorage.setItem('elsa3ed_selected_product_id', product.id);
+                  } catch {}
+                  setActivePage('wholesale');
+                }}
                 className="
                   flex
                   min-h-12
@@ -1716,7 +1869,7 @@ export const ProductDetailsView: React.FC = () => {
                   cursor-pointer
                 "
               >
-                تفاصيل التوريد
+                تفاصيل التوريد بالجملة
                 <ArrowUpLeft size={15} />
               </button>
             </div>

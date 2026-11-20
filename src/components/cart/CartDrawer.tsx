@@ -4,6 +4,7 @@ import { X, Trash2, Plus, Minus, ShoppingBag, ArrowLeft, Tag, ShieldCheck, Truck
 import { motion, AnimatePresence } from 'motion/react';
 import { Product } from '../../types';
 import { formatArabicNumber } from '../../utils/arabicNumbers';
+import { getEffectiveUnitPrice } from '../../utils/wholesalePricing';
 
 export const CartDrawer: React.FC = () => {
   const {
@@ -188,8 +189,10 @@ export const CartDrawer: React.FC = () => {
                     const img = prod?.images?.[0] || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=200&q=80';
                     const sellerName = prod?.sellerName || 'ورشة الصعيد';
                     const sellerGov = prod?.sellerGovernorate || 'قنا';
-                    const price = prod?.price || 0;
+                    const basePrice = prod?.price || 0;
                     const qty = item.quantity || 1;
+                    const unitPrice = getEffectiveUnitPrice(prod, qty);
+                    const isWholesale = unitPrice < basePrice;
 
                     return (
                       <div
@@ -247,11 +250,11 @@ export const CartDrawer: React.FC = () => {
                           <div className="flex items-center justify-between mt-2.5">
                             <div className="flex items-center gap-1.5 flex-wrap">
                               <span className="text-base sm:text-lg font-black font-price text-primary dark:text-primary-hover">
-                                {formatArabicNumber(price * qty)} ج.م
+                                {formatArabicNumber(unitPrice * qty)} ج.م
                               </span>
                               {qty > 1 && (
-                                <span className="text-xs font-bold text-black/45 dark:text-white/45 wah-num">
-                                  ({formatArabicNumber(price)} ج.م للقطعة)
+                                <span className={`text-xs font-bold wah-num ${isWholesale ? 'text-emerald-600 dark:text-emerald-400 font-black' : 'text-black/45 dark:text-white/45'}`}>
+                                  ({formatArabicNumber(unitPrice)} ج.م للقطعة{isWholesale ? ' - سعر جملة' : ''})
                                 </span>
                               )}
                             </div>

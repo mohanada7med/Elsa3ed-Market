@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useApp } from '../../context/AppContext.tsx';
-import { Product, Governorate, OrderStatus, ProductStatus, CraftReel, Review } from '../../types.ts';
+import { Product, Governorate, OrderStatus, ProductStatus, CraftReel, Review, WholesaleTier } from '../../types.ts';
 import { api } from '../../services/api.ts';
 import { craftReelsService } from '../../services/craftReelsService.ts';
 import { SellerPayouts } from './SellerPayouts.tsx';
@@ -15,6 +15,7 @@ import { SellerPromotionPanel } from './SellerPromotionPanel.tsx';
 import { formatArabicNumber, toArabicDigits, toWesternDigits } from '../../utils/arabicNumbers.ts';
 import {
   Store,
+  Building2,
   Package,
   DollarSign,
   Star,
@@ -389,6 +390,8 @@ export const SellerDashboard: React.FC = () => {
   const [weight, setWeight] = useState('');
   const [careInstructions, setCareInstructions] = useState('');
   const [estimatedMakingTime, setEstimatedMakingTime] = useState('');
+  const [wholesaleEnabled, setWholesaleEnabled] = useState(false);
+  const [wholesaleTiers, setWholesaleTiers] = useState<WholesaleTier[]>([]);
   const [submissionIntent, setSubmissionIntent] = useState<'pending' | 'draft'>('pending');
 
   // Product Images Cloudinary State
@@ -680,6 +683,12 @@ export const SellerDashboard: React.FC = () => {
     setWeight('');
     setCareInstructions('');
     setEstimatedMakingTime('');
+    setWholesaleEnabled(false);
+    setWholesaleTiers([
+      { minQty: 5, price: 0, label: 'كميات صغيرة وبازارات' },
+      { minQty: 15, price: 0, label: 'تجهيز فنادق ومطاعم' },
+      { minQty: 50, price: 0, label: 'توريدات كبرى وتصدير' }
+    ]);
     setSelectedImages([]);
     setExistingImages([]);
     setUploadError(null);
@@ -705,6 +714,26 @@ export const SellerDashboard: React.FC = () => {
     setWeight(prod.specifications?.weight || '');
     setCareInstructions(prod.specifications?.careInstructions || '');
     setEstimatedMakingTime(prod.specifications?.estimatedMakingTime || '');
+    const hasWholesale = Boolean(
+      prod.wholesaleEnabled ||
+      (prod.wholesaleTiers && prod.wholesaleTiers.length > 0) ||
+      prod.wholesalePrice
+    );
+    setWholesaleEnabled(hasWholesale);
+    if (prod.wholesaleTiers && prod.wholesaleTiers.length > 0) {
+      setWholesaleTiers(prod.wholesaleTiers);
+    } else if (prod.wholesalePrice && prod.wholesaleMinQty) {
+      setWholesaleTiers([
+        { minQty: prod.wholesaleMinQty, price: prod.wholesalePrice, label: 'سعر الجملة' }
+      ]);
+    } else {
+      const p = Number(prod.price) || 100;
+      setWholesaleTiers([
+        { minQty: 5, price: Math.round(p * 0.85), label: 'كميات صغيرة وبازارات' },
+        { minQty: 15, price: Math.round(p * 0.75), label: 'تجهيز فنادق ومطاعم' },
+        { minQty: 50, price: Math.round(p * 0.65), label: 'توريدات كبرى وتصدير' }
+      ]);
+    }
     setSelectedImages([]);
     setExistingImages(prod.images || []);
     setUploadError(null);
@@ -857,6 +886,18 @@ export const SellerDashboard: React.FC = () => {
 
       const finalImages = [...existingImages, ...newlyUploadedUrls];
 
+      const cleanWholesaleTiers = wholesaleEnabled
+        ? wholesaleTiers
+            .filter((t) => Number(t.minQty) > 1 && Number(t.price) > 0)
+            .map((t) => ({
+              minQty: Number(t.minQty),
+              price: Number(t.price),
+              label: t.label?.trim() || undefined
+            }))
+            .sort((a, b) => a.minQty - b.minQty)
+        : [];
+      const firstWholesaleTier = cleanWholesaleTiers[0];
+
       if (editingProduct) {
         await updateProduct(editingProduct.id, {
           title,
@@ -869,6 +910,10 @@ export const SellerDashboard: React.FC = () => {
           inStock: Number(stockCount) > 0,
           isHandmade,
           description: description.trim(),
+          wholesaleEnabled: wholesaleEnabled && cleanWholesaleTiers.length > 0,
+          wholesaleTiers: cleanWholesaleTiers,
+          wholesalePrice: firstWholesaleTier ? firstWholesaleTier.price : undefined,
+          wholesaleMinQty: firstWholesaleTier ? firstWholesaleTier.minQty : undefined,
           images: finalImages,
           specifications: {
             ...(editingProduct.specifications || {}),
@@ -896,6 +941,10 @@ export const SellerDashboard: React.FC = () => {
             isHeritage: true,
             isFeatured: true,
             sellerGovernorate: governorate,
+            wholesaleEnabled: wholesaleEnabled && cleanWholesaleTiers.length > 0,
+            wholesaleTiers: cleanWholesaleTiers,
+            wholesalePrice: firstWholesaleTier ? firstWholesaleTier.price : undefined,
+            wholesaleMinQty: firstWholesaleTier ? firstWholesaleTier.minQty : undefined,
             images: finalImages,
             description: description.trim(),
             specifications: {
@@ -2358,6 +2407,12 @@ export const SellerDashboard: React.FC = () => {
                               <span className="text-[10px] bg-primary/15 text-primary dark:text-primary-hover px-2 py-0.5 rounded font-bold">
                                 {toArabicDigits(prod.categoryName)}
                               </span>
+                              {(prod.wholesaleEnabled || (prod.wholesaleTiers && prod.wholesaleTiers.length > 0) || prod.wholesalePrice) && (
+                                <span className="text-[10px] bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded font-black inline-flex items-center gap-1">
+                                  <Building2 className="w-3 h-3" />
+                                  يدعم الجملة
+                                </span>
+                              )}
                             </div>
                             <p className="text-xs text-black/60 dark:text-white/60 font-medium">
                               السعر: <strong className="text-sm text-primary dark:text-primary-hover font-black">{formatArabicNumber(prod.price)} ج.م</strong> • المخزون: <span className={`text-sm ${prod.stockCount === 0 ? 'text-rose-600 dark:text-rose-400 font-bold' : prod.stockCount <= 5 ? 'text-amber-600 dark:text-primary dark:text-primary-hover font-bold' : 'text-emerald-700 dark:text-emerald-400 font-bold'}`}>{formatArabicNumber(prod.stockCount)} قطعة</span>                               • الصنعة: {toArabicDigits(prod.specifications?.craftsmanship || 'يدوية')}
@@ -3854,6 +3909,166 @@ export const SellerDashboard: React.FC = () => {
                     className="min-h-11 w-full rounded-xl border border-black/15 bg-white/80 px-3 py-2.5 text-right text-base font-bold text-espresso outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/25 dark:border-white/20 dark:bg-[#2B2119] dark:text-[#FFF9EE]"
                   />
                 </div>
+              </div>
+
+              {/* Wholesale Tiers Management */}
+              <div className="rounded-2xl border border-primary/25 bg-gradient-to-br from-primary/[0.04] to-primary/[0.01] p-4 space-y-3 dark:border-primary/20 dark:bg-black/15">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary dark:text-primary-hover">
+                      <Building2 className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-black text-espresso dark:text-cream">
+                        شرائح أسعار الجملة للورشة (Wholesale Tiers)
+                      </h4>
+                      <p className="text-xs text-black/60 dark:text-white/60">
+                        خصومات تلقائية للكميات لتشجيع طلبات الفنادق، البازارات، والشركات.
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const next = !wholesaleEnabled;
+                      setWholesaleEnabled(next);
+                      if (next && wholesaleTiers.length === 0) {
+                        const p = Number(price) || 100;
+                        setWholesaleTiers([
+                          { minQty: 5, price: Math.round(p * 0.85), label: 'كميات صغيرة وبازارات' },
+                          { minQty: 15, price: Math.round(p * 0.75), label: 'تجهيز فنادق ومطاعم' },
+                          { minQty: 50, price: Math.round(p * 0.65), label: 'توريدات كبرى وتصدير' }
+                        ]);
+                      }
+                    }}
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                      wholesaleEnabled ? 'bg-primary' : 'bg-black/20 dark:bg-white/20'
+                    }`}
+                  >
+                    <span
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
+                        wholesaleEnabled ? '-translate-x-5' : 'translate-x-0'
+                      }`}
+                    />
+                  </button>
+                </div>
+
+                {wholesaleEnabled && (
+                  <div className="space-y-3 pt-2 animate-in fade-in">
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-t border-black/10 dark:border-white/10 pt-3">
+                      <span className="text-xs font-bold text-espresso/70 dark:text-cream/70">
+                        الشرائح المحددة ({formatArabicNumber(wholesaleTiers.length)}):
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const p = Number(price) || 100;
+                          setWholesaleTiers([
+                            { minQty: 5, price: Math.round(p * 0.85), label: 'كميات صغيرة وبازارات' },
+                            { minQty: 15, price: Math.round(p * 0.75), label: 'تجهيز فنادق ومطاعم' },
+                            { minQty: 50, price: Math.round(p * 0.65), label: 'توريدات كبرى وتصدير' }
+                          ]);
+                        }}
+                        className="text-xs font-black text-primary dark:text-primary-hover hover:underline cursor-pointer"
+                      >
+                        ⚡ تطبيق الشرائح النموذجية (15%، 25%، 35%)
+                      </button>
+                    </div>
+
+                    <div className="space-y-2">
+                      {wholesaleTiers.map((tier, idx) => {
+                        const currentP = Number(price) || 0;
+                        const tierP = Number(tier.price) || 0;
+                        const discount = currentP > 0 && tierP > 0 && tierP < currentP
+                          ? Math.round(((currentP - tierP) / currentP) * 100)
+                          : 0;
+
+                        return (
+                          <div
+                            key={idx}
+                            className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 rounded-xl border border-black/10 bg-white/70 p-2.5 dark:border-white/10 dark:bg-black/20"
+                          >
+                            <div className="flex items-center gap-1.5 flex-1">
+                              <span className="text-xs font-bold text-espresso/60 dark:text-cream/60 shrink-0">
+                                الحد الأدنى للكمية:
+                              </span>
+                              <input
+                                type="number"
+                                min={2}
+                                value={tier.minQty || ''}
+                                onChange={(e) => {
+                                  const val = e.target.value === '' ? 0 : Number(e.target.value);
+                                  const updated = [...wholesaleTiers];
+                                  updated[idx] = { ...updated[idx], minQty: val };
+                                  setWholesaleTiers(updated);
+                                }}
+                                placeholder="5"
+                                className="w-20 rounded-lg border border-black/15 bg-white px-2 py-1.5 text-center text-xs font-bold text-espresso outline-none dark:border-white/20 dark:bg-[#2B2119] dark:text-[#FFF9EE]"
+                              />
+                              <span className="text-xs font-bold text-espresso/60 dark:text-cream/60">قطع</span>
+                            </div>
+
+                            <div className="flex items-center gap-1.5 flex-1">
+                              <span className="text-xs font-bold text-espresso/60 dark:text-cream/60 shrink-0">
+                                سعر القطعة:
+                              </span>
+                              <input
+                                type="number"
+                                min={1}
+                                value={tier.price || ''}
+                                onChange={(e) => {
+                                  const val = e.target.value === '' ? 0 : Number(e.target.value);
+                                  const updated = [...wholesaleTiers];
+                                  updated[idx] = { ...updated[idx], price: val };
+                                  setWholesaleTiers(updated);
+                                }}
+                                placeholder="ج.م"
+                                className="w-24 rounded-lg border border-black/15 bg-white px-2 py-1.5 text-center text-xs font-bold text-espresso outline-none dark:border-white/20 dark:bg-[#2B2119] dark:text-[#FFF9EE]"
+                              />
+                              <span className="text-xs font-bold text-espresso/60 dark:text-cream/60">ج.م</span>
+
+                              {discount > 0 && (
+                                <span className="rounded bg-emerald-500/15 px-1.5 py-0.5 text-[10px] font-black text-emerald-700 dark:text-emerald-400 shrink-0">
+                                  خصم {discount}%
+                                </span>
+                              )}
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setWholesaleTiers(wholesaleTiers.filter((_, i) => i !== idx));
+                              }}
+                              className="self-end sm:self-center p-1.5 rounded-lg text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition cursor-pointer"
+                              title="حذف هذه الشريحة"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const last = wholesaleTiers[wholesaleTiers.length - 1];
+                        const nextMin = last ? Number(last.minQty) + 10 : 5;
+                        const baseP = Number(price) || 100;
+                        const nextPrice = last ? Math.round(Number(last.price) * 0.9) : Math.round(baseP * 0.85);
+                        setWholesaleTiers([
+                          ...wholesaleTiers,
+                          { minQty: nextMin, price: nextPrice, label: 'شريحة جملة إضافية' }
+                        ]);
+                      }}
+                      className="inline-flex items-center gap-1.5 rounded-xl border border-primary/30 bg-primary/5 px-3 py-1.5 text-xs font-bold text-primary dark:text-primary-hover hover:bg-primary/10 transition cursor-pointer"
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                      <span>إضافة شريحة كميات جديدة</span>
+                    </button>
+                  </div>
+                )}
               </div>
 
               <details className="rounded-2xl border border-primary/20 bg-primary/[0.04] p-3.5 dark:bg-primary/[0.06] sm:p-4">

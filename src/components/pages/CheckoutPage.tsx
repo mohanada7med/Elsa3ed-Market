@@ -4,6 +4,7 @@ import { Governorate, Order } from '../../types';
 import { api, initiatePaymobPayment } from '../../services/api';
 import { calculatePaymobFee, PAYMOB_FEE_RATE, PAYMOB_FIXED_FEE } from '../../constants/paymobFees';
 import { formatArabicNumber } from '../../utils/arabicNumbers';
+import { getEffectiveUnitPrice } from '../../utils/wholesalePricing';
 import {
   ShieldCheck,
   Truck,
@@ -915,8 +916,10 @@ export const CheckoutPage: React.FC = () => {
                     {cart.map((item, idx) => {
                       const title = item.product?.title || 'قطعة أصيلة';
                       const img = item.product?.images?.[0];
-                      const price = item.product?.price || 0;
+                      const basePrice = item.product?.price || 0;
                       const qty = item.quantity || 1;
+                      const unitPrice = getEffectiveUnitPrice(item.product, qty);
+                      const isWholesale = unitPrice < basePrice;
 
                       return (
                         <div
@@ -945,13 +948,18 @@ export const CheckoutPage: React.FC = () => {
                               {title}
                             </p>
                             <p className="text-xs font-bold text-[#978b81] dark:text-white/50 mt-1 wah-num">
-                              {formatArabicNumber(price)} ج.م × {formatArabicNumber(qty)}
+                              {formatArabicNumber(unitPrice)} ج.م × {formatArabicNumber(qty)}
+                              {isWholesale && (
+                                <span className="mr-1.5 inline-block text-[10px] font-black text-emerald-600 dark:text-emerald-400">
+                                  (سعر جملة)
+                                </span>
+                              )}
                             </p>
                           </div>
 
                           <div className="text-left shrink-0">
                             <span className="text-base font-black font-price text-[#3B1E0E] dark:text-[#FFF9EE]">
-                              {formatArabicNumber(price * qty)}
+                              {formatArabicNumber(unitPrice * qty)}
                             </span>
                             <span className="block text-[10px] font-bold text-[#9c9188] dark:text-white/40">ج.م</span>
                           </div>

@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { formatArabicNumber } from '../../utils/arabicNumbers';
+import { getEffectiveUnitPrice, getActiveWholesaleTier, getNextWholesaleTier } from '../../utils/wholesalePricing';
 export const CartPage: React.FC = () => {
   const {
     cart,
@@ -300,10 +301,13 @@ export const CartPage: React.FC = () => {
 
                     const sellerName = prod?.sellerName || 'ورشة الصعيد';
                     const sellerGov = prod?.sellerGovernorate || 'قنا';
-                    const price = Number(prod?.price || 0);
+                    const basePrice = Number(prod?.price || 0);
                     const stockCount = prod?.stockCount ?? 99;
                     const qty = item.quantity || 1;
-                    const subtotal = price * qty;
+                    const unitPrice = getEffectiveUnitPrice(prod, qty);
+                    const subtotal = unitPrice * qty;
+                    const activeTier = getActiveWholesaleTier(prod, qty);
+                    const nextTier = getNextWholesaleTier(prod, qty);
 
                     return (
                       <motion.article
@@ -369,14 +373,32 @@ export const CartPage: React.FC = () => {
 
                             <div className="mt-5 flex flex-wrap items-end justify-between gap-4">
                               <div>
-                                <p className={`mb-1 text-[11px] ${muted}`}>
-                                  {qty > 1
-                                    ? `${formatPrice(price)} للقطعة`
-                                    : 'سعر القطعة'}
-                                </p>
-                                <p className="text-2xl font-black font-price text-[#8C5428] dark:text-[#DDA654]">
-                                  {formatPrice(subtotal)}
-                                </p>
+                                {activeTier ? (
+                                  <div className="mb-1.5 flex items-center gap-1.5">
+                                    <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/15 px-2 py-0.5 text-[10px] font-black text-emerald-700 dark:text-emerald-400">
+                                     خصم جملة {activeTier.discountPercent}%
+                                    </span>
+                                    <span className="text-[10px] text-espresso/45 dark:text-cream/45 line-through">
+                                      {formatPrice(basePrice)}
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <p className={`mb-1 text-[11px] ${muted}`}>
+                                    {qty > 1
+                                      ? `${formatPrice(unitPrice)} للقطعة`
+                                      : 'سعر القطعة'}
+                                  </p>
+                                )}
+                                <div className="flex items-baseline gap-2">
+                                  <p className="text-2xl font-black font-price text-[#8C5428] dark:text-[#DDA654]">
+                                    {formatPrice(subtotal)}
+                                  </p>
+                                  {qty > 1 && (
+                                    <span className="text-xs font-bold text-espresso/50 dark:text-cream/50 wah-num">
+                                      ({formatPrice(unitPrice)} للقطعة)
+                                    </span>
+                                  )}
+                                </div>
                               </div>
 
                               <div className="flex items-center gap-3">
@@ -414,6 +436,23 @@ export const CartPage: React.FC = () => {
                                 </div>
                               </div>
                             </div>
+
+                            {/* Wholesale Tier Next Level Hint */}
+                            {nextTier && nextTier.itemsNeeded <= 12 && (
+                              <div className="mt-3 flex items-center justify-between gap-2 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2 text-xs text-primary dark:text-primary-hover">
+                                <span className="flex items-center gap-1.5 font-bold">
+                                  <Sparkles className="h-3.5 w-3.5" />
+                                  زوّد {formatArabicNumber(nextTier.itemsNeeded)} {nextTier.itemsNeeded === 1 ? 'قطعة' : 'قطع'} واحصل على خصم الجملة {nextTier.discountPercent}% ({formatPrice(nextTier.potentialUnitPrice)} للقطعة)!
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => updateCartQuantity(prodId, nextTier.tier.minQty)}
+                                  className="shrink-0 rounded-lg bg-primary px-2.5 py-1 text-[10px] font-black text-white transition hover:bg-primary-hover cursor-pointer"
+                                >
+                                  تطبيق الشريحة
+                                </button>
+                              </div>
+                            )}
 
                             {stockCount < 5 && stockCount > 0 && (
                               <p className="mt-3 flex items-center gap-1.5 text-xs font-bold text-amber-700 dark:text-amber-400">

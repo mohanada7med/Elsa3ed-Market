@@ -22,6 +22,12 @@ export type Governorate =
 
 export type ProductStatus = 'draft' | 'pending' | 'approved' | 'rejected';
 
+export interface WholesaleTier {
+  minQty: number;
+  price: number;
+  label?: string;
+}
+
 export interface Product {
   id: string;
   title: string;
@@ -54,8 +60,10 @@ export interface Product {
   isFeatured?: boolean;
   isProductOfWeek?: boolean;
   isNewArrival?: boolean;
+  wholesaleEnabled?: boolean;
   wholesalePrice?: number;
   wholesaleMinQty?: number;
+  wholesaleTiers?: WholesaleTier[];
   createdAt: string;
   updatedAt?: string;
   approvalStatus: ProductStatus;
@@ -174,6 +182,9 @@ export interface CartItem {
   quantity: number;
   selectedColor?: string;
   customNote?: string;
+  unitPrice?: number;
+  itemSubtotal?: number;
+  isWholesaleApplied?: boolean;
 }
 
 export type OrderStatus =

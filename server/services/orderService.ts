@@ -165,8 +165,9 @@ export async function createOrder(
     sellerName: item.product.sellerName,
     sellerGovernorate: item.product.sellerGovernorate,
     quantity: item.quantity,
-    unitPrice: item.product.price, // Immutable historical snapshot
+    unitPrice: item.unitPrice ?? item.product.price, // Immutable historical snapshot (reflecting wholesale tier if applicable)
     subtotal: item.itemSubtotal,
+    isWholesaleApplied: item.isWholesaleApplied,
     selectedColor: item.selectedColor,
     customNote: item.customNote
   }));

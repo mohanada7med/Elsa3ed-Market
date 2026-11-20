@@ -26,6 +26,7 @@ import { api, wahApi } from '../services/api.ts';
 import { notificationService, AppNotification, normalizeNotification } from '../services/notificationService.ts';
 import { browserNotificationService, BrowserNotificationSettings } from '../services/browserNotificationService.ts';
 import { resolveNotificationNavigation } from '../utils/notificationRouter.ts';
+import { getEffectiveUnitPrice } from '../utils/wholesalePricing.ts';
 
 export interface ToastNotification {
   id: string;
@@ -2225,7 +2226,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const cartCount = useMemo(() => cart.reduce((acc, item) => acc + item.quantity, 0), [cart]);
 
   const cartSubtotal = useMemo(() => {
-    return cart.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
+    return cart.reduce((acc, item) => {
+      const unitPrice = getEffectiveUnitPrice(item.product, item.quantity);
+      return acc + unitPrice * item.quantity;
+    }, 0);
   }, [cart]);
 
   const shippingFee = useMemo(() => {
