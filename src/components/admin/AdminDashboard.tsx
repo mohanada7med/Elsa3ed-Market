@@ -3618,7 +3618,7 @@ export const AdminDashboard: React.FC = () => {
                   <div>
                     <h3 className="font-bold text-base text-foreground">إشراف ومراجعة تقييمات المشترين</h3>
                     <p className="text-xs text-black/60 dark:text-white/60">
-                      مراجعة آراء وتعليقات الزباين، وشارة الشراء المؤكد، ومنع أي تقييم عشوائي أو مش مناسب
+                      التقييمات الجديدة لا تظهر للمشترين إلا بعد الموافقة عليها
                     </p>
                   </div>
 
@@ -3643,6 +3643,21 @@ export const AdminDashboard: React.FC = () => {
                         <div className="space-y-1.5 flex-1">
                           <div className="flex flex-wrap items-center gap-2">
                             <span className="font-bold text-xs text-foreground">{rev.userName || 'مشتري موثق'}</span>
+                            <span
+                              className={`px-2 py-0.5 rounded-full border text-[10px] font-bold ${
+                                rev.status === 'published'
+                                  ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                                  : rev.status === 'hidden'
+                                    ? 'bg-amber-100 text-amber-800 border-amber-300'
+                                    : 'bg-blue-100 text-blue-800 border-blue-300'
+                              }`}
+                            >
+                              {rev.status === 'published'
+                                ? 'منشور'
+                                : rev.status === 'hidden'
+                                  ? 'مخفي'
+                                  : 'بانتظار الموافقة'}
+                            </span>
                             {rev.verifiedPurchase && (
                               <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-300">
                                 <BadgeCheck className="w-3 h-3 text-emerald-600" />
@@ -3658,34 +3673,49 @@ export const AdminDashboard: React.FC = () => {
                                 />
                               ))}
                             </div>
-                            <span className="text-[10px] text-black/60 dark:text-white/60 font-black">{rev.date}</span>
+                            <span className="text-[10px] text-black/60 dark:text-white/60 font-black">
+                              {rev.createdAt
+                                ? new Date(rev.createdAt).toLocaleDateString('ar-EG', { timeZone: 'Africa/Cairo' })
+                                : rev.date}
+                            </span>
                           </div>
 
                           <p className="text-xs text-foreground leading-relaxed">"{rev.comment}"</p>
 
                           <div className="text-[11px] text-black/60 dark:text-white/60 flex items-center gap-3">
-                            <span>المنتج: <strong className="text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">{rev.productTitle || rev.productId}</strong></span>
+                            <span>
+                              {rev.reviewType === 'seller' ? 'البائع:' : 'المنتج:'}{' '}
+                              <strong className="text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
+                                {rev.reviewType === 'seller'
+                                  ? rev.sellerName || rev.productTitle || rev.sellerId
+                                  : rev.productTitle || rev.productId}
+                              </strong>
+                            </span>
                             <span>المحافظة: {rev.userGovernorate || 'الصعيد'}</span>
                           </div>
                         </div>
 
                         <div className="flex items-center gap-2 self-end md:self-center shrink-0">
-                          <button
-                            type="button"
-                            onClick={() => moderateReview(rev.id, 'published')}
-                            className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold flex items-center gap-1 shadow-xs cursor-pointer"
-                          >
-                            <Check className="w-3.5 h-3.5" />
-                            <span>قبول ونشر</span>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => moderateReview(rev.id, 'hidden')}
-                            className="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer"
-                          >
-                            <X className="w-3.5 h-3.5" />
-                            <span>إخفاء</span>
-                          </button>
+                          {rev.status !== 'published' && (
+                            <button
+                              type="button"
+                              onClick={() => moderateReview(rev.id, 'published')}
+                              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold flex items-center gap-1 shadow-xs cursor-pointer"
+                            >
+                              <Check className="w-3.5 h-3.5" />
+                              <span>قبول ونشر</span>
+                            </button>
+                          )}
+                          {rev.status !== 'hidden' && (
+                            <button
+                              type="button"
+                              onClick={() => moderateReview(rev.id, 'hidden')}
+                              className="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                              <span>إخفاء</span>
+                            </button>
+                          )}
                           <button
                             type="button"
                             onClick={() => {

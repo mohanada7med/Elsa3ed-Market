@@ -12,13 +12,52 @@ import { createNotification, notifyAdmins } from './notificationService.ts';
 import { addAuditLog } from './auditService.ts';
 import { AuthenticatedUser } from '../middleware/auth.ts';
 
+interface SellerProductSales {
+  productId: string;
+  productTitle: string;
+  quantity: number;
+  revenue: number;
+  ordersCount: number;
+  averageUnitPrice: number;
+}
+
+interface SellerOrderSale {
+  orderId: string;
+  orderNumber: string;
+  createdAt: string;
+  buyerName: string;
+  status: string;
+  paymentStatus: string;
+  itemCount: number;
+  productSales: number;
+  items: Array<{
+    productId: string;
+    productTitle: string;
+    quantity: number;
+    unitPrice: number;
+    revenue: number;
+  }>;
+}
+
+function orderIncludesSeller(order: OrderDocument, sellerIds: Set<string>): boolean {
+  return (
+    (order.sellerIds || []).some((id) => sellerIds.has(id)) ||
+    (order.items || []).some((item) => sellerIds.has(item.sellerId))
+  );
+}
+
 /**
  * Calculates a seller's real-time financial balance directly from actual order history and payouts.
  * Prevents double payouts and guarantees that no untrusted frontend numbers are ever used.
  */
 export async function calculateSellerBalance(sellerId: string): Promise<{
   totalEarnings: number;
+  totalProductSales: number;
+  totalSellerTips: number;
   totalSalesCount: number;
+  sellerOrdersCount: number;
+  salesByProduct: SellerProductSales[];
+  recentSales: SellerOrderSale[];
   totalPaid: number;
   pendingProcessing: number;
   availableBalance: number;
@@ -41,16 +80,23 @@ export async function calculateSellerBalance(sellerId: string): Promise<{
         $or: [{ id: sellerId }, { userId: sellerId }]
       })) as unknown as SellerDocument | null;
 
-      const effectiveSellerId = seller ? seller.id : sellerId;
+      const sellerIdentifiers = new Set(
+        [sellerId, seller?.id, seller?.userId].filter((id): id is string => Boolean(id))
+      );
 
       orders = (await db
         .collection('orders')
-        .find({ sellerIds: effectiveSellerId })
+        .find({
+          $or: [
+            { sellerIds: { $in: Array.from(sellerIdentifiers) } },
+            { 'items.sellerId': { $in: Array.from(sellerIdentifiers) } }
+          ]
+        })
         .toArray()) as unknown as OrderDocument[];
 
       payouts = (await db
         .collection('payouts')
-        .find({ sellerId: effectiveSellerId })
+        .find({ sellerId: { $in: Array.from(sellerIdentifiers) } })
         .toArray()) as unknown as PayoutDocument[];
     } catch (e) {
       console.error('[PayoutService] Error querying MongoDB in calculateSellerBalance:', e);
@@ -64,36 +110,117 @@ export async function calculateSellerBalance(sellerId: string): Promise<{
       ) as unknown as SellerDocument) || null;
   }
 
-  const effectiveSellerId = seller ? seller.id : sellerId;
+  const sellerIdentifiers = new Set(
+    [sellerId, seller?.id, seller?.userId].filter((id): id is string => Boolean(id))
+  );
 
   if (orders.length === 0) {
-    orders = memoryDb.orders.filter(
-      (o) => o.sellerIds && o.sellerIds.includes(effectiveSellerId)
-    );
+    orders = memoryDb.orders.filter((order) => orderIncludesSeller(order, sellerIdentifiers));
   }
 
   if (payouts.length === 0) {
-    payouts = memoryDb.payouts.filter((p) => p.sellerId === effectiveSellerId);
+    payouts = memoryDb.payouts.filter((payout) => sellerIdentifiers.has(payout.sellerId));
   }
 
   // 1. Calculate eligible earnings from non-cancelled, non-refunded orders
   let totalEarnings = 0;
+  let totalProductSales = 0;
+  let totalSellerTips = 0;
   let totalSalesCount = 0;
+  let sellerOrdersCount = 0;
+  const productSales = new Map<string, {
+    productId: string;
+    productTitle: string;
+    quantity: number;
+    revenue: number;
+    orderIds: Set<string>;
+  }>();
+  const recentSales: SellerOrderSale[] = [];
 
   for (const order of orders) {
-    if (order.status !== 'cancelled' && order.paymentStatus !== 'refunded') {
-      for (const item of order.items || []) {
-        if (item.sellerId === effectiveSellerId) {
-          const itemRev = (item.unitPrice || 0) * (item.quantity || 1);
-          totalEarnings += itemRev;
-          totalSalesCount += item.quantity || 1;
-        }
+    if (order.status === 'cancelled' || order.paymentStatus === 'refunded') continue;
+
+    const sellerItems = (order.items || []).filter((item) => sellerIdentifiers.has(item.sellerId));
+    if (sellerItems.length > 0) {
+      sellerOrdersCount += 1;
+      const orderItems: SellerOrderSale['items'] = [];
+      let orderProductSales = 0;
+
+      for (const item of sellerItems) {
+        const quantity = Number(item.quantity) || 1;
+        const unitPrice = Number(item.unitPrice) || 0;
+        const itemRevenue = unitPrice * quantity;
+        const productId = item.productId || item.productTitle;
+        const productTitle = item.productTitle || item.productId;
+        const existing = productSales.get(productId);
+        const sales = existing || {
+          productId,
+          productTitle,
+          quantity: 0,
+          revenue: 0,
+          orderIds: new Set<string>()
+        };
+
+        sales.quantity += quantity;
+        sales.revenue += itemRevenue;
+        sales.orderIds.add(order.id);
+        productSales.set(productId, sales);
+
+        totalProductSales += itemRevenue;
+        totalSalesCount += quantity;
+        orderProductSales += itemRevenue;
+        orderItems.push({
+          productId,
+          productTitle,
+          quantity,
+          unitPrice,
+          revenue: Math.round(itemRevenue * 100) / 100
+        });
       }
-      if (order.sellerTipSellerId === effectiveSellerId) {
-        totalEarnings += Number(order.sellerTipAmount) || 0;
-      }
+
+      recentSales.push({
+        orderId: order.id,
+        orderNumber: order.orderNumber || order.id,
+        createdAt: order.createdAt,
+        buyerName: order.buyerName,
+        status: order.status,
+        paymentStatus: order.paymentStatus,
+        itemCount: sellerItems.reduce((sum, item) => sum + (Number(item.quantity) || 1), 0),
+        productSales: Math.round(orderProductSales * 100) / 100,
+        items: orderItems
+      });
+    }
+
+    if (order.sellerTipSellerId && sellerIdentifiers.has(order.sellerTipSellerId)) {
+      const sellerTip = Number(order.sellerTipAmount) || 0;
+      totalSellerTips += sellerTip;
+      totalEarnings += sellerTip;
+    }
+
+    if (sellerItems.length > 0) {
+      totalEarnings += sellerItems.reduce(
+        (sum, item) => sum + (Number(item.unitPrice) || 0) * (Number(item.quantity) || 1),
+        0
+      );
     }
   }
+
+  const salesByProduct: SellerProductSales[] = Array.from(productSales.values())
+    .map((sales) => ({
+      productId: sales.productId,
+      productTitle: sales.productTitle,
+      quantity: sales.quantity,
+      revenue: Math.round(sales.revenue * 100) / 100,
+      ordersCount: sales.orderIds.size,
+      averageUnitPrice: sales.quantity > 0
+        ? Math.round((sales.revenue / sales.quantity) * 100) / 100
+        : 0
+    }))
+    .sort((a, b) => b.revenue - a.revenue);
+  recentSales.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  totalProductSales = Math.round(totalProductSales * 100) / 100;
+  totalSellerTips = Math.round(totalSellerTips * 100) / 100;
+  totalEarnings = Math.round(totalEarnings * 100) / 100;
 
   // 2. Sum up total paid payouts
   let totalPaid = 0;
@@ -112,7 +239,6 @@ export async function calculateSellerBalance(sellerId: string): Promise<{
   }
 
   // 3. Round to 2 decimal places to avoid floating point inaccuracies
-  totalEarnings = Math.round(totalEarnings * 100) / 100;
   totalPaid = Math.round(totalPaid * 100) / 100;
   pendingProcessing = Math.round(pendingProcessing * 100) / 100;
 
@@ -127,7 +253,12 @@ export async function calculateSellerBalance(sellerId: string): Promise<{
 
   return {
     totalEarnings,
+    totalProductSales,
+    totalSellerTips,
     totalSalesCount,
+    sellerOrdersCount,
+    salesByProduct,
+    recentSales: recentSales.slice(0, 20),
     totalPaid,
     pendingProcessing,
     availableBalance,
@@ -499,6 +630,14 @@ export async function getAdminPayoutById(payoutId: string): Promise<{
   currentAvailableBalance: number;
   sellerPreviousPayouts: PayoutDocument[];
   totalSellerEarnings: number;
+  totalProductSales: number;
+  totalSellerTips: number;
+  totalSalesCount: number;
+  sellerOrdersCount: number;
+  totalPaid: number;
+  pendingProcessing: number;
+  salesByProduct: SellerProductSales[];
+  recentSales: SellerOrderSale[];
 } | null> {
   const { db, isMongo } = await getDatabase();
   let payout: PayoutDocument | null = null;
@@ -547,7 +686,15 @@ export async function getAdminPayoutById(payoutId: string): Promise<{
     seller: balanceInfo.seller,
     currentAvailableBalance: balanceInfo.availableBalance,
     sellerPreviousPayouts,
-    totalSellerEarnings: balanceInfo.totalEarnings
+    totalSellerEarnings: balanceInfo.totalEarnings,
+    totalProductSales: balanceInfo.totalProductSales,
+    totalSellerTips: balanceInfo.totalSellerTips,
+    totalSalesCount: balanceInfo.totalSalesCount,
+    sellerOrdersCount: balanceInfo.sellerOrdersCount,
+    totalPaid: balanceInfo.totalPaid,
+    pendingProcessing: balanceInfo.pendingProcessing,
+    salesByProduct: balanceInfo.salesByProduct,
+    recentSales: balanceInfo.recentSales
   };
 }
 

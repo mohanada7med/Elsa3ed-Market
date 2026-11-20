@@ -55,6 +55,7 @@ router.get('/', async (req: Request, res: Response) => {
 // GET /api/products/:id/reviews - Public product reviews
 router.get('/:id/reviews', async (req: Request, res: Response) => {
   try {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
     const reviews = await getProductReviews(req.params.id, false);
     res.json({
       success: true,
@@ -83,7 +84,7 @@ router.post('/:id/reviews', requireBuyer, async (req: AuthenticatedRequest, res:
 
     res.status(201).json({
       success: true,
-      message: 'تقييمك اتسجل بنجاح، تسلم!',
+      message: 'تم تسجيل تقييمك، وسيظهر للمشترين بعد موافقة الإدارة.',
       data: result.review,
       productRating: result.updatedProductRating
     });

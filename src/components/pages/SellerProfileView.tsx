@@ -15,6 +15,7 @@ import {
 import { updatePageSEO, generateStoreSchema } from '../../utils/seo';
 import { api } from '../../services/api';
 import { QrCodeModal } from '../common/QrCodeModal';
+import type { Review } from '../../types';
 
 type SortKey = 'default' | 'price-asc' | 'price-desc';
 
@@ -35,6 +36,7 @@ export const SellerProfileView: React.FC = () => {
     sellers,
     selectedSellerId,
     products,
+    orders,
     setActivePage,
     addToast,
     currentUser,
@@ -70,6 +72,13 @@ export const SellerProfileView: React.FC = () => {
   const [isFollowLoading, setIsFollowLoading] = useState(false);
   const [sortBy, setSortBy] = useState<SortKey>('default');
   const [activeCategory, setActiveCategory] = useState<string>('all');
+  const [sellerReviews, setSellerReviews] = useState<Review[]>([]);
+  const [mySellerReview, setMySellerReview] = useState<Review | null>(null);
+  const [isSellerReviewsLoading, setIsSellerReviewsLoading] = useState(false);
+  const [sellerReviewsError, setSellerReviewsError] = useState<string | null>(null);
+  const [newSellerRating, setNewSellerRating] = useState(5);
+  const [newSellerComment, setNewSellerComment] = useState('');
+  const [isSubmittingSellerReview, setIsSubmittingSellerReview] = useState(false);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -99,6 +108,43 @@ export const SellerProfileView: React.FC = () => {
   }, [matchedSeller, effectiveSellerId]);
 
   const seller = matchedSeller || directSeller;
+
+  useEffect(() => {
+    if (!seller?.id) {
+      setSellerReviews([]);
+      setMySellerReview(null);
+      return;
+    }
+
+    let active = true;
+    setIsSellerReviewsLoading(true);
+    setSellerReviewsError(null);
+    setSellerReviews([]);
+    setMySellerReview(null);
+    setNewSellerComment('');
+    const mineRequest = isAuthenticated && currentUser.role === 'buyer'
+      ? api.getMySellerReview(currentUser, seller.id)
+      : Promise.resolve(null);
+
+    Promise.all([api.getSellerReviews(seller.id), mineRequest])
+      .then(([publishedReviews, myReview]) => {
+        if (!active) return;
+        setSellerReviews(publishedReviews.filter((review) => review.status === 'published'));
+        setMySellerReview(myReview);
+      })
+      .catch((error: unknown) => {
+        if (!active) return;
+        console.error('[SellerProfileView] Failed to load seller reviews:', error);
+        setSellerReviewsError('تعذر تحميل التقييمات حالياً. حاول تحديث الصفحة.');
+      })
+      .finally(() => {
+        if (active) setIsSellerReviewsLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [seller?.id, isAuthenticated, currentUser.id, currentUser.role]);
 
   const isOwnSellerProfile = Boolean(
     seller &&
@@ -150,6 +196,32 @@ export const SellerProfileView: React.FC = () => {
       addToast('تعذر تحديث المتابعة', (error as Error).message || 'حاول مرة أخرى بعد قليل', 'error');
     } finally {
       setIsFollowLoading(false);
+    }
+  };
+
+  const handleSubmitSellerReview = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!seller?.id || !newSellerComment.trim() || isSubmittingSellerReview) return;
+
+    setIsSubmittingSellerReview(true);
+    try {
+      const review = await api.createSellerReview(
+        currentUser,
+        seller.id,
+        newSellerRating,
+        newSellerComment
+      );
+      setMySellerReview(review);
+      setNewSellerComment('');
+      addToast('تم إرسال تقييمك', 'سيظهر تقييمك بعد موافقة الإدارة', 'success');
+    } catch (error) {
+      addToast(
+        'تعذر إرسال التقييم',
+        (error as Error).message || 'حاول مرة أخرى بعد قليل',
+        'error'
+      );
+    } finally {
+      setIsSubmittingSellerReview(false);
     }
   };
 
@@ -265,9 +337,24 @@ export const SellerProfileView: React.FC = () => {
     ? Math.max(0, new Date().getFullYear() - seller.craftSinceYear)
     : null;
 
-  const hasRating = Number(seller.rating) > 0;
+  const sellerRating = sellerReviews.length > 0
+    ? Number((sellerReviews.reduce((sum, review) => sum + review.rating, 0) / sellerReviews.length).toFixed(1))
+    : Number(seller.rating) || 0;
+  const sellerReviewCount = sellerReviews.length || seller.reviewCount || 0;
+  const hasRating = sellerRating > 0;
   const hasSales = Number(seller.salesCount) > 0;
   const whatsappNumber = toWhatsAppNumber(seller.phone);
+  const sellerIdentifiers = new Set(
+    [seller.id, seller.userId].filter((id): id is string => Boolean(id))
+  );
+  const hasDeliveredOrderFromSeller =
+    currentUser.role === 'buyer' &&
+    orders.some(
+      (order) =>
+        order.buyerId === currentUser.id &&
+        order.status === 'delivered' &&
+        order.items.some((item) => sellerIdentifiers.has(item.product.sellerId))
+    );
 
   const profileUrl = () =>
     `${window.location.origin}/sellers/${encodeURIComponent(seller.id || effectiveSellerId || '')}`;
@@ -301,7 +388,11 @@ export const SellerProfileView: React.FC = () => {
 
   const stats = [
     { value: String(sellerProducts.length), label: 'قطعة متاحة' },
-    hasRating && { value: String(seller.rating), label: 'تقييم', star: true },
+    hasRating && {
+      value: `${sellerRating.toLocaleString('ar-EG')} (${sellerReviewCount.toLocaleString('ar-EG')})`,
+      label: 'تقييم المشترين',
+      star: true
+    },
     hasSales && { value: String(seller.salesCount), label: 'مبيعة' },
     followState.followersCount > 0 && { value: String(followState.followersCount), label: 'متابع' },
     craftYears !== null && { value: String(craftYears), label: 'سنة خبرة' },
@@ -555,7 +646,146 @@ export const SellerProfileView: React.FC = () => {
             </div>
           </section>
 
-          
+          {/* seller reviews */}
+          <section aria-labelledby="seller-reviews-title" className="space-y-6">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <h2 id="seller-reviews-title" className="text-3xl font-main font-black sm:text-4xl">
+                  تقييمات المشترين
+                </h2>
+                <p className="mt-2 text-sm text-foreground-muted">
+                  شارك تجربتك مع {brandTitle}. التقييمات تظهر بعد مراجعة الإدارة.
+                </p>
+              </div>
+              <div className="flex items-center gap-2 rounded-2xl bg-surface-subtle px-4 py-3">
+                <Star className="h-5 w-5 fill-current text-amber-500" />
+                <span className="text-lg font-black">
+                  {sellerRating > 0 ? sellerRating.toLocaleString('ar-EG') : '—'}
+                </span>
+                <span className="text-xs text-foreground-muted">
+                  ({sellerReviews.length.toLocaleString('ar-EG')} تقييم منشور)
+                </span>
+              </div>
+            </div>
+
+            {sellerReviewsError && (
+              <p role="alert" className="rounded-xl border border-rose-500/20 bg-rose-500/5 p-4 text-sm text-rose-700 dark:text-rose-300">
+                {sellerReviewsError}
+              </p>
+            )}
+
+            {isSellerReviewsLoading ? (
+              <p className="rounded-2xl bg-surface-subtle p-5 text-sm text-foreground-muted">
+                جاري تحميل التقييمات...
+              </p>
+            ) : sellerReviews.length === 0 ? (
+              <p className="rounded-2xl border border-dashed border-border-subtle p-6 text-sm text-foreground-muted">
+                لسه مفيش تقييمات منشورة للورشة.
+              </p>
+            ) : (
+              <div className="grid gap-3">
+                {sellerReviews.map((review) => (
+                  <article key={review.id} className="rounded-2xl border border-border-subtle bg-surface-subtle p-5">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div>
+                        <p className="font-black">{review.userName}</p>
+                        <p className="mt-1 text-xs text-foreground-muted">
+                          {review.createdAt
+                            ? new Date(review.createdAt).toLocaleDateString('ar-EG', { timeZone: 'Africa/Cairo' })
+                            : review.date}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-0.5" aria-label={`${review.rating} من 5 نجوم`}>
+                        {Array.from({ length: 5 }, (_, index) => (
+                          <Star
+                            key={index}
+                            className={`h-4 w-4 ${index < review.rating ? 'fill-current text-amber-500' : 'text-foreground-disabled'}`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <p className="mt-3 whitespace-pre-line text-sm leading-7 text-foreground-muted">{review.comment}</p>
+                  </article>
+                ))}
+              </div>
+            )}
+
+            {isSellerReviewsLoading ? (
+              <p className="rounded-2xl bg-surface-subtle p-5 text-sm text-foreground-muted">
+                جاري التحقق من إمكانية إضافة تقييم...
+              </p>
+            ) : mySellerReview ? (
+              <div className="flex items-start gap-2 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-5 text-sm text-emerald-800 dark:text-emerald-300">
+                <BadgeCheck className="mt-0.5 h-5 w-5 shrink-0" />
+                <span>
+                  {mySellerReview.status === 'pending'
+                    ? 'تم إرسال تقييمك، وسيظهر للمشترين بعد موافقة الإدارة.'
+                    : mySellerReview.status === 'published'
+                      ? 'شكراً لك، لقد قيّمت هذه الورشة بالفعل.'
+                      : 'سبق وأرسلت تقييماً لهذه الورشة.'}
+                </span>
+              </div>
+            ) : !isAuthenticated ? (
+              <div className="rounded-2xl border border-border-subtle bg-surface-subtle p-5 text-center">
+                <p className="text-sm text-foreground-muted">سجّل الدخول بعد استلام طلب من الورشة لتقييم البائع.</p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAuthModalTab('login');
+                    setIsAuthModalOpen(true);
+                  }}
+                  className="mt-3 rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-white"
+                >
+                  تسجيل الدخول
+                </button>
+              </div>
+            ) : currentUser.role !== 'buyer' || isOwnSellerProfile ? (
+              <p className="rounded-2xl border border-border-subtle bg-surface-subtle p-5 text-sm text-foreground-muted">
+                تقييم الورش متاح للمشترين فقط.
+              </p>
+            ) : !hasDeliveredOrderFromSeller ? (
+              <p className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-5 text-sm text-amber-800 dark:text-amber-200">
+                يمكنك تقييم البائع بعد استلام طلب من هذه الورشة.
+              </p>
+            ) : (
+              <form onSubmit={handleSubmitSellerReview} className="rounded-3xl border border-border-subtle bg-surface-subtle p-5 sm:p-7">
+                <h3 className="text-lg font-black">قيّم تجربتك مع البائع</h3>
+                <div className="mt-3 flex items-center gap-1" role="group" aria-label="اختيار عدد النجوم">
+                  {Array.from({ length: 5 }, (_, index) => {
+                    const rating = index + 1;
+                    return (
+                      <button
+                        key={rating}
+                        type="button"
+                        onClick={() => setNewSellerRating(rating)}
+                        aria-label={`${rating} نجوم`}
+                        aria-pressed={newSellerRating === rating}
+                        className="rounded p-1"
+                      >
+                        <Star className={`h-7 w-7 ${rating <= newSellerRating ? 'fill-current text-amber-500' : 'text-foreground-disabled'}`} />
+                      </button>
+                    );
+                  })}
+                </div>
+                <textarea
+                  required
+                  maxLength={1000}
+                  rows={4}
+                  value={newSellerComment}
+                  onChange={(event) => setNewSellerComment(event.target.value)}
+                  placeholder="اكتب رأيك في التعامل وجودة الخدمة..."
+                  className="mt-4 w-full resize-y rounded-2xl border border-border-subtle bg-background p-4 text-sm outline-none focus:ring-2 focus:ring-primary"
+                />
+                <button
+                  type="submit"
+                  disabled={isSubmittingSellerReview || !newSellerComment.trim()}
+                  className="mt-3 rounded-xl bg-primary px-6 py-3 text-sm font-black text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {isSubmittingSellerReview ? 'جاري إرسال التقييم...' : 'إرسال التقييم'}
+                </button>
+              </form>
+            )}
+          </section>
         </main>
 
         {/* ==================== SIDEBAR ==================== */}

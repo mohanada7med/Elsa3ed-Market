@@ -83,6 +83,7 @@ export interface SellerDocument {
   brandName: string;
   governorate: string;
   rating: number;
+  reviewCount?: number;
   salesCount: number;
   productsCount: number;
   badge: string;
@@ -375,9 +376,30 @@ export interface ReviewDocument {
   comment: string;
   date: string;
   verifiedPurchase: boolean;
-  status: 'published' | 'hidden';
+  status: 'pending' | 'published' | 'hidden';
+  reviewType?: 'product' | 'seller';
+  sellerId?: string;
+  sellerName?: string;
   createdAt?: string;
   updatedAt?: string;
+}
+
+export interface SellerReviewDocument {
+  id: string;
+  sellerId: string;
+  sellerName: string;
+  verifiedBuyerId: string;
+  userId: string;
+  userName: string;
+  userGovernorate?: string;
+  orderId: string;
+  rating: number;
+  comment: string;
+  date: string;
+  verifiedPurchase: true;
+  status: 'pending' | 'published' | 'hidden';
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface StockMovementDocument {

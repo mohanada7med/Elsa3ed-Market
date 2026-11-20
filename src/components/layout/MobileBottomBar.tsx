@@ -113,14 +113,6 @@ export const MobileBottomBar: React.FC = () => {
 
     rightItems = [
       {
-        id: 'seller-orders',
-        label: 'الطلبات',
-        icon: ClipboardList,
-        isActive: activePage === 'seller-orders',
-        onClick: () =>
-          setActivePage('seller-orders' as any),
-      },
-      {
         id: 'seller-messages',
         label: 'المحادثات',
         icon: MessageSquare,

@@ -685,7 +685,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
         { id: 'seller-dashboard', label: 'لوحة التحكم', icon: LayoutDashboard },
         { id: 'seller-products', label: 'منتجاتي', icon: Package },
         { id: 'seller-inventory', label: 'المخزون', icon: Store },
-        { id: 'seller-orders', label: 'الطلبات', icon: ClipboardList },
         { id: 'seller-analytics', label: 'الإحصائيات', icon: Sparkles },
         { id: 'buyer-account', label: 'الملف الشخصي', icon: UserCircle },
       ];
@@ -753,11 +752,11 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
           items: ['seller-products', 'seller-inventory'],
         },
         {
-          id: 'seller-orders',
-          title: 'الطلبات والأداء',
-          description: 'الطلبات والإحصائيات',
+          id: 'seller-performance',
+          title: 'الأداء',
+          description: 'إحصائيات الورشة',
           icon: ClipboardList,
-          items: ['seller-orders', 'seller-analytics'],
+          items: ['seller-analytics'],
         },
       ]
       : isAdmin
@@ -953,12 +952,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
           id: 'seller-products',
           label: 'منتجات الورشة',
           icon: Package,
-          badge: null,
-        },
-        {
-          id: 'seller-orders',
-          label: 'طلبات الورشة',
-          icon: ClipboardList,
           badge: null,
         },
         {

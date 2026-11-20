@@ -43,7 +43,9 @@ import {
   PaidPromotionRequest,
   SellerFollowState,
   HomePromotionPosition,
-  ContentStatus
+  ContentStatus,
+  Review,
+  AdminPayoutDetails
 } from '../types.ts';
 
 
@@ -1897,7 +1899,10 @@ export const api = {
       headers: getAuthHeaders(user)
     });
     const json: ApiResponse<any[]> = await res.json();
-    return json.data || [];
+    if (!json.success || !Array.isArray(json.data)) {
+      throw new Error(json.error || 'فشل في جلب طلبات المنصة');
+    }
+    return json.data;
   },
 
   async updateAdminOrderStatus(
@@ -2413,10 +2418,13 @@ export const api = {
   },
 
   // ==================== PHASE 4: REVIEWS ====================
-  async getProductReviews(productId: string): Promise<any[]> {
+  async getProductReviews(productId: string): Promise<Review[]> {
     const res = await fetch(`${API_BASE}/products/${productId}/reviews`);
-    const json: ApiResponse<any[]> = await res.json();
-    return json.data || [];
+    const json: ApiResponse<Review[]> = await res.json();
+    if (!res.ok || !json.success || !Array.isArray(json.data)) {
+      throw new Error(json.error || 'تعذر تحميل التقييمات');
+    }
+    return json.data;
   },
 
   async createProductReview(
@@ -2433,6 +2441,49 @@ export const api = {
     const json: ApiResponse<any> = await res.json();
     if (!json.success || !json.data) {
       throw new Error(json.error || 'فشل في إرسال التقييم');
+    }
+    return json.data;
+  },
+
+  async getSellerReviews(sellerId: string): Promise<Review[]> {
+    const res = await fetch(`${API_BASE}/sellers/${encodeURIComponent(sellerId)}/reviews`);
+    const json: ApiResponse<Review[]> = await res.json();
+    if (!res.ok || !json.success || !Array.isArray(json.data)) {
+      throw new Error(json.error || 'تعذر تحميل تقييمات البائع');
+    }
+    return json.data;
+  },
+
+  async getMySellerReview(
+    user: { id: string; role: string },
+    sellerId: string
+  ): Promise<Review | null> {
+    const res = await fetch(`${API_BASE}/sellers/${encodeURIComponent(sellerId)}/reviews/mine`, {
+      credentials: 'include',
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<Review | null> = await res.json();
+    if (!res.ok || !json.success) {
+      throw new Error(json.error || 'تعذر تحميل تقييمك للبائع');
+    }
+    return json.data || null;
+  },
+
+  async createSellerReview(
+    user: { id: string; role: string },
+    sellerId: string,
+    rating: number,
+    comment: string
+  ): Promise<Review> {
+    const res = await fetch(`${API_BASE}/sellers/${encodeURIComponent(sellerId)}/reviews`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify({ rating, comment })
+    });
+    const json: ApiResponse<Review> = await res.json();
+    if (!res.ok || !json.success || !json.data) {
+      throw new Error(json.error || 'تعذر إرسال تقييم البائع');
     }
     return json.data;
   },
@@ -3640,13 +3691,7 @@ export const api = {
   async getAdminPayoutById(
     user: { id: string; role: string },
     id: string
-  ): Promise<{
-    payout: PayoutRequest;
-    seller: Seller | null;
-    currentAvailableBalance: number;
-    sellerPreviousPayouts: PayoutRequest[];
-    totalSellerEarnings: number;
-  }> {
+  ): Promise<AdminPayoutDetails> {
     const res = await fetch(`${API_BASE}/admin/payouts/${id}`, {
       credentials: 'include',
       headers: getAuthHeaders(user)

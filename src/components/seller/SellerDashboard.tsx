@@ -4,7 +4,6 @@ import { Product, Governorate, OrderStatus, ProductStatus, CraftReel } from '../
 import { api } from '../../services/api.ts';
 import { craftReelsService } from '../../services/craftReelsService.ts';
 import { SellerPayouts } from './SellerPayouts.tsx';
-import { SellerShippingManager } from './SellerShippingManager.tsx';
 import { NotificationsManager } from '../common/NotificationsManager.tsx';
 import { RefreshDataButton } from '../common/RefreshDataButton.tsx';
 import { ReelUploadModal } from '../common/ReelUploadModal.tsx';
@@ -120,7 +119,6 @@ type SellerTab =
   | 'overview'
   | 'products'
   | 'inventory'
-  | 'orders'
   | 'messages'
   | 'payouts'
   | 'reels'
@@ -344,7 +342,7 @@ export const SellerDashboard: React.FC = () => {
   useEffect(() => {
     if (activePage === 'seller-products') setActiveTab('products');
     else if (activePage === 'seller-inventory') setActiveTab('inventory');
-    else if (activePage === 'seller-orders') setActiveTab('orders');
+    else if (activePage === 'seller-orders') setActiveTab('overview');
     else if (activePage === 'seller-messages') setActiveTab('messages');
     else if (activePage === 'seller-payouts' || activePage === 'seller-analytics') setActiveTab('payouts');
     else if (activePage === 'seller-account') setActiveTab('settings');
@@ -355,7 +353,7 @@ export const SellerDashboard: React.FC = () => {
     if (typeof window === 'undefined') return;
     const tab = new URLSearchParams(window.location.search).get('tab');
     const validTabs: SellerTab[] = [
-      'overview', 'products', 'inventory', 'orders', 'messages', 'payouts',
+      'overview', 'products', 'inventory', 'messages', 'payouts',
       'reels', 'notifications', 'settings', 'reports', 'promotion'
     ];
     if (tab && validTabs.includes(tab as SellerTab)) {
@@ -967,11 +965,10 @@ export const SellerDashboard: React.FC = () => {
   const lowStockCount = sellerProducts.filter((p) => p.stockCount > 0 && p.stockCount <= lowStockThreshold).length;
   const outOfStockCount = sellerProducts.filter((p) => p.stockCount === 0).length;
   const totalValuation = sellerProducts.reduce((sum, p) => sum + p.price * p.stockCount, 0);
-  const pendingOrdersCount = activeOrders.filter((o) => o.status === 'pending' || o.status === 'processing').length;
   const pendingProductsCount = sellerProducts.filter((p) => p.approvalStatus === 'pending').length;
 
   interface SellerNavItem {
-    id: 'overview' | 'products' | 'inventory' | 'orders' | 'messages' | 'payouts' | 'reels' | 'notifications' | 'settings' | 'reports' | 'promotion';
+    id: 'overview' | 'products' | 'inventory' | 'messages' | 'payouts' | 'reels' | 'notifications' | 'settings' | 'reports' | 'promotion';
     label: string;
     sublabel?: string;
     icon: React.ComponentType<{ className?: string }>;
@@ -1021,21 +1018,6 @@ export const SellerDashboard: React.FC = () => {
           icon: Boxes,
           badge: lowStockCount > 0 ? `${formatArabicNumber(lowStockCount)} نواقص` : undefined,
           elementId: 'seller-nav-inventory-btn'
-        }
-      ]
-    },
-    {
-      id: 'sales',
-      title: 'الطلبات',
-      description: 'جهّز الطلبات وتابع توصيلها',
-      items: [
-        {
-          id: 'orders',
-          label: 'طلبات الزباين',
-          sublabel: `${formatArabicNumber(totalOrdersCount)} طلب`,
-          icon: Truck,
-          badge: pendingOrdersCount > 0 ? formatArabicNumber(pendingOrdersCount) : undefined,
-          elementId: 'seller-nav-orders-btn'
         }
       ]
     },
@@ -1125,10 +1107,9 @@ export const SellerDashboard: React.FC = () => {
   const mobileQuickTabLabels: Partial<Record<SellerNavItem['id'], string>> = {
     overview: 'الرئيسية',
     products: 'المنتجات',
-    orders: 'الطلبات',
     inventory: 'المخزون'
   };
-  const mobileQuickTabs = (['overview', 'products', 'orders', 'inventory'] as const)
+  const mobileQuickTabs = (['overview', 'products', 'inventory'] as const)
     .map((id) => allNavItems.find((item) => item.id === id))
     .filter((item): item is SellerNavItem => Boolean(item));
 
@@ -1829,26 +1810,6 @@ export const SellerDashboard: React.FC = () => {
 
               <button
                 type="button"
-                onClick={() => handleSelectTab('orders')}
-                className={`flex aspect-square min-w-0 flex-col items-stretch justify-between overflow-hidden rounded-2xl border p-3 text-right shadow-xs transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:rounded-3xl sm:p-4 ${activeTab === 'orders'
-                  ? 'bg-primary text-white border-primary ring-2 ring-primary/30'
-                  : 'bg-white text-espresso border-black/10 hover:border-primary/50 dark:bg-[#26160D] dark:text-cream dark:border-white/10'
-                  }`}
-              >
-                <div className="flex w-full items-start justify-between gap-1">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-100 text-blue-800 dark:bg-blue-950/40 dark:text-blue-300">
-                    <Truck className="h-5 w-5" />
-                  </span>
-                  {pendingOrdersCount > 0 && <span className="max-w-[60%] truncate rounded-full bg-amber-500 px-2 py-1 text-xs font-black text-white">{formatArabicNumber(pendingOrdersCount)} للتجهيز</span>}
-                </div>
-                <div className="w-full">
-                  <h4 className="truncate text-sm font-black sm:text-base">طلبات الزباين</h4>
-                  <p className={`mt-1 truncate text-xs font-semibold ${activeTab === 'orders' ? 'text-white/75' : 'text-black/55 dark:text-white/60'}`}>{formatArabicNumber(totalOrdersCount)} طلب</p>
-                </div>
-              </button>
-
-              <button
-                type="button"
                 onClick={() => handleSelectTab('inventory')}
                 className={`flex aspect-square min-w-0 flex-col items-stretch justify-between overflow-hidden rounded-2xl border p-3 text-right shadow-xs transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:rounded-3xl sm:p-4 ${activeTab === 'inventory'
                   ? 'bg-primary text-white border-primary ring-2 ring-primary/30'
@@ -1969,13 +1930,6 @@ export const SellerDashboard: React.FC = () => {
               <section aria-label="مهام الورشة" className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
                 {[
                   {
-                    label: 'طلبات محتاجة تجهيز',
-                    value: formatArabicNumber(pendingOrdersCount),
-                    tab: 'orders' as SellerTab,
-                    icon: Truck,
-                    tone: 'border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/20 dark:text-amber-200'
-                  },
-                  {
                     label: 'منتجات قيد المراجعة',
                     value: formatArabicNumber(sellerProducts.filter((product) => product.approvalStatus === 'pending').length),
                     tab: 'products' as SellerTab,
@@ -2088,21 +2042,7 @@ export const SellerDashboard: React.FC = () => {
                 </div>
               </section>
 
-              <section className="grid grid-cols-1 gap-3 lg:grid-cols-3">
-                <button
-                  type="button"
-                  onClick={() => handleSelectTab('orders')}
-                  className="group flex items-center justify-between gap-4 rounded-2xl border border-black/10 bg-white/75 p-4 text-right transition hover:border-primary/40 hover:shadow-md dark:border-white/10 dark:bg-espresso-900/80"
-                >
-                  <span className="flex min-w-0 items-center gap-3">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-700 dark:text-blue-300"><Truck className="h-5 w-5" /></span>
-                    <span className="min-w-0">
-                      <span className="block text-xs font-black text-espresso dark:text-cream">طلبات محتاجة تجهيز</span>
-                      <span className="mt-1 block text-xs font-semibold text-black/60 dark:text-white/60">{pendingOrdersCount > 0 ? `${formatArabicNumber(pendingOrdersCount)} طلب مستنيك` : 'مفيش طلبات مستنية التجهيز'}</span>
-                    </span>
-                  </span>
-                  <span className="shrink-0 text-xs font-black text-primary dark:text-primary-hover transition group-hover:-translate-x-1">شوف ←</span>
-                </button>
+              <section className="grid grid-cols-1 gap-3 lg:grid-cols-2">
                 <button
                   type="button"
                   onClick={() => handleSelectTab('products')}
@@ -2383,7 +2323,7 @@ export const SellerDashboard: React.FC = () => {
                   <span className="text-3xl font-black text-espresso dark:text-cream">
                     {formatArabicNumber(sellerProducts.reduce((acc, p) => acc + p.stockCount, 0))} قطعة
                   </span>
-                  <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">جاهزة للشحن المباشر</span>
+                  <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">متاحة للبيع من الورشة</span>
                 </div>
 
                 <div className="bg-white/75 dark:bg-espresso-900/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
@@ -2499,20 +2439,6 @@ export const SellerDashboard: React.FC = () => {
             </div>
           )}
 
-
-          {/* TAB 4: ORDERS & SHIPPING LOGISTICS HUB */}
-          {activeTab === 'orders' && (
-            <SellerShippingManager
-              currentUser={currentUser}
-              orders={orders}
-              refreshOrders={refreshOrders}
-              updateOrderStatus={updateOrderStatus}
-              addToast={addToast}
-              confirmModal={confirmModal}
-              openReportModal={openReportModal}
-              openChatWithBuyer={openChatWithBuyer}
-            />
-          )}
 
           {/* TAB 5: PAYOUTS */}
           {activeTab === 'payouts' && (
@@ -3138,7 +3064,7 @@ export const SellerDashboard: React.FC = () => {
             <NotificationsManager
               viewMode="seller"
               onNavigateTab={(tab) => {
-                if (tab === 'orders') setActiveTab('orders');
+                if (tab === 'orders') setActiveTab('overview');
                 else if (tab === 'products') setActiveTab('products');
                 else if (tab === 'inventory') setActiveTab('inventory');
                 else if (tab === 'payouts') setActiveTab('payouts');

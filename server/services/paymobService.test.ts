@@ -53,7 +53,7 @@ const order: OrderDocument = {
 function setBaseEnvironment(): void {
   const env = process.env as Record<string, string | undefined>;
   env.NODE_ENV = 'development';
-  process.env.APP_URL = 'https://wah.example';
+  process.env.APP_URL = 'https://waaaaah.vercel.app/';
   process.env['PAYMOB_ENVIRONMENT'] = 'TEST';
   process.env.PAYMOB_API_KEY = 'legacy-api-key-not-for-intentions';
   process.env.PAYMOB_SECRET_KEY = 'sk_test_mock_secret';

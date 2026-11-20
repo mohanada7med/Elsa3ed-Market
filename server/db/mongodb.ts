@@ -6,6 +6,7 @@ import type {
   CartDocument,
   DiscountCouponDocument,
   ReviewDocument,
+  SellerReviewDocument,
   StockMovementDocument,
   CraftStoryDocument,
   CraftReelDocument,
@@ -99,6 +100,7 @@ class MemoryStore {
   orders: OrderDocument[] = [];
   discounts: DiscountCouponDocument[] = [...INITIAL_DISCOUNTS];
   reviews: ReviewDocument[] = [];
+  sellerReviews: SellerReviewDocument[] = [];
   stockMovements: StockMovementDocument[] = [];
   craftStories: CraftStoryDocument[] = [];
   reels: CraftReelDocument[] = [];
@@ -591,6 +593,14 @@ async function seedMongoDatabase(database: Db) {
       database.collection('reviews').createIndex({ productId: 1, status: 1, createdAt: -1 }),
       database.collection('reviews').createIndex(
         { verifiedBuyerId: 1, productId: 1 },
+        {
+          unique: true,
+          partialFilterExpression: { verifiedBuyerId: { $type: 'string' } }
+        }
+      ),
+      database.collection('seller_reviews').createIndex({ sellerId: 1, status: 1, createdAt: -1 }),
+      database.collection('seller_reviews').createIndex(
+        { verifiedBuyerId: 1, sellerId: 1 },
         {
           unique: true,
           partialFilterExpression: { verifiedBuyerId: { $type: 'string' } }

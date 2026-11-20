@@ -4,6 +4,8 @@ import { ProductCard } from './ProductCard';
 import { updatePageSEO, generateProductSchema } from '../../utils/seo';
 import { getOptimizedImageUrl } from '../../utils/cloudinaryMedia';
 import { formatArabicNumber, toArabicDigits } from '../../utils/arabicNumbers';
+import { api } from '../../services/api';
+import type { Review } from '../../types';
 
 import {
   Heart,
@@ -83,6 +85,9 @@ export const ProductDetailsView: React.FC = () => {
   >('desc');
   const [newRating, setNewRating] = useState(5);
   const [newComment, setNewComment] = useState('');
+  const [publishedProductReviews, setPublishedProductReviews] = useState<Review[]>([]);
+  const [isReviewsLoading, setIsReviewsLoading] = useState(false);
+  const [reviewsError, setReviewsError] = useState<string | null>(null);
   const [relatedFilter, setRelatedFilter] = useState<'all' | 'artisan' | 'category' | 'governorate'>('all');
   const isOwner = currentRole === 'seller' && (currentUser?.sellerId === product?.sellerId || currentUser?.id === product?.sellerId);
 
@@ -95,6 +100,37 @@ export const ProductDetailsView: React.FC = () => {
     setNewComment('');
     setRelatedFilter('all');
   }, [product?.id, effectiveProductId]);
+
+  useEffect(() => {
+    if (!product?.id) {
+      setPublishedProductReviews([]);
+      setIsReviewsLoading(false);
+      return;
+    }
+
+    let isCurrent = true;
+    setIsReviewsLoading(true);
+    setReviewsError(null);
+    api.getProductReviews(product.id)
+      .then((productReviews: Review[]) => {
+        if (isCurrent) {
+          setPublishedProductReviews(productReviews.filter((review) => review.status === 'published'));
+        }
+      })
+      .catch((error: unknown) => {
+        if (isCurrent) {
+          console.error('[ProductDetailsView] Could not load published reviews:', error);
+          setReviewsError('تعذر تحميل التقييمات. حاول تحديث الصفحة.');
+        }
+      })
+      .finally(() => {
+        if (isCurrent) setIsReviewsLoading(false);
+      });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [product?.id]);
 
   const productImages =
     product?.images &&
@@ -116,8 +152,17 @@ export const ProductDetailsView: React.FC = () => {
   const favorite = product ? isFavorite(product.id) : false;
 
   const productReviews = useMemo(
-    () => (reviews || []).filter((r) => r.productId === product?.id),
-    [reviews, product?.id]
+    () => {
+      const byId = new Map<string, Review>();
+      publishedProductReviews
+        .filter((review) => review.productId === product?.id)
+        .forEach((review) => byId.set(review.id, review));
+      (reviews || [])
+        .filter((review) => review.productId === product?.id && review.status === 'published')
+        .forEach((review) => byId.set(review.id, review));
+      return Array.from(byId.values());
+    },
+    [publishedProductReviews, reviews, product?.id]
   );
   const hasDeliveredProduct = Boolean(
     product &&
@@ -127,7 +172,30 @@ export const ProductDetailsView: React.FC = () => {
       order.items.some((item) => item.product?.id === product.id)
     )
   );
-  const hasReviewedProduct = productReviews.some((review) => review.userId === currentUser?.id);
+  const hasReviewedProduct =
+    productReviews.some((review) => review.userId === currentUser?.id) ||
+    (reviews || []).some(
+      (review) => review.productId === product?.id && review.userId === currentUser?.id
+    );
+  const myPendingReview = (reviews || []).some(
+    (review) =>
+      review.productId === product?.id &&
+      review.userId === currentUser?.id &&
+      review.status === 'pending'
+  );
+  const displayedReviewCount = isReviewsLoading
+    ? product?.reviewCount || 0
+    : productReviews.length;
+  const displayedRating = isReviewsLoading
+    ? product?.rating || 0
+    : productReviews.length > 0
+      ? Number(
+          (
+            productReviews.reduce((sum, review) => sum + review.rating, 0) /
+            productReviews.length
+          ).toFixed(1)
+        )
+      : 0;
 
   useEffect(() => {
     if (!product) return;
@@ -143,15 +211,15 @@ export const ProductDetailsView: React.FC = () => {
         description: product.description || '',
         images: productImages,
         price: product.price || 0,
-        rating: product.rating || 5,
-        reviewCount: productReviews.length || product.reviewCount || 1,
+        rating: displayedRating,
+        reviewCount: displayedReviewCount,
         sellerName: product.sellerName || 'حرفي من الصعيد',
         sellerGovernorate: product.sellerGovernorate || 'صعيد مصر',
         inStock: product.inStock !== false,
         categoryName: product.categoryName || 'حرف ومشغولات يدوية'
       }),
     });
-  }, [product, productReviews.length]);
+  }, [product, displayedRating, displayedReviewCount]);
 
   // Smart pieces of the same story: matching artisan workshop, category, and governorate
   const {
@@ -1164,7 +1232,7 @@ export const ProductDetailsView: React.FC = () => {
                     key={star}
                     size={16}
                     className={
-                      star <= Math.floor(product.rating)
+                      star <= Math.floor(displayedRating)
                         ? ' text-primary dark:text-primary-hover'
                         : 'text-black/15 dark:text-white/15'
                     }
@@ -1173,11 +1241,11 @@ export const ProductDetailsView: React.FC = () => {
               </div>
 
               <span className="text-base sm:text-lg font-black wah-num">
-                {formatArabicNumber(product.rating)}
+                {formatArabicNumber(displayedRating)}
               </span>
 
               <span className="text-xs font-bold text-black/50 dark:text-white/50 wah-num">
-                {formatArabicNumber(product.reviewCount)} تقييم
+                {formatArabicNumber(displayedReviewCount)} تقييم
               </span>
             </div>
 
@@ -2001,7 +2069,7 @@ export const ProductDetailsView: React.FC = () => {
 
                     <div className="mt-7 flex items-end gap-3">
                       <span className="text-6xl sm:text-7xl font-black wah-num">
-                        {formatArabicNumber(product.rating)}
+                        {formatArabicNumber(displayedRating)}
                       </span>
 
                       <div className="pb-2">
@@ -2014,7 +2082,7 @@ export const ProductDetailsView: React.FC = () => {
                                 className={
                                   star <=
                                     Math.floor(
-                                      product.rating
+                                      displayedRating
                                     )
                                     ? ' text-primary dark:text-primary-hover'
                                     : 'text-white/15'
@@ -2025,7 +2093,7 @@ export const ProductDetailsView: React.FC = () => {
                         </div>
 
                         <div className="mt-1 text-xs font-bold text-white/55 wah-num">
-                          {formatArabicNumber(product.reviewCount)} تقييم
+                          {formatArabicNumber(displayedReviewCount)} تقييم
                         </div>
                       </div>
                     </div>
@@ -2041,7 +2109,15 @@ export const ProductDetailsView: React.FC = () => {
                   {/* Reviews */}
 
                   <div className="space-y-4">
-                    {productReviews.length === 0 ? (
+                    {isReviewsLoading ? (
+                      <p className="py-8 text-center text-xs text-black/50 dark:text-white/50">
+                        جاري تحميل التقييمات...
+                      </p>
+                    ) : reviewsError ? (
+                      <p role="alert" className="py-8 text-center text-xs text-rose-600 dark:text-rose-400">
+                        {reviewsError}
+                      </p>
+                    ) : productReviews.length === 0 ? (
                       <div
                         className="
                           rounded-3xl
@@ -2138,7 +2214,9 @@ export const ProductDetailsView: React.FC = () => {
                           </p>
 
                           <div className="mt-3 text-[9px] text-black/30 dark:text-white/25">
-                            {review.date}
+                            {review.createdAt
+                              ? new Date(review.createdAt).toLocaleDateString('ar-EG', { timeZone: 'Africa/Cairo' })
+                              : review.date}
                           </div>
                         </div>
                       ))
@@ -2149,7 +2227,11 @@ export const ProductDetailsView: React.FC = () => {
                     {hasReviewedProduct ? (
                       <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-5 text-xs text-emerald-800 dark:text-emerald-300 flex items-center gap-2">
                         <CheckCircle2 className="w-4 h-4 shrink-0" />
-                        <span>شكرًا لك، لقد أضفت تقييمك لهذا المنتج بالفعل.</span>
+                        <span>
+                          {myPendingReview
+                            ? 'تم إرسال تقييمك، وسيظهر للمشترين بعد موافقة الإدارة.'
+                            : 'شكرًا لك، لقد أضفت تقييمك لهذا المنتج بالفعل.'}
+                        </span>
                       </div>
                     ) : !isAuthenticated ? (
                       <div className="rounded-2xl border border-black/10 dark:border-white/10 bg-white/60 dark:bg-cream/[0.02] p-5 text-center space-y-3">

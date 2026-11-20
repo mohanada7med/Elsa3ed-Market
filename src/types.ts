@@ -88,6 +88,7 @@ export interface Seller {
   brandName: string;
   governorate: Governorate;
   rating: number;
+  reviewCount?: number;
   salesCount: number;
   productsCount: number;
   badge: string;
@@ -389,7 +390,11 @@ export interface Review {
   comment: string;
   date: string;
   verifiedPurchase: boolean;
-  status: 'published' | 'hidden';
+  status: 'pending' | 'published' | 'hidden';
+  reviewType?: 'product' | 'seller';
+  sellerId?: string;
+  sellerName?: string;
+  createdAt?: string;
 }
 
 export interface StockMovement {
@@ -624,6 +629,67 @@ export interface PayoutRequest {
   paidBy?: string | null;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface PayoutProductSales {
+  productId: string;
+  productTitle: string;
+  quantity: number;
+  revenue: number;
+  ordersCount: number;
+  averageUnitPrice: number;
+}
+
+export interface PayoutSalesOrder {
+  orderId: string;
+  orderNumber: string;
+  createdAt: string;
+  buyerName: string;
+  status: string;
+  paymentStatus: string;
+  itemCount: number;
+  productSales: number;
+  items: Array<{
+    productId: string;
+    productTitle: string;
+    quantity: number;
+    unitPrice: number;
+    revenue: number;
+  }>;
+}
+
+export interface AdminPayoutOrderSnapshot {
+  id: string;
+  orderNumber: string;
+  createdAt: string;
+  buyerName: string;
+  status: string;
+  paymentStatus: string;
+  sellerTipAmount?: number;
+  sellerTipSellerId?: string;
+  items: Array<{
+    productId: string;
+    productTitle: string;
+    sellerId: string;
+    quantity: number;
+    unitPrice: number;
+  }>;
+}
+
+export interface AdminPayoutDetails {
+  payout: PayoutRequest;
+  seller: Seller | null;
+  currentAvailableBalance?: number;
+  sellerPreviousPayouts?: PayoutRequest[];
+  totalSellerEarnings?: number;
+  totalProductSales?: number;
+  totalSellerTips?: number;
+  totalSalesCount?: number;
+  sellerOrdersCount?: number;
+  totalPaid?: number;
+  pendingProcessing?: number;
+  salesByProduct?: PayoutProductSales[];
+  recentSales?: PayoutSalesOrder[];
 }
 
 export interface SellerPayoutSummary {

@@ -2,7 +2,13 @@ import express from 'express';
 import type { Request, Response } from 'express';
 import { memoryDb, getDatabase } from '../db/mongodb.ts';
 import { validateAndCalculateDiscount } from '../services/discountService.ts';
-import { getProductReviews, createProductReview } from '../services/reviewService.ts';
+import {
+  getProductReviews,
+  createProductReview,
+  getSellerReviews,
+  getBuyerSellerReview,
+  createSellerReview
+} from '../services/reviewService.ts';
 import { getRecommendedProducts } from '../services/recommendationService.ts';
 import { getPaymentConfig } from '../services/paymentConfigService.ts';
 import { getPaymobConfig, isIntegrationVerified } from '../services/paymobService.ts';
@@ -97,6 +103,48 @@ router.get('/sellers/:id', async (req: Request, res: Response) => {
   }
 
   res.json({ success: true, data: seller });
+});
+
+router.get('/sellers/:id/reviews', async (req: Request, res: Response) => {
+  try {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+    const reviews = await getSellerReviews(req.params.id);
+    res.json({ success: true, count: reviews.length, data: reviews });
+  } catch (error) {
+    console.error('Error fetching seller reviews:', error);
+    res.status(500).json({ success: false, error: 'تعذر تحميل تقييمات البائع' });
+  }
+});
+
+router.get('/sellers/:id/reviews/mine', requireBuyer, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const review = await getBuyerSellerReview(req.user!.id, req.params.id);
+    res.json({ success: true, data: review });
+  } catch (error) {
+    console.error('Error fetching buyer seller review:', error);
+    res.status(500).json({ success: false, error: 'تعذر تحميل تقييمك للبائع' });
+  }
+});
+
+router.post('/sellers/:id/reviews', requireBuyer, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const review = await createSellerReview(req.user!, {
+      sellerId: req.params.id,
+      rating: Number(req.body.rating),
+      comment: String(req.body.comment || '')
+    });
+    res.status(201).json({
+      success: true,
+      message: 'تم تسجيل تقييمك، وسيظهر بعد موافقة الإدارة.',
+      data: review
+    });
+  } catch (error) {
+    console.error('Error creating seller review:', error);
+    res.status(400).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'تعذر إرسال تقييم البائع'
+    });
+  }
 });
 
 

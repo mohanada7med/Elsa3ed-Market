@@ -278,23 +278,6 @@ export const ProductsPage: React.FC = () => {
                   dark:text-primary dark:text-primary-hover
                 "
               >
-                <span
-                  className="
-                    flex
-                    h-8
-                    w-8
-                    items-center
-                    justify-center
-                    rounded-full
-                    bg-primary/10
-
-                    dark:bg-[#C99444]/10
-                  "
-                >
-                  <Sparkles size={13} />
-                </span>
-
-                WAH / HANDMADE ARCHIVE
               </div>
 
               <h1

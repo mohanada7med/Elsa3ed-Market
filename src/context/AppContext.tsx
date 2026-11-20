@@ -3176,7 +3176,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
       refreshNotifications();
       refreshAuditLogs();
-      return createdOrder;
+      return normalized;
     } catch (err: any) {
       console.error('[AppContext] Error creating order:', err);
       throw err;
@@ -3263,24 +3263,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         userGovernorate: currentUser.governorate,
         rating,
         comment,
-        date: 'الآن',
+        date: new Date().toLocaleDateString('ar-EG', { timeZone: 'Africa/Cairo' }),
         verifiedPurchase: true,
-        status: 'published'
+        status: 'pending'
       };
 
       setReviews((prev) => [newRev, ...prev]);
-      setProducts((prev) =>
-        prev.map((p) => {
-          if (p.id === productId) {
-            const newCount = p.reviewCount + 1;
-            const newAvg = Number(((p.rating * p.reviewCount + rating) / newCount).toFixed(1));
-            return { ...p, rating: newAvg, reviewCount: newCount };
-          }
-          return p;
-        })
-      );
-      addToast('شكراً لتقييمك الموثق!', 'تم اعتماد تقييمك للقطعة التراثية بنجاح', 'success');
-      refreshReviews();
+      addToast('تم إرسال تقييمك', 'تقييمك بانتظار مراجعة الإدارة، وسيظهر للمشترين بعد الموافقة عليه.', 'success');
     } catch (err: any) {
       const errMsg = err.message || 'فشل في إضافة التقييم';
       addToast('تنبيه التقييم', errMsg, 'warning');
@@ -3301,6 +3290,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       refreshAuditLogs();
     } catch (err: any) {
       console.error('Error moderating review:', err);
+      addToast('تعذر تحديث التقييم', err?.message || 'فشل في حفظ حالة التقييم', 'error');
     }
   };
 

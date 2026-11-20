@@ -38,7 +38,7 @@ const GOVERNORATE_NAMES: Record<string, string> = {
 const SELLER_SECTION_LABELS: Record<string, string> = {
   'seller-products': 'إدارة المنتجات والمقتنيات',
   'seller-inventory': 'المخزون والكميات',
-  'seller-orders': 'طلبات الورشة الواردة',
+  'seller-orders': 'لوحة تحكم الورشة',
   'seller-messages': 'المراسلات والتواصل مع العملاء',
   'seller-payouts': 'المستحقات والأرباح',
   'seller-analytics': 'تقارير المبيعات والإحصائيات',
