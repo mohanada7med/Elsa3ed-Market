@@ -12,7 +12,7 @@ type CatchAllProps = {
   params: Promise<{ slug: string[] }>;
 };
 
-const baseUrl = (process.env.APP_URL || 'https://wah-saeed.com').replace(/\/+$/, '');
+const baseUrl = (process.env.APP_URL || 'https://waaaaah.vercel.app').replace(/\/+$/, '');
 
 function getMetadata(page: PublicSeoPage): Metadata {
   const canonical = `${baseUrl}${page.path}`;
@@ -64,7 +64,9 @@ const listingMetadata: Record<string, [string, string]> = {
   categories: ['تصنيفات الحرف التراثية', 'استكشف الحرف والصناعات اليدوية التراثية في صعيد مصر.'],
   crafts: ['الحرف التراثية', 'اكتشف الحرف والصناعات اليدوية الأصيلة في صعيد مصر.'],
   stories: ['حكايات وتراث الصعيد', 'اقرأ الحكايات والروايات التي توثق تراث صعيد مصر.'],
-  heritage: ['تراث صعيد مصر', 'اكتشف تراث صعيد مصر وحرفه وأماكنه وأكلاته.']
+  heritage: ['تراث صعيد مصر', 'اكتشف تراث صعيد مصر وحرفه وأماكنه وأكلاته.'],
+  intro: ['فيلم وه التوثيقي — الصعيد بيحكى', 'شاهد الحكاية والفيلم التوثيقي لرحلة وه في قلب صعيد مصر وتراثه الأصيل.'],
+  film: ['فيلم وه التوثيقي — الصعيد بيحكى', 'شاهد الحكاية والفيلم التوثيقي لرحلة وه في قلب صعيد مصر وتراثه الأصيل.']
 };
 
 export async function generateMetadata({ params }: CatchAllProps): Promise<Metadata> {

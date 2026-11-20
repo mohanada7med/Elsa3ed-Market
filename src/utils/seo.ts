@@ -80,7 +80,7 @@ export function generateProductSchema(product: {
   inStock?: boolean;
   categoryName?: string;
 }) {
-  const pageUrl = typeof window !== 'undefined' ? window.location.href : 'https://wah-saeed.com';
+  const pageUrl = typeof window !== 'undefined' ? window.location.href : 'https://waaaaah.vercel.app';
 
   return {
     '@context': 'https://schema.org/',
@@ -185,7 +185,7 @@ export function generateBreadcrumbSchema(items: { name: string; url?: string }[]
       '@type': 'ListItem',
       position: idx + 1,
       name: item.name,
-      item: item.url || (typeof window !== 'undefined' ? window.location.origin : 'https://wah-saeed.com')
+      item: item.url || (typeof window !== 'undefined' ? window.location.origin : 'https://waaaaah.vercel.app')
     }))
   };
 }

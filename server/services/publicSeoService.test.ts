@@ -30,7 +30,7 @@ test('resolves public Arabic place metadata and structured data', async () => {
   assert.equal(page?.description, 'معبد أثري في قنا');
   assert.equal(page?.path, '/places/dendera-test');
   assert.equal(
-    getPublicSeoJsonLd(page!, 'https://wah-saeed.com/places/dendera-test')['@type'],
+    getPublicSeoJsonLd(page!, 'https://waaaaah.vercel.app/places/dendera-test')['@type'],
     'TouristDestination'
   );
 });

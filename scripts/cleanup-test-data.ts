@@ -15,7 +15,7 @@ const ESSENTIAL_CLOUDINARY_ASSETS = new Set([
   // WAH Canonical Assets
   'WAH/general/branding/logo',
   'WAH/general/placeholders/default-user-avatar',
-  'WAH/videos/intro/platform-intro',
+  'WAH/videos/film/platform-intro',
   'WAH/videos/promo/market-overview',
   // Provinces
   'WAH/provinces/beni-suef/cover',
@@ -127,7 +127,7 @@ async function performFullTestDataCleanup() {
     // 2. SURGICAL USER & SELLER CLEANUP
     // ==========================================
     console.log('\n👤 Step 2: Preserving Platform Administrator and Removing Test Accounts...');
-    
+
     // Find real platform administrator (preserve @مهند / id user-buyer-1787872585157 or real admin)
     const allUsers = await db.collection('users').find({}).toArray();
     const preservedUserIds = new Set<string>();

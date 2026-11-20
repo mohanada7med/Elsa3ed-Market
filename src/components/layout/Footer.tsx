@@ -139,10 +139,10 @@ export const Footer: React.FC = () => {
     ...(isSeller || isAdmin
       ? []
       : [
-          { label: 'تابع شحنتك وطلباتك', page: 'orders' },
-          { label: 'سلة الشراء', page: 'cart' },
-          { label: 'الحاجات المحفوظة', page: 'favorites' },
-        ]),
+        { label: 'تابع شحنتك وطلباتك', page: 'orders' },
+        { label: 'سلة الشراء', page: 'cart' },
+        { label: 'الحاجات المحفوظة', page: 'favorites' },
+      ]),
     { label: 'مضايفة وه (المساعدة والتواصل)', page: 'help' },
     { label: 'حسابك الشخصي', page: 'buyer-account' },
     { label: 'سياسة الخصوصية', page: 'privacy' },
@@ -218,14 +218,20 @@ export const Footer: React.FC = () => {
                 <ArrowLeft className="w-4 h-4" />
               </button>
 
-              <button
-                type="button"
-                onClick={() => setShowIntroVideo(true)}
+              <a
+                href="/film"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setShowIntroVideo(true);
+                  try {
+                    window.history.pushState({ page: 'intro' }, '', '/film');
+                  } catch { }
+                }}
                 className="px-4 py-2.5 sm:px-7 sm:py-4 rounded-xl sm:rounded-2xl bg-white/[0.04] border border-primary/30 hover:border-primary hover:bg-primary/15 text-[11px] sm:text-sm font-bold text-white hover:text-primary dark:text-primary-hover transition-all duration-200 flex items-center gap-2.5 cursor-pointer backdrop-blur-xl active:scale-95 shadow-lg hover:shadow-[0_0_20px_rgba(154,106,53,0.2)]"
               >
                 <Film className="w-4 h-4 text-white" />
                 <span>اتفرج على فيلم وه</span>
-              </button>
+              </a>
             </div>
 
           </div>
@@ -310,14 +316,20 @@ export const Footer: React.FC = () => {
                     {service.label}
                   </a>
                 ))}
-                <button
-                  type="button"
-                  onClick={() => setShowIntroVideo(true)}
+                <a
+                  href="/film"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setShowIntroVideo(true);
+                    try {
+                      window.history.pushState({ page: 'intro' }, '', '/film');
+                    } catch { }
+                  }}
                   className="px-3 py-1.5 rounded-xl bg-white/[0.04] border border-primary/30 hover:border-primary text-xs text-white/80 hover:bg-primary hover:text-white font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 active:scale-95"
                 >
                   <Film className="w-3.5 h-3.5" />
                   <span>فيلم وه التوثيقي</span>
-                </button>
+                </a>
                 <button
                   type="button"
                   onClick={() => setShowOnboarding(true)}
@@ -444,13 +456,19 @@ export const Footer: React.FC = () => {
                   {service.label}
                 </a>
               ))}
-              <button
-                type="button"
-                onClick={() => setShowIntroVideo(true)}
+              <a
+                href="/film"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setShowIntroVideo(true);
+                  try {
+                    window.history.pushState({ page: 'intro' }, '', '/film');
+                  } catch { }
+                }}
                 className="rounded-lg border border-white/10 bg-white/[0.03] px-2.5 py-1.5 text-[10px] font-semibold text-white/75 transition-colors hover:border-primary/50 hover:text-white"
               >
                 فيلم وه التوثيقي
-              </button>
+              </a>
               <button
                 type="button"
                 onClick={() => setShowOnboarding(true)}

@@ -438,6 +438,13 @@ const WAH_PORTALS_PREVIEW: Record<string, PortalPreviewItem> = {
     badge: 'تحدي عم وه',
     accentColor: '#E66A2E',
   },
+  intro: {
+    title: 'فيلم وه التوثيقي',
+    desc: 'وثائقي حي يروي حكاية الصعيد وأهله وتراثه قبل ما تبدأ جولتك في المنصة.',
+    avatar: '/mascot/saaed.png',
+    badge: 'وثائقي حي',
+    accentColor: '#C99444',
+  },
 };
 
 /* =========================================================
@@ -711,6 +718,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
       { id: 'food', label: 'طعم الصعيد (المطبخ الأصيل)', shortLabel: 'طعم الصعيد', icon: UtensilsCrossed },
       { id: 'events', label: 'مواسم وليالي الصعيد', shortLabel: 'ليالي ومواسم', icon: Calendar },
       { id: 'reels', label: 'ريلز وه', shortLabel: 'ريلز وه', isNew: true, icon: Film },
+      { id: 'intro', label: 'فيلم وه التوثيقي', shortLabel: 'فيلم وه', icon: Film, isNew: true },
       { id: 'sellers', label: 'شيوخ الصنعة والورش', shortLabel: 'ورش الصنعة', icon: Store },
       { id: 'categories', label: 'التصنيفات التراثية', shortLabel: 'التصنيفات', icon: Layers },
       { id: 'quize', label: 'انت صعيدى ؟ (لعبة اللهجة)', shortLabel: 'انت صعيدى؟', isNew: true, icon: Flame },
@@ -784,42 +792,42 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
           },
         ]
         : [
-            {
-              id: 'main',
-              title: 'الرئيسية والسوق',
-              description: 'ابدأ رحلتك في منصة وَه',
-              icon: HomeIcon,
-              items: ['home', 'products', 'cart', 'orders'],
-            },
-            {
-              id: 'discover',
-              title: 'اكتشف الصعيد',
-              description: 'المحافظات والأماكن والشخصيات',
-              icon: Compass,
-              items: ['map', 'places', 'people'],
-            },
-            {
-              id: 'heritage',
-              title: 'تراث وحكايات الصعيد',
-              description: 'الأكل والمواسم والحكايات والصور',
-              icon: Landmark,
-              items: ['food', 'events', 'reels'],
-            },
-            {
-              id: 'wah-market',
-              title: 'سوق وَه',
-              description: 'الحرفيون والمنتجات التراثية',
-              icon: ShoppingBag,
-              items: ['sellers', 'categories'],
-            },
-            {
-              id: 'help',
-              title: 'المساعدة والتواصل',
-              description: 'تواصل معنا واطلب مساعدة في أي وقت',
-              icon: Headphones,
-              items: ['quize', 'help'],
-            },
-          ];
+          {
+            id: 'main',
+            title: 'الرئيسية والسوق',
+            description: 'ابدأ رحلتك في منصة وَه',
+            icon: HomeIcon,
+            items: ['home', 'products', 'cart', 'orders'],
+          },
+          {
+            id: 'discover',
+            title: 'اكتشف الصعيد',
+            description: 'المحافظات والأماكن والشخصيات',
+            icon: Compass,
+            items: ['map', 'places', 'people'],
+          },
+          {
+            id: 'heritage',
+            title: 'تراث وحكايات الصعيد',
+            description: 'الأكل والمواسم والحكايات والصور',
+            icon: Landmark,
+            items: ['food', 'events', 'reels', 'intro'],
+          },
+          {
+            id: 'wah-market',
+            title: 'سوق وَه',
+            description: 'الحرفيون والمنتجات التراثية',
+            icon: ShoppingBag,
+            items: ['sellers', 'categories'],
+          },
+          {
+            id: 'help',
+            title: 'المساعدة والتواصل',
+            description: 'تواصل معنا واطلب مساعدة في أي وقت',
+            icon: Headphones,
+            items: ['quize', 'help'],
+          },
+        ];
 
     return categories
       .map((category) => ({
@@ -837,12 +845,21 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
   const navigate = useCallback(
     (page: string) => {
       const cleanPage = page.startsWith('/') ? page.slice(1) : page;
-      setActivePage(cleanPage as ActivePage);
+      if (cleanPage === 'intro' || cleanPage === 'film') {
+        setShowIntroVideo(true);
+        try {
+          if (window.location.pathname !== '/film') {
+            window.history.pushState({ page: 'intro' }, '', '/film');
+          }
+        } catch { }
+      } else {
+        setActivePage(cleanPage as ActivePage);
+      }
       setMobileMenuOpen(false);
       setUserDropdownOpen(false);
       setIsProfileMenuOpen(false);
     },
-    [setActivePage]
+    [setActivePage, setShowIntroVideo]
   );
 
   const navigateFromLink = useCallback(
@@ -1296,40 +1313,40 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             ========================================================= */}
         <div className="hidden lg:flex relative mx-auto max-w-[1600px] h-[78px] items-center justify-between px-8 xl:px-12">
           {/* Start Actions / Nav Links */}
-            <div className="flex items-center gap-6">
-              <a
-                href={PAGE_ROUTES.home}
-                onClick={(event) => navigateFromLink(event, 'home')}
-                className="whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
-                style={{
-                  color: activePage === 'home' ? (isDark ? '#C99444' : '#6B3A1F') : mainText,
-                }}
-              >
-                الرئيسية
-              </a>
+          <div className="flex items-center gap-6">
+            <a
+              href={PAGE_ROUTES.home}
+              onClick={(event) => navigateFromLink(event, 'home')}
+              className="whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
+              style={{
+                color: activePage === 'home' ? (isDark ? '#C99444' : '#6B3A1F') : mainText,
+              }}
+            >
+              الرئيسية
+            </a>
 
-              <a
-                href={PAGE_ROUTES.products}
-                onClick={(event) => navigateFromLink(event, 'products')}
-                className="whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
-                style={{
-                  color: activePage === 'products' ? (isDark ? '#C99444' : '#6B3A1F') : mainText,
-                }}
-              >
-                المنتجات
-              </a>
+            <a
+              href={PAGE_ROUTES.products}
+              onClick={(event) => navigateFromLink(event, 'products')}
+              className="whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
+              style={{
+                color: activePage === 'products' ? (isDark ? '#C99444' : '#6B3A1F') : mainText,
+              }}
+            >
+              المنتجات
+            </a>
 
-              <a
-                href={PAGE_ROUTES.map}
-                onClick={(event) => navigateFromLink(event, 'map')}
-                className="flex items-center gap-1.5 whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
-                style={{
-                  color: activePage === 'map' ? (isDark ? '#C99444' : '#6B3A1F') : mainText,
-                }}
-              >
-                محافظات الصعيد
-              </a>
-            </div>
+            <a
+              href={PAGE_ROUTES.map}
+              onClick={(event) => navigateFromLink(event, 'map')}
+              className="flex items-center gap-1.5 whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
+              style={{
+                color: activePage === 'map' ? (isDark ? '#C99444' : '#6B3A1F') : mainText,
+              }}
+            >
+              محافظات الصعيد
+            </a>
+          </div>
 
           {/* End Actions */}
           <div className="flex items-center gap-2">
@@ -1940,8 +1957,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         type="button"
                         onClick={() => setSearchCategory(tab.id as any)}
                         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer shrink-0 ${searchCategory === tab.id
-                            ? 'bg-primary text-white shadow-xs'
-                            : 'bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-foreground-secondary'
+                          ? 'bg-primary text-white shadow-xs'
+                          : 'bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-foreground-secondary'
                           }`}
                       >
                         {tab.icon && <tab.icon size={12} />}

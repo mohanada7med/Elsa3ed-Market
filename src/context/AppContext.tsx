@@ -374,45 +374,45 @@ export const normalizeOrder = (ord: any): Order => {
   if (!ord) return ord;
   const items = Array.isArray(ord.items)
     ? ord.items
-        .filter(Boolean)
-        .map((it: any) => {
-          const rawProduct = it.product;
-          const product = rawProduct && typeof rawProduct === 'object'
-            ? {
-                ...rawProduct,
-                id: rawProduct.id || it.productId || 'prod-item',
-                images: Array.isArray(rawProduct.images) && rawProduct.images.length > 0
-                  ? rawProduct.images
-                  : [rawProduct.image || it.productImage || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=600&q=80']
-              }
-            : {
-                id: it.productId || 'prod-item',
-                title: it.productTitle || it.title || 'منتج تراثي أصيل',
-                price: it.unitPrice || it.price || 0,
-                originalPrice: it.unitPrice || it.price || 0,
-                images: [it.productImage || it.image || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=600&q=80'],
-                sellerId: it.sellerId || '',
-                sellerName: it.sellerName || 'ورشة الصعيد التراثية',
-                sellerGovernorate: it.sellerGovernorate || 'قنا',
-                categoryId: 'cat-pottery',
-                categoryName: 'الفخار والخزف',
-                inStock: true,
-                stockCount: 10,
-                rating: 5,
-                reviewCount: 1,
-                isHandmade: true,
-                heritageGovernorate: it.sellerGovernorate || 'قنا',
-                approvalStatus: 'approved' as const,
-                description: it.productTitle || it.title || 'منتج تراثي مصنوع يدوياً في صعيد مصر'
-              };
-
-          return {
-            product,
-            quantity: it.quantity || 1,
-            selectedColor: it.selectedColor,
-            customNote: it.customNote
+      .filter(Boolean)
+      .map((it: any) => {
+        const rawProduct = it.product;
+        const product = rawProduct && typeof rawProduct === 'object'
+          ? {
+            ...rawProduct,
+            id: rawProduct.id || it.productId || 'prod-item',
+            images: Array.isArray(rawProduct.images) && rawProduct.images.length > 0
+              ? rawProduct.images
+              : [rawProduct.image || it.productImage || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=600&q=80']
+          }
+          : {
+            id: it.productId || 'prod-item',
+            title: it.productTitle || it.title || 'منتج تراثي أصيل',
+            price: it.unitPrice || it.price || 0,
+            originalPrice: it.unitPrice || it.price || 0,
+            images: [it.productImage || it.image || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=600&q=80'],
+            sellerId: it.sellerId || '',
+            sellerName: it.sellerName || 'ورشة الصعيد التراثية',
+            sellerGovernorate: it.sellerGovernorate || 'قنا',
+            categoryId: 'cat-pottery',
+            categoryName: 'الفخار والخزف',
+            inStock: true,
+            stockCount: 10,
+            rating: 5,
+            reviewCount: 1,
+            isHandmade: true,
+            heritageGovernorate: it.sellerGovernorate || 'قنا',
+            approvalStatus: 'approved' as const,
+            description: it.productTitle || it.title || 'منتج تراثي مصنوع يدوياً في صعيد مصر'
           };
-        })
+
+        return {
+          product,
+          quantity: it.quantity || 1,
+          selectedColor: it.selectedColor,
+          customNote: it.customNote
+        };
+      })
     : [];
 
   return {
@@ -453,6 +453,7 @@ export const normalizeOrder = (ord: any): Order => {
 
 export const PAGE_ROUTES: Record<ActivePage, string> = {
   home: '/',
+  intro: '/film',
   explore: '/explore',
 
   'governorate-details': '/governorates/:slug',
@@ -583,6 +584,19 @@ function getInitialNavigationState(): {
   const pageParam = params.get('page') as ActivePage | null;
 
   // 1. Direct Deep-Linking Priority via Explicit Query Parameters (Legacy & Share fallback)
+  if (
+    rawPath === '/film' ||
+    rawPath === '/film' ||
+    params.get('intro') === 'true' ||
+    params.get('intro') === '1' ||
+    params.get('film') === 'true' ||
+    params.get('film') === '1' ||
+    hash === '#intro' ||
+    hash === '#film'
+  ) {
+    return { page: 'intro', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  }
+
   const reelId = params.get('reel') || params.get('reelId');
   if (reelId) {
     try { sessionStorage.setItem('wah_selected_reel_id', reelId); } catch { }
@@ -884,6 +898,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Update navigation state on browser back/forward buttons (popstate)
   useEffect(() => {
     const onPopState = () => {
+      const path = window.location.pathname.replace(/\/+$/, '') || '/';
+      const params = new URLSearchParams(window.location.search);
+      const isIntro =
+        path === '/film' ||
+        path === '/film' ||
+        params.get('intro') === 'true' ||
+        params.get('intro') === '1' ||
+        params.get('film') === 'true' ||
+        params.get('film') === '1';
+      setShowIntroVideo(isIntro);
+
       const nav = getInitialNavigationState();
       setActivePageState(nav.page);
       if (nav.productId !== undefined) setSelectedProductId(nav.productId);
@@ -928,13 +953,41 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } catch { }
   }, [activePage]);
 
-  // Intro Video: Opt-in only via explicit click to prevent blocking visitors
-  const [showIntroVideo, setShowIntroVideo] = useState<boolean>(false);
+  // Intro Video: Opt-in via explicit click, button link, or direct /film or /film URL
+  const [showIntroVideo, setShowIntroVideo] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    const path = window.location.pathname.replace(/\/+$/, '') || '/';
+    const params = new URLSearchParams(window.location.search);
+    const hash = window.location.hash;
+    return (
+      path === '/film' ||
+      path === '/film' ||
+      params.get('intro') === 'true' ||
+      params.get('intro') === '1' ||
+      params.get('film') === 'true' ||
+      params.get('film') === '1' ||
+      hash === '#intro' ||
+      hash === '#film'
+    );
+  });
 
-  const dismissIntroVideo = () => {
+  useEffect(() => {
+    if (activePage === 'intro') {
+      setShowIntroVideo(true);
+    }
+  }, [activePage]);
+
+  const dismissIntroVideo = useCallback(() => {
     setShowIntroVideo(false);
-    localStorage.setItem('saeed_intro_seen', 'true');
-  };
+    try {
+      localStorage.setItem('saeed_intro_seen', 'true');
+      const currentPath = window.location.pathname.replace(/\/+$/, '') || '/';
+      if (currentPath === '/film' || currentPath === '/film') {
+        window.history.pushState({ page: 'home' }, '', '/');
+        setActivePageState('home');
+      }
+    } catch { }
+  }, []);
 
   const [showOnboarding, setShowOnboarding] = useState(false);
 

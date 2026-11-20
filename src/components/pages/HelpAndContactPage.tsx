@@ -316,7 +316,7 @@ export const HelpAndContactPage: React.FC = () => {
 
           {/* Official Email */}
           <a
-            href="mailto:support@wah-saeed.com"
+            href="mailto:support@waaaaah.vercel.app"
             className="group relative p-5 rounded-2xl bg-white dark:bg-[#26160D] border border-[#C99444]/30 shadow-md hover:shadow-xl hover:border-[#C99444] transition-all duration-300 cursor-pointer flex flex-col justify-between"
           >
             <div>

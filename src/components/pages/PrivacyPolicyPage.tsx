@@ -282,11 +282,11 @@ export const PrivacyPolicyPage: React.FC = () => {
               </p>
               <div className="flex flex-wrap gap-4 pt-1 text-xs">
                 <a
-                  href="mailto:privacy@wah-saeed.com"
+                  href="mailto:privacy@waaaaah.vercel.app"
                   className="px-4 py-2 rounded-xl bg-primary text-white font-bold hover:bg-[#B37A2B] transition-colors flex items-center gap-2"
                 >
                   <Mail className="w-3.5 h-3.5" />
-                  <span>privacy@wah-saeed.com</span>
+                  <span>privacy@waaaaah.vercel.app</span>
                 </a>
                 <button
                   type="button"

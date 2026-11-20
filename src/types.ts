@@ -501,6 +501,7 @@ export interface PasswordResetRequest {
 
 export type ActivePage =
   | 'home'
+  | 'intro'
   | 'explore'
   | 'governorate-details'
   | 'map'

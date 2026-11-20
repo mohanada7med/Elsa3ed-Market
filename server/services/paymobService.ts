@@ -136,7 +136,7 @@ export async function isIntegrationVerified(methodType: 'card' | 'wallet'): Prom
         first_name: 'Verification',
         last_name: 'Probe',
         phone_number: '01000000000',
-        email: 'probe@wah-saeed.com',
+        email: 'probe@waaaaah.vercel.app',
         apartment: 'NA',
         floor: 'NA',
         street: 'NA',
@@ -149,7 +149,7 @@ export async function isIntegrationVerified(methodType: 'card' | 'wallet'): Prom
       customer: {
         first_name: 'Verification',
         last_name: 'Probe',
-        email: 'probe@wah-saeed.com',
+        email: 'probe@waaaaah.vercel.app',
         phone_number: '01000000000'
       }
     };
@@ -219,7 +219,7 @@ export async function initiatePaymobPayment(
     first_name: firstName,
     last_name: lastName,
     phone_number: order.buyerPhone || '01000000000',
-    email: order.buyerEmail || 'customer@wah-saeed.com',
+    email: order.buyerEmail || 'customer@waaaaah.vercel.app',
     apartment: 'NA',
     floor: 'NA',
     street: streetAddress.slice(0, 50),
@@ -297,7 +297,7 @@ export async function initiatePaymobPayment(
     customer: {
       first_name: firstName,
       last_name: lastName,
-      email: order.buyerEmail || 'customer@wah-saeed.com',
+      email: order.buyerEmail || 'customer@waaaaah.vercel.app',
       phone_number: order.buyerPhone || '01000000000'
     },
     special_reference: `${order.orderNumber}-${Date.now().toString().slice(-6)}`,
@@ -335,7 +335,7 @@ export async function initiatePaymobPayment(
       (normalizedError.includes('does not exist') || normalizedError.includes('not found'));
     const errorCode = responseData && typeof responseData === 'object'
       ? (responseData as Record<string, unknown>).error_code ??
-        (responseData as Record<string, unknown>).code
+      (responseData as Record<string, unknown>).code
       : undefined;
     Logger.error('[Paymob] Intention API rejected payment request', {
       status: response.status,
@@ -474,7 +474,7 @@ export async function markOrderPaidByPaymob(
     !transactionDetails.transactionId ||
     !Number.isFinite(transactionDetails.paidAmount) ||
     Math.round((transactionDetails.paidAmount as number) * 100) !==
-      Math.round((order.total + (order.paymentFee ?? 0)) * 100)
+    Math.round((order.total + (order.paymentFee ?? 0)) * 100)
   ) {
     return { success: false, error: 'مبلغ الدفع أو رقم المعاملة غير صحيح' };
   }

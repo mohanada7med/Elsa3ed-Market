@@ -140,9 +140,9 @@ export default function RootLayout({
               '@graph': [
                 {
                   '@type': 'Organization',
-                  '@id': 'https://wah-saeed.com/#organization',
+                  '@id': 'https://waaaaah.vercel.app/#organization',
                   name: 'وه | WAH — العالم الرقمي لصعيد مصر',
-                  url: 'https://wah-saeed.com',
+                  url: 'https://waaaaah.vercel.app',
                   logo: {
                     '@type': 'ImageObject',
                     url: 'https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png',
@@ -158,18 +158,18 @@ export default function RootLayout({
                 },
                 {
                   '@type': 'WebSite',
-                  '@id': 'https://wah-saeed.com/#website',
-                  url: 'https://wah-saeed.com',
+                  '@id': 'https://waaaaah.vercel.app/#website',
+                  url: 'https://waaaaah.vercel.app',
                   name: 'وه | WAH',
                   description:
                     'العالم الرقمي لصعيد مصر: تراث، حرف، سوق، أكلات، ومعالم أصيلة',
                   publisher: {
-                    '@id': 'https://wah-saeed.com/#organization'
+                    '@id': 'https://waaaaah.vercel.app/#organization'
                   },
                   inLanguage: 'ar-EG',
                   potentialAction: {
                     '@type': 'SearchAction',
-                    target: 'https://wah-saeed.com/?search={search_term_string}',
+                    target: 'https://waaaaah.vercel.app/?search={search_term_string}',
                     'query-input': 'required name=search_term_string'
                   }
                 }

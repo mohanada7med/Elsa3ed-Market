@@ -480,7 +480,7 @@ const MainContent: React.FC = () => {
             id="main-route-container"
           >
             <React.Suspense fallback={<LazySectionFallback />}>
-              {activePage === 'home' && <HomePage />}
+              {(activePage === 'home' || activePage === 'intro') && <HomePage />}
               {(activePage === 'products' || activePage === 'search' || activePage === 'market' || activePage === 'wah-market') && <ProductsPage />}
               {(activePage === 'product-details' || activePage === 'product-detail') && <ProductDetailsView />}
               {activePage === 'categories' && <CategoriesPage />}

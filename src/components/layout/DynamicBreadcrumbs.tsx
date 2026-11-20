@@ -148,11 +148,11 @@ export const DynamicBreadcrumbs: React.FC = () => {
   // Compute hierarchical breadcrumbs list
   const breadcrumbItems = useMemo<BreadcrumbItem[]>(() => {
     // Only display on secondary pages
-    if (activePage === 'home') {
+    if (activePage === 'home' || activePage === 'intro') {
       return [];
     }
 
-    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://wah-saeed.com';
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://waaaaah.vercel.app';
     const items: BreadcrumbItem[] = [
       {
         id: 'home',
@@ -587,7 +587,7 @@ export const DynamicBreadcrumbs: React.FC = () => {
         '@type': 'ListItem',
         position: index + 1,
         name: item.label,
-        item: item.url || (typeof window !== 'undefined' ? window.location.href : 'https://wah-saeed.com')
+        item: item.url || (typeof window !== 'undefined' ? window.location.href : 'https://waaaaah.vercel.app')
       }))
     };
 
@@ -607,7 +607,7 @@ export const DynamicBreadcrumbs: React.FC = () => {
   }, [breadcrumbItems]);
 
   // If on home page or no breadcrumb items exist, render nothing
-  if (activePage === 'home' || activePage === 'products' || breadcrumbItems.length === 0) {
+  if (activePage === 'home' || activePage === 'intro' || activePage === 'products' || breadcrumbItems.length === 0) {
     return null;
   }
 
