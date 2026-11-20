@@ -1643,7 +1643,7 @@ export const ProductDetailsView: React.FC = () => {
                       title={`محادثة واتساب البائع: ${sellerPhone}`}
                     >
                       <MessageCircle size={16} className="text-[#25D366]" />
-                      <span>تواصل واتساب</span>
+                      <span>واتساب: {sellerPhone}</span>
                     </a>
                   </div>
                 </>
@@ -1815,7 +1815,32 @@ export const ProductDetailsView: React.FC = () => {
             </div>
 
             <div className="flex flex-col gap-2 sm:flex-row">
-              
+              <a
+                href={getWhatsAppUrl(
+                  `السلام عليكم، نود طلب عرض أسعار جملة وتوريدات لمنتج: "${product.title}" (كود: ${product.id}) من ورشة ${sellerName}`,
+                  sellerPhone
+                )}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="
+                  flex
+                  min-h-12
+                  items-center
+                  justify-center
+                  gap-2
+                  rounded-xl
+                  bg-[#25D366] hover:bg-[#20ba59]
+                  px-6
+                  text-xs
+                  font-black
+                  text-white
+                  transition
+                  shadow-md
+                "
+              >
+                <MessageCircle size={16} />
+                <span>محادثة واتساب: {sellerPhone}</span>
+              </a>
 
               <button
                 type="button"

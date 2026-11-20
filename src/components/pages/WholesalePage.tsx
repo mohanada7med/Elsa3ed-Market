@@ -24,7 +24,7 @@ export const WholesalePage: React.FC = () => {
     if (!pid && typeof window !== 'undefined') {
       try {
         pid = sessionStorage.getItem('elsa3ed_selected_product_id');
-      } catch { }
+      } catch {}
     }
     if (!pid) return null;
     return products.find((p) => p.id === pid) || null;
@@ -182,7 +182,7 @@ export const WholesalePage: React.FC = () => {
                 className="px-7 py-3.5 rounded-[1.25rem] bg-[#25D366] hover:bg-[#20ba59] text-white font-black text-sm shadow-lg shadow-emerald-900/20 transition-all hover:scale-105 flex items-center gap-2"
               >
                 <MessageCircle className="w-4 h-4" />
-                <span>محادثة واتساب</span>
+                <span>محادثة واتساب: {sellerPhone}</span>
               </a>
             </div>
           </div>
@@ -352,7 +352,7 @@ export const WholesalePage: React.FC = () => {
               className="px-4 py-2 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white text-xs font-bold flex items-center gap-1.5 shadow-md shadow-emerald-900/20 transition-all hover:scale-105"
             >
               <MessageCircle className="w-4 h-4" />
-              <span>محادثة واتساب البائع</span>
+              <span>محادثة واتساب البائع: {sellerPhone}</span>
             </a>
           </div>
         )}

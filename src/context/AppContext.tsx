@@ -25,7 +25,6 @@ import {
 import { api, wahApi } from '../services/api.ts';
 import { notificationService, AppNotification, normalizeNotification } from '../services/notificationService.ts';
 import { browserNotificationService, BrowserNotificationSettings } from '../services/browserNotificationService.ts';
-import { pushNotificationService } from '../services/pushNotificationService';
 import { resolveNotificationNavigation } from '../utils/notificationRouter.ts';
 import { getEffectiveUnitPrice } from '../utils/wholesalePricing.ts';
 
@@ -1207,17 +1206,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const res = await browserNotificationService.requestPermission();
     setBrowserNotificationPermission(res);
     setBrowserNotificationSettingsState(browserNotificationService.getSettings());
-    if (res === 'granted') {
-      pushNotificationService.subscribeUser(currentUser || undefined).catch((e) => {
-        console.warn('[AppContext] Web Push background subscription notice:', e);
-      });
-    }
     return res;
-  }, [currentUser]);
+  }, []);
 
   const sendTestBrowserNotification = useCallback(() => {
     browserNotificationService.sendTestNotification();
-    pushNotificationService.sendTestNotification().catch(() => {});
     addToast('تم إرسال إشعار تجريبي', 'تم اختبار منظومة التنبيهات الفورية والتنبيه الصوتي بنجاح', 'success');
   }, [addToast]);
 

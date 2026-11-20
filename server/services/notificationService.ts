@@ -2,7 +2,6 @@ import { getDatabase, memoryDb } from '../db/mongodb.ts';
 import type { NotificationDocument, AdminBroadcastDocument } from '../models/types.ts';
 import type { AuthenticatedUser } from '../middleware/auth.ts';
 import { chatRealtimeService } from './chatRealtimeService.ts';
-import { webPushService } from './webPushService.ts';
 import { Logger } from '../utils/logger.ts';
 
 const memoryNotifications: NotificationDocument[] = [];
@@ -133,23 +132,6 @@ export async function createNotification(params: {
   }
 
   memoryNotifications.unshift(doc);
-
-  // Trigger background Web Push Notification if recipient has subscribed devices
-  if (targetUserId) {
-    webPushService
-      .sendPushToUser(targetUserId, {
-        title: doc.title,
-        body: doc.message,
-        url: doc.link || (doc.actionPage ? `/?page=${doc.actionPage}` : '/'),
-        actionPage: doc.actionPage,
-        metadata: doc.metadata,
-        tag: `notif-${doc.id}`
-      })
-      .catch((err) => {
-        Logger.warn('[NotificationService] Web push dispatch warning:', err?.message || err);
-      });
-  }
-
   return doc;
 }
 
@@ -658,25 +640,6 @@ export async function sendAdminBroadcastNotification(
       link: finalActionPage,
       createdAt: now
     });
-  }
-
-  // 8. Deliver via Native Web Push Notifications (PWA Background Push)
-  const pushPayload = {
-    title,
-    body: message,
-    url: finalActionPage || '/',
-    actionPage: finalActionPage,
-    tag: `broadcast-${broadcastId}`
-  };
-
-  if (targetType === 'all') {
-    webPushService.sendPushBroadcast(pushPayload).catch(() => {});
-  } else if (targetType === 'buyers') {
-    webPushService.sendPushToRole('buyer', pushPayload).catch(() => {});
-  } else if (targetType === 'sellers') {
-    webPushService.sendPushToRole('seller', pushPayload).catch(() => {});
-  } else if (targetType === 'user' && targetUserId) {
-    webPushService.sendPushToUser(targetUserId, pushPayload).catch(() => {});
   }
 
   Logger.info(

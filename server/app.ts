@@ -33,7 +33,6 @@ import cloudinaryRoutes from './routes/cloudinaryRoutes.ts';
 import paymentRoutes from './routes/paymentRoutes.ts';
 import shippingRoutes from './routes/shippingRoutes.ts';
 import communityRoutes from './routes/communityRoutes.ts';
-import pushRoutes from './routes/pushRoutes.ts';
 
 
 export function createApp(): Express {
@@ -72,11 +71,9 @@ export function createApp(): Express {
   const uploadsPath = path.join(process.cwd(), 'public', 'uploads');
   const mascotPath = path.join(process.cwd(), 'public', 'mascot');
   const patternPath = path.join(process.cwd(), 'public', 'pattern');
-  const iconsPath = path.join(process.cwd(), 'public', 'icons');
   app.use('/uploads', express.static(uploadsPath, { maxAge: '7d', etag: true }));
   app.use('/mascot', express.static(mascotPath, { maxAge: '30d', etag: true, immutable: true }));
   app.use('/pattern', express.static(patternPath, { maxAge: '30d', etag: true, immutable: true }));
-  app.use('/icons', express.static(iconsPath, { maxAge: '30d', etag: true, immutable: true }));
 
   // 5. SEO routes (Sitemap & Robots at root level)
   app.use(seoRoutes);
@@ -152,7 +149,6 @@ export function createApp(): Express {
     { prefix: '/seller', router: sellerRoutes },
     { prefix: '/seller-requests', router: sellerRequestRoutes },
     { prefix: '/notifications', router: notificationRoutes },
-    { prefix: '/push', router: pushRoutes },
     { prefix: '/community', router: communityRoutes },
     { prefix: '/reports', router: reportRoutes },
     { prefix: '/admin/media', router: adminMediaRoutes },
