@@ -47,18 +47,7 @@ function getDate(value: unknown, fallback: string): string {
 /**
  * GET /sitemap.xml
  *
- * Dynamic sitemap for WAH platform.
- *
- * Public pages:
- * - Home
- * - Products
- * - Categories
- * - Sellers
- * - Heritage
- * - Food
- * - Places
- * - Crafts
- * - Stories
+ * Comprehensive dynamic sitemap for all live public WAH platform pages and entities.
  */
 router.get('/sitemap.xml', async (req: Request, res: Response) => {
   try {
@@ -76,126 +65,121 @@ router.get('/sitemap.xml', async (req: Request, res: Response) => {
     let events: any[] = [];
     let people: any[] = [];
     let seasons: any[] = [];
+    let reels: any[] = [];
 
-    /**
-     * MongoDB
-     */
     if (isMongo && db) {
       try {
-        products = await db
-          .collection('products')
-          .find(
-            {
-              approvalStatus: 'approved',
-            },
-            {
-              projection: {
-                id: 1,
-                updatedAt: 1,
-                createdAt: 1,
-              },
-            }
-          )
-          .toArray();
+        const publishedStatus = {
+          status: { $nin: ['draft', 'pending_review', 'rejected', 'archived'] }
+        };
 
-        categories = await db
-          .collection('categories')
-          .find(
-            {
-              active: true,
-            },
-            {
-              projection: {
-                id: 1,
-                slug: 1,
-                updatedAt: 1,
+        [
+          products,
+          categories,
+          sellers,
+          governorates,
+          places,
+          foods,
+          events,
+          people,
+          seasons,
+          reels
+        ] = await Promise.all([
+          db
+            .collection('products')
+            .find(
+              { approvalStatus: 'approved' },
+              { projection: { id: 1, updatedAt: 1, createdAt: 1 } }
+            )
+            .toArray(),
+          db
+            .collection('categories')
+            .find(
+              { active: { $ne: false } },
+              { projection: { id: 1, slug: 1, updatedAt: 1 } }
+            )
+            .toArray(),
+          db
+            .collection('sellers')
+            .find(
+              { status: 'approved' },
+              { projection: { id: 1, updatedAt: 1, createdAt: 1 } }
+            )
+            .toArray(),
+          db
+            .collection('wah_governorates')
+            .find(publishedStatus, { projection: { id: 1, slug: 1, updatedAt: 1, createdAt: 1 } })
+            .toArray(),
+          db
+            .collection('wah_heritage_places')
+            .find(publishedStatus, { projection: { id: 1, slug: 1, updatedAt: 1, createdAt: 1 } })
+            .toArray(),
+          db
+            .collection('wah_food')
+            .find(publishedStatus, { projection: { id: 1, slug: 1, updatedAt: 1, createdAt: 1 } })
+            .toArray(),
+          db
+            .collection('wah_events')
+            .find(publishedStatus, { projection: { id: 1, slug: 1, updatedAt: 1, createdAt: 1 } })
+            .toArray(),
+          db
+            .collection('wah_local_people')
+            .find(publishedStatus, { projection: { id: 1, slug: 1, updatedAt: 1, createdAt: 1 } })
+            .toArray(),
+          db
+            .collection('wah_seasons')
+            .find(publishedStatus, { projection: { id: 1, slug: 1, updatedAt: 1, createdAt: 1 } })
+            .toArray(),
+          db
+            .collection('reels')
+            .find(
+              {
+                $and: [
+                  publishedStatus,
+                  { videoUrl: { $exists: true, $nin: ['', null] } },
+                  {
+                    $or: [
+                      { moderationStatus: 'approved' },
+                      { moderationStatus: { $exists: false } },
+                      { moderationStatus: null }
+                    ]
+                  }
+                ]
               },
-            }
-          )
-          .toArray();
-
-        sellers = await db
-          .collection('sellers')
-          .find(
-            {
-              status: 'approved',
-            },
-            {
-              projection: {
-                id: 1,
-                updatedAt: 1,
-                createdAt: 1,
-              },
-            }
-          )
-          .toArray();
-
-        const publishedStatus = { status: { $nin: ['draft', 'pending_review', 'rejected', 'archived'] } };
-        [governorates, places, foods, events, people, seasons] = await Promise.all([
-          db.collection('wah_governorates').find(publishedStatus, {
-            projection: { id: 1, slug: 1, updatedAt: 1, createdAt: 1 }
-          }).toArray(),
-          db.collection('wah_heritage_places').find(publishedStatus, {
-            projection: { id: 1, slug: 1, updatedAt: 1, createdAt: 1 }
-          }).toArray(),
-          db.collection('wah_food').find(publishedStatus, {
-            projection: { id: 1, slug: 1, updatedAt: 1, createdAt: 1 }
-          }).toArray(),
-          db.collection('wah_events').find(publishedStatus, {
-            projection: { id: 1, slug: 1, updatedAt: 1, createdAt: 1 }
-          }).toArray(),
-          db.collection('wah_local_people').find(publishedStatus, {
-            projection: { id: 1, slug: 1, updatedAt: 1, createdAt: 1 }
-          }).toArray(),
-          db.collection('wah_seasons').find(publishedStatus, {
-            projection: { id: 1, slug: 1, updatedAt: 1, createdAt: 1 }
-          }).toArray()
+              { projection: { id: 1, slug: 1, updatedAt: 1, createdAt: 1 } }
+            )
+            .toArray()
         ]);
       } catch (error) {
-        console.error(
-          'Error querying WAH sitemap data from MongoDB:',
-          error
-        );
+        console.error('Error querying WAH sitemap data from MongoDB:', error);
       }
     }
 
-    /**
-     * Memory DB fallback
-     */
+    // Memory DB fallback when running without MongoDB
     if (products.length === 0) {
-      products = memoryDb.products.filter(
-        (product) => product.approvalStatus === 'approved'
-      );
+      products = memoryDb.products.filter((product) => product.approvalStatus === 'approved');
     }
-
     if (categories.length === 0) {
-      categories = memoryDb.categories.filter(
-        (category) => category.active !== false
-      );
+      categories = memoryDb.categories.filter((category) => category.active !== false);
     }
-
     if (sellers.length === 0) {
-      sellers = memoryDb.sellers.filter(
-        (seller) =>
-          seller.status === 'approved' || !seller.status
-      );
+      sellers = memoryDb.sellers.filter((seller) => seller.status === 'approved' || !seller.status);
+    }
+    const isPublished = (item: any) =>
+      !['draft', 'pending_review', 'rejected', 'archived'].includes(item.status);
+    if (governorates.length === 0) governorates = memoryDb.governorates.filter(isPublished);
+    if (places.length === 0) places = memoryDb.heritagePlaces.filter(isPublished);
+    if (foods.length === 0) foods = memoryDb.upperEgyptFood.filter(isPublished);
+    if (events.length === 0) events = memoryDb.culturalEvents.filter(isPublished);
+    if (people.length === 0) people = memoryDb.localPeople.filter(isPublished);
+    if (seasons.length === 0) seasons = memoryDb.seasons.filter(isPublished);
+    if (reels.length === 0 && Array.isArray(memoryDb.reels)) {
+      reels = memoryDb.reels.filter((r: any) => isPublished(r) && Boolean(r.videoUrl));
     }
 
-    if (governorates.length === 0) governorates = memoryDb.governorates.filter((item) => !['draft', 'pending_review', 'rejected', 'archived'].includes(item.status));
-    if (places.length === 0) places = memoryDb.heritagePlaces.filter((item) => !['draft', 'pending_review', 'rejected', 'archived'].includes(item.status));
-    if (foods.length === 0) foods = memoryDb.upperEgyptFood.filter((item) => !['draft', 'pending_review', 'rejected', 'archived'].includes(item.status));
-    if (events.length === 0) events = memoryDb.culturalEvents.filter((item) => !['draft', 'pending_review', 'rejected', 'archived'].includes(item.status));
-    if (people.length === 0) people = memoryDb.localPeople.filter((item) => !['draft', 'pending_review', 'rejected', 'archived'].includes(item.status));
-    if (seasons.length === 0) seasons = memoryDb.seasons.filter((item) => !['draft', 'pending_review', 'rejected', 'archived'].includes(item.status));
-
-    /**
-     * XML
-     */
+    const seenLocs = new Set<string>();
     const urls: string[] = [];
 
-    /**
-     * Helper for adding URLs.
-     */
     const addUrl = (
       path: string,
       options?: {
@@ -204,287 +188,150 @@ router.get('/sitemap.xml', async (req: Request, res: Response) => {
         priority?: string;
       }
     ) => {
+      const normalizedPath = path === '/' ? '/' : path.replace(/\/+$/, '');
+      const loc = `${baseUrl}${normalizedPath}`;
+      if (seenLocs.has(loc)) return;
+      seenLocs.add(loc);
+
       const lastmod = options?.lastmod || today;
       const changefreq = options?.changefreq || 'weekly';
       const priority = options?.priority || '0.5';
 
       urls.push(`
   <url>
-    <loc>${escapeXml(`${baseUrl}${path}`)}</loc>
+    <loc>${escapeXml(loc)}</loc>
     <lastmod>${escapeXml(lastmod)}</lastmod>
     <changefreq>${changefreq}</changefreq>
     <priority>${priority}</priority>
   </url>`);
     };
 
-    /**
-     * ============================================================
-     * WAH - Main Public Pages
-     * ============================================================
-     */
+    // Main live public pages (only real, non-redirect, indexable routes)
+    addUrl('/', { changefreq: 'daily', priority: '1.0' });
+    addUrl('/products', { changefreq: 'daily', priority: '0.95' });
+    addUrl('/reels', { changefreq: 'daily', priority: '0.9' });
+    addUrl('/map', { changefreq: 'weekly', priority: '0.9' });
+    addUrl('/places', { changefreq: 'weekly', priority: '0.9' });
+    addUrl('/food', { changefreq: 'weekly', priority: '0.85' });
+    addUrl('/events', { changefreq: 'weekly', priority: '0.85' });
+    addUrl('/people', { changefreq: 'weekly', priority: '0.85' });
+    addUrl('/sellers', { changefreq: 'weekly', priority: '0.85' });
+    addUrl('/categories', { changefreq: 'weekly', priority: '0.8' });
+    addUrl('/wholesale', { changefreq: 'weekly', priority: '0.8' });
+    addUrl('/quiz', { changefreq: 'monthly', priority: '0.7' });
+    addUrl('/film', { changefreq: 'monthly', priority: '0.7' });
+    addUrl('/help', { changefreq: 'monthly', priority: '0.6' });
+    addUrl('/privacy', { changefreq: 'yearly', priority: '0.4' });
+    addUrl('/terms', { changefreq: 'yearly', priority: '0.4' });
 
-    addUrl('/', {
-      changefreq: 'daily',
-      priority: '1.0',
-    });
-
-    addUrl('/products', {
-      changefreq: 'daily',
-      priority: '0.9',
-    });
-
-    addUrl('/categories', {
-      changefreq: 'weekly',
-      priority: '0.8',
-    });
-
-    addUrl('/sellers', {
-      changefreq: 'weekly',
-      priority: '0.7',
-    });
-
-    addUrl('/map', {
-      changefreq: 'weekly',
-      priority: '0.8',
-    });
-
-    addUrl('/people', {
-      changefreq: 'weekly',
-      priority: '0.7',
-    });
-
-    addUrl('/events', {
-      changefreq: 'weekly',
-      priority: '0.7',
-    });
-
-    /**
-     * ============================================================
-     * WAH - Heritage / Cultural Pages
-     * ============================================================
-     *
-     * Add these only if these routes actually exist
-     * in your frontend.
-     */
-
-    addUrl('/heritage', {
-      changefreq: 'weekly',
-      priority: '0.9',
-    });
-
-    addUrl('/places', {
-      changefreq: 'weekly',
-      priority: '0.8',
-    });
-
-    addUrl('/food', {
-      changefreq: 'weekly',
-      priority: '0.8',
-    });
-
-    addUrl('/crafts', {
-      changefreq: 'weekly',
-      priority: '0.8',
-    });
-
-    addUrl('/stories', {
-      changefreq: 'weekly',
-      priority: '0.7',
-    });
-
-    addUrl('/about', {
-      changefreq: 'monthly',
-      priority: '0.6',
-    });
-
-    /**
-     * ============================================================
-     * Public Categories
-     * ============================================================
-     */
-
-    for (const category of categories) {
-      const slug = category.slug || category.id;
-
-      if (!slug) continue;
-
-      const lastmod = getDate(
-        category.updatedAt,
-        today
-      );
-
-      addUrl(
-        `/categories/${encodeURIComponent(String(slug))}`,
-        {
-          lastmod,
-          changefreq: 'weekly',
-          priority: '0.7',
-        }
-      );
-    }
-
-    /**
-     * ============================================================
-     * Approved Products
-     * ============================================================
-     */
-
-    for (const product of products) {
-      const productId = product.id;
-
-      if (!productId) continue;
-
-      const lastmod = getDate(
-        product.updatedAt || product.createdAt,
-        today
-      );
-
-      addUrl(
-        `/products/${encodeURIComponent(String(productId))}`,
-        {
-          lastmod,
-          changefreq: 'weekly',
-          priority: '0.8',
-        }
-      );
-    }
-
-    /**
-     * ============================================================
-     * Approved Sellers
-     * ============================================================
-     */
-
-    for (const seller of sellers) {
-      const sellerId = seller.id;
-
-      if (!sellerId) continue;
-
-      const lastmod = getDate(
-        seller.updatedAt || seller.createdAt,
-        today
-      );
-
-      addUrl(
-        `/sellers/${encodeURIComponent(String(sellerId))}`,
-        {
-          lastmod,
-          changefreq: 'weekly',
-          priority: '0.6',
-        }
-      );
-    }
-
-    const addEntityUrls = (items: any[], route: string, priority: string) => {
+    // Dynamic entity URLs
+    const addEntityUrls = (
+      items: any[],
+      route: string,
+      priority: string,
+      changefreq: string = 'weekly',
+      useIdOnly: boolean = false
+    ) => {
       for (const item of items) {
-        const identifier = item.slug || item.id;
+        const identifier = useIdOnly ? item.id : item.slug || item.id;
         if (!identifier) continue;
         addUrl(`/${route}/${encodeURIComponent(String(identifier))}`, {
           lastmod: getDate(item.updatedAt || item.createdAt, today),
-          changefreq: 'monthly',
+          changefreq,
           priority
         });
       }
     };
 
-    addEntityUrls(governorates, 'governorates', '0.8');
-    addEntityUrls(places, 'places', '0.8');
-    addEntityUrls(foods, 'food', '0.8');
-    addEntityUrls(events, 'events', '0.7');
-    addEntityUrls(seasons, 'events', '0.7');
-    addEntityUrls(people, 'people', '0.7');
+    addEntityUrls(categories, 'categories', '0.75', 'weekly');
+    addEntityUrls(products, 'products', '0.85', 'weekly', true);
+    addEntityUrls(sellers, 'sellers', '0.75', 'weekly', true);
+    addEntityUrls(governorates, 'governorates', '0.85', 'monthly');
+    addEntityUrls(places, 'places', '0.85', 'monthly');
+    addEntityUrls(foods, 'food', '0.8', 'monthly');
+    addEntityUrls(events, 'events', '0.75', 'monthly');
+    addEntityUrls(seasons, 'events', '0.75', 'monthly');
+    addEntityUrls(people, 'people', '0.75', 'monthly');
+    addEntityUrls(reels, 'reels', '0.75', 'weekly');
 
-    /**
-     * Build sitemap XML.
-     */
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.join(
-      ''
-    )}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.join('')}
 </urlset>`;
 
     res.status(200);
-
-    res.setHeader(
-      'Content-Type',
-      'application/xml; charset=utf-8'
-    );
-
-    res.setHeader(
-      'Cache-Control',
-      'public, max-age=3600, s-maxage=3600'
-    );
-
+    res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=3600');
     res.send(xml);
   } catch (error) {
-    console.error(
-      'Error generating WAH sitemap:',
-      error
-    );
-
-    res
-      .status(500)
-      .type('text/plain')
-      .send('Error generating sitemap');
+    console.error('Error generating WAH sitemap:', error);
+    res.status(500).type('text/plain').send('Error generating sitemap');
   }
 });
 
 /**
  * GET /robots.txt
  *
- * Robots configuration for WAH.
+ * Search engine crawling policy for WAH platform.
  */
 router.get('/robots.txt', (req: Request, res: Response) => {
   const baseUrl = getBaseUrl(req);
 
-  const robots = `# robots.txt for WAH (وَه)
-# منصة وَه - منصة التراث والثقافة وسوق منتجات الصعيد
+  const robots = `# robots.txt for WAH (وه)
+# منصة وه - العالم الرقمي لصعيد مصر وسوق الحرف التراثية
 
 User-agent: *
 
-# Public pages
+# Public indexable pages
 Allow: /
 Allow: /products
 Allow: /categories
 Allow: /sellers
-Allow: /heritage
+Allow: /reels
+Allow: /map
+Allow: /governorates
 Allow: /places
 Allow: /food
-Allow: /stories
-Allow: /about
+Allow: /events
+Allow: /people
+Allow: /wholesale
+Allow: /quiz
+Allow: /film
+Allow: /help
+Allow: /privacy
+Allow: /terms
 
-# Private / administrative areas
+# Private, dashboard, and transactional areas
 Disallow: /admin
-Disallow: /seller
+Disallow: /seller-
+Disallow: /seller/
 Disallow: /account
+Disallow: /profile
+Disallow: /buyer-account
 Disallow: /cart
 Disallow: /checkout
 Disallow: /orders
+Disallow: /favorites
+Disallow: /notifications
+Disallow: /messages
+Disallow: /search
+Disallow: /global-search
 
-# API should not be indexed
+# API endpoints
 Disallow: /api/
 
-# Authentication pages
+# Authentication & password recovery
 Disallow: /login
 Disallow: /register
 Disallow: /forgot-password
+Disallow: /reset-password
 
 # Sitemap
 Sitemap: ${baseUrl}/sitemap.xml
 `;
 
   res.status(200);
-
-  res.setHeader(
-    'Content-Type',
-    'text/plain; charset=utf-8'
-  );
-
-  res.setHeader(
-    'Cache-Control',
-    'public, max-age=3600, s-maxage=3600'
-  );
-
+  res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+  res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=3600');
   res.send(robots);
 });
 

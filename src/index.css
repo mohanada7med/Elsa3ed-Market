@@ -1288,6 +1288,7 @@ h6 {
   color: #D7AA61;
 }
 
+.wah-loader-content .wah-loader-title,
 .wah-loader-content h1 {
   margin: 0;
   font-family: 'MainFont', 'Cairo', sans-serif;

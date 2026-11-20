@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { wahApi } from '../../services/api';
 import { VisitorMediaGallery } from '../common/VisitorMediaGallery';
 import type { WahGovernorate } from '../../types';
+import { updatePageSEO, generateGovernorateSchema } from '../../utils/seo';
 
 import {
   ArrowLeft,
@@ -215,6 +216,30 @@ export const GovernorateDetailPage: React.FC = () => {
       mounted = false;
     };
   }, [slug, addToast]);
+
+  useEffect(() => {
+    if (!governorate?.name) return;
+    const canonicalPath = `/governorates/${encodeURIComponent(governorate.slug || slug)}`;
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://waaaaah.vercel.app';
+    updatePageSEO({
+      title: `محافظة ${governorate.name} — المعالم والتراث والحرف`,
+      description:
+        governorate.shortIntro ||
+        governorate.history ||
+        `استكشف محافظة ${governorate.name} ومعالمها الأثرية وحرفها وأكلاتها التراثية على منصة وه.`,
+      image: governorate.coverImage,
+      canonicalPath,
+      type: 'article',
+      schema: generateGovernorateSchema({
+        name: governorate.name,
+        description: governorate.shortIntro || governorate.history,
+        image: governorate.coverImage,
+        latitude: governorate.coordinates?.lat,
+        longitude: governorate.coordinates?.lng,
+        url: `${origin}${canonicalPath}`
+      })
+    });
+  }, [governorate, slug]);
 
   const places = governorate?.places || [];
   const crafts = governorate?.crafts || [];

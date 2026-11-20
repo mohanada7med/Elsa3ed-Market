@@ -6,6 +6,7 @@ import { getOptimizedVideoPoster, getOptimizedVideoUrl } from '../../utils/cloud
 import { getYouTubeVideoId } from '../../utils/youtube';
 import { PersonEditorModal } from './PersonEditorModal';
 import { PageNavigationBar } from '../layout/PageNavigationBar';
+import { updatePageSEO, generatePersonSchema } from '../../utils/seo';
 import {
   MapPin,
   ArrowLeft,
@@ -218,6 +219,30 @@ export const PersonDetailPage: React.FC = () => {
     };
     fetchPerson();
   }, [slug]);
+
+  useEffect(() => {
+    if (!person?.name) return;
+    const canonicalPath = `/people/${encodeURIComponent(person.slug || slug)}`;
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://waaaaah.vercel.app';
+    updatePageSEO({
+      title: person.titleOrRole ? `${person.name} — ${person.titleOrRole}` : person.name,
+      description:
+        person.bio ||
+        person.biography ||
+        `سيرة ومسيرة ${person.name} ضمن أعلام وشخصيات صعيد مصر على منصة وه.`,
+      image: person.photoUrl || person.avatarUrl || person.imageUrl,
+      canonicalPath,
+      type: 'article',
+      schema: generatePersonSchema({
+        name: person.name,
+        description: person.bio || person.biography,
+        image: person.photoUrl || person.avatarUrl || person.imageUrl,
+        jobTitle: person.titleOrRole,
+        governorate: person.governorateName,
+        url: `${origin}${canonicalPath}`
+      })
+    });
+  }, [person, slug]);
 
   const handleShare = () => {
     const url = `${window.location.origin}/people/${encodeURIComponent(slug)}`;

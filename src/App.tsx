@@ -287,165 +287,184 @@ const MainContent: React.FC = () => {
 
   // Dynamic SEO meta updates on page transition
   useEffect(() => {
+    if (
+      activePage.startsWith('admin-') ||
+      activePage === 'cultural-cms' ||
+      (activePage.startsWith('seller-') && activePage !== 'seller-details')
+    ) {
+      updatePageSEO({
+        title: activePage.startsWith('seller-') ? 'لوحة تحكم الورشة' : 'لوحة الإدارة',
+        description: 'منطقة الإدارة والتحكم الخاصة بحسابك على منصة وه.',
+        noIndex: true
+      });
+      return;
+    }
+
     switch (activePage) {
       case 'home':
         updatePageSEO({
-          title: 'الرئيسية',
-          description: 'وه - العالم الرقمي لصعيد مصر لاكتشاف وتوثيق التراث والقرى والأكلات والحرف، وسوق وه المعتمد لتسوق منتجات الصعيد مباشرة من ورشها.'
+          title: '',
+          canonicalPath: '/',
+          description: 'اكتشف منصة وه — العالم الرقمي لصعيد مصر: سوق حرفي أصيل للشراء المباشر من ورش الصعيد، ريلز حية للصنعة، خريطة المحافظات، المعالم والأكلات وأعلام الصعيد.'
+        });
+        break;
+      case 'intro':
+        updatePageSEO({
+          title: 'فيلم وه التوثيقي — الصعيد بيحكي',
+          canonicalPath: '/film',
+          description: 'شاهد الفيلم التوثيقي لمنصة وه في رحلة بصرية وسمعية داخل قلب صعيد مصر، بين ورش الحرفيين والمعالم العريقة وحكايات أهل البلد.',
+          schema: generateBreadcrumbSchema([{ name: 'الرئيسية', url: '/' }, { name: 'فيلم وه التوثيقي', url: '/film' }])
         });
         break;
       case 'products':
+      case 'market':
+      case 'wah-market':
         updatePageSEO({
-          title: 'معرض المنتجات التراثية',
-          description: 'تصفح تشكيلة واسعة من روائع الحرف الصعيدية الأصيلة بأسعار الورش وضمان الجودة والشحن الآمن.',
-          schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'المقتنيات وسوق وه' }])
+          title: 'سوق وه — منتجات وحرف يدوية من صعيد مصر',
+          canonicalPath: '/products',
+          description: 'تسوّق أرقى المنتجات الحرفية اليدوية الأصيلة من الفخار والكليم والتلي والنحاس والجلود وخيرات الصعيد مباشرة من الورش وبشحن آمن لكل مصر.',
+          schema: generateBreadcrumbSchema([{ name: 'الرئيسية', url: '/' }, { name: 'سوق وه للمنتجات الحرفية', url: '/products' }])
         });
         break;
       case 'categories':
         updatePageSEO({
-          title: 'الأقسام والحرف التراثية',
-          description: 'استكشف تصنيفات الحرف الصعيدية: الفخار والخزف، المنسوجات والكليم، المشغولات الخشبية، وخيرات الطبيعة.',
-          schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'الأقسام والتصنيفات' }])
+          title: 'أقسام وتصنيفات الحرف التراثية',
+          canonicalPath: '/categories',
+          description: 'تصفح جميع أقسام الحرف والصناعات اليدوية الصعيدية: الفخار والخزف، الكليم والسجاد، التلي والتطريز، الخشب والنحاس، وخيرات الصعيد الطبيعية.',
+          schema: generateBreadcrumbSchema([{ name: 'الرئيسية', url: '/' }, { name: 'الأقسام والتصنيفات', url: '/categories' }])
         });
         break;
       case 'reels':
         updatePageSEO({
-          title: 'فيديوهات الحرفيين التفاعلية (وه Reels)',
-          description: 'شاهد مقاطع فيديو حية للحرفيين وهم يصنعون الفخار والكليم والنحاس واشترِ القطعة فوراً من الورشة.',
-          schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'فيديوهات الصنعة والورش' }])
+          title: 'ريلز وه — فيديوهات الصنعة والورش الحية',
+          canonicalPath: '/reels',
+          description: 'شاهد مقاطع ريلز وفيديوهات حية من قلب ورش صعيد مصر لحرفيي الفخار والكليم والتلي والنحاس أثناء الصنعة، واقتنِ القطعة مباشرة من صانعها.',
+          schema: generateBreadcrumbSchema([{ name: 'الرئيسية', url: '/' }, { name: 'ريلز وفيديوهات الصنعة', url: '/reels' }])
         });
         break;
       case 'sellers':
         updatePageSEO({
-          title: 'دليل الورش والحرفيين',
-          description: 'تواصل مع كبار شيوخ الصنعة وأصحاب الورش المعتمدة في قنا وأسوان وسوهاج وأسيوط.'
+          title: 'دليل ورش وحرفيي صعيد مصر المعتمدين',
+          canonicalPath: '/sellers',
+          description: 'تعرّف على شيوخ الصنعة وأصحاب الورش الحرفية المعتمدة في قنا والأقصر وأسوان وسوهاج وأسيوط والمنيا وتسوّق منهم مباشرة.',
+          schema: generateBreadcrumbSchema([{ name: 'الرئيسية', url: '/' }, { name: 'ورش وحرفيو الصعيد', url: '/sellers' }])
         });
         break;
-      case 'cart':
+      case 'wholesale':
         updatePageSEO({
-          title: 'سلة المشتريات التراثية',
-          description: 'استعرض مشترياتك من المنتجات التراثية والحرفية من ورش الصعيد.'
-        });
-        break;
-      case 'checkout':
-        updatePageSEO({
-          title: 'إتمام وتأكيد الطلب',
-          description: 'تأكيد وشحن طلبات سوق وه الحرفية مباشرة من ورش الصعيد.'
-        });
-        break;
-      case 'orders':
-        updatePageSEO({
-          title: 'تتبع الطلبات والشحنات',
-          description: 'متابعة حية لمسار شحن طلباتك الحرفية من محافظات الصعيد حتى باب منزلك.'
-        });
-        break;
-      case 'favorites':
-        updatePageSEO({
-          title: 'المفضلة وقائمة الرغبات',
-          description: 'منتجاتك التراثية المفضلة المحفوظة في منصة وه.'
-        });
-        break;
-      case 'messages':
-        updatePageSEO({
-          title: 'المحادثات المباشرة',
-          description: 'تواصل مباشر وفوري مع الحرفيين وشيوخ الصنعة في منصة وه.'
+          title: 'طلبات الجملة والتوريد من ورش الصعيد',
+          canonicalPath: '/wholesale',
+          description: 'اطلب منتجات حرفية وتراثية صعيدية بأسعار الجملة مباشرة من الورش المعتمدة للفنادق والبازارات والمتاجر وشركات التصدير.',
+          schema: generateBreadcrumbSchema([{ name: 'الرئيسية', url: '/' }, { name: 'طلبات الجملة', url: '/wholesale' }])
         });
         break;
       case 'map':
+      case 'explore':
         updatePageSEO({
-          title: 'لفة في الصعيد ورحلة النيل | وه',
-          description: 'استكشف محافظات صعيد مصر ومعالمها التراثية وحرفها وأسواقها على الأطلس التفاعلي ومسار رحلة النيل التراثية.'
-        });
-        break;
-      case 'governorate-details':
-        updatePageSEO({
-          title: 'محافظات صعيد مصر | وه',
-          description: 'دليل شامل لكافة محافظات الصعيد من الفيوم حتى أسوان وحلايب وشلاتين.',
-          schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'محافظات صعيد مصر' }])
+          title: 'خريطة محافظات الصعيد التفاعلية',
+          canonicalPath: '/map',
+          description: 'استكشف خريطة صعيد مصر التفاعلية ورحلة النيل عبر محافظات الفيوم وبني سويف والمنيا وأسيوط وسوهاج وقنا والأقصر وأسوان والوادي الجديد والبحر الأحمر.',
+          schema: generateBreadcrumbSchema([{ name: 'الرئيسية', url: '/' }, { name: 'خريطة محافظات الصعيد', url: '/map' }])
         });
         break;
       case 'places':
-      case 'place-details':
         updatePageSEO({
-          title: 'المعالم والتراث المعماري | وه',
-          description: 'توثيق المعابد، القلاع، الأديرة، المساجد العتيقة، والبيوت التراثية بالصعيد.',
-          schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'المعالم والتراث المعماري' }])
+          title: 'معالم وتراث صعيد مصر',
+          canonicalPath: '/places',
+          description: 'دليل موثّق للمعابد الفرعونية والأديرة والمساجد العتيقة والقلاع والبيوت التراثية والمعالم السياحية في محافظات صعيد مصر.',
+          schema: generateBreadcrumbSchema([{ name: 'الرئيسية', url: '/' }, { name: 'معالم وتراث الصعيد', url: '/places' }])
         });
         break;
       case 'people':
-      case 'person-details':
         updatePageSEO({
-          title: 'اعلام الصعيد | وه',
-          description: 'سير ومسيرات شيوخ الصنعة والرواة والفنانين التلقائيين في صعيد مصر.',
-          schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'اعلام الصعيد' }])
+          title: 'أعلام وشخصيات من صعيد مصر',
+          canonicalPath: '/people',
+          description: 'تعرّف على سير ومسيرة أعلام الصعيد وشيوخ الصنعة والأدباء والرواة والشخصيات المؤثرة التي صنعت تاريخ وثقافة صعيد مصر.',
+          schema: generateBreadcrumbSchema([{ name: 'الرئيسية', url: '/' }, { name: 'أعلام الصعيد', url: '/people' }])
         });
         break;
       case 'food':
-      case 'food-details':
         updatePageSEO({
-          title: 'طعم الصعيد — المطبخ التراثي | وه',
-          description: 'توثيق أكلات ومخبوزات الصعيد الأصيلة وسر الطبخ في الفرن البلدي.',
-          schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'طعم الصعيد والمطبخ التراثي' }])
+          title: 'أكلات ومطبخ الصعيد التراثي',
+          canonicalPath: '/food',
+          description: 'اكتشف أشهر أكلات ومخبوزات صعيد مصر الأصيلة مثل العيش الشمسي والفطير المشلتت والفايش والويكا بمكوناتها وطريقة تحضيرها وحكاياتها.',
+          schema: generateBreadcrumbSchema([{ name: 'الرئيسية', url: '/' }, { name: 'مطبخ وأكلات الصعيد', url: '/food' }])
         });
         break;
       case 'events':
-      case 'event-details':
         updatePageSEO({
-          title: 'فعاليات ومواسم الصعيد | وه',
-          description: 'أجندة الموالد ومواسم الحصاد والمهرجانات التراثية في محافظات الصعيد.'
-        });
-        break;
-      case 'global-search':
-        updatePageSEO({
-          title: 'البحث الشامل | وه',
-          description: 'ابحث في كافة معالم وحرف وحكايات وأكلات وناس ومنتجات صعيد مصر.'
-        });
-        break;
-      case 'cultural-cms':
-        updatePageSEO({
-          title: 'لوحة التوثيق التراثي | وه',
-          description: 'استوديو التوثيق وحفظ التراث وإدارة الموسوعة التراثية لصعيد مصر.'
-        });
-        break;
-      case 'admin-map-editor':
-        updatePageSEO({
-          title: 'محرر إحداثيات الخريطة التفاعلية (GIS) | وه',
-          description: 'لوحة التحكم الإدارية لضبط إحداثيات ومواقع معالم ومحافظات صعيد مصر.'
-        });
-        break;
-      case 'admin-events':
-      case 'admin-events-manager':
-        updatePageSEO({
-          title: 'إدارة المواسم والأعياد والموالد الصعيدية | وه',
-          description: 'لوحة التحكم الشاملة لإدارة وتوثيق مواسم وموالد صعيد مصر بالعامية مع الصور والفيديوهات والتعديل المباشر.'
+          title: 'فعاليات ومواسم وموالد الصعيد',
+          canonicalPath: '/events',
+          description: 'تابع أجندة الفعاليات والمواسم التراثية والموالد الشعبية ومواسم الحصاد والمهرجانات الثقافية في محافظات صعيد مصر.',
+          schema: generateBreadcrumbSchema([{ name: 'الرئيسية', url: '/' }, { name: 'فعاليات ومواسم الصعيد', url: '/events' }])
         });
         break;
       case 'quize':
         updatePageSEO({
-          title: 'مسابقة عم وه • كلام الصعيد | وه',
-          description: 'اختبر معرفتك بكلمات ومصطلحات لهجة أهل الصعيد الأصيلة مع عم وه.'
+          title: 'مسابقة عم وه — اختبر معرفتك بكلام الصعيد',
+          canonicalPath: '/quiz',
+          description: 'شارك في مسابقة عم وه التفاعلية واكتشف معاني كلمات ومصطلحات وأمثال اللهجة الصعيدية الأصيلة واختبر معلوماتك عن تراث الصعيد.',
+          schema: generateBreadcrumbSchema([{ name: 'الرئيسية', url: '/' }, { name: 'مسابقة كلام الصعيد', url: '/quiz' }])
         });
         break;
       case 'help':
       case 'contact':
         updatePageSEO({
-          title: 'مضايفة وه — المساعدة والتواصل | ديوان العون لأهل البلد',
-          description: 'ديوان العون والتواصل في منصة وه؛ في خدمتك على مدار الأسبوع لأي استفسار عن طلبياتك، الصنعة الصعيدية، أو الانضمام لشيوخ الكار.',
-          schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'المساعدة والتواصل' }])
+          title: 'المساعدة والتواصل — مضايفة وه',
+          canonicalPath: '/help',
+          description: 'تواصل مع فريق دعم منصة وه على مدار الأسبوع للاستفسار عن الطلبات والشحن، انضمام الورش والحرفيين، وطلبات الجملة.',
+          schema: generateBreadcrumbSchema([{ name: 'الرئيسية', url: '/' }, { name: 'المساعدة والتواصل', url: '/help' }])
         });
         break;
       case 'privacy':
         updatePageSEO({
-          title: 'سياسة الخصوصية وأمان أهل الدار | وه',
-          description: 'ميثاق سرية وأمان البيانات وحماية خصوصية مقتني الحرف وزوار منصة وه وفق أعلى المعايير.',
-          schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'سياسة الخصوصية' }])
+          title: 'سياسة الخصوصية وحماية البيانات',
+          canonicalPath: '/privacy',
+          description: 'تعرّف على سياسة الخصوصية وأمان البيانات في منصة وه وكيف نحمي معلومات الزوار والمشترين وأصحاب الورش.',
+          schema: generateBreadcrumbSchema([{ name: 'الرئيسية', url: '/' }, { name: 'سياسة الخصوصية', url: '/privacy' }])
         });
         break;
       case 'terms':
         updatePageSEO({
-          title: 'الشروط والأحكام وعهد الصنعة | وه',
-          description: 'ميثاق وعهد التعامل بين مقتني الحرف وشيوخ الورش ومنصة وه لضمان حقوق الجميع بالعدالة والإنصاف.',
-          schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'الشروط والأحكام' }])
+          title: 'الشروط والأحكام وعهد الصنعة',
+          canonicalPath: '/terms',
+          description: 'اطّلع على الشروط والأحكام وسياسة الاسترجاع والضمان وعهد التعامل بين المشترين والورش المعتمدة على منصة وه.',
+          schema: generateBreadcrumbSchema([{ name: 'الرئيسية', url: '/' }, { name: 'الشروط والأحكام', url: '/terms' }])
+        });
+        break;
+      case 'cart':
+      case 'checkout':
+      case 'orders':
+      case 'order-details':
+      case 'favorites':
+      case 'notifications':
+      case 'messages':
+      case 'buyer-account':
+      case 'profile':
+      case 'global-search':
+      case 'search':
+      case 'reset-password':
+        updatePageSEO({
+          title:
+            activePage === 'cart'
+              ? 'سلة المشتريات'
+              : activePage === 'checkout'
+                ? 'إتمام الطلب'
+                : activePage === 'orders' || activePage === 'order-details'
+                  ? 'تتبع الطلبات'
+                  : activePage === 'favorites'
+                    ? 'المفضلة'
+                    : activePage === 'notifications'
+                      ? 'الإشعارات'
+                      : activePage === 'messages'
+                        ? 'المحادثات المباشرة'
+                        : activePage === 'global-search' || activePage === 'search'
+                          ? 'نتائج البحث'
+                          : activePage === 'reset-password'
+                            ? 'إعادة تعيين كلمة المرور'
+                            : 'حسابي الشخصي',
+          description: 'إدارة حسابك وطلباتك على منصة وه.',
+          noIndex: true
         });
         break;
       default:

@@ -7,6 +7,7 @@ import { ArrowLeft, ArrowRight, Check, Clock, Edit3, MapPin, RotateCcw, Share2, 
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { EventImageLightboxModal } from '../common/EventImageLightboxModal';
 import { PageNavigationBar } from '../layout/PageNavigationBar';
+import { updatePageSEO, generateRecipeSchema } from '../../utils/seo';
 
 const fallbackCover = '/mascot/welcoming.webp';
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -96,6 +97,36 @@ export const FoodDetailPage: React.FC = () => {
     setDoneSteps({});
     setSpreadIndex(0);
   }, [slug]);
+
+  useEffect(() => {
+    if (!food?.title) return;
+    const canonicalPath = `/food/${encodeURIComponent(food.slug || slug)}`;
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://waaaaah.vercel.app';
+    const rawPrep = food.preparationMethod || food.preparation || '';
+    const instructions = rawPrep
+      .split(/\n+/)
+      .map((line) => line.replace(/^[\d\-•*.]+\s*/, '').trim())
+      .filter(Boolean);
+    updatePageSEO({
+      title: `${food.title} — طريقة التحضير وحكايتها الصعيدية`,
+      description:
+        food.description ||
+        food.originStory ||
+        `تعرّف على مكونات وطريقة تحضير ${food.title} من مطبخ صعيد مصر التراثي.`,
+      image: food.coverImage,
+      canonicalPath,
+      type: 'article',
+      schema: generateRecipeSchema({
+        name: food.title,
+        description: food.description || food.originStory,
+        image: food.coverImage,
+        governorate: food.governorateName,
+        ingredients: food.ingredients,
+        instructions,
+        url: `${origin}${canonicalPath}`
+      })
+    });
+  }, [food, slug]);
 
   /* ---------- Share ---------- */
   const handleShare = async () => {

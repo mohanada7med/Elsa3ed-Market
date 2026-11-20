@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { EventImageLightboxModal } from '../common/EventImageLightboxModal';
 import { PageNavigationBar } from '../layout/PageNavigationBar';
+import { updatePageSEO, generateEventSchema } from '../../utils/seo';
 import { EventEditorModal } from './AdminEventsManagerPage';
 
 export const EventDetailPage: React.FC = () => {
@@ -91,6 +92,32 @@ export const EventDetailPage: React.FC = () => {
       mounted = false;
     };
   }, [slug]);
+
+  useEffect(() => {
+    if (!event?.title) return;
+    const canonicalPath = `/events/${encodeURIComponent(event.slug || slug)}`;
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://waaaaah.vercel.app';
+    updatePageSEO({
+      title: event.title,
+      description:
+        event.description ||
+        event.traditions ||
+        `تفاصيل وموعد وحكاية ${event.title} ضمن فعاليات ومواسم صعيد مصر على منصة وه.`,
+      image: event.coverImage,
+      canonicalPath,
+      type: 'article',
+      schema: generateEventSchema({
+        name: event.title,
+        description: event.description || event.traditions,
+        image: event.coverImage,
+        startDate: event.startDate,
+        endDate: event.endDate,
+        locationName: event.locationName || event.governorateName,
+        governorate: event.governorateName,
+        url: `${origin}${canonicalPath}`
+      })
+    });
+  }, [event, slug]);
 
   const heroImage = useMemo(() => {
     return (

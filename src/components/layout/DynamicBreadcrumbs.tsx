@@ -507,7 +507,7 @@ export const DynamicBreadcrumbs: React.FC = () => {
         items.push({
           id: activePage,
           label: SELLER_SECTION_LABELS[activePage] || 'القسم',
-          url: `${origin}/${PAGE_ROUTES[activePage] || activePage}`,
+          url: `${origin}${PAGE_ROUTES[activePage] || `/${activePage}`}`,
           isCurrent: true
         });
       }
@@ -528,7 +528,7 @@ export const DynamicBreadcrumbs: React.FC = () => {
         items.push({
           id: activePage,
           label: ADMIN_SECTION_LABELS[activePage] || 'القسم الإداري',
-          url: `${origin}/${PAGE_ROUTES[activePage] || activePage}`,
+          url: `${origin}${PAGE_ROUTES[activePage] || `/${activePage}`}`,
           isCurrent: true
         });
       }

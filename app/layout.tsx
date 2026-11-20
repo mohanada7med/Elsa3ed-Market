@@ -1,34 +1,92 @@
 import type { Metadata, Viewport } from 'next';
 import '../src/index.css';
 
+const baseUrl = (process.env.APP_URL || 'https://waaaaah.vercel.app').replace(/\/+$/, '');
+const brandLogoUrl = 'https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png';
+const defaultDescription =
+  'منصة صعيد مصر الشاملة: سوق حرفي تجاري متكامل للتسوق المباشر من الورش، ريلز حية للحرفيين، وموسوعة تفاعلية لمعالم ومحافظات وأكلات وأعلام الصعيد.';
+
 export const metadata: Metadata = {
-  title: 'وه | WAH — الحكاية ورا كل حاجة',
-  description:
-    'منصة صعيد مصر الشاملة: سوق حرفي تجاري متكامل للتسوق المباشر، ريلز وتجارب الحرفيين الحية، وتوثيق وثائقي تفاعلي لمعالم وتراث محافظات الصعيد.',
+  metadataBase: new URL(baseUrl),
+  applicationName: 'وه | WAH',
+  title: {
+    default: 'وه | WAH — الحكاية ورا كل حاجة',
+    template: '%s | وه | WAH',
+  },
+  description: defaultDescription,
+  keywords: [
+    'وه',
+    'WAH',
+    'وه صعيد مصر',
+    'صعيد مصر',
+    'تراث الصعيد',
+    'حرف يدوية صعيدية',
+    'سوق صعيد مصر',
+    'منتجات يدوية مصرية',
+    'محافظات صعيد مصر',
+    'معالم الصعيد',
+    'أكلات صعيدية',
+    'أعلام الصعيد',
+    'فخار',
+    'كليم',
+    'تلي',
+    'عيش شمسي',
+    'قنا',
+    'الأقصر',
+    'أسوان',
+    'سوهاج',
+    'أسيوط',
+    'المنيا',
+    'بني سويف',
+    'الفيوم',
+    'الوادي الجديد',
+    'البحر الأحمر',
+    'Upper Egypt Heritage',
+    'Egyptian Handmade Crafts',
+  ],
+  authors: [{ name: 'وه | WAH', url: baseUrl }],
+  creator: 'وه | WAH',
+  publisher: 'وه | WAH',
+  category: 'Culture & Heritage',
+  alternates: {
+    canonical: `${baseUrl}/`,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
+  },
   icons: {
-    icon: 'https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png',
-    apple: 'https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png',
+    icon: brandLogoUrl,
+    apple: brandLogoUrl,
   },
   openGraph: {
     title: 'وه | WAH — الحكاية ورا كل حاجة',
-    description:
-      'منصة صعيد مصر الشاملة: سوق حرفي تجاري متكامل للتسوق المباشر، ريلز وتجارب الحرفيين الحية، وتوثيق وثائقي تفاعلي لمعالم وتراث محافظات الصعيد.',
+    description: defaultDescription,
+    url: `${baseUrl}/`,
+    siteName: 'وه | WAH',
+    locale: 'ar_EG',
     type: 'website',
     images: [
       {
-        url: 'https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png',
+        url: brandLogoUrl,
         width: 800,
         height: 800,
-        alt: 'وه | WAH',
+        alt: 'وه | WAH — العالم الرقمي لصعيد مصر',
       },
     ],
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: 'وه | WAH — الحكاية ورا كل حاجة',
-    description:
-      'منصة صعيد مصر الشاملة: سوق حرفي تجاري متكامل للتسوق المباشر، ريلز وتجارب الحرفيين الحية، وتوثيق وثائقي تفاعلي لمعالم وتراث محافظات الصعيد.',
-    images: ['https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png'],
+    description: defaultDescription,
+    images: [brandLogoUrl],
   },
 };
 
@@ -90,7 +148,7 @@ export default function RootLayout({
           }}
         />
         <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
-        <link rel="preload" as="image" href="https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png" type="image/png" />
+        <link rel="preload" as="image" href={brandLogoUrl} type="image/png" />
         <link rel="preload" as="image" href="/mascot/logo.png" type="image/png" />
         <link rel="preload" as="image" href="/mascot/welcoming.png" type="image/png" />
         <link rel="preload" as="image" href="/mascot/success.png" type="image/png" />
@@ -140,16 +198,20 @@ export default function RootLayout({
               '@graph': [
                 {
                   '@type': 'Organization',
-                  '@id': 'https://waaaaah.vercel.app/#organization',
+                  '@id': `${baseUrl}/#organization`,
                   name: 'وه | WAH — العالم الرقمي لصعيد مصر',
-                  url: 'https://waaaaah.vercel.app',
+                  alternateName: ['وه', 'WAH', 'منصة وه'],
+                  url: baseUrl,
                   logo: {
                     '@type': 'ImageObject',
-                    url: 'https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png',
+                    url: brandLogoUrl,
                     caption: 'منصة وه لتراث وحرف صعيد مصر'
                   },
-                  description:
-                    'منصة صعيد مصر الشاملة: سوق حرفي تجاري متكامل للتسوق المباشر من الورش، وتوثيق وثائقي تفاعلي لمعالم وتراث وقرى وأكلات محافظات الصعيد.',
+                  description: defaultDescription,
+                  areaServed: {
+                    '@type': 'Country',
+                    name: 'Egypt'
+                  },
                   address: {
                     '@type': 'PostalAddress',
                     addressRegion: 'صعيد مصر',
@@ -158,23 +220,24 @@ export default function RootLayout({
                 },
                 {
                   '@type': 'WebSite',
-                  '@id': 'https://waaaaah.vercel.app/#website',
-                  url: 'https://waaaaah.vercel.app',
+                  '@id': `${baseUrl}/#website`,
+                  url: baseUrl,
                   name: 'وه | WAH',
+                  alternateName: 'منصة وه لصعيد مصر',
                   description:
-                    'العالم الرقمي لصعيد مصر: تراث، حرف، سوق، أكلات، ومعالم أصيلة',
+                    'العالم الرقمي لصعيد مصر: تراث، حرف، سوق، ريلز، أكلات، ومعالم أصيلة',
                   publisher: {
-                    '@id': 'https://waaaaah.vercel.app/#organization'
+                    '@id': `${baseUrl}/#organization`
                   },
                   inLanguage: 'ar-EG',
                   potentialAction: {
                     '@type': 'SearchAction',
-                    target: 'https://waaaaah.vercel.app/?search={search_term_string}',
+                    target: `${baseUrl}/global-search?q={search_term_string}`,
                     'query-input': 'required name=search_term_string'
                   }
                 }
               ]
-            })
+            }).replace(/</g, '\\u003c')
           }}
         />
       </head>
@@ -189,7 +252,7 @@ export default function RootLayout({
               <span className="wah-loader-spark wah-loader-spark-two" aria-hidden="true" />
             </div>
             <p className="wah-loader-kicker">من قلب الصعيد</p>
-            <h1>الحكاية ورا كل حاجة</h1>
+            <p className="wah-loader-title">الحكاية ورا كل حاجة</p>
             <p className="wah-loader-caption" aria-hidden="true">
               <span className="wah-loader-message-list">
                 <span>بنجهزلك رحلة في قلب الصعيد</span>
