@@ -2508,7 +2508,7 @@ export const api = {
   async moderateAdminReview(
     user: { id: string; role: string },
     reviewId: string,
-    status: 'published' | 'hidden',
+    status: 'published' | 'hidden' | 'rejected' | 'pending',
     reason?: string
   ): Promise<any> {
     const res = await fetch(`${API_BASE}/admin/reviews/${reviewId}/moderate`, {
@@ -2519,6 +2519,61 @@ export const api = {
     const json: ApiResponse<any> = await res.json();
     if (!json.success || !json.data) {
       throw new Error(json.error || 'فشل في تعديل حالة التقييم');
+    }
+    return json.data;
+  },
+
+  async getSellerReviewsForDashboard(
+    user: { id: string; role: string }
+  ): Promise<Review[]> {
+    const res = await fetch(`${API_BASE}/seller/reviews`, {
+      credentials: 'include',
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<Review[]> = await res.json();
+    if (!json.success || !Array.isArray(json.data)) {
+      throw new Error(json.error || 'تعذر تحميل تقييمات الورشة');
+    }
+    return json.data;
+  },
+
+  async moderateSellerReview(
+    user: { id: string; role: string },
+    reviewId: string,
+    status: 'published' | 'rejected' | 'hidden',
+    reason?: string
+  ): Promise<any> {
+    const res = await fetch(`${API_BASE}/seller/reviews/${reviewId}/moderate`, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify({ status, reason })
+    });
+    const json: ApiResponse<any> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في تعديل حالة التقييم');
+    }
+    return json.data;
+  },
+
+  async replyToReview(
+    user: { id: string; role: string },
+    reviewId: string,
+    message: string
+  ): Promise<any> {
+    const endpoint = user.role === 'admin'
+      ? `${API_BASE}/admin/reviews/${reviewId}/reply`
+      : `${API_BASE}/seller/reviews/${reviewId}/reply`;
+
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      credentials: 'include',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify({ message })
+    });
+    const json: ApiResponse<any> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في إرسال الرد');
     }
     return json.data;
   },

@@ -12,8 +12,6 @@ import {
 import { useApp } from '../../context/AppContext';
 import { api } from '../../services/api';
 import type { HomePromotionPosition, PaidPromotion } from '../../types';
-import { p } from 'motion/react-client';
-import SellerProfileView from '../pages/SellerProfileView';
 
 let promotionRequest: Promise<PaidPromotion | null> | null = null;
 
@@ -56,7 +54,14 @@ export const PaidPromotionSection: React.FC<PaidPromotionSectionProps> = ({
 
   if (loadError && (directory || position === 'after-reels')) {
     return (
-      <div role="status" className="mx-auto max-w-6xl px-5 py-3 text-center text-xs text-foreground-muted">
+      <div
+        role="status"
+        className={
+          directory
+            ? 'w-full py-3 text-center text-xs text-foreground-muted'
+            : 'mx-auto w-full max-w-[1600px] px-4 sm:px-8 lg:px-12 py-3 text-center text-xs text-foreground-muted'
+        }
+      >
         تعذر تحميل مساحة الترشيح حاليًا.
       </div>
     );
@@ -129,17 +134,21 @@ export const PaidPromotionSection: React.FC<PaidPromotionSectionProps> = ({
     }
   };
 
+  const containerClasses = directory
+    ? 'w-full'
+    : 'mx-auto w-full max-w-[1600px] px-4 sm:px-8 lg:px-12';
+
   if (isProduct && product) {
     return (
       <section
         dir="rtl"
         aria-label="ترشيح منتج من وه"
-        className="mx-auto w-full max-w-[1500px] px-4 sm:px-6 lg:px-10"
+        className={containerClasses}
       >
         <button
           type="button"
           onClick={handleClick}
-          className="group relative grid w-full overflow-hidden rounded-[2rem] border border-primary/25 bg-gradient-to-br from-[#FFF9EE] via-[#F8F0E2] to-[#EAD5B8] text-right text-espresso shadow-[0_20px_65px_rgba(64,39,24,0.14)] transition-all duration-500 hover:-translate-y-1 hover:border-primary/45 hover:shadow-[0_28px_75px_rgba(64,39,24,0.22)] dark:from-[#1B1009] dark:via-[#26160D] dark:to-[#3B1E0E] dark:text-cream dark:shadow-[0_20px_65px_rgba(0,0,0,0.4)] dark:hover:shadow-[0_28px_75px_rgba(0,0,0,0.55)] lg:grid-cols-[1.05fr_0.95fr]"
+          className="group relative grid w-full overflow-hidden rounded-2xl sm:rounded-[2.5rem] border border-primary/25 bg-gradient-to-br from-[#FFF9EE] via-[#F8F0E2] to-[#EAD5B8] text-right text-espresso shadow-[0_20px_65px_rgba(64,39,24,0.14)] transition-all duration-500 hover:-translate-y-1 hover:border-primary/45 hover:shadow-[0_28px_75px_rgba(64,39,24,0.22)] dark:from-[#1B1009] dark:via-[#26160D] dark:to-[#3B1E0E] dark:text-cream dark:shadow-[0_20px_65px_rgba(0,0,0,0.4)] dark:hover:shadow-[0_28px_75px_rgba(0,0,0,0.55)] lg:grid-cols-[1.05fr_0.95fr]"
         >
           <div className="relative order-1 min-h-[150px] overflow-hidden bg-[#EAD5B8] dark:bg-[#3B1E0E] sm:min-h-[420px] lg:min-h-[500px]">
             {product.images?.[0] ? (
@@ -233,12 +242,12 @@ export const PaidPromotionSection: React.FC<PaidPromotionSectionProps> = ({
     <section
       dir="rtl"
       aria-label="ترشيح وه المدفوع"
-      className="mx-auto w-full max-w-[1500px] px-4 sm:px-6 lg:px-10"
+      className={containerClasses}
     >
       <button
         type="button"
         onClick={handleClick}
-        className="group relative block w-full overflow-hidden rounded-[2rem] border border-primary/20 bg-gradient-to-br from-[#FFF9EE] via-[#F8F0E2] to-[#EAD5B8] text-right text-espresso shadow-[0_15px_50px_rgba(64,39,24,0.12)] transition-all duration-500 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[0_25px_65px_rgba(64,39,24,0.2)] dark:from-[#1B1009] dark:via-[#26160D] dark:to-[#3B1E0E] dark:text-cream dark:shadow-[0_18px_55px_rgba(0,0,0,0.35)] dark:hover:shadow-[0_26px_70px_rgba(0,0,0,0.5)]"
+        className="group relative block w-full overflow-hidden rounded-2xl sm:rounded-[2.5rem] border border-primary/20 bg-gradient-to-br from-[#FFF9EE] via-[#F8F0E2] to-[#EAD5B8] text-right text-espresso shadow-[0_15px_50px_rgba(64,39,24,0.12)] transition-all duration-500 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[0_25px_65px_rgba(64,39,24,0.2)] dark:from-[#1B1009] dark:via-[#26160D] dark:to-[#3B1E0E] dark:text-cream dark:shadow-[0_18px_55px_rgba(0,0,0,0.35)] dark:hover:shadow-[0_26px_70px_rgba(0,0,0,0.5)]"
       >
         {/* Decorative background */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">

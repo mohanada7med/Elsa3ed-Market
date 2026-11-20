@@ -37,6 +37,8 @@ import {
   AlertCircle,
   Check,
   X,
+  Send,
+  CornerDownLeft,
   Layers,
   MessageSquare,
   Star,
@@ -161,6 +163,7 @@ export const AdminDashboard: React.FC = () => {
     reviews,
     refreshReviews,
     moderateReview,
+    replyToReview,
     deleteReview,
     deleteOrder,
     deleteAuditLog,
@@ -247,6 +250,46 @@ export const AdminDashboard: React.FC = () => {
       );
     });
   }, [auditLogs, auditSearchTerm, auditStatusFilter, auditRoleFilter, auditResourceFilter]);
+
+  // Admin Reviews Moderation & Reply State
+  const [adminReplyingReviewId, setAdminReplyingReviewId] = useState<string | null>(null);
+  const [adminReplyText, setAdminReplyText] = useState('');
+  const [isAdminSubmittingReply, setIsAdminSubmittingReply] = useState(false);
+  const [adminRejectReviewId, setAdminRejectReviewId] = useState<string | null>(null);
+  const [adminRejectReasonInput, setAdminRejectReasonInput] = useState('');
+  const [adminReviewStatusFilter, setAdminReviewStatusFilter] = useState<'all' | 'pending' | 'published' | 'rejected' | 'hidden'>('all');
+
+  const handleAdminSubmitReply = async (reviewId: string) => {
+    if (!adminReplyText.trim()) return;
+    setIsAdminSubmittingReply(true);
+    try {
+      await replyToReview(reviewId, adminReplyText.trim());
+      setAdminReplyingReviewId(null);
+      setAdminReplyText('');
+    } finally {
+      setIsAdminSubmittingReply(false);
+    }
+  };
+
+  const handleAdminConfirmRejectReview = async () => {
+    if (!adminRejectReviewId) return;
+    try {
+      await moderateReview(adminRejectReviewId, 'rejected', adminRejectReasonInput.trim());
+      setAdminRejectReviewId(null);
+      setAdminRejectReasonInput('');
+    } catch (e) {}
+  };
+
+  const filteredAdminReviews = useMemo(() => {
+    return reviews.filter((r) => {
+      if (adminReviewStatusFilter === 'all') return true;
+      if (adminReviewStatusFilter === 'pending') return r.status === 'pending';
+      if (adminReviewStatusFilter === 'published') return r.status === 'published';
+      if (adminReviewStatusFilter === 'rejected') return r.status === 'rejected';
+      if (adminReviewStatusFilter === 'hidden') return r.status === 'hidden';
+      return true;
+    });
+  }, [reviews, adminReviewStatusFilter]);
 
   const refreshAdminReelsFromDb = async () => {
     try {
@@ -3618,7 +3661,7 @@ export const AdminDashboard: React.FC = () => {
                   <div>
                     <h3 className="font-bold text-base text-foreground">إشراف ومراجعة تقييمات المشترين</h3>
                     <p className="text-xs text-black/60 dark:text-white/60">
-                      التقييمات الجديدة لا تظهر للمشترين إلا بعد الموافقة عليها
+                      التقييمات الجديدة لا تظهر للمشترين إلا بعد الموافقة عليها، ويمكنك قبول أو رفض أو الرد على أي تقييم
                     </p>
                   </div>
 
@@ -3628,117 +3671,293 @@ export const AdminDashboard: React.FC = () => {
                   />
                 </div>
 
-                <div className="space-y-3">
-                  {reviews.length === 0 ? (
+                {/* Status Filter Buttons */}
+                <div className="flex flex-wrap items-center gap-2 border-b border-border pb-4">
+                  {(
+                    [
+                      { id: 'all', label: 'الكل', count: reviews.length },
+                      { id: 'pending', label: 'بانتظار الموافقة', count: reviews.filter((r) => r.status === 'pending').length },
+                      { id: 'published', label: 'منشورة ومقبولة', count: reviews.filter((r) => r.status === 'published').length },
+                      { id: 'rejected', label: 'مرفوضة', count: reviews.filter((r) => r.status === 'rejected').length },
+                      { id: 'hidden', label: 'مخفية', count: reviews.filter((r) => r.status === 'hidden').length }
+                    ] as const
+                  ).map((tab) => {
+                    const isSelected = adminReviewStatusFilter === tab.id;
+                    return (
+                      <button
+                        key={tab.id}
+                        type="button"
+                        onClick={() => setAdminReviewStatusFilter(tab.id)}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                          isSelected
+                            ? 'bg-primary text-white shadow-xs'
+                            : 'bg-black/5 dark:bg-white/5 text-foreground/70 hover:bg-primary/10 hover:text-primary'
+                        }`}
+                      >
+                        <span>{tab.label}</span>
+                        <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? 'bg-white/20' : 'bg-black/10 dark:bg-white/10'}`}>
+                          {formatArabicNumber(tab.count)}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <div className="space-y-4">
+                  {filteredAdminReviews.length === 0 ? (
                     <div className="text-center py-12 bg-black/5 dark:bg-cream/5 border border-dashed border-border rounded-2xl">
                       <MessageSquare className="w-8 h-8 text-black/60 dark:text-white/60 mx-auto mb-2 opacity-50" />
-                      <p className="text-xs font-bold text-foreground">مفيش تقييمات متسجلة لحد دلوقتي</p>
+                      <p className="text-xs font-bold text-foreground">مفيش تقييمات في هذا التصنيف حالياً</p>
                     </div>
                   ) : (
-                    reviews.map((rev) => (
-                      <div
-                        key={rev.id}
-                        className="p-4 rounded-2xl bg-black/5 dark:bg-cream/5 border border-border flex flex-col md:flex-row md:items-center justify-between gap-4"
-                      >
-                        <div className="space-y-1.5 flex-1">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <span className="font-bold text-xs text-foreground">{rev.userName || 'مشتري موثق'}</span>
-                            <span
-                              className={`px-2 py-0.5 rounded-full border text-[10px] font-bold ${
-                                rev.status === 'published'
-                                  ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
-                                  : rev.status === 'hidden'
-                                    ? 'bg-amber-100 text-amber-800 border-amber-300'
-                                    : 'bg-blue-100 text-blue-800 border-blue-300'
-                              }`}
-                            >
-                              {rev.status === 'published'
-                                ? 'منشور'
-                                : rev.status === 'hidden'
-                                  ? 'مخفي'
-                                  : 'بانتظار الموافقة'}
-                            </span>
-                            {rev.verifiedPurchase && (
-                              <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-300">
-                                <BadgeCheck className="w-3 h-3 text-emerald-600" />
-                                <span>شروة متأكدة (Verified)</span>
-                              </span>
-                            )}
-                            <div className="flex items-center text-amber-500 mr-2">
-                              {Array.from({ length: 5 }).map((_, i) => (
-                                <Star
-                                  key={i}
-                                  className={`w-3.5 h-3.5 ${i < rev.rating ? ' text-primary dark:text-primary-hover' : 'text-gray-300'
-                                    }`}
-                                />
-                              ))}
+                    filteredAdminReviews.map((rev) => {
+                      const isReplying = adminReplyingReviewId === rev.id;
+
+                      return (
+                        <div
+                          key={rev.id}
+                          className="p-5 rounded-2xl bg-black/5 dark:bg-cream/5 border border-border flex flex-col gap-3.5"
+                        >
+                          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                            <div className="space-y-1.5 flex-1">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className="font-bold text-xs text-foreground">{rev.userName || 'مشتري موثق'}</span>
+                                <span
+                                  className={`px-2 py-0.5 rounded-full border text-[10px] font-bold ${
+                                    rev.status === 'published'
+                                      ? 'bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-950/40 dark:text-emerald-300'
+                                      : rev.status === 'rejected'
+                                        ? 'bg-rose-100 text-rose-800 border-rose-300 dark:bg-rose-950/40 dark:text-rose-300'
+                                        : rev.status === 'hidden'
+                                          ? 'bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300'
+                                          : 'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-950/40 dark:text-blue-300'
+                                  }`}
+                                >
+                                  {rev.status === 'published'
+                                    ? 'منشور ومقبول'
+                                    : rev.status === 'rejected'
+                                      ? 'مرفوض'
+                                      : rev.status === 'hidden'
+                                        ? 'مخفي'
+                                        : 'بانتظار الموافقة'}
+                                </span>
+                                {rev.verifiedPurchase && (
+                                  <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-300">
+                                    <BadgeCheck className="w-3 h-3 text-emerald-600" />
+                                    <span>شروة متأكدة (Verified)</span>
+                                  </span>
+                                )}
+                                <div className="flex items-center text-amber-500 mr-2">
+                                  {Array.from({ length: 5 }).map((_, i) => (
+                                    <Star
+                                      key={i}
+                                      className={`w-3.5 h-3.5 ${i < rev.rating ? 'fill-amber-500 text-amber-500' : 'text-gray-300'}`}
+                                    />
+                                  ))}
+                                </div>
+                                <span className="text-[10px] text-black/60 dark:text-white/60 font-black">
+                                  {rev.createdAt
+                                    ? new Date(rev.createdAt).toLocaleDateString('ar-EG', { timeZone: 'Africa/Cairo' })
+                                    : rev.date}
+                                </span>
+                              </div>
+
+                              <p className="text-xs text-foreground leading-relaxed">"{rev.comment}"</p>
+
+                              <div className="text-[11px] text-black/60 dark:text-white/60 flex items-center gap-3">
+                                <span>
+                                  {rev.reviewType === 'seller' ? 'البائع:' : 'المنتج:'}{' '}
+                                  <strong className="text-primary dark:text-primary-hover">
+                                    {rev.reviewType === 'seller'
+                                      ? rev.sellerName || rev.productTitle || rev.sellerId
+                                      : rev.productTitle || rev.productId}
+                                  </strong>
+                                </span>
+                                <span>المحافظة: {rev.userGovernorate || 'الصعيد'}</span>
+                              </div>
+
+                              {rev.rejectionReason && (
+                                <div className="text-[11px] p-2 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-800 dark:text-rose-300">
+                                  <strong>سبب الرفض:</strong> {rev.rejectionReason}
+                                </div>
+                              )}
                             </div>
-                            <span className="text-[10px] text-black/60 dark:text-white/60 font-black">
-                              {rev.createdAt
-                                ? new Date(rev.createdAt).toLocaleDateString('ar-EG', { timeZone: 'Africa/Cairo' })
-                                : rev.date}
-                            </span>
+
+                            <div className="flex flex-wrap items-center gap-2 self-end md:self-center shrink-0">
+                              {rev.status !== 'published' && (
+                                <button
+                                  type="button"
+                                  onClick={() => moderateReview(rev.id, 'published')}
+                                  className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold flex items-center gap-1 shadow-xs cursor-pointer"
+                                >
+                                  <Check className="w-3.5 h-3.5" />
+                                  <span>قبول ونشر</span>
+                                </button>
+                              )}
+                              {rev.status !== 'rejected' && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setAdminRejectReviewId(rev.id);
+                                    setAdminRejectReasonInput('');
+                                  }}
+                                  className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer"
+                                >
+                                  <X className="w-3.5 h-3.5" />
+                                  <span>رفض</span>
+                                </button>
+                              )}
+                              {rev.status !== 'hidden' && (
+                                <button
+                                  type="button"
+                                  onClick={() => moderateReview(rev.id, 'hidden')}
+                                  className="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer"
+                                >
+                                  <X className="w-3.5 h-3.5" />
+                                  <span>إخفاء</span>
+                                </button>
+                              )}
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setAdminReplyingReviewId(isReplying ? null : rev.id);
+                                  setAdminReplyText(rev.reply?.message || '');
+                                }}
+                                className="px-3 py-1.5 bg-black/5 hover:bg-primary/10 text-primary dark:text-primary-hover border border-border rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer"
+                              >
+                                <MessageSquare className="w-3.5 h-3.5" />
+                                <span>{rev.reply ? 'تعديل الرد' : 'رد'}</span>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  confirmModal({
+                                    title: 'حذف التقييم',
+                                    message: 'هل أنت متأكد من حذف هذا التقييم نهائياً من قاعدة البيانات؟',
+                                    confirmText: 'حذف التقييم',
+                                    danger: true,
+                                    onConfirm: async () => {
+                                      await deleteReview(rev.id);
+                                    }
+                                  });
+                                }}
+                                className="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors"
+                                title="حذف التقييم نهائياً"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                                <span>حذف</span>
+                              </button>
+                            </div>
                           </div>
 
-                          <p className="text-xs text-foreground leading-relaxed">"{rev.comment}"</p>
-
-                          <div className="text-[11px] text-black/60 dark:text-white/60 flex items-center gap-3">
-                            <span>
-                              {rev.reviewType === 'seller' ? 'البائع:' : 'المنتج:'}{' '}
-                              <strong className="text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
-                                {rev.reviewType === 'seller'
-                                  ? rev.sellerName || rev.productTitle || rev.sellerId
-                                  : rev.productTitle || rev.productId}
-                              </strong>
-                            </span>
-                            <span>المحافظة: {rev.userGovernorate || 'الصعيد'}</span>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-2 self-end md:self-center shrink-0">
-                          {rev.status !== 'published' && (
-                            <button
-                              type="button"
-                              onClick={() => moderateReview(rev.id, 'published')}
-                              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold flex items-center gap-1 shadow-xs cursor-pointer"
-                            >
-                              <Check className="w-3.5 h-3.5" />
-                              <span>قبول ونشر</span>
-                            </button>
+                          {/* Existing Reply */}
+                          {rev.reply && (
+                            <div className="p-3 rounded-xl bg-primary/5 border border-primary/20 space-y-1 text-xs">
+                              <div className="flex items-center justify-between text-[11px] font-bold text-primary dark:text-primary-hover">
+                                <div className="flex items-center gap-1.5">
+                                  <CornerDownLeft className="w-3.5 h-3.5" />
+                                  <span>{rev.reply.authorRole === 'seller' ? `رد البائع (${rev.reply.authorName})` : 'رد إدارة المنصة'}</span>
+                                </div>
+                                <span className="text-[10px] text-black/50 dark:text-white/50">
+                                  {new Date(rev.reply.createdAt).toLocaleDateString('ar-EG')}
+                                </span>
+                              </div>
+                              <p className="text-foreground leading-relaxed pr-5">
+                                {rev.reply.message}
+                              </p>
+                            </div>
                           )}
-                          {rev.status !== 'hidden' && (
-                            <button
-                              type="button"
-                              onClick={() => moderateReview(rev.id, 'hidden')}
-                              className="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer"
-                            >
-                              <X className="w-3.5 h-3.5" />
-                              <span>إخفاء</span>
-                            </button>
+
+                          {/* Inline Admin Reply Form */}
+                          {isReplying && (
+                            <div className="p-3 rounded-xl bg-black/5 dark:bg-cream/10 border border-primary/30 space-y-2 animate-in fade-in">
+                              <label className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                                <CornerDownLeft className="w-3.5 h-3.5 text-primary" />
+                                <span>اكتب رد الإدارة على التقييم:</span>
+                              </label>
+                              <textarea
+                                value={adminReplyText}
+                                onChange={(e) => setAdminReplyText(e.target.value)}
+                                placeholder="اكتب رد الإدارة الرسمي هنا..."
+                                className="w-full p-2.5 rounded-xl border border-border bg-background text-xs outline-none focus:border-primary resize-none h-20 text-foreground"
+                              />
+                              <div className="flex items-center justify-end gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setAdminReplyingReviewId(null);
+                                    setAdminReplyText('');
+                                  }}
+                                  className="px-3 py-1.5 rounded-lg text-xs font-bold text-foreground/70 hover:bg-black/5 transition-colors cursor-pointer"
+                                >
+                                  إلغاء
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleAdminSubmitReply(rev.id)}
+                                  disabled={isAdminSubmittingReply || !adminReplyText.trim()}
+                                  className="px-4 py-1.5 rounded-lg text-xs font-bold bg-primary text-white shadow-xs transition-colors cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+                                >
+                                  <Send className="w-3.5 h-3.5" />
+                                  <span>{isAdminSubmittingReply ? 'جاري الإرسال...' : 'إرسال الرد'}</span>
+                                </button>
+                              </div>
+                            </div>
                           )}
-                          <button
-                            type="button"
-                            onClick={() => {
-                              confirmModal({
-                                title: 'حذف التقييم',
-                                message: 'هل أنت متأكد من حذف هذا التقييم نهائياً من قاعدة البيانات؟',
-                                confirmText: 'حذف التقييم',
-                                danger: true,
-                                onConfirm: async () => {
-                                  await deleteReview(rev.id);
-                                }
-                              });
-                            }}
-                            className="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors"
-                            title="حذف التقييم نهائياً"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                            <span>حذف</span>
-                          </button>
                         </div>
-                      </div>
-                    ))
+                      );
+                    })
                   )}
+                </div>
+              </div>
+            )}
+
+            {/* Admin Review Rejection Modal */}
+            {adminRejectReviewId && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
+                <div className="bg-surface rounded-[2rem] border border-border max-w-md w-full p-6 space-y-4 shadow-2xl text-foreground">
+                  <div className="flex items-center justify-between border-b border-border pb-3">
+                    <h3 className="font-bold text-lg font-cairo">رفض التقييم</h3>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAdminRejectReviewId(null);
+                        setAdminRejectReasonInput('');
+                      }}
+                      className="p-1 rounded-lg hover:bg-black/5 cursor-pointer"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                  <p className="text-xs text-black/60 dark:text-white/60">
+                    يمكنك كتابة سبب الرفض لتوضيحه للمشتري وصاحب الورشة:
+                  </p>
+                  <textarea
+                    value={adminRejectReasonInput}
+                    onChange={(e) => setAdminRejectReasonInput(e.target.value)}
+                    placeholder="اكتب سبب رفض التقييم هنا..."
+                    className="w-full p-3 rounded-xl border border-border bg-background text-xs outline-none focus:border-primary resize-none h-24 text-foreground"
+                  />
+                  <div className="flex items-center justify-end gap-2 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAdminRejectReviewId(null);
+                        setAdminRejectReasonInput('');
+                      }}
+                      className="px-4 py-2 rounded-xl text-xs font-bold bg-black/5 hover:bg-black/10 cursor-pointer"
+                    >
+                      إلغاء
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleAdminConfirmRejectReview}
+                      className="px-5 py-2 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white shadow-md cursor-pointer flex items-center gap-1.5"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                      <span>تأكيد الرفض</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             )}

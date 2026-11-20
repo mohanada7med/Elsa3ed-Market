@@ -319,22 +319,7 @@ export async function resolveSellerUserId(sellerId: string): Promise<string> {
 export async function notifyAdmins(params: {
   title: string;
   message: string;
-  type?:
-  | 'seller_request'
-  | 'seller_approved'
-  | 'seller_rejected'
-  | 'new_order'
-  | 'order_status'
-  | 'payment_status'
-  | 'payout_request'
-  | 'payout_response'
-  | 'password_request'
-  | 'password_response'
-  | 'account'
-  | 'system'
-  | 'order'
-  | 'product'
-  | 'promotion';
+  type?: NotificationDocument['type'];
   link?: string;
   metadata?: any;
 }): Promise<void> {

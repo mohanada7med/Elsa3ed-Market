@@ -363,6 +363,13 @@ export interface CategoryDocument {
   updatedAt?: string;
 }
 
+export interface ReviewReply {
+  message: string;
+  authorName: string;
+  authorRole: 'seller' | 'admin';
+  createdAt: string;
+}
+
 export interface ReviewDocument {
   id: string;
   productId: string;
@@ -376,10 +383,12 @@ export interface ReviewDocument {
   comment: string;
   date: string;
   verifiedPurchase: boolean;
-  status: 'pending' | 'published' | 'hidden';
+  status: 'pending' | 'published' | 'hidden' | 'rejected';
   reviewType?: 'product' | 'seller';
   sellerId?: string;
   sellerName?: string;
+  reply?: ReviewReply;
+  rejectionReason?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -397,7 +406,9 @@ export interface SellerReviewDocument {
   comment: string;
   date: string;
   verifiedPurchase: true;
-  status: 'pending' | 'published' | 'hidden';
+  status: 'pending' | 'published' | 'hidden' | 'rejected';
+  reply?: ReviewReply;
+  rejectionReason?: string;
   createdAt: string;
   updatedAt: string;
 }

@@ -4,10 +4,12 @@ import type {
   ProductDocument,
   OrderDocument,
   SellerDocument,
-  SellerReviewDocument
+  SellerReviewDocument,
+  ReviewReply
 } from '../models/types.ts';
 import type { AuthenticatedUser } from '../middleware/auth.ts';
 import { createAuditLog } from './auditService.ts';
+import { createNotification, notifyAdmins } from './notificationService.ts';
 
 /**
  * Get published reviews for a product. Unapproved and hidden reviews stay private.
@@ -169,6 +171,47 @@ export async function createProductReview(
     details: `أرسل المشتري ${buyerUser.name} تقييماً (${newReview.rating} نجوم) للمنتج "${product.title}" [${productId}] (شراء موثق) بانتظار مراجعة الإدارة`,
     metadata: { productId, rating: numRating, orderId: matchingOrderId }
   });
+
+  // Notify product seller
+  if (product.sellerId) {
+    try {
+      let sellerDoc: SellerDocument | null = null;
+      if (isMongo && db) {
+        sellerDoc = (await db.collection('sellers').findOne({
+          $or: [{ id: product.sellerId }, { userId: product.sellerId }]
+        })) as unknown as SellerDocument | null;
+      } else {
+        sellerDoc = (memoryDb.sellers.find(s => s.id === product.sellerId || s.userId === product.sellerId) as SellerDocument) || null;
+      }
+      const sellerUserId = sellerDoc?.userId || sellerDoc?.id || product.sellerId;
+      await createNotification({
+        userId: sellerUserId,
+        recipientId: sellerUserId,
+        title: 'تقييم جديد لأحد منتجاتك',
+        message: `أرسل المشتري ${newReview.userName} تقييماً (${newReview.rating} نجوم) للمنتج "${product.title}"`,
+        type: 'product',
+        actionPage: 'seller-dashboard',
+        link: '/seller?tab=reviews',
+        recipientRole: 'seller',
+        metadata: { reviewId: newReview.id, productId: product.id, rating: newReview.rating }
+      });
+    } catch (e) {
+      console.error('[ReviewService] Error notifying seller of product review:', e);
+    }
+  }
+
+  // Notify admins
+  try {
+    await notifyAdmins({
+      title: 'تقييم منتج جديد بانتظار المراجعة',
+      message: `أرسل المشتري ${newReview.userName} تقييماً (${newReview.rating} نجوم) للمنتج "${product.title}".`,
+      type: 'system_alert',
+      link: '/admin?tab=reviews',
+      metadata: { reviewId: newReview.id, productId: product.id, rating: newReview.rating }
+    });
+  } catch (e) {
+    console.error('[ReviewService] Error notifying admins of product review:', e);
+  }
 
   return {
     review: newReview,
@@ -340,6 +383,37 @@ export async function createSellerReview(
     metadata: { sellerId: seller.id, rating: review.rating, orderId: matchingOrder.id }
   });
 
+  // 1. Send notification to the seller
+  try {
+    const sellerUserId = seller.userId || seller.id;
+    await createNotification({
+      userId: sellerUserId,
+      recipientId: sellerUserId,
+      title: 'تقييم جديد لمتجرك',
+      message: `أرسل المشتري ${review.userName} تقييماً (${review.rating} نجوم) لمتجرك: "${review.comment.substring(0, 80)}${review.comment.length > 80 ? '...' : ''}"`,
+      type: 'system_alert',
+      actionPage: 'seller-dashboard',
+      link: '/seller?tab=reviews',
+      recipientRole: 'seller',
+      metadata: { reviewId: review.id, sellerId: seller.id, rating: review.rating }
+    });
+  } catch (err) {
+    console.error('[ReviewService] Error notifying seller of new review:', err);
+  }
+
+  // 2. Send notification to platform admins
+  try {
+    await notifyAdmins({
+      title: 'تقييم بائع جديد بانتظار المراجعة',
+      message: `أرسل المشتري ${review.userName} تقييماً (${review.rating} نجوم) للبائع "${review.sellerName}".`,
+      type: 'system_alert',
+      link: '/admin?tab=reviews',
+      metadata: { reviewId: review.id, sellerId: seller.id, rating: review.rating }
+    });
+  } catch (err) {
+    console.error('[ReviewService] Error notifying admins of seller review:', err);
+  }
+
   return review;
 }
 
@@ -459,16 +533,90 @@ export async function getAdminReviews(filters?: {
 }
 
 /**
- * Admin: Moderate a review (publish or hide inappropriate content).
+ * Get all reviews related to a seller (seller reviews and product reviews).
+ */
+export async function getSellerDashboardReviews(
+  sellerUser: AuthenticatedUser
+): Promise<Array<(SellerReviewDocument | ReviewDocument) & { reviewType: 'seller' | 'product' }>> {
+  if (!sellerUser?.id) return [];
+
+  const { db, isMongo } = await getDatabase();
+  let seller: SellerDocument | null = null;
+  const sellerId = sellerUser.sellerId || sellerUser.id;
+
+  if (isMongo && db) {
+    seller = (await db.collection('sellers').findOne({
+      $or: [{ id: sellerId }, { userId: sellerUser.id }, { id: sellerUser.id }]
+    })) as unknown as SellerDocument | null;
+  }
+  if (!seller) {
+    seller = (memoryDb.sellers.find(
+      (s) => s.id === sellerId || s.userId === sellerUser.id || s.id === sellerUser.id
+    ) as SellerDocument) || null;
+  }
+
+  const sellerIds = Array.from(new Set([sellerId, seller?.id, seller?.userId, sellerUser.id].filter(Boolean))) as string[];
+
+  let sellerReviews: SellerReviewDocument[] = [];
+  if (isMongo && db) {
+    try {
+      sellerReviews = (await db.collection('seller_reviews').find({
+        sellerId: { $in: sellerIds }
+      }).sort({ createdAt: -1 }).toArray()) as unknown as SellerReviewDocument[];
+    } catch (e) {
+      console.error('[ReviewService] Error fetching seller reviews for dashboard:', e);
+    }
+  } else {
+    sellerReviews = memoryDb.sellerReviews.filter((r) => sellerIds.includes(r.sellerId));
+  }
+
+  let productReviews: ReviewDocument[] = [];
+  let sellerProductIds: string[] = [];
+  if (isMongo && db) {
+    try {
+      const prods = await db.collection('products').find({ sellerId: { $in: sellerIds } }, { projection: { id: 1 } }).toArray();
+      sellerProductIds = prods.map((p: any) => p.id);
+      if (sellerProductIds.length > 0) {
+        productReviews = (await db.collection('reviews').find({
+          productId: { $in: sellerProductIds }
+        }).sort({ createdAt: -1 }).toArray()) as unknown as ReviewDocument[];
+      }
+    } catch (e) {
+      console.error('[ReviewService] Error fetching product reviews for seller dashboard:', e);
+    }
+  } else {
+    sellerProductIds = memoryDb.products.filter((p) => sellerIds.includes(p.sellerId)).map((p) => p.id);
+    productReviews = memoryDb.reviews.filter((r) => sellerProductIds.includes(r.productId));
+  }
+
+  const formattedSellerReviews = sellerReviews.map((r) => ({
+    ...r,
+    productId: '',
+    productTitle: r.sellerName,
+    reviewType: 'seller' as const
+  }));
+
+  const formattedProductReviews = productReviews.map((r) => ({
+    ...r,
+    reviewType: 'product' as const
+  }));
+
+  return [...formattedSellerReviews, ...formattedProductReviews].sort(
+    (a, b) => (b.createdAt || '').localeCompare(a.createdAt || '')
+  );
+}
+
+/**
+ * Moderate a review (publish, hide, reject or set pending) by Admin or Seller.
  */
 export async function moderateReview(
-  adminUser: AuthenticatedUser,
+  actorUser: AuthenticatedUser,
   reviewId: string,
-  status: 'published' | 'hidden',
+  status: 'published' | 'hidden' | 'rejected' | 'pending',
   reason?: string
 ): Promise<ReviewDocument | SellerReviewDocument> {
-  if (adminUser.role !== 'admin') {
-    throw new Error('فقط مدير المنصة يملك صلاحية إدارة التقييمات');
+  if (actorUser.role !== 'admin' && actorUser.role !== 'seller') {
+    throw new Error('فقط مدير المنصة أو البائع يملك صلاحية إدارة التقييمات');
   }
 
   const { db, isMongo } = await getDatabase();
@@ -498,8 +646,48 @@ export async function moderateReview(
     sellerReview = memoryDb.sellerReviews.find((r) => r.id === reviewId) || null;
   }
 
-  if (!review && sellerReview) {
-    const updatedFields = { status, updatedAt: new Date().toISOString() };
+  if (!review && !sellerReview) {
+    throw new Error('التقييم غير موجود');
+  }
+
+  // Permission check for sellers
+  if (actorUser.role === 'seller') {
+    let sellerDoc: SellerDocument | null = null;
+    const sellerId = actorUser.sellerId || actorUser.id;
+    if (isMongo && db) {
+      sellerDoc = (await db.collection('sellers').findOne({
+        $or: [{ id: sellerId }, { userId: actorUser.id }]
+      })) as unknown as SellerDocument | null;
+    } else {
+      sellerDoc = (memoryDb.sellers.find(s => s.id === sellerId || s.userId === actorUser.id) as SellerDocument) || null;
+    }
+    const sellerIds = new Set([sellerId, sellerDoc?.id, sellerDoc?.userId, actorUser.id].filter(Boolean));
+
+    if (sellerReview && !sellerIds.has(sellerReview.sellerId)) {
+      throw new Error('غير مصرح لك بإدارة تقييم ورشة أخرى');
+    }
+    if (review) {
+      let product: ProductDocument | null = null;
+      if (isMongo && db) {
+        product = (await db.collection('products').findOne({ id: review.productId })) as unknown as ProductDocument | null;
+      } else {
+        product = (memoryDb.products.find(p => p.id === review!.productId) as ProductDocument) || null;
+      }
+      if (!product || !sellerIds.has(product.sellerId)) {
+        throw new Error('غير مصرح لك بإدارة تقييم منتج لا يتبع ورشتك');
+      }
+    }
+  }
+
+  const updatedFields: any = {
+    status,
+    updatedAt: new Date().toISOString()
+  };
+  if (status === 'rejected' && reason) {
+    updatedFields.rejectionReason = reason;
+  }
+
+  if (sellerReview) {
     if (isMongo && db) {
       const result = await db.collection('seller_reviews').updateOne({ id: reviewId }, { $set: updatedFields });
       if (result.matchedCount === 0) throw new Error('التقييم غير موجود');
@@ -515,27 +703,66 @@ export async function moderateReview(
       productTitle: sellerReview.sellerName,
       reviewType: 'seller' as const
     };
+
+    const statusLabel = status === 'published' ? 'مقبول ومنشور' : status === 'rejected' ? 'مرفوض' : status === 'hidden' ? 'مخفي' : 'قيد المراجعة';
+
+    // Notify buyer
+    try {
+      if (status === 'published') {
+        await createNotification({
+          userId: sellerReview.userId,
+          recipientId: sellerReview.userId,
+          title: 'تم قبول تقييمك',
+          message: `تم قبول ونشر تقييمك لورشة "${sellerReview.sellerName}" بنجاح.`,
+          type: 'system_alert',
+          link: `/seller/${sellerReview.sellerId}`
+        });
+      } else if (status === 'rejected') {
+        await createNotification({
+          userId: sellerReview.userId,
+          recipientId: sellerReview.userId,
+          title: 'تم رفض تقييمك',
+          message: `تم رفض تقييمك لورشة "${sellerReview.sellerName}"${reason ? `: ${reason}` : '.'}`,
+          type: 'system_alert'
+        });
+      }
+    } catch (e) {}
+
+    // Counterpart notification
+    if (actorUser.role === 'seller') {
+      try {
+        await notifyAdmins({
+          title: `تعديل حالة تقييم بائع [${statusLabel}]`,
+          message: `قام البائع "${sellerReview.sellerName}" بتعديل حالة تقييم المشتري "${sellerReview.userName}" إلى [${statusLabel}]${reason ? ` - السبب: ${reason}` : ''}`,
+          type: 'system_alert',
+          link: '/admin?tab=reviews'
+        });
+      } catch (e) {}
+    } else {
+      try {
+        await createNotification({
+          userId: sellerReview.sellerId,
+          recipientId: sellerReview.sellerId,
+          title: `تحديث تقييم لمتجرك من الإدارة`,
+          message: `قامت الإدارة بتعديل حالة تقييم المشتري "${sellerReview.userName}" إلى [${statusLabel}].`,
+          type: 'system_alert',
+          recipientRole: 'seller'
+        });
+      } catch (e) {}
+    }
+
     await createAuditLog({
-      actorId: adminUser.id,
-      userName: adminUser.name,
-      userRole: 'admin',
+      actorId: actorUser.id,
+      userName: actorUser.name,
+      userRole: actorUser.role as any,
       action: 'SELLER_REVIEW_MODERATED',
       resource: 'تقييم بائع',
       resourceId: reviewId,
-      status: status === 'hidden' ? 'تنبيه' : 'نجاح',
-      details: `قام المدير ${adminUser.name} بتعديل حالة تقييم البائع "${sellerReview.sellerName}" إلى [${status === 'published' ? 'منشور' : 'مخفي'}] - السبب: ${reason || 'مراجعة دورية'}`
+      status: status === 'hidden' || status === 'rejected' ? 'تنبيه' : 'نجاح',
+      details: `قام ${actorUser.name} (${actorUser.role === 'admin' ? 'الإدارة' : 'البائع'}) بتعديل حالة تقييم البائع "${sellerReview.sellerName}" إلى [${statusLabel}] - السبب: ${reason || 'مراجعة دورية'}`
     });
     return updatedReview;
   }
-
-  if (!review) {
-    throw new Error('التقييم غير موجود');
-  }
-
-  const updatedFields = {
-    status,
-    updatedAt: new Date().toISOString()
-  };
 
   if (isMongo && db) {
     try {
@@ -554,17 +781,17 @@ export async function moderateReview(
     Object.assign(memRev, updatedFields);
   }
 
-  const updatedReview = { ...review, ...updatedFields };
+  const updatedReview = { ...review!, ...updatedFields };
 
-  // Recalculate product rating after hiding/restoring review
-  const activeReviews = await getProductReviews(review.productId, false);
+  // Recalculate product rating after moderation
+  const activeReviews = await getProductReviews(review!.productId, false);
   const total = activeReviews.reduce((sum, r) => sum + r.rating, 0);
   const avg = activeReviews.length > 0 ? Number((total / activeReviews.length).toFixed(1)) : 5.0;
 
   if (isMongo && db) {
     try {
       await db.collection('products').updateOne(
-        { id: review.productId },
+        { id: review!.productId },
         { $set: { rating: avg, reviewCount: activeReviews.length } }
       );
     } catch (e) {
@@ -578,18 +805,250 @@ export async function moderateReview(
     memProd.reviewCount = activeReviews.length;
   }
 
+  const statusLabel = status === 'published' ? 'مقبول ومنشور' : status === 'rejected' ? 'مرفوض' : status === 'hidden' ? 'مخفي' : 'قيد المراجعة';
+
+  // Notify buyer
+  try {
+    if (status === 'published') {
+      await createNotification({
+        userId: review!.userId,
+        recipientId: review!.userId,
+        title: 'تم قبول تقييمك للمنتج',
+        message: `تم قبول ونشر تقييمك للمنتج "${review!.productTitle || ''}" بنجاح.`,
+        type: 'product',
+        link: `/product/${review!.productId}`
+      });
+    } else if (status === 'rejected') {
+      await createNotification({
+        userId: review!.userId,
+        recipientId: review!.userId,
+        title: 'تم رفض تقييمك للمنتج',
+        message: `تم رفض تقييمك للمنتج "${review!.productTitle || ''}"${reason ? `: ${reason}` : '.'}`,
+        type: 'product'
+      });
+    }
+  } catch (e) {}
+
   await createAuditLog({
-    actorId: adminUser.id,
-    userName: adminUser.name,
-    userRole: 'admin',
+    actorId: actorUser.id,
+    userName: actorUser.name,
+    userRole: actorUser.role as any,
     action: 'REVIEW_MODERATED',
     resource: 'تقييم منتج',
     resourceId: reviewId,
-    status: status === 'hidden' ? 'تنبيه' : 'نجاح',
-    details: `قام المدير ${adminUser.name} بتعديل حالة التقييم إلى [${status === 'published' ? 'منشور' : 'مخفي'}] - السبب: ${reason || 'مراجعة دورية'}`
+    status: status === 'hidden' || status === 'rejected' ? 'تنبيه' : 'نجاح',
+    details: `قام ${actorUser.name} بتعديل حالة التقييم إلى [${statusLabel}] - السبب: ${reason || 'مراجعة دورية'}`
   });
 
   return updatedReview;
+}
+
+/**
+ * Send a reply to a review by Seller or Admin.
+ */
+export async function replyToReview(
+  actorUser: AuthenticatedUser,
+  reviewId: string,
+  replyMessage: string
+): Promise<ReviewDocument | SellerReviewDocument> {
+  if (!actorUser || !actorUser.id) {
+    throw new Error('يجب تسجيل الدخول لإرسال رد');
+  }
+
+  const trimmed = (replyMessage || '').trim();
+  if (!trimmed) {
+    throw new Error('نص الرد مطلوب');
+  }
+
+  if (actorUser.role !== 'admin' && actorUser.role !== 'seller') {
+    throw new Error('فقط البائع أو مدير المنصة يمكنه الرد على التقييمات');
+  }
+
+  const { db, isMongo } = await getDatabase();
+  let review: ReviewDocument | null = null;
+  let sellerReview: SellerReviewDocument | null = null;
+
+  if (isMongo && db) {
+    try {
+      review = (await db.collection('reviews').findOne({ id: reviewId })) as unknown as ReviewDocument | null;
+      if (!review) {
+        sellerReview = (await db.collection('seller_reviews').findOne({ id: reviewId })) as unknown as SellerReviewDocument | null;
+      }
+    } catch (e) {
+      console.error('[ReviewService] MongoDB find review for reply error:', e);
+    }
+  }
+
+  if (!review && !sellerReview) {
+    review = memoryDb.reviews.find((r) => r.id === reviewId) || null;
+    if (!review) {
+      sellerReview = memoryDb.sellerReviews.find((r) => r.id === reviewId) || null;
+    }
+  }
+
+  if (!review && !sellerReview) {
+    throw new Error('التقييم المراد الرد عليه غير موجود');
+  }
+
+  // Permission check for seller
+  if (actorUser.role === 'seller') {
+    let sellerDoc: SellerDocument | null = null;
+    const sellerId = actorUser.sellerId || actorUser.id;
+    if (isMongo && db) {
+      sellerDoc = (await db.collection('sellers').findOne({
+        $or: [{ id: sellerId }, { userId: actorUser.id }]
+      })) as unknown as SellerDocument | null;
+    } else {
+      sellerDoc = (memoryDb.sellers.find(s => s.id === sellerId || s.userId === actorUser.id) as SellerDocument) || null;
+    }
+    const sellerIds = new Set([sellerId, sellerDoc?.id, sellerDoc?.userId, actorUser.id].filter(Boolean));
+
+    if (sellerReview && !sellerIds.has(sellerReview.sellerId)) {
+      throw new Error('غير مصرح لك بالرد على تقييم ورشة أخرى');
+    }
+    if (review) {
+      let product: ProductDocument | null = null;
+      if (isMongo && db) {
+        product = (await db.collection('products').findOne({ id: review.productId })) as unknown as ProductDocument | null;
+      } else {
+        product = (memoryDb.products.find(p => p.id === review!.productId) as ProductDocument) || null;
+      }
+      if (!product || !sellerIds.has(product.sellerId)) {
+        throw new Error('غير مصرح لك بالرد على تقييم منتج لا يتبع ورشتك');
+      }
+    }
+  }
+
+  const authorName = actorUser.role === 'admin'
+    ? 'إدارة المنصة'
+    : (actorUser.name || 'صاحب الورشة');
+
+  const replyObj: ReviewReply = {
+    message: trimmed,
+    authorName,
+    authorRole: actorUser.role as 'admin' | 'seller',
+    createdAt: new Date().toISOString()
+  };
+
+  const now = new Date().toISOString();
+
+  if (sellerReview) {
+    if (isMongo && db) {
+      await db.collection('seller_reviews').updateOne(
+        { id: reviewId },
+        { $set: { reply: replyObj, updatedAt: now } }
+      );
+    }
+    const memRev = memoryDb.sellerReviews.find((r) => r.id === reviewId);
+    if (memRev) {
+      memRev.reply = replyObj;
+      memRev.updatedAt = now;
+    }
+    sellerReview.reply = replyObj;
+    sellerReview.updatedAt = now;
+
+    // Send notification to buyer
+    try {
+      await createNotification({
+        userId: sellerReview.userId,
+        recipientId: sellerReview.userId,
+        title: actorUser.role === 'admin' ? 'رد من إدارة المنصة على تقييمك' : `رد من ${sellerReview.sellerName} على تقييمك`,
+        message: `رد ${authorName}: "${trimmed.substring(0, 80)}${trimmed.length > 80 ? '...' : ''}"`,
+        type: 'system_alert',
+        link: `/seller/${sellerReview.sellerId}`,
+        metadata: { reviewId, replyAuthor: authorName }
+      });
+    } catch (e) {
+      console.error('[ReviewService] Error notifying buyer of seller review reply:', e);
+    }
+
+    // Counterpart notification
+    if (actorUser.role === 'seller') {
+      try {
+        await notifyAdmins({
+          title: 'رد بائع على تقييم',
+          message: `أرسل البائع "${sellerReview.sellerName}" رداً على تقييم المشتري "${sellerReview.userName}": "${trimmed.substring(0, 60)}"`,
+          type: 'system_alert',
+          link: '/admin?tab=reviews'
+        });
+      } catch (e) {}
+    } else {
+      try {
+        await createNotification({
+          userId: sellerReview.sellerId,
+          recipientId: sellerReview.sellerId,
+          title: 'ردت الإدارة على تقييم في متجرك',
+          message: `أرسلت إدارة المنصة رداً على تقييم المشتري "${sellerReview.userName}".`,
+          type: 'system_alert',
+          recipientRole: 'seller'
+        });
+      } catch (e) {}
+    }
+
+    await createAuditLog({
+      actorId: actorUser.id,
+      userName: actorUser.name,
+      userRole: actorUser.role as any,
+      action: 'REVIEW_REPLIED',
+      resource: 'تقييم بائع',
+      resourceId: reviewId,
+      status: 'نجاح',
+      details: `أضاف ${authorName} رداً على تقييم المشتري "${sellerReview.userName}"`
+    });
+
+    return {
+      ...sellerReview,
+      productId: '',
+      productTitle: sellerReview.sellerName,
+      reviewType: 'seller' as const
+    };
+  }
+
+  if (review) {
+    if (isMongo && db) {
+      await db.collection('reviews').updateOne(
+        { id: reviewId },
+        { $set: { reply: replyObj, updatedAt: now } }
+      );
+    }
+    const memRev = memoryDb.reviews.find((r) => r.id === reviewId);
+    if (memRev) {
+      memRev.reply = replyObj;
+      memRev.updatedAt = now;
+    }
+    review.reply = replyObj;
+    review.updatedAt = now;
+
+    // Send notification to buyer
+    try {
+      await createNotification({
+        userId: review.userId,
+        recipientId: review.userId,
+        title: actorUser.role === 'admin' ? 'رد من إدارة المنصة على تقييمك' : 'رد من البائع على تقييمك',
+        message: `رد ${authorName}: "${trimmed.substring(0, 80)}${trimmed.length > 80 ? '...' : ''}"`,
+        type: 'product',
+        link: `/product/${review.productId}`,
+        metadata: { reviewId, replyAuthor: authorName }
+      });
+    } catch (e) {
+      console.error('[ReviewService] Error notifying buyer of product review reply:', e);
+    }
+
+    await createAuditLog({
+      actorId: actorUser.id,
+      userName: actorUser.name,
+      userRole: actorUser.role as any,
+      action: 'REVIEW_REPLIED',
+      resource: 'تقييم منتج',
+      resourceId: reviewId,
+      status: 'نجاح',
+      details: `أضاف ${authorName} رداً على تقييم المنتج`
+    });
+
+    return review;
+  }
+
+  throw new Error('تعذر إرسال الرد');
 }
 
 /**

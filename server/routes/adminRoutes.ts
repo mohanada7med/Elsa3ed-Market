@@ -31,7 +31,8 @@ import {
 import {
   getAdminReviews,
   moderateReview,
-  deleteProductReview
+  deleteProductReview,
+  replyToReview
 } from '../services/reviewService.ts';
 import { adminUpdateSellerStatus, adminUpdateSellerProfile, deleteSellerCompletely } from '../services/sellerService.ts';
 import {
@@ -186,22 +187,23 @@ router.get('/reviews', async (req: AuthenticatedRequest, res: Response) => {
   }
 });
 
-// PUT /api/admin/reviews/:id/moderate - Publish or hide review
+// PUT /api/admin/reviews/:id/moderate - Publish, reject, hide, or reset review
 router.put('/reviews/:id/moderate', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { status, reason } = req.body;
-    if (!status || !['published', 'hidden'].includes(status)) {
+    if (!status || !['published', 'hidden', 'rejected', 'pending'].includes(status)) {
       return res.status(400).json({
         success: false,
-        error: 'حالة التقييم يجب أن تكون إما published أو hidden',
+        error: 'حالة التقييم يجب أن تكون إما published أو hidden أو rejected أو pending',
         code: 'VALIDATION_ERROR'
       });
     }
 
     const moderated = await moderateReview(req.user!, req.params.id, status, reason);
+    const actionLabel = status === 'published' ? 'قبول ونشر' : status === 'rejected' ? 'رفض' : status === 'hidden' ? 'حجب' : 'إعادة للمراجعة';
     res.json({
       success: true,
-      message: `تم ${status === 'published' ? 'إعادة نشر' : 'حجب'} التقييم بنجاح`,
+      message: `تم ${actionLabel} التقييم بنجاح`,
       data: moderated
     });
   } catch (error: any) {
@@ -210,6 +212,34 @@ router.put('/reviews/:id/moderate', async (req: AuthenticatedRequest, res: Respo
       success: false,
       error: error.message || 'فشل في تعديل حالة التقييم',
       code: 'MODERATION_ERROR'
+    });
+  }
+});
+
+// POST /api/admin/reviews/:id/reply - Send an admin reply to a review
+router.post('/reviews/:id/reply', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { message } = req.body;
+    if (!message || !String(message).trim()) {
+      return res.status(400).json({
+        success: false,
+        error: 'نص الرد مطلوب',
+        code: 'VALIDATION_ERROR'
+      });
+    }
+
+    const updated = await replyToReview(req.user!, req.params.id, String(message).trim());
+    res.json({
+      success: true,
+      message: 'تم إرسال رد الإدارة بنجاح',
+      data: updated
+    });
+  } catch (error: any) {
+    console.error('Error replying to review by admin:', error);
+    res.status(400).json({
+      success: false,
+      error: error?.message || 'فشل في إرسال رد الإدارة',
+      code: 'REPLY_ERROR'
     });
   }
 });

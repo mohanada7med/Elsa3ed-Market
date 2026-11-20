@@ -11,6 +11,7 @@ import {
   MessageCircle,
   Heart,
   Edit2,
+  CornerDownLeft,
 } from 'lucide-react';
 import { updatePageSEO, generateStoreSchema } from '../../utils/seo';
 import { api } from '../../services/api';
@@ -705,6 +706,20 @@ export const SellerProfileView: React.FC = () => {
                       </div>
                     </div>
                     <p className="mt-3 whitespace-pre-line text-sm leading-7 text-foreground-muted">{review.comment}</p>
+                    {review.reply && (
+                      <div className="mt-3 rounded-xl border border-primary/20 bg-primary/5 p-3 text-xs leading-6">
+                        <div className="flex items-center justify-between font-black text-primary dark:text-primary-hover">
+                          <div className="flex items-center gap-1.5">
+                            <CornerDownLeft className="h-3.5 w-3.5" />
+                            <span>{review.reply.authorRole === 'seller' ? `رد ${seller.brandName || ownerName || 'صاحب الورشة'}` : 'رد إدارة المنصة'}:</span>
+                          </div>
+                          <span className="text-[10px] text-foreground-muted">
+                            {new Date(review.reply.createdAt).toLocaleDateString('ar-EG')}
+                          </span>
+                        </div>
+                        <p className="mt-1 text-foreground-muted pr-5">{review.reply.message}</p>
+                      </div>
+                    )}
                   </article>
                 ))}
               </div>

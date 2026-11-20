@@ -33,6 +33,7 @@ import {
   Package,
   Gem,
   Ruler,
+  CornerDownLeft,
   Weight,
   Clock3,
   Leaf,
@@ -2212,6 +2213,21 @@ export const ProductDetailsView: React.FC = () => {
                           <p className="mt-4 text-xs leading-7">
                             {review.comment}
                           </p>
+
+                          {review.reply && (
+                            <div className="mt-3 rounded-xl border border-primary/20 bg-primary/5 p-3 text-xs leading-6">
+                              <div className="flex items-center justify-between font-black text-primary dark:text-primary-hover">
+                                <div className="flex items-center gap-1.5">
+                                  <CornerDownLeft className="h-3.5 w-3.5" />
+                                  <span>{review.reply.authorRole === 'seller' ? `رد البائع (${review.reply.authorName})` : 'رد إدارة المنصة'}:</span>
+                                </div>
+                                <span className="text-[10px] text-black/40 dark:text-white/40">
+                                  {new Date(review.reply.createdAt).toLocaleDateString('ar-EG')}
+                                </span>
+                              </div>
+                              <p className="mt-1 text-black/75 dark:text-white/75 pr-5 leading-relaxed">{review.reply.message}</p>
+                            </div>
+                          )}
 
                           <div className="mt-3 text-[9px] text-black/30 dark:text-white/25">
                             {review.createdAt

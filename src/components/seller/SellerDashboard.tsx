@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useApp } from '../../context/AppContext.tsx';
-import { Product, Governorate, OrderStatus, ProductStatus, CraftReel } from '../../types.ts';
+import { Product, Governorate, OrderStatus, ProductStatus, CraftReel, Review } from '../../types.ts';
 import { api } from '../../services/api.ts';
 import { craftReelsService } from '../../services/craftReelsService.ts';
 import { SellerPayouts } from './SellerPayouts.tsx';
@@ -37,6 +37,7 @@ import {
   X,
   Save,
   Send,
+  CornerDownLeft,
   AlertCircle,
   FileText,
   Boxes,
@@ -125,7 +126,8 @@ type SellerTab =
   | 'notifications'
   | 'settings'
   | 'reports'
-  | 'promotion';
+  | 'promotion'
+  | 'reviews';
 
 export const SellerDashboard: React.FC = () => {
   const {
@@ -346,6 +348,7 @@ export const SellerDashboard: React.FC = () => {
     else if (activePage === 'seller-messages') setActiveTab('messages');
     else if (activePage === 'seller-payouts' || activePage === 'seller-analytics') setActiveTab('payouts');
     else if (activePage === 'seller-account') setActiveTab('settings');
+    else if (activePage === 'seller-reviews') setActiveTab('reviews');
     else if (activePage === 'seller-dashboard') setActiveTab('overview');
   }, [activePage]);
 
@@ -354,7 +357,7 @@ export const SellerDashboard: React.FC = () => {
     const tab = new URLSearchParams(window.location.search).get('tab');
     const validTabs: SellerTab[] = [
       'overview', 'products', 'inventory', 'messages', 'payouts',
-      'reels', 'notifications', 'settings', 'reports', 'promotion'
+      'reels', 'notifications', 'settings', 'reports', 'promotion', 'reviews'
     ];
     if (tab && validTabs.includes(tab as SellerTab)) {
       setActiveTab(tab as SellerTab);
@@ -505,6 +508,124 @@ export const SellerDashboard: React.FC = () => {
     }
   }, [sellerStatus, refreshSellerInventory, refreshStockMovements, refreshSellerStats]);
 
+  // Seller Reviews State
+  const [sellerReviewsList, setSellerReviewsList] = useState<Review[]>([]);
+  const [isSellerReviewsLoading, setIsSellerReviewsLoading] = useState(false);
+  const [sellerReviewsStatusFilter, setSellerReviewsStatusFilter] = useState<'all' | 'pending' | 'published' | 'rejected'>('all');
+  const [replyingReviewId, setReplyingReviewId] = useState<string | null>(null);
+  const [replyInputText, setReplyInputText] = useState('');
+  const [isSubmittingReply, setIsSubmittingReply] = useState(false);
+  const [moderatingReviewId, setModeratingReviewId] = useState<string | null>(null);
+  const [rejectModalReviewId, setRejectModalReviewId] = useState<string | null>(null);
+  const [rejectReasonInput, setRejectReasonInput] = useState('');
+
+  const fetchSellerReviews = useCallback(async () => {
+    setIsSellerReviewsLoading(true);
+    try {
+      const data = await api.getSellerReviewsForDashboard(currentUser);
+      if (Array.isArray(data)) {
+        setSellerReviewsList(data);
+      }
+    } catch (err) {
+      console.error('[SellerDashboard] Error fetching reviews:', err);
+    } finally {
+      setIsSellerReviewsLoading(false);
+    }
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (sellerStatus === 'approved') {
+      fetchSellerReviews();
+    }
+  }, [sellerStatus, fetchSellerReviews]);
+
+  useEffect(() => {
+    if (activeTab === 'reviews') {
+      fetchSellerReviews();
+    }
+  }, [activeTab, fetchSellerReviews]);
+
+  const pendingReviewsCount = useMemo(() => {
+    return sellerReviewsList.filter((r) => r.status === 'pending').length;
+  }, [sellerReviewsList]);
+
+  const publishedReviewsCount = useMemo(() => {
+    return sellerReviewsList.filter((r) => r.status === 'published').length;
+  }, [sellerReviewsList]);
+
+  const rejectedReviewsCount = useMemo(() => {
+    return sellerReviewsList.filter((r) => r.status === 'rejected' || r.status === 'hidden').length;
+  }, [sellerReviewsList]);
+
+  const averageSellerRating = useMemo(() => {
+    const pub = sellerReviewsList.filter((r) => r.status === 'published');
+    if (pub.length === 0) return null;
+    const sum = pub.reduce((acc, r) => acc + (r.rating || 0), 0);
+    return formatArabicNumber(Number((sum / pub.length).toFixed(1)), { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  }, [sellerReviewsList]);
+
+  const filteredSellerReviews = useMemo(() => {
+    return sellerReviewsList.filter((r) => {
+      if (sellerReviewsStatusFilter === 'all') return true;
+      if (sellerReviewsStatusFilter === 'pending') return r.status === 'pending';
+      if (sellerReviewsStatusFilter === 'published') return r.status === 'published';
+      if (sellerReviewsStatusFilter === 'rejected') return r.status === 'rejected' || r.status === 'hidden';
+      return true;
+    });
+  }, [sellerReviewsList, sellerReviewsStatusFilter]);
+
+  const handleSellerModerateReview = async (reviewId: string, status: 'published' | 'rejected', reason?: string) => {
+    setModeratingReviewId(reviewId);
+    try {
+      const updated = await api.moderateSellerReview(currentUser, reviewId, status, reason);
+      setSellerReviewsList((prev) =>
+        prev.map((r) => (r.id === reviewId ? { ...r, ...updated, status, rejectionReason: reason || r.rejectionReason } : r))
+      );
+      addToast(
+        'إدارة التقييم',
+        status === 'published' ? 'تم قبول ونشر التقييم بنجاح' : 'تم رفض التقييم',
+        status === 'published' ? 'success' : 'info'
+      );
+      setRejectModalReviewId(null);
+      setRejectReasonInput('');
+      refreshSellerStats();
+    } catch (err: any) {
+      addToast('خطأ في العملية', err?.message || 'تعذر تعديل حالة التقييم', 'error');
+    } finally {
+      setModeratingReviewId(null);
+    }
+  };
+
+  const handleSellerSubmitReply = async (reviewId: string) => {
+    if (!replyInputText.trim()) return;
+    setIsSubmittingReply(true);
+    try {
+      const updated = await api.replyToReview(currentUser, reviewId, replyInputText.trim());
+      setSellerReviewsList((prev) =>
+        prev.map((r) =>
+          r.id === reviewId
+            ? {
+                ...r,
+                reply: updated.reply || {
+                  message: replyInputText.trim(),
+                  authorName: currentUser.name || 'البائع',
+                  authorRole: 'seller',
+                  createdAt: new Date().toISOString()
+                }
+              }
+            : r
+        )
+      );
+      addToast('تم إرسال الرد', 'تم إرسال رد ورشتك على تقييم المشتري بنجاح', 'success');
+      setReplyingReviewId(null);
+      setReplyInputText('');
+    } catch (err: any) {
+      addToast('خطأ في إرسال الرد', err?.message || 'تعذر حفظ الرد', 'error');
+    } finally {
+      setIsSubmittingReply(false);
+    }
+  };
+
   // Lock background scrolling whenever ANY modal or drawer is open
   const isAnyModalOpen = Boolean(
     isProductModalOpen ||
@@ -513,7 +634,8 @@ export const SellerDashboard: React.FC = () => {
     isMobileNavOpen ||
     isReelUploadOpen ||
     isSellerReelEditOpen ||
-    isReelPreviewOpen
+    isReelPreviewOpen ||
+    Boolean(rejectModalReviewId)
   );
 
   useEffect(() => {
@@ -968,7 +1090,7 @@ export const SellerDashboard: React.FC = () => {
   const pendingProductsCount = sellerProducts.filter((p) => p.approvalStatus === 'pending').length;
 
   interface SellerNavItem {
-    id: 'overview' | 'products' | 'inventory' | 'messages' | 'payouts' | 'reels' | 'notifications' | 'settings' | 'reports' | 'promotion';
+    id: 'overview' | 'products' | 'inventory' | 'messages' | 'payouts' | 'reels' | 'notifications' | 'settings' | 'reports' | 'promotion' | 'reviews';
     label: string;
     sublabel?: string;
     icon: React.ComponentType<{ className?: string }>;
@@ -1055,6 +1177,21 @@ export const SellerDashboard: React.FC = () => {
           icon: Sparkles,
           elementId: 'seller-nav-promotion-btn'
         }] : [])
+      ]
+    },
+    {
+      id: 'reputation',
+      title: 'التقييمات والسمعة',
+      description: 'آراء المشترين والرد عليها',
+      items: [
+        {
+          id: 'reviews' as const,
+          label: 'التقييمات والآراء',
+          sublabel: pendingReviewsCount > 0 ? `${formatArabicNumber(pendingReviewsCount)} بانتظار الموافقة` : 'آراء المشترين والردود',
+          icon: Star,
+          badge: pendingReviewsCount > 0 ? `${formatArabicNumber(pendingReviewsCount)} جديد` : undefined,
+          elementId: 'seller-nav-reviews-btn'
+        }
       ]
     },
     {
@@ -3217,6 +3354,318 @@ export const SellerDashboard: React.FC = () => {
               </div>
             </div>
           )}
+
+          {/* TAB: REVIEWS MANAGEMENT */}
+          {activeTab === 'reviews' && (
+            <div className="bg-white/80 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-lg space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-5">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-bold text-xl text-espresso dark:text-cream font-cairo">
+                      تقييمات وآراء المشترين
+                    </h3>
+                    {pendingReviewsCount > 0 && (
+                      <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/20">
+                        {formatArabicNumber(pendingReviewsCount)} بانتظار الموافقة والرد
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-black/60 dark:text-white/60 mt-1 font-medium">
+                    راجع تقييمات المشترين على ورشتك ومنتجاتك، واقبل التقييم أو ارفضه أو ابعت رد مباشر للمشتري.
+                  </p>
+                </div>
+                <RefreshDataButton
+                  onRefresh={fetchSellerReviews}
+                  label="تحديث التقييمات"
+                />
+              </div>
+
+              {/* Summary Metric Cards */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="p-4 rounded-2xl border border-amber-500/20 bg-amber-500/5 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold text-amber-800 dark:text-amber-300">متوسط التقييم العام</span>
+                    <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+                  </div>
+                  <div className="text-2xl font-black font-main text-espresso dark:text-cream">
+                    {averageSellerRating ? `${averageSellerRating} / ٥` : '—'}
+                  </div>
+                  <p className="text-[10px] text-black/50 dark:text-white/50">بناءً على التقييمات المقبولة</p>
+                </div>
+
+                <div className="p-4 rounded-2xl border border-black/10 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.02] space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold text-black/60 dark:text-white/60">إجمالي التقييمات</span>
+                    <MessageSquare className="w-4 h-4 text-primary" />
+                  </div>
+                  <div className="text-2xl font-black font-main text-espresso dark:text-cream">
+                    {formatArabicNumber(sellerReviewsList.length)}
+                  </div>
+                  <p className="text-[10px] text-black/50 dark:text-white/50">كل التقييمات المسجلة</p>
+                </div>
+
+                <div className="p-4 rounded-2xl border border-blue-500/20 bg-blue-500/5 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold text-blue-800 dark:text-blue-300">بانتظار الإجراء</span>
+                    <Clock className="w-4 h-4 text-blue-500" />
+                  </div>
+                  <div className="text-2xl font-black font-main text-blue-700 dark:text-blue-300">
+                    {formatArabicNumber(pendingReviewsCount)}
+                  </div>
+                  <p className="text-[10px] text-blue-600/70 dark:text-blue-400/70">جديدة بانتظار الموافقة</p>
+                </div>
+
+                <div className="p-4 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold text-emerald-800 dark:text-emerald-300">مقبولة ومنشورة</span>
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                  </div>
+                  <div className="text-2xl font-black font-main text-emerald-700 dark:text-emerald-300">
+                    {formatArabicNumber(publishedReviewsCount)}
+                  </div>
+                  <p className="text-[10px] text-emerald-600/70 dark:text-emerald-400/70">تظهر للزوار في المتجر</p>
+                </div>
+              </div>
+
+              {/* Status Filter Buttons */}
+              <div className="flex flex-wrap items-center gap-2 border-b border-black/10 dark:border-white/10 pb-4">
+                {(
+                  [
+                    { id: 'all', label: 'الكل', count: sellerReviewsList.length },
+                    { id: 'pending', label: 'بانتظار الموافقة', count: pendingReviewsCount },
+                    { id: 'published', label: 'المنشورة للعامة', count: publishedReviewsCount },
+                    { id: 'rejected', label: 'المرفوضة والمخفية', count: rejectedReviewsCount }
+                  ] as const
+                ).map((tab) => {
+                  const isSelected = sellerReviewsStatusFilter === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setSellerReviewsStatusFilter(tab.id)}
+                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                        isSelected
+                          ? 'bg-primary text-white shadow-xs'
+                          : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-primary/10 hover:text-primary'
+                      }`}
+                    >
+                      <span>{tab.label}</span>
+                      <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? 'bg-white/20' : 'bg-black/10 dark:bg-white/10'}`}>
+                        {formatArabicNumber(tab.count)}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Reviews List */}
+              <div className="space-y-4">
+                {isSellerReviewsLoading ? (
+                  <div className="text-center py-12">
+                    <Loader2 className="w-8 h-8 text-primary animate-spin mx-auto mb-2" />
+                    <p className="text-xs text-black/60 dark:text-white/60">جاري تحميل تقييمات الورشة...</p>
+                  </div>
+                ) : filteredSellerReviews.length === 0 ? (
+                  <div className="text-center py-12 bg-black/[0.02] dark:bg-white/[0.02] border border-dashed border-black/10 dark:border-white/10 rounded-2xl p-6">
+                    <Star className="w-8 h-8 text-amber-500/40 mx-auto mb-2" />
+                    <p className="text-xs font-bold text-espresso dark:text-cream">لا توجد تقييمات في هذا التصنيف حالياً</p>
+                    <p className="text-[11px] text-black/50 dark:text-white/50 mt-1">
+                      عندما يقوم المشترون بتقييم ورشتك أو منتجاتك بعد استلام طلباتهم ستظهر هنا فوراً.
+                    </p>
+                  </div>
+                ) : (
+                  filteredSellerReviews.map((rev) => {
+                    const isReplying = replyingReviewId === rev.id;
+                    const isModding = moderatingReviewId === rev.id;
+
+                    return (
+                      <div
+                        key={rev.id}
+                        className="p-5 rounded-2xl border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/[0.02] shadow-xs space-y-3.5"
+                      >
+                        {/* Header of review card */}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-black text-xs">
+                              {(rev.userName || 'م').charAt(0)}
+                            </div>
+                            <div>
+                              <span className="font-bold text-xs text-espresso dark:text-cream">{rev.userName || 'مشتري موثق'}</span>
+                              <span className="text-[10px] text-black/50 dark:text-white/50 mr-2">
+                                {rev.userGovernorate ? `محافظة ${rev.userGovernorate}` : 'صعيد مصر'}
+                              </span>
+                            </div>
+
+                            {rev.verifiedPurchase && (
+                              <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-800/40">
+                                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                                <span>شراء موثق</span>
+                              </span>
+                            )}
+
+                            <span
+                              className={`px-2 py-0.5 rounded-full border text-[10px] font-bold ${
+                                rev.status === 'published'
+                                  ? 'bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-950/40 dark:text-emerald-300'
+                                  : rev.status === 'rejected' || rev.status === 'hidden'
+                                    ? 'bg-rose-100 text-rose-800 border-rose-300 dark:bg-rose-950/40 dark:text-rose-300'
+                                    : 'bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300'
+                              }`}
+                            >
+                              {rev.status === 'published'
+                                ? 'مقبول ومنشور'
+                                : rev.status === 'rejected'
+                                  ? 'مرفوض'
+                                  : rev.status === 'hidden'
+                                    ? 'مخفي'
+                                    : 'بانتظار الموافقة'}
+                            </span>
+
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary dark:text-primary-hover">
+                              {rev.reviewType === 'seller' ? 'تقييم الورشة' : `منتج: ${rev.productTitle || 'منتج يدوي'}`}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-2 self-start sm:self-center">
+                            <div className="flex items-center text-amber-500">
+                              {Array.from({ length: 5 }).map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className={`w-3.5 h-3.5 ${i < rev.rating ? 'fill-amber-500 text-amber-500' : 'text-gray-300 dark:text-white/20'}`}
+                                />
+                              ))}
+                            </div>
+                            <span className="text-[10px] text-black/50 dark:text-white/50 font-bold">
+                              {rev.createdAt
+                                ? new Date(rev.createdAt).toLocaleDateString('ar-EG', { timeZone: 'Africa/Cairo' })
+                                : rev.date}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Review comment */}
+                        <div className="p-3.5 rounded-xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5 text-xs text-espresso dark:text-cream leading-relaxed">
+                          "{rev.comment}"
+                        </div>
+
+                        {/* Rejection reason if any */}
+                        {rev.rejectionReason && (
+                          <div className="text-[11px] p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-800 dark:text-rose-300">
+                            <strong>سبب الرفض:</strong> {rev.rejectionReason}
+                          </div>
+                        )}
+
+                        {/* Existing Reply */}
+                        {rev.reply && (
+                          <div className="p-3.5 rounded-xl bg-primary/5 border border-primary/20 space-y-1.5 text-xs">
+                            <div className="flex items-center justify-between text-[11px] font-bold text-primary dark:text-primary-hover">
+                              <div className="flex items-center gap-1.5">
+                                <CornerDownLeft className="w-3.5 h-3.5" />
+                                <span>{rev.reply.authorRole === 'seller' ? 'رد ورشتك على المشتري' : `رد ${rev.reply.authorName}`}</span>
+                              </div>
+                              <span className="text-[10px] text-black/40 dark:text-white/40">
+                                {new Date(rev.reply.createdAt).toLocaleDateString('ar-EG')}
+                              </span>
+                            </div>
+                            <p className="text-espresso dark:text-cream leading-relaxed pr-5">
+                              {rev.reply.message}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Inline Reply Form */}
+                        {isReplying && (
+                          <div className="p-3.5 rounded-xl bg-black/[0.03] dark:bg-white/[0.04] border border-primary/30 space-y-2 animate-in fade-in">
+                            <label className="text-[11px] font-bold text-espresso dark:text-cream flex items-center gap-1.5">
+                              <CornerDownLeft className="w-3.5 h-3.5 text-primary" />
+                              <span>اكتب ردك اللبق للمشتري:</span>
+                            </label>
+                            <textarea
+                              value={replyInputText}
+                              onChange={(e) => setReplyInputText(e.target.value)}
+                              placeholder="شكراً لك على ثقتك في ورشتنا، ويسعدنا دائماً تقديم أفضل جودة لك..."
+                              className="w-full p-3 rounded-xl border border-black/10 dark:border-white/10 bg-white dark:bg-espresso-950 text-xs outline-none focus:border-primary resize-none h-20 text-foreground"
+                            />
+                            <div className="flex items-center justify-end gap-2">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setReplyingReviewId(null);
+                                  setReplyInputText('');
+                                }}
+                                className="px-3 py-1.5 rounded-lg text-xs font-bold text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer"
+                              >
+                                إلغاء
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleSellerSubmitReply(rev.id)}
+                                disabled={isSubmittingReply || !replyInputText.trim()}
+                                className="px-4 py-1.5 rounded-lg text-xs font-bold bg-primary hover:bg-[#7e5527] text-white shadow-xs transition-colors cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+                              >
+                                {isSubmittingReply ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+                                <span>إرسال الرد للمشتري</span>
+                              </button>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Action Buttons Bar */}
+                        <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-black/5 dark:border-white/5">
+                          <div className="flex items-center gap-2">
+                            {rev.status !== 'published' && (
+                              <button
+                                type="button"
+                                onClick={() => handleSellerModerateReview(rev.id, 'published')}
+                                disabled={isModding}
+                                className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer disabled:opacity-50"
+                                title="قبول التقييم ونشره ليظهر للجميع"
+                              >
+                                {isModding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
+                                <span>قبول ونشر</span>
+                              </button>
+                            )}
+
+                            {rev.status !== 'rejected' && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setRejectModalReviewId(rev.id);
+                                  setRejectReasonInput('');
+                                }}
+                                disabled={isModding}
+                                className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-800 dark:bg-rose-950/30 dark:text-rose-300 border border-rose-200 dark:border-rose-900/40 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-50"
+                                title="رفض هذا التقييم"
+                              >
+                                <X className="w-3.5 h-3.5" />
+                                <span>رفض التقييم</span>
+                              </button>
+                            )}
+                          </div>
+
+                          <div>
+                            {!isReplying && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setReplyingReviewId(rev.id);
+                                  setReplyInputText(rev.reply?.message || '');
+                                }}
+                                className="px-3.5 py-1.5 bg-black/5 dark:bg-white/10 hover:bg-primary/10 hover:text-primary dark:text-primary-hover text-espresso dark:text-cream rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+                              >
+                                <MessageSquare className="w-3.5 h-3.5" />
+                                <span>{rev.reply ? 'تعديل الرد' : 'رد على التقييم'}</span>
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+          )}
         </main>
       </div>
 
@@ -3710,6 +4159,57 @@ export const SellerDashboard: React.FC = () => {
         onClose={() => setIsDeleteAccountModalOpen(false)}
         isSellerMode={true}
       />
+
+      {/* Review Rejection Modal */}
+      {rejectModalReviewId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white/95 dark:bg-espresso-900/95 rounded-[2rem] border border-black/10 dark:border-white/10 max-w-md w-full p-6 space-y-4 shadow-2xl backdrop-blur-2xl">
+            <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
+              <h3 className="font-bold text-lg text-espresso dark:text-cream font-cairo">رفض التقييم</h3>
+              <button
+                type="button"
+                onClick={() => {
+                  setRejectModalReviewId(null);
+                  setRejectReasonInput('');
+                }}
+                className="p-1 rounded-lg text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <p className="text-xs text-black/60 dark:text-white/60">
+              يمكنك كتابة سبب الرفض لتوضيحه للمشتري وإدارة المنصة:
+            </p>
+            <textarea
+              value={rejectReasonInput}
+              onChange={(e) => setRejectReasonInput(e.target.value)}
+              placeholder="اكتب سبب الرفض هنا... (مثال: معلومات غير دقيقة، تم حل المشكلة مع العميل)"
+              className="w-full p-3 rounded-xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 text-xs outline-none focus:border-primary resize-none h-24 text-foreground"
+            />
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setRejectModalReviewId(null);
+                  setRejectReasonInput('');
+                }}
+                className="px-4 py-2 rounded-xl text-xs font-bold bg-black/5 dark:bg-white/10 text-black/70 dark:text-white/70 hover:bg-black/10 transition-colors cursor-pointer"
+              >
+                إلغاء
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSellerModerateReview(rejectModalReviewId, 'rejected', rejectReasonInput.trim())}
+                disabled={moderatingReviewId === rejectModalReviewId}
+                className="px-5 py-2 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white shadow-md transition-colors cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+              >
+                {moderatingReviewId === rejectModalReviewId ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <X className="w-3.5 h-3.5" />}
+                <span>تأكيد الرفض</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {layoutMode === 'compact-rail' && (
         <nav

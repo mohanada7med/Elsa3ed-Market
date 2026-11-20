@@ -378,6 +378,13 @@ export interface ShippingConfig {
 }
 
 
+export interface ReviewReply {
+  message: string;
+  authorName: string;
+  authorRole: 'seller' | 'admin';
+  createdAt: string;
+}
+
 export interface Review {
   id: string;
   productId: string;
@@ -390,10 +397,12 @@ export interface Review {
   comment: string;
   date: string;
   verifiedPurchase: boolean;
-  status: 'pending' | 'published' | 'hidden';
+  status: 'pending' | 'published' | 'hidden' | 'rejected';
   reviewType?: 'product' | 'seller';
   sellerId?: string;
   sellerName?: string;
+  reply?: ReviewReply;
+  rejectionReason?: string;
   createdAt?: string;
 }
 
@@ -522,6 +531,7 @@ export type ActivePage =
   | 'seller-payouts'
   | 'seller-analytics'
   | 'seller-account'
+  | 'seller-reviews'
   | 'admin-dashboard'
   | 'admin-cultural-cms'
   | 'admin-map-editor'

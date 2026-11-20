@@ -281,7 +281,8 @@ interface AppContextType {
 
   // Reviews
   addReview: (productId: string, rating: number, comment: string) => Promise<void> | void;
-  moderateReview: (reviewId: string, status: 'published' | 'hidden', reason?: string) => Promise<void>;
+  moderateReview: (reviewId: string, status: 'published' | 'hidden' | 'rejected' | 'pending', reason?: string) => Promise<void>;
+  replyToReview: (reviewId: string, message: string) => Promise<void>;
   deleteReview: (reviewId: string) => Promise<void>;
 
   // Discounts
@@ -515,6 +516,7 @@ export const PAGE_ROUTES: Record<ActivePage, string> = {
   'seller-payouts': '/seller-payouts',
   'seller-analytics': '/seller-analytics',
   'seller-account': '/seller-account',
+  'seller-reviews': '/seller/reviews',
 
   // Admin
   'admin-dashboard': '/admin-dashboard',
@@ -3277,20 +3279,36 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  const moderateReview = async (reviewId: string, status: 'published' | 'hidden', reason?: string) => {
+  const moderateReview = async (reviewId: string, status: 'published' | 'hidden' | 'rejected' | 'pending', reason?: string) => {
     try {
-      const updated = await api.moderateAdminReview(
-        { id: currentUser.id, role: 'admin' },
-        reviewId,
-        status,
-        reason
-      );
+      const updated = currentRole === 'admin'
+        ? await api.moderateAdminReview({ id: currentUser.id, role: 'admin' }, reviewId, status, reason)
+        : await api.moderateSellerReview({ id: currentUser.id, role: 'seller' }, reviewId, status as any, reason);
       setReviews((prev) => prev.map((r) => (r.id === reviewId ? updated : r)));
-      addToast('إدارة التقييمات', `تم تغيير حالة التقييم إلى "${status === 'published' ? 'منشور' : 'مخفي'}"`, 'success');
+      const statusLabel = status === 'published' ? 'مقبول ومنشور' : status === 'rejected' ? 'مرفوض' : status === 'hidden' ? 'مخفي' : 'قيد المراجعة';
+      addToast('إدارة التقييمات', `تم تغيير حالة التقييم إلى "${statusLabel}"`, 'success');
       refreshAuditLogs();
     } catch (err: any) {
       console.error('Error moderating review:', err);
       addToast('تعذر تحديث التقييم', err?.message || 'فشل في حفظ حالة التقييم', 'error');
+      throw err;
+    }
+  };
+
+  const replyToReview = async (reviewId: string, message: string) => {
+    try {
+      const updated = await api.replyToReview(
+        { id: currentUser.id, role: currentRole },
+        reviewId,
+        message
+      );
+      setReviews((prev) => prev.map((r) => (r.id === reviewId ? updated : r)));
+      addToast('الرد على التقييم', 'تم إرسال ردك للمشتري بنجاح', 'success');
+      refreshAuditLogs();
+    } catch (err: any) {
+      console.error('Error replying to review:', err);
+      addToast('تعذر إرسال الرد', err?.message || 'فشل في إرسال الرد', 'error');
+      throw err;
     }
   };
 
@@ -3570,6 +3588,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
         addReview,
         moderateReview,
+        replyToReview,
         deleteReview,
 
         addDiscountCoupon,

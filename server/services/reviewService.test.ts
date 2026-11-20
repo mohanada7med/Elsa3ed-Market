@@ -12,7 +12,9 @@ import {
   getBuyerSellerReview,
   getProductReviews,
   getSellerReviews,
-  moderateReview
+  moderateReview,
+  getSellerDashboardReviews,
+  replyToReview
 } from './reviewService.ts';
 
 const databaseEnvironmentKeys = [
@@ -295,6 +297,168 @@ test('buyers can submit verified seller reviews that require moderation', async 
     assert.equal((await getSellerReviews(seller.id)).length, 0);
     assert.equal(seller.rating, 0);
     assert.equal(seller.reviewCount, 0);
+  } finally {
+    memoryDb.sellers = originalSellers;
+    memoryDb.orders = originalOrders;
+    memoryDb.reviews = originalReviews;
+    memoryDb.sellerReviews = originalSellerReviews;
+    memoryDb.auditLogs = originalAuditLogs;
+
+    originalEnvironment.forEach((value, key) => {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    });
+  }
+});
+
+test('sellers and admins can view reviews, accept, reject, or reply to them', async () => {
+  const originalEnvironment = new Map(
+    databaseEnvironmentKeys.map((key) => [key, process.env[key]])
+  );
+  const originalSellers = memoryDb.sellers;
+  const originalOrders = memoryDb.orders;
+  const originalReviews = memoryDb.reviews;
+  const originalSellerReviews = memoryDb.sellerReviews;
+  const originalAuditLogs = memoryDb.auditLogs;
+
+  databaseEnvironmentKeys.forEach((key) => delete process.env[key]);
+
+  try {
+    const seller: Seller = {
+      id: 'seller-reply-test',
+      userId: 'seller-user-reply-test',
+      name: 'عم صابر الفخراني',
+      brandName: 'فخار قنا الأصيل',
+      governorate: 'قنا',
+      rating: 0,
+      reviewCount: 0,
+      salesCount: 1,
+      productsCount: 1,
+      badge: '',
+      avatar: '',
+      coverImage: '',
+      bio: '',
+      story: '',
+      verified: true,
+      joinedDate: new Date().toISOString(),
+      phone: '01011112222',
+      email: 'saber@example.test',
+      payoutMethod: 'vodafone_cash',
+      payoutAccount: '01011112222',
+      status: 'approved',
+      specialty: 'فخار'
+    };
+
+    const deliveredOrder: OrderDocument = {
+      id: 'order-reply-test',
+      orderNumber: 'SAED-ORDER-REPLY',
+      buyerId: 'buyer-reply-user',
+      buyerName: 'أحمد محمود',
+      buyerPhone: '01099998888',
+      shippingAddress: {
+        fullName: 'أحمد محمود',
+        phone: '01099998888',
+        governorate: 'قنا',
+        city: 'قنا',
+        streetAddress: 'ش البحر'
+      },
+      items: [{
+        productId: 'prod-reply-test',
+        productTitle: 'طاجن فخار كبير',
+        productImage: '',
+        sellerId: seller.id,
+        sellerName: seller.brandName,
+        sellerGovernorate: seller.governorate,
+        quantity: 1,
+        unitPrice: 150,
+        subtotal: 150
+      }],
+      status: 'delivered',
+      paymentMethod: 'cod',
+      paymentStatus: 'paid',
+      subtotal: 150,
+      shippingFee: 0,
+      discountAmount: 0,
+      total: 150,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      trackingNumber: 'TRACK-REPLY-TEST',
+      timeline: [],
+      sellerIds: [seller.id]
+    };
+
+    const buyer: AuthenticatedUser = {
+      id: 'buyer-reply-user',
+      name: 'أحمد محمود',
+      email: 'ahmed@example.test',
+      role: 'buyer'
+    };
+
+    const sellerUser: AuthenticatedUser = {
+      id: 'seller-user-reply-test',
+      sellerId: 'seller-reply-test',
+      name: 'عم صابر',
+      email: 'saber@example.test',
+      role: 'seller'
+    };
+
+    const adminUser: AuthenticatedUser = {
+      id: 'admin-reply-user',
+      name: 'مدير المنصة',
+      email: 'admin@example.test',
+      role: 'admin'
+    };
+
+    memoryDb.sellers = [seller];
+    memoryDb.orders = [deliveredOrder];
+    memoryDb.reviews = [];
+    memoryDb.sellerReviews = [];
+    memoryDb.auditLogs = [];
+
+    // 1. Buyer creates review for seller
+    const sellerRev = await createSellerReview(buyer, {
+      sellerId: seller.id,
+      rating: 5,
+      comment: 'شغل تحفة وجودة خرافية وتسليم سريع جدا'
+    });
+
+    assert.equal(sellerRev.status, 'pending');
+
+    // 2. Seller can see their reviews on dashboard
+    const dashboardReviews = await getSellerDashboardReviews(sellerUser);
+    assert.equal(dashboardReviews.length, 1);
+    assert.equal(dashboardReviews[0].id, sellerRev.id);
+    assert.equal(dashboardReviews[0].reviewType, 'seller');
+
+    // 3. Seller can reply to review
+    const repliedReview = await replyToReview(
+      sellerUser,
+      sellerRev.id,
+      'تسلم يا هندسة، نورتنا وتحت أمرك دايماً!'
+    );
+    assert.ok(repliedReview.reply);
+    assert.equal(repliedReview.reply.authorRole, 'seller');
+    assert.equal(repliedReview.reply.message, 'تسلم يا هندسة، نورتنا وتحت أمرك دايماً!');
+
+    // 4. Seller can accept the review
+    const approvedReview = await moderateReview(sellerUser, sellerRev.id, 'published');
+    assert.equal(approvedReview.status, 'published');
+    assert.equal(seller.rating, 5);
+    assert.equal(seller.reviewCount, 1);
+
+    // 5. Admin can also reply or reject
+    const adminReplied = await replyToReview(
+      adminUser,
+      sellerRev.id,
+      'شكراً لتقييمك الرائع ودعمك للحرف اليدوية الصعيدية'
+    );
+    assert.equal(adminReplied.reply?.authorRole, 'admin');
+
+    // 6. Seller or Admin can reject review
+    const rejectedReview = await moderateReview(sellerUser, sellerRev.id, 'rejected', 'مخالف للشروط');
+    assert.equal(rejectedReview.status, 'rejected');
+    assert.equal(rejectedReview.rejectionReason, 'مخالف للشروط');
+    assert.equal(seller.rating, 0); // No longer active
   } finally {
     memoryDb.sellers = originalSellers;
     memoryDb.orders = originalOrders;

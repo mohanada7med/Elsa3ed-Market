@@ -29,6 +29,11 @@ import {
   getSellerPayoutById,
   cancelSellerPayout
 } from '../services/payoutService.ts';
+import {
+  getSellerDashboardReviews,
+  moderateReview,
+  replyToReview
+} from '../services/reviewService.ts';
 
 const router = express.Router();
 
@@ -791,6 +796,83 @@ router.patch('/payouts/:id/cancel', async (req: AuthenticatedRequest, res: Respo
       success: false,
       error: msg || 'تعذر إلغاء طلب صرف المستحقات',
       code: 'PAYOUT_CANCEL_ERROR'
+    });
+  }
+});
+
+// ==================== SELLER REVIEWS MANAGEMENT ====================
+
+// GET /api/seller/reviews - List all reviews related to this seller
+router.get('/reviews', requireSeller, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const reviews = await getSellerDashboardReviews(req.user!);
+    res.json({
+      success: true,
+      count: reviews.length,
+      data: reviews
+    });
+  } catch (error) {
+    console.error('[SellerRoutes] Error fetching seller reviews:', error);
+    res.status(500).json({
+      success: false,
+      error: 'فشل في جلب تقييمات الورشة',
+      code: 'SERVER_ERROR'
+    });
+  }
+});
+
+// PUT /api/seller/reviews/:id/moderate - Accept or reject a review
+router.put('/reviews/:id/moderate', requireSeller, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { status, reason } = req.body;
+    if (!status || !['published', 'rejected', 'hidden'].includes(status)) {
+      return res.status(400).json({
+        success: false,
+        error: 'حالة التقييم يجب أن تكون published أو rejected أو hidden',
+        code: 'VALIDATION_ERROR'
+      });
+    }
+
+    const moderated = await moderateReview(req.user!, req.params.id, status, reason);
+    res.json({
+      success: true,
+      message: `تم ${status === 'published' ? 'قبول ونشر' : 'رفض'} التقييم بنجاح`,
+      data: moderated
+    });
+  } catch (error: any) {
+    console.error('[SellerRoutes] Error moderating review:', error);
+    res.status(400).json({
+      success: false,
+      error: error?.message || 'فشل في تعديل حالة التقييم',
+      code: 'MODERATION_ERROR'
+    });
+  }
+});
+
+// POST /api/seller/reviews/:id/reply - Send a reply from seller to buyer
+router.post('/reviews/:id/reply', requireSeller, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { message } = req.body;
+    if (!message || !String(message).trim()) {
+      return res.status(400).json({
+        success: false,
+        error: 'نص الرد مطلوب',
+        code: 'VALIDATION_ERROR'
+      });
+    }
+
+    const updated = await replyToReview(req.user!, req.params.id, String(message).trim());
+    res.json({
+      success: true,
+      message: 'تم إرسال ردك للمشتري بنجاح',
+      data: updated
+    });
+  } catch (error: any) {
+    console.error('[SellerRoutes] Error replying to review:', error);
+    res.status(400).json({
+      success: false,
+      error: error?.message || 'فشل في إرسال الرد',
+      code: 'REPLY_ERROR'
     });
   }
 });
