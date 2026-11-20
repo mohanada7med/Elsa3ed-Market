@@ -44,8 +44,10 @@ import {
   ArrowUpLeft,
   Loader2,
   Tag,
+  Download,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { usePWA } from '../../hooks/usePWA';
 
 /* =========================================================
    TYPES
@@ -477,6 +479,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
     sellers,
   } = useApp();
 
+  const { isStandalone, isInstalled, promptInstall } = usePWA();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeMobileCategory, setActiveMobileCategory] = useState<string | null>(null);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
@@ -1399,6 +1402,19 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               />
             )}
 
+            {!isStandalone && !isInstalled && (
+              <button
+                type="button"
+                onClick={() => promptInstall()}
+                aria-label="تثبيت تطبيق وه"
+                title="تثبيت تطبيق وه على جهازك لتصفح أسرع وإشعارات فورية"
+                className="hidden lg:inline-flex items-center gap-1.5 h-11 px-3.5 rounded-full transition-all hover:scale-105 active:scale-95 cursor-pointer text-xs font-black bg-primary/10 hover:bg-primary/20 text-primary dark:text-[#C99444] border border-primary/20"
+              >
+                <Download size={15} />
+                <span>تثبيت التطبيق</span>
+              </button>
+            )}
+
             {!isShopBlockedStaff && (
               <button
                 type="button"
@@ -2269,6 +2285,29 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
 
               {/* Navigation Content */}
               <div className="relative flex-1 overflow-y-auto px-4 pb-5 pt-5">
+                {!isStandalone && !isInstalled && (
+                  <div className="mb-4 p-3.5 rounded-2xl bg-[#8A4B24]/10 border border-[#8A4B24]/20 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2.5">
+                      <img src="/icons/icon-192x192.png" alt="" className="w-10 h-10 rounded-xl object-cover border border-[#8A4B24]/30" />
+                      <div>
+                        <h4 className="text-xs font-black text-[#3B1E0E] dark:text-[#FFF9EE]">تطبيق وه للهاتف 🏺</h4>
+                        <p className="text-[10px] text-[#3B1E0E]/70 dark:text-[#FFF9EE]/70">تصفح أسرع وإشعارات فورية</p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        promptInstall();
+                      }}
+                      className="px-3.5 py-1.5 rounded-xl bg-[#8A4B24] hover:bg-[#A0592C] text-white text-xs font-black flex items-center gap-1 shadow-sm transition-transform active:scale-95 cursor-pointer"
+                    >
+                      <Download size={13} />
+                      <span>تثبيت</span>
+                    </button>
+                  </div>
+                )}
+
                 {/* Section Title */}
                 <div className="mb-4 flex items-end justify-between">
                   <div>

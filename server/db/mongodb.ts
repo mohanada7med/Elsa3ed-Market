@@ -150,6 +150,7 @@ class MemoryStore {
   };
   shippingCompanies: import('../models/types.ts').ShippingCompanyDocument[] = [];
   shipments: import('../models/types.ts').ShipmentDocument[] = [];
+  pushSubscriptions: import('../models/types.ts').PushSubscriptionDocument[] = [];
   craftReels: any;
 }
 export const memoryDb = new MemoryStore();

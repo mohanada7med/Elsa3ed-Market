@@ -91,7 +91,7 @@ const nextConfig = {
 
     return [
       {
-        source: '/((?!_next|mascot|pattern|fonts|audio|uploads|sw\\.js|.*\\.(?:ico|png|jpg|jpeg|svg|webp|avif|gif)).*)',
+        source: '/((?!_next|mascot|pattern|fonts|audio|uploads|icons|sw\\.js|manifest\\.json|offline\\.html|.*\\.(?:ico|png|jpg|jpeg|svg|webp|avif|gif)).*)',
         headers: [
           ...commonHeaders,
           {
@@ -107,6 +107,34 @@ const nextConfig = {
       {
         source: '/sw.js',
         headers: serviceWorkerHeaders,
+      },
+      {
+        source: '/manifest.json',
+        headers: [
+          ...commonHeaders,
+          {
+            key: 'Content-Type',
+            value: 'application/manifest+json; charset=utf-8',
+          },
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=0, must-revalidate',
+          },
+        ],
+      },
+      {
+        source: '/offline.html',
+        headers: [
+          ...commonHeaders,
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=3600, must-revalidate',
+          },
+        ],
+      },
+      {
+        source: '/icons/:path*',
+        headers: immutableAssetHeaders,
       },
       {
         source: '/_next/static/:path*',

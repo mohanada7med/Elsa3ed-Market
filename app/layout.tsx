@@ -5,9 +5,22 @@ export const metadata: Metadata = {
   title: 'وه | WAH — الحكاية ورا كل حاجة',
   description:
     'منصة صعيد مصر الشاملة: سوق حرفي تجاري متكامل للتسوق المباشر، ريلز وتجارب الحرفيين الحية، وتوثيق وثائقي تفاعلي لمعالم وتراث محافظات الصعيد.',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'سوق وه',
+  },
   icons: {
-    icon: 'https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png',
-    apple: 'https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png',
+    icon: [
+      { url: '/icons/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+      { url: 'https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png' },
+    ],
+    apple: [
+      { url: '/icons/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+      { url: 'https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png' },
+    ],
   },
   openGraph: {
     title: 'وه | WAH — الحكاية ورا كل حاجة',
@@ -86,6 +99,38 @@ export default function RootLayout({
 
               window.addEventListener('wah:app-ready', onAppReady, { once: true });
               fallbackTimer = window.setTimeout(exitLoader, 12000);
+            })();`,
+          }}
+        />
+        {/* PWA Head Configuration */}
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="سوق وه" />
+        <meta name="application-name" content="وه | WAH" />
+        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function() {
+              window.addEventListener('beforeinstallprompt', function(e) {
+                e.preventDefault();
+                window.__wahDeferredPrompt = e;
+                window.dispatchEvent(new CustomEvent('wah:pwa-ready'));
+              });
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js', { scope: '/' })
+                    .then(function(reg) {
+                      console.log('[WAH PWA] Service Worker registered with scope:', reg.scope);
+                    })
+                    .catch(function(err) {
+                      console.warn('[WAH PWA] Service Worker registration failed:', err);
+                    });
+                });
+              }
             })();`,
           }}
         />

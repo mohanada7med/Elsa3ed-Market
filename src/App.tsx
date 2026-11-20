@@ -60,6 +60,7 @@ import { ForbiddenPage } from './components/pages/ForbiddenPage';
 import { NotFoundPage } from './components/pages/NotFoundPage';
 import { ResetPasswordPage } from './components/pages/ResetPasswordPage';
 import { AmWahSupportButton } from './components/common/AmWahSupportButton';
+import { PWAInstallBanner } from './components/common/PWAInstallBanner';
 import { MessageCircle, UserRound } from 'lucide-react';
 
 // High-performance code-splitting: Heavy non-home views loaded on-demand
@@ -832,6 +833,9 @@ const MainContent: React.FC = () => {
 
       {/* Floating Uncle Wah Technical Support Concierge (عم وه - الدعم الفني) */}
       <AmWahSupportButton />
+
+      {/* PWA Install Banner & Offline Connectivity Monitor */}
+      <PWAInstallBanner />
 
       {/* Persistent Mobile Bottom Navigation Bar */}
       <MobileBottomBar />

@@ -19,6 +19,9 @@ export interface EnvConfig {
   ENABLE_RATE_LIMITING: boolean;
   CACHE_TTL_SECONDS: number;
   MAX_UPLOAD_SIZE_MB: number;
+  VAPID_PUBLIC_KEY: string;
+  VAPID_PRIVATE_KEY: string;
+  VAPID_SUBJECT: string;
 }
 
 let cachedConfig: EnvConfig | null = null;
@@ -42,6 +45,9 @@ export function validateAndGetEnv(): EnvConfig {
   const ENABLE_RATE_LIMITING = process.env.ENABLE_RATE_LIMITING !== 'false';
   const CACHE_TTL_SECONDS = Number(process.env.CACHE_TTL_SECONDS) || 300;
   const MAX_UPLOAD_SIZE_MB = Number(process.env.MAX_UPLOAD_SIZE_MB) || 1024;
+  const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY?.trim() || 'BPPNS05lrbDEUK6PFeTLdO2t5rSdhfFifiOPCLAmqXnuOuSANAsBIq0PxcSZSUb4Nf49oTvuAcJriNJsXc-ySNw';
+  const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY?.trim() || 'Nk0jw6GXff-3jh-M3DzcL3UG_R_eG7VE607m4O05Ins';
+  const VAPID_SUBJECT = process.env.VAPID_SUBJECT?.trim() || 'mailto:support@wah-saeed.com';
 
   // Verification checks
   const missingConfigs: string[] = [];
@@ -69,7 +75,10 @@ export function validateAndGetEnv(): EnvConfig {
     AUTH_SECRET,
     ENABLE_RATE_LIMITING,
     CACHE_TTL_SECONDS,
-    MAX_UPLOAD_SIZE_MB
+    MAX_UPLOAD_SIZE_MB,
+    VAPID_PUBLIC_KEY,
+    VAPID_PRIVATE_KEY,
+    VAPID_SUBJECT
   };
 
   console.log(`[Config] Environment validated successfully. Mode: ${NODE_ENV}, Port: ${PORT}, DB: ${MONGODB_DB}`);

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>غير متصل بالإنترنت | وه — WAH</title>
+  <meta name="theme-color" content="#3B1E0E">
+  <link rel="icon" href="/icons/favicon-32x32.png">
+  <style>
+    :root {
+      --bg: #FFF9EE;
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --text: #3B1E0E;
+      --text-muted: rgba(59, 30, 14, 0.7);
+      --primary: #8A4B24;
+      --primary-hover: #A0592C;
+      --gold: #C99444;
+      --border: rgba(59, 30, 14, 0.12);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1B1009;
+        --card-bg: rgba(35, 20, 12, 0.85);
+        --text: #FFF9EE;
+        --text-muted: rgba(255, 249, 238, 0.7);
+        --primary: #A0592C;
+        --primary-hover: #C99444;
+        --gold: #C99444;
+        --border: rgba(255, 255, 255, 0.1);
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Cairo', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      text-align: center;
+      line-height: 1.6;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Ambient background glows */
+    .glow-1 {
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(201, 148, 68, 0.25) 0%, transparent 70%);
+      pointer-events: none;
+      filter: blur(40px);
+    }
+    .glow-2 {
+      position: absolute;
+      bottom: -80px;
+      left: -80px;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(138, 75, 36, 0.2) 0%, transparent 70%);
+      pointer-events: none;
+      filter: blur(40px);
+    }
+
+    .container {
+      position: relative;
+      z-index: 10;
+      max-width: 480px;
+      width: 100%;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 2rem;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.15);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .emblem-wrapper {
+      position: relative;
+      width: 110px;
+      height: 110px;
+      margin: 0 auto 1.5rem auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .emblem-pulse {
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 2px dashed var(--gold);
+      opacity: 0.4;
+      animation: rotate-pulse 14s linear infinite;
+    }
+
+    .emblem-img {
+      width: 96px;
+      height: 96px;
+      border-radius: 1.5rem;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.15));
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.9rem;
+      border-radius: 9999px;
+      background: rgba(201, 148, 68, 0.15);
+      border: 1px solid rgba(201, 148, 68, 0.3);
+      color: var(--gold);
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: #E53E3E;
+      border-radius: 50%;
+      animation: blink 2s infinite;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.02em;
+    }
+
+    p {
+      font-size: 0.925rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      line-height: 1.7;
+    }
+
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .btn-retry {
+      background: var(--primary);
+      color: #FFFFFF;
+      border: none;
+      padding: 0.85rem 1.5rem;
+      border-radius: 1.25rem;
+      font-size: 0.95rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 8px 20px -6px rgba(138, 75, 36, 0.4);
+    }
+
+    .btn-retry:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+    }
+
+    .btn-retry:active {
+      transform: translateY(0);
+    }
+
+    .tips-box {
+      margin-top: 1.75rem;
+      padding: 1rem;
+      border-radius: 1rem;
+      background: rgba(0, 0, 0, 0.03);
+      border: 1px dashed var(--border);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-align: right;
+    }
+
+    .tips-box strong {
+      display: block;
+      color: var(--text);
+      margin-bottom: 0.35rem;
+    }
+
+    @keyframes rotate-pulse {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(0.85); }
+    }
+  </style>
+</head>
+<body>
+  <div class="glow-1"></div>
+  <div class="glow-2"></div>
+
+  <main class="container">
+    <div class="emblem-wrapper">
+      <div class="emblem-pulse"></div>
+      <img src="/icons/icon-192x192.png" alt="وه | WAH" class="emblem-img" onerror="this.src='/mascot/logo.png'">
+    </div>
+
+    <div class="badge">
+      <span class="status-dot"></span>
+      <span>انقطع الاتصال بالإنترنت</span>
+    </div>
+
+    <h1>أنت غير متصل بالإنترنت</h1>
+    <p>
+      يبدو أن اتصال الإنترنت غير متاح حالياً. لا تقلق، البيانات والصفحات التي قمت بزيارتها مسبقاً محفوظة لديك، وسيعود التطبيق للعمل تلقائياً فور عودة الشبكة.
+    </p>
+
+    <div class="actions">
+      <button class="btn-retry" id="retry-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+        </svg>
+        <span>إعادة المحاولة الآن</span>
+      </button>
+    </div>
+
+    <div class="tips-box">
+      <strong>💡 نصائح سريعة:</strong>
+      • تحقق من اتصال الواي فاي أو بيانات الهاتف المحمول.<br>
+      • تطبيق وه (PWA) يحفظ سلة المشتريات والمنتجات المفضلة على جهازك.<br>
+      • سيتم استئناف الصفحة تلقائياً بمجرد عودة إشارة الإنترنت.
+    </div>
+  </main>
+
+  <script>
+    const retryBtn = document.getElementById('retry-btn');
+    if (retryBtn) {
+      retryBtn.addEventListener('click', () => {
+        retryBtn.innerHTML = '<span>جاري التحقق من الاتصال...</span>';
+        if (navigator.onLine) {
+          window.location.reload();
+        } else {
+          setTimeout(() => {
+            retryBtn.innerHTML = `
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+              </svg>
+              <span>إعادة المحاولة الآن</span>
+            `;
+            alert('ما زال الجهاز غير متصل بالإنترنت. يرجى التأكد من الشبكة والمحاولة مجدداً.');
+          }, 800);
+        }
+      });
+    }
+
+    // Auto-reload when connection is restored
+    window.addEventListener('online', () => {
+      window.location.reload();
+    });
+  </script>
+</body>
+</html>

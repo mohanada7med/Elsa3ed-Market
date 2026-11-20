@@ -571,6 +571,23 @@ export interface AdminBroadcastDocument {
   createdAt: string;
 }
 
+export interface PushSubscriptionKeys {
+  p256dh: string;
+  auth: string;
+}
+
+export interface PushSubscriptionDocument {
+  id: string;
+  userId?: string;
+  role?: string;
+  endpoint: string;
+  expirationTime?: number | null;
+  keys: PushSubscriptionKeys;
+  userAgent?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface PaymentDocument {
   id: string;
   orderId: string;
