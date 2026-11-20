@@ -13,6 +13,7 @@ import { AdminMediaUploader } from '../common/AdminMediaUploader.tsx';
 import { AdminMediaLibraryPage } from './AdminMediaLibraryPage.tsx';
 import { AdminReportsManager } from './AdminReportsManager.tsx';
 import { PaidPromotionRequestsPanel } from './PaidPromotionRequestsPanel.tsx';
+import { formatArabicNumber } from '../../utils/arabicNumbers.ts';
 import {
   Calendar,
   AlertTriangle,
@@ -51,9 +52,7 @@ import {
   UserPlus,
   Eye,
   Copy,
-  KeyRound,
   CreditCard,
-  DollarSign,
   Wallet,
   Upload,
   Image as ImageIcon,
@@ -78,6 +77,25 @@ import {
   Phone,
   PinIcon
 } from 'lucide-react';
+
+type AdminTab =
+  | 'overview'
+  | 'approvals'
+  | 'categories'
+  | 'craft-stories'
+  | 'craft-reels'
+  | 'weekly-story'
+  | 'reviews'
+  | 'sellers'
+  | 'payouts'
+  | 'orders'
+  | 'coupons'
+  | 'audit'
+  | 'users'
+  | 'notifications'
+  | 'media-library'
+  | 'reports'
+  | 'promotion-requests';
 
 const HERITAGE_COVER_PRESETS = [
   {
@@ -156,12 +174,11 @@ export const AdminDashboard: React.FC = () => {
     confirmModal
   } = useApp();
 
-  const [activeTab, setActiveTab] = useState<
-    'overview' | 'approvals' | 'categories' | 'craft-stories' | 'craft-reels' | 'weekly-story' | 'reviews' | 'sellers' | 'payouts' | 'orders' | 'coupons' | 'audit' | 'users' | 'password-resets' | 'payment-settings' | 'shipping-settings' | 'notifications' | 'media-library' | 'reports' | 'promotion-requests'
-  >('overview');
+  const [activeTab, setActiveTab] = useState<AdminTab>('overview');
 
 
   const [pendingReportsCount, setPendingReportsCount] = useState(0);
+  const [lastAdminRefreshAt, setLastAdminRefreshAt] = useState<Date | null>(null);
   const [settingWeeklyProductId, setSettingWeeklyProductId] = useState<string | null>(null);
   const [weeklyStoryEnabled, setWeeklyStoryEnabled] = useState(false);
   const [weeklyStoryProductId, setWeeklyStoryProductId] = useState('');
@@ -360,9 +377,23 @@ export const AdminDashboard: React.FC = () => {
     else if (activePage === 'admin-audit-logs') setActiveTab('audit');
     else if (activePage === 'admin-media') setActiveTab('media-library');
     else if (activePage === 'admin-reports') setActiveTab('reports');
-    else if (activePage === 'admin-shipping') setActiveTab('shipping-settings');
     else if (activePage === 'admin-dashboard') setActiveTab('overview');
   }, [activePage]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const tab = new URLSearchParams(window.location.search).get('tab');
+    if (!tab) return;
+    const validTabs: AdminTab[] = [
+      'overview', 'approvals', 'categories', 'craft-stories', 'craft-reels',
+      'weekly-story', 'reviews', 'sellers', 'payouts', 'orders', 'coupons',
+      'audit', 'users', 'notifications', 'media-library', 'reports',
+      'promotion-requests'
+    ];
+    if (validTabs.includes(tab as AdminTab)) {
+      setActiveTab(tab as AdminTab);
+    }
+  }, []);
 
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
   const [searchTerm, setSearchTerm] = useState('');
@@ -417,22 +448,6 @@ export const AdminDashboard: React.FC = () => {
   const [newUserWorkshopName, setNewUserWorkshopName] = useState('');
   const [newUserSpecialty, setNewUserSpecialty] = useState('');
   const [isTogglingStatus, setIsTogglingStatus] = useState<string | null>(null);
-
-  // Password Resets State
-  const [passwordResets, setPasswordResets] = useState<any[]>([]);
-  const [isLoadingPasswordResets, setIsLoadingPasswordResets] = useState(false);
-  const [passwordResetFilter, setPasswordResetFilter] = useState<'all' | 'pending' | 'completed' | 'rejected'>('all');
-  const [selectedResetForAction, setSelectedResetForAction] = useState<any | null>(null);
-  const [isCreateTempPasswordModalOpen, setIsCreateTempPasswordModalOpen] = useState(false);
-  const [tempPasswordInput, setTempPasswordInput] = useState('');
-  const [isSubmittingTempPassword, setIsSubmittingTempPassword] = useState(false);
-  const [completedTempPasswordInfo, setCompletedTempPasswordInfo] = useState<{
-    username: string;
-    name?: string;
-    phone?: string;
-    temporaryPassword: string;
-  } | null>(null);
-  const [isCopiedTempPassword, setIsCopiedTempPassword] = useState(false);
 
   // Seller Management State
   const [sellerStatusFilter, setSellerStatusFilter] = useState<'all' | 'pending' | 'approved' | 'rejected' | 'suspended'>('all');
@@ -557,109 +572,9 @@ export const AdminDashboard: React.FC = () => {
   const [orderPaymentFilter, setOrderPaymentFilter] = useState<'all' | 'online' | 'pending_verification' | 'paid' | 'payment_rejected' | 'cod'>('all');
   const [verifyingOrderId, setVerifyingOrderId] = useState<string | null>(null);
   const [rejectingOrderId, setRejectingOrderId] = useState<string | null>(null);
+  const [paymentRejection, setPaymentRejection] = useState<{ orderId: string; reason: string } | null>(null);
 
-  // Payment Accounts & Methods Configuration State
-  const [adminPaymentSettings, setAdminPaymentSettings] = useState<{
-    isOnlinePaymentActive: boolean;
-    isCashOnDeliveryActive: boolean;
-    instaPayAccount?: string;
-    vodafoneCashNumber?: string;
-    instaPayInstructions?: string;
-    vodafoneCashInstructions?: string;
-    isInstaPayActive?: boolean;
-    isVodafoneCashActive?: boolean;
-  }>({
-    isOnlinePaymentActive: true,
-    isCashOnDeliveryActive: true,
-    instaPayAccount: 'elsa3ed@instapay',
-    vodafoneCashNumber: '01158969931',
-    instaPayInstructions: '',
-    vodafoneCashInstructions: '',
-    isInstaPayActive: false,
-    isVodafoneCashActive: false
-  });
-  const [isLoadingPaymentSettings, setIsLoadingPaymentSettings] = useState(false);
-  const [isSavingPaymentSettings, setIsSavingPaymentSettings] = useState(false);
-
-  const fetchAdminPaymentSettings = async () => {
-    setIsLoadingPaymentSettings(true);
-    try {
-      const cfg = await api.getAdminPaymentConfig(currentUser);
-      if (cfg) {
-        setAdminPaymentSettings({
-          isOnlinePaymentActive: cfg.isOnlinePaymentActive !== false,
-          isCashOnDeliveryActive: cfg.isCashOnDeliveryActive !== false,
-          instaPayAccount: cfg.instaPayAccount || '',
-          vodafoneCashNumber: cfg.vodafoneCashNumber || '',
-          instaPayInstructions: cfg.instaPayInstructions || '',
-          vodafoneCashInstructions: cfg.vodafoneCashInstructions || '',
-          isInstaPayActive: Boolean(cfg.isInstaPayActive),
-          isVodafoneCashActive: Boolean(cfg.isVodafoneCashActive)
-        });
-      }
-    } catch (err: any) {
-      console.warn('Failed to load payment settings:', err);
-    } finally {
-      setIsLoadingPaymentSettings(false);
-    }
-  };
-
-  const handleSaveAdminPaymentSettings = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSavingPaymentSettings(true);
-    try {
-      const updated = await api.updateAdminPaymentConfig(currentUser, adminPaymentSettings);
-      if (updated) {
-        setAdminPaymentSettings(updated);
-      }
-      addToast('تم الحفظ بنجاح', 'تم تحديث إعدادات طرق الدفع والتحصيل بنجاح', 'success');
-    } catch (err: any) {
-      addToast('فشل حفظ الإعدادات', err?.message || 'تعذر تحديث إعدادات الدفع', 'error');
-    } finally {
-      setIsSavingPaymentSettings(false);
-    }
-  };
-
-  // Shipping Rates & Logistics Configuration State
-  const [adminShippingSettings, setAdminShippingSettings] = useState<any>({
-    defaultPackageType: 'Small',
-    freeShippingThreshold: 1000,
-    upperEgyptShippingFee: 45,
-    otherGovernoratesShippingFee: 55
-  });
-  const [isLoadingShippingSettings, setIsLoadingShippingSettings] = useState(false);
-  const [isSavingShippingSettings, setIsSavingShippingSettings] = useState(false);
   const [trackingModalOrder, setTrackingModalOrder] = useState<any | null>(null);
-
-  const fetchAdminShippingSettings = async () => {
-    setIsLoadingShippingSettings(true);
-    try {
-      const cfg = await api.getAdminShippingConfig(currentUser);
-      if (cfg) {
-        setAdminShippingSettings(cfg);
-      }
-    } catch (err: any) {
-      console.warn('Failed to load shipping settings:', err);
-    } finally {
-      setIsLoadingShippingSettings(false);
-    }
-  };
-
-  const handleSaveAdminShippingSettings = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSavingShippingSettings(true);
-    try {
-      const updated = await api.updateAdminShippingConfig(currentUser, adminShippingSettings);
-      if (updated) {
-        setAdminShippingSettings(updated);
-      }
-      addToast('تم حفظ الإعدادات', 'تم تحديث أسعار وإعدادات الشحن بنجاح', 'success');
-    } catch (err: any) {
-      addToast('فشل الحفظ', err?.message || 'تعذر تحديث إعدادات الشحن', 'error');
-    } finally {
-      setIsSavingShippingSettings(false);
-    }
-  };
 
   const handleViewOrderTracking = (order: any) => {
     setTrackingModalOrder(order);
@@ -680,12 +595,20 @@ export const AdminDashboard: React.FC = () => {
   };
 
   const handleAdminRejectPayment = async (orderId: string) => {
-    const reason = window.prompt('يرجى كتابة سبب رفض التحويل (اختياري - سيظهر للمشتري):');
-    if (reason === null) return;
-    setRejectingOrderId(orderId);
+    setPaymentRejection({ orderId, reason: '' });
+  };
+
+  const confirmAdminRejectPayment = async () => {
+    if (!paymentRejection) return;
+    setRejectingOrderId(paymentRejection.orderId);
     try {
-      await api.adminRejectOrderPayment(currentUser, orderId, reason || undefined);
+      await api.adminRejectOrderPayment(
+        currentUser,
+        paymentRejection.orderId,
+        paymentRejection.reason.trim() || undefined
+      );
       addToast('تم رفض التحويل', 'تم تغيير حالة الدفع إلى "مرفوض" وإشعار المشتري', 'info');
+      setPaymentRejection(null);
       await refreshOrders();
     } catch (err: any) {
       addToast('خطأ في الرفض', err?.message || 'تعذر رفض عملية التحويل', 'error');
@@ -1174,93 +1097,6 @@ export const AdminDashboard: React.FC = () => {
     }
   }, [activeTab, currentUser?.role, fetchTotalUsersCount]);
 
-  const fetchPasswordResets = async () => {
-    setIsLoadingPasswordResets(true);
-    try {
-      const data = await api.getAdminPasswordResets(
-        { id: currentUser.id, role: currentUser.role },
-        passwordResetFilter
-      );
-      setPasswordResets(data || []);
-    } catch (err: any) {
-      console.error('Failed fetching password resets:', err);
-    } finally {
-      setIsLoadingPasswordResets(false);
-    }
-  };
-
-  useEffect(() => {
-    if (currentUser?.role === 'admin') {
-      fetchPasswordResets();
-    }
-  }, [passwordResetFilter, currentUser?.role]);
-
-  const openCreateTempPasswordModal = (request: any) => {
-    setSelectedResetForAction(request);
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$';
-    let generated = '';
-    for (let i = 0; i < 10; i++) {
-      generated += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    setTempPasswordInput(generated);
-    setIsCreateTempPasswordModalOpen(true);
-  };
-
-  const handleConfirmCompleteReset = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedResetForAction || !tempPasswordInput || tempPasswordInput.length < 6) {
-      addToast('خد بالك', 'كلمة السر المؤقتة لازم متقلش عن 6 خانات', 'warning');
-      return;
-    }
-
-    setIsSubmittingTempPassword(true);
-    try {
-      const result = await api.completeAdminPasswordReset(
-        { id: currentUser.id, role: currentUser.role },
-        selectedResetForAction.id,
-        tempPasswordInput
-      );
-      setIsCreateTempPasswordModalOpen(false);
-      setCompletedTempPasswordInfo({
-        username: selectedResetForAction.username,
-        name: selectedResetForAction.name,
-        phone: selectedResetForAction.phone,
-        temporaryPassword: result.temporaryPassword
-      });
-      setIsCopiedTempPassword(false);
-      addToast('تمام كله مظبوط', result.message, 'success');
-      fetchPasswordResets();
-    } catch (err: any) {
-      addToast('حصلت مشكلة', err?.message || 'معرفناش نعمل كلمة السر المؤقتة دلوقتي', 'error');
-    } finally {
-      setIsSubmittingTempPassword(false);
-    }
-  };
-
-  const handleRejectReset = async (request: any) => {
-    const reason = prompt('اكتب سبب رفض طلب استرجاع كلمة السر:', 'طلب مش متأكدين منه أو اتواصلنا مع المستخدم قبل كده');
-    if (reason === null) return;
-
-    try {
-      await api.rejectAdminPasswordReset(
-        { id: currentUser.id, role: currentUser.role },
-        request.id,
-        reason
-      );
-      addToast('اترفض', 'اترفض طلب استرجاع كلمة السر خلاص', 'info');
-      fetchPasswordResets();
-    } catch (err: any) {
-      addToast('حصلت مشكلة', err?.message || 'معرفناش نرفض الطلب دلوقتي', 'error');
-    }
-  };
-
-  const copyTempPassword = () => {
-    if (!completedTempPasswordInfo) return;
-    navigator.clipboard.writeText(completedTempPasswordInfo.temporaryPassword);
-    setIsCopiedTempPassword(true);
-    addToast('اتنسخت خلاص', 'اتنسخت كلمة السر المؤقتة عندك في الحافظة', 'info');
-  };
-
 
   useEffect(() => {
     if (activeTab === 'reviews') {
@@ -1606,8 +1442,8 @@ export const AdminDashboard: React.FC = () => {
   const [layoutMode, setLayoutMode] = useState<AdminLayoutMode>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('wah_admin_layout_mode');
-      if (saved === 'sidebar' || saved === 'compact-rail' || saved === 'full-hub' || saved === 'bento') {
-        return saved as AdminLayoutMode;
+      if (saved === 'sidebar' || saved === 'compact-rail' || saved === 'full-hub') {
+        return saved;
       }
     }
     return 'sidebar';
@@ -1620,18 +1456,27 @@ export const AdminDashboard: React.FC = () => {
     }
   };
 
-  const [activeHubSection, setActiveHubSection] = useState<string>('all');
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      setPaymentRejection(null);
+      setIsMobileNavOpen(false);
+    };
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, []);
 
-  const pendingPasswordResetsCount = passwordResets.filter((r) => r.status === 'pending').length;
+  const [activeHubSection, setActiveHubSection] = useState<string>('all');
 
   const handleSelectTab = (tabId: typeof activeTab) => {
     setActiveTab(tabId);
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.set('tab', tabId);
+      window.history.replaceState({}, '', url);
+    }
     if (tabId === 'craft-reels') {
       setAdminReels(craftReelsService.getReels());
-    } else if (tabId === 'payment-settings') {
-      fetchAdminPaymentSettings();
-    } else if (tabId === 'shipping-settings') {
-      fetchAdminShippingSettings();
     }
     setIsMobileNavOpen(false);
 
@@ -1725,20 +1570,6 @@ export const AdminDashboard: React.FC = () => {
           icon: CreditCard,
           elementId: 'admin-tab-payouts'
         },
-        {
-          id: 'payment-settings' as const,
-          label: 'إعدادات الدفع',
-          sublabel: 'InstaPay والمحافظ الإلكترونية',
-          icon: Wallet,
-          elementId: 'admin-tab-payment-settings'
-        },
-        {
-          id: 'shipping-settings' as const,
-          label: 'الشحن والتوصيل',
-          sublabel: 'أسعار التوصيل والحد المجاني',
-          icon: Truck,
-          elementId: 'admin-tab-shipping-settings'
-        }
       ]
     },
     {
@@ -1831,15 +1662,6 @@ export const AdminDashboard: React.FC = () => {
           badgeType: 'danger' as const,
           elementId: 'admin-tab-reports'
         },
-        {
-          id: 'password-resets' as const,
-          label: 'طلبات استعادة كلمة المرور',
-          sublabel: 'مراجعة طلبات إعادة تعيين المرور',
-          icon: KeyRound,
-          badge: pendingPasswordResetsCount,
-          badgeType: 'danger' as const,
-          elementId: 'admin-tab-password-resets'
-        }
       ]
     }
   ];
@@ -1929,11 +1751,15 @@ export const AdminDashboard: React.FC = () => {
                 id="admin-layout-switcher"
                 className="flex w-full sm:w-auto items-center justify-between sm:justify-start bg-background-secondary border border-border-subtle rounded-xl p-1 gap-1"
                 title="تغيير مظهر وعرض لوحة الإدارة"
+                role="tablist"
+                aria-label="نمط عرض لوحة الإدارة"
               >
                 <button
                   type="button"
                   id="admin-layout-sidebar-btn"
                   onClick={() => handleLayoutChange('sidebar')}
+                  role="tab"
+                  aria-selected={layoutMode === 'sidebar'}
                   className={`min-h-10 min-w-10 flex-1 sm:flex-none justify-center px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${layoutMode === 'sidebar'
                     ? 'bg-surface text-primary dark:text-primary-hover dark:text-accent shadow-sm'
                     : 'text-foreground-secondary hover:text-primary dark:text-primary-hover dark:hover:text-accent hover:bg-surface'
@@ -1949,21 +1775,25 @@ export const AdminDashboard: React.FC = () => {
                   type="button"
                   id="admin-layout-rail-btn"
                   onClick={() => handleLayoutChange('compact-rail')}
+                  role="tab"
+                  aria-selected={layoutMode === 'compact-rail'}
                   className={`min-h-10 min-w-10 flex-1 sm:flex-none justify-center px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${layoutMode === 'compact-rail'
                     ? 'bg-surface text-primary dark:text-primary-hover dark:text-accent shadow-sm'
                     : 'text-foreground-secondary hover:text-primary dark:text-primary-hover dark:hover:text-accent hover:bg-surface'
                     }`}
-                  title="عرض الشريط الذكي الرفيع (Compact Iconic Rail)"
+                  title="عرض الشريط الجانبي الصغير"
                 >
                   <Columns2 className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">شريط رفيع</span>
-                  <span className="sm:hidden">رفيع</span>
+                  <span className="hidden sm:inline">شريط صغير</span>
+                  <span className="sm:hidden">صغير</span>
                 </button>
 
                 <button
                   type="button"
                   id="admin-layout-hub-btn"
                   onClick={() => handleLayoutChange('full-hub')}
+                  role="tab"
+                  aria-selected={layoutMode === 'full-hub'}
                   className={`min-h-10 min-w-10 flex-1 sm:flex-none justify-center px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${layoutMode === 'full-hub'
                     ? 'bg-surface text-primary dark:text-primary-hover dark:text-accent shadow-sm'
                     : 'text-foreground-secondary hover:text-primary dark:text-primary-hover dark:hover:text-accent hover:bg-surface'
@@ -1973,21 +1803,6 @@ export const AdminDashboard: React.FC = () => {
                   <StretchHorizontal className="w-3.5 h-3.5" />
                   <span className="hidden sm:inline">تبويب عريض</span>
                   <span className="sm:hidden">عريض</span>
-                </button>
-
-                <button
-                  type="button"
-                  id="admin-layout-bento-btn"
-                  onClick={() => handleLayoutChange('bento')}
-                  className={`min-h-10 min-w-10 flex-1 sm:flex-none justify-center px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${layoutMode === 'bento'
-                    ? 'bg-surface text-primary dark:text-primary-hover dark:text-accent shadow-sm'
-                    : 'text-foreground-secondary hover:text-primary dark:text-primary-hover dark:hover:text-accent hover:bg-surface'
-                    }`}
-                  title="عرض البطاقات السريعة (Bento Grid)"
-                >
-                  <LayoutGrid className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">بطاقات Bento</span>
-                  <span className="sm:hidden">بطاقات</span>
                 </button>
               </div>
 
@@ -2001,6 +1816,7 @@ export const AdminDashboard: React.FC = () => {
                     refreshReviews(),
                     refreshAuditLogs()
                   ]);
+                  setLastAdminRefreshAt(new Date());
                   addToast('تم التحديث', 'تمت مزامنة كافة بيانات الإدارة بنجاح', 'success');
                 }}
                 label="تحديث البيانات"
@@ -2023,7 +1839,7 @@ export const AdminDashboard: React.FC = () => {
               >
                 <SlidersHorizontal className="w-4 h-4" />
                 <span>أقسام الإدارة</span>
-                {(pendingProducts.length > 0 || pendingSellersCount > 0 || pendingPasswordResetsCount > 0) && (
+                {(pendingProducts.length > 0 || pendingSellersCount > 0) && (
                   <span className="w-2 h-2 rounded-full bg-amber-300 animate-ping" />
                 )}
               </button>
@@ -2063,17 +1879,6 @@ export const AdminDashboard: React.FC = () => {
               </button>
             )}
 
-            {pendingPasswordResetsCount > 0 && (
-              <button
-                type="button"
-                onClick={() => handleSelectTab('password-resets')}
-                className="bg-rose-50 hover:bg-rose-100 border border-rose-200 px-3 py-1.5 rounded-xl flex items-center gap-2 text-rose-800 dark:bg-rose-500/10 dark:hover:bg-rose-500/20 dark:border-rose-500/30 dark:text-rose-200 text-xs font-bold transition-all cursor-pointer"
-              >
-                <KeyRound className="w-3.5 h-3.5 text-rose-400 animate-pulse" />
-                <span>{pendingPasswordResetsCount} استعادة كلمة سر</span>
-                <ArrowLeft className="w-3 h-3 text-rose-400" />
-              </button>
-            )}
 
             <div className="mr-auto hidden sm:flex items-center gap-2 text-[11px] text-[#948778] dark:text-white/40">
               <span className="w-2 h-2 rounded-full bg-emerald-400" />
@@ -2113,7 +1918,11 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           {/* Fast Swipeable Pills for Top Tools */}
-          <div className="flex snap-x snap-mandatory items-center gap-2 overflow-x-auto pb-1 no-scrollbar -mx-1 px-1">
+          <div
+            className="flex snap-x snap-mandatory items-center gap-2 overflow-x-auto pb-1 no-scrollbar -mx-1 px-1"
+            role="tablist"
+            aria-label="اختصارات أقسام لوحة الإدارة"
+          >
             {quickPillTabs.map((item) => {
               const isActive = activeTab === item.id;
               const Icon = item.icon;
@@ -2122,6 +1931,8 @@ export const AdminDashboard: React.FC = () => {
                   key={item.id}
                   type="button"
                   onClick={() => handleSelectTab(item.id)}
+                  role="tab"
+                  aria-selected={isActive}
                   className={`min-h-11 snap-start px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer ${isActive
                     ? 'bg-primary text-white shadow-md shadow-primary/25'
                     : 'bg-background text-foreground hover:bg-primary/10 border border-border-subtle'
@@ -2829,7 +2640,7 @@ export const AdminDashboard: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Bento Card 6: Users & Password Resets */}
+                {/* Bento Card 6: Users & Security */}
                 <div
                   onClick={() => handleSelectTab('users')}
                   className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${activeTab === 'users'
@@ -2841,74 +2652,16 @@ export const AdminDashboard: React.FC = () => {
                     <div className="w-10 h-10 rounded-2xl bg-blue-100 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 flex items-center justify-center group-hover:scale-110 transition-transform">
                       <Users className="w-5 h-5" />
                     </div>
-                    {pendingPasswordResetsCount > 0 && (
-                      <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-rose-500 text-white animate-pulse">
-                        {pendingPasswordResetsCount} استعادة باسورد
-                      </span>
-                    )}
                   </div>
                   <h4 className="font-black text-sm mt-3">المستخدمون والأمان</h4>
                   <p className={`text-xs mt-1 ${activeTab === 'users' ? 'text-white/80' : 'text-black/60 dark:text-white/60'}`}>
-                    إدارة الصلاحيات وتوليد الباسوردات المؤقتة
+                    إدارة الصلاحيات والحسابات وتغيير بيانات الدخول
                   </p>
                   <div className="mt-4 pt-3 border-t border-border flex items-center justify-between text-xs">
                     <span className="font-bold">الأمان والرقابة</span>
                     <span className="text-[11px] text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover font-bold">دخول ←</span>
                   </div>
                 </div>
-
-                {/* Bento Card 7: Payment Settings */}
-                <div
-                  onClick={() => handleSelectTab('payment-settings')}
-                  className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${activeTab === 'payment-settings'
-                    ? 'bg-primary text-white border-primary ring-2 ring-primary/30'
-                    : 'bg-surface border-border hover:border-primary/50'
-                    }`}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="w-10 h-10 rounded-2xl bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <Wallet className="w-5 h-5" />
-                    </div>
-                    <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400">
-                      InstaPay
-                    </span>
-                  </div>
-                  <h4 className="font-black text-sm mt-3">بوابات الدفع والمحافظ</h4>
-                  <p className={`text-xs mt-1 ${activeTab === 'payment-settings' ? 'text-white/80' : 'text-black/60 dark:text-white/60'}`}>
-                    ضبط أرقام فودافون كاش وانستاباي للمنصة
-                  </p>
-                  <div className="mt-4 pt-3 border-t border-border flex items-center justify-between text-xs">
-                    <span className="font-bold">إعدادات الدفع</span>
-                    <span className="text-[11px] text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover font-bold">ضبط ←</span>
-                  </div>
-                </div>
-
-                {/* Bento Card 7.5: Shipping & Logistics */}
-                <div
-                  onClick={() => handleSelectTab('shipping-settings')}
-                  className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${activeTab === 'shipping-settings'
-                    ? 'bg-primary text-white border-primary ring-2 ring-primary/30'
-                    : 'bg-surface border-border hover:border-primary/50'
-                    }`}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="w-10 h-10 rounded-2xl bg-orange-100 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <Truck className="w-5 h-5" />
-                    </div>
-                    <span className="text-[10px] font-bold text-orange-700 dark:text-orange-400">
-                      أسعار التوصيل 🚚
-                    </span>
-                  </div>
-                  <h4 className="font-black text-sm mt-3">إدارة الشحن والتوصيل</h4>
-                  <p className={`text-xs mt-1 ${activeTab === 'shipping-settings' ? 'text-white/80' : 'text-black/60 dark:text-white/60'}`}>
-                    إدارة أسعار التوصيل وحد الشحن المجاني للعملاء
-                  </p>
-                  <div className="mt-4 pt-3 border-t border-border flex items-center justify-between text-xs">
-                    <span className="font-bold">إعدادات الشحن</span>
-                    <span className="text-[11px] text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover font-bold">فتح ←</span>
-                  </div>
-                </div>
-
 
                 {/* Bento Card 8: Complaints and Reports */}
                 <div
@@ -2982,6 +2735,11 @@ export const AdminDashboard: React.FC = () => {
                     <p className="text-xs text-white dark:text-white mt-0.5">
                       متابعة حية للمستخدمين، المبيعات، ورش الصعيد، طابور الاعتماد وشحنات المحافظات
                     </p>
+                    {lastAdminRefreshAt && (
+                      <p className="mt-1 text-[10px] text-white/70 dark:text-white/60">
+                        آخر تحديث: {lastAdminRefreshAt.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })}
+                      </p>
+                    )}
                   </div>
                   <RefreshDataButton
                     onRefresh={async () => {
@@ -2991,6 +2749,7 @@ export const AdminDashboard: React.FC = () => {
                         refreshOrders(),
                         fetchTotalUsersCount()
                       ]);
+                      setLastAdminRefreshAt(new Date());
                     }}
                     label="تحديث الأرقام"
                   />
@@ -3013,12 +2772,12 @@ export const AdminDashboard: React.FC = () => {
                       {isLoadingTotalUsers ? (
                         <RefreshCw className="w-5 h-5 animate-spin inline-block text-primary dark:text-primary-hover" />
                       ) : (
-                        `${totalUsersCount.toLocaleString()} مستخدم`
+                        `${formatArabicNumber(totalUsersCount)} مستخدم`
                       )}
                     </span>
                     <span className="text-[10px] text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover font-bold block mt-1">
                       {totalUsersCount > 0
-                        ? `${usersBreakdown.buyers} مشتري • ${usersBreakdown.sellers} ورشة • ${usersBreakdown.active} نشط`
+                        ?                         `${formatArabicNumber(usersBreakdown.buyers)} مشتري • ${formatArabicNumber(usersBreakdown.sellers)} ورشة • ${formatArabicNumber(usersBreakdown.active)} نشط`
                         : 'كل الحسابات المسجلة'}
                     </span>
                   </div>
@@ -3026,9 +2785,9 @@ export const AdminDashboard: React.FC = () => {
                   {/* GMV Sales */}
                   <div className="bg-surface backdrop-blur-xl p-5 rounded-2xl border border-border shadow-sm text-foreground">
                     <span className="text-xs text-foreground-secondary block mb-1">إجمالي مبيعات المنصة (GMV)</span>
-                    <span className="text-2xl font-black text-foreground font-black">{totalMarketplaceSales.toLocaleString()} ج.م</span>
+                    <span className="text-2xl font-black text-foreground font-black">{formatArabicNumber(totalMarketplaceSales)} ج.م</span>
                     <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">
-                      {activeOrders.length > 0 ? `إجمالي ${activeOrders.length} طلب نشط` : 'مؤشر المبيعات المباشرة'}
+                      {activeOrders.length > 0 ? `إجمالي ${formatArabicNumber(activeOrders.length)} طلب نشط` : 'مؤشر المبيعات المباشرة'}
                     </span>
                   </div>
 
@@ -3575,7 +3334,7 @@ export const AdminDashboard: React.FC = () => {
                       <span>إجمالي الفيديوهات</span>
                       <Film className="w-4 h-4 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover" />
                     </div>
-                    <span className="text-2xl font-black text-foreground font-black">{adminReels.length} فيديو</span>
+                    <span className="text-2xl font-black text-foreground font-black">{formatArabicNumber(adminReels.length)} فيديو</span>
                     <span className="text-[10px] text-emerald-700 font-bold block mt-1">بتغطي بلاد الصعيد كلها</span>
                   </div>
 
@@ -3585,7 +3344,7 @@ export const AdminDashboard: React.FC = () => {
                       <Eye className="w-4 h-4 text-amber-600" />
                     </div>
                     <span className="text-2xl font-black text-foreground font-black">
-                      {adminReels.reduce((acc, r) => acc + (r.viewsCount || 0), 0).toLocaleString()}
+                      {formatArabicNumber(adminReels.reduce((acc, r) => acc + (r.viewsCount || 0), 0))}
                     </span>
                     <span className="text-[10px] text-emerald-700 font-bold block mt-1">مشاهدات حقيقية وتفاعل عالي</span>
                   </div>
@@ -3596,7 +3355,7 @@ export const AdminDashboard: React.FC = () => {
                       <Heart className="w-4 h-4 text-rose-500 fill-rose-500" />
                     </div>
                     <span className="text-2xl font-black text-foreground font-black">
-                      {adminReels.reduce((acc, r) => acc + (r.likesCount || 0), 0).toLocaleString()}
+                      {formatArabicNumber(adminReels.reduce((acc, r) => acc + (r.likesCount || 0), 0))}
                     </span>
                     <span className="text-[10px] text-black/60 dark:text-white/60 block mt-1">تفاعل الناس في المنصة</span>
                   </div>
@@ -4292,7 +4051,7 @@ export const AdminDashboard: React.FC = () => {
 
                 {/* Payment Status Filter Buttons */}
                 <div className="flex flex-wrap items-center gap-2 text-xs">
-                  <span className="text-gray-500 font-bold ml-1">فلترة حسب طريقة الدفع:</span>
+                  <span className="text-white font-bold ml-1">فلترة حسب طريقة الدفع:</span>
                   {[
                     { id: 'all', label: 'كل الأوردرات' },
                     { id: 'online', label: '💳 دفع إلكتروني (بطاقة/محفظة)' },
@@ -4517,301 +4276,6 @@ export const AdminDashboard: React.FC = () => {
                     </tbody>
                   </table>
                 </div>
-              </div>
-            )}
-
-            {/* TAB: PAYMENT SETTINGS */}
-            {activeTab === 'payment-settings' && (
-              <div className="bg-surface rounded-3xl border border-border p-6 sm:p-8 shadow-xs space-y-6">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
-                  <div>
-                    <h3 className="font-bold text-base sm:text-lg text-foreground flex items-center gap-2">
-                      <CreditCard className="w-5 h-5 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover" />
-                      <span>إعدادات طرق الدفع والتحصيل</span>
-                    </h3>
-                    <p className="text-xs text-black/60 dark:text-white/60 mt-1">
-                      إدارة خيارات الدفع المتاحة للعملاء، وتفعيل الدفع عند الاستلام، والدفع الإلكتروني، وحسابات إنستاباي والمحافظ الإلكترونية.
-                    </p>
-                  </div>
-                  <RefreshDataButton
-                    onRefresh={fetchAdminPaymentSettings}
-                    label="تحديث الإعدادات"
-                  />
-                </div>
-
-                <form onSubmit={handleSaveAdminPaymentSettings} className="space-y-6 max-w-2xl">
-                  {/* Online Card / Wallet Payment Section */}
-                  <div className="p-5 sm:p-6 rounded-2xl border border-sky-200 dark:border-sky-800/40 bg-sky-50/40 dark:bg-sky-950/20 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-xl bg-sky-600 text-white flex items-center justify-center font-black text-xs shadow-sm">
-                          <CreditCard className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <h4 className="font-bold text-sm text-sky-950 dark:text-sky-200">
-                            الدفع الإلكتروني (Online Payment)
-                          </h4>
-                          <p className="text-[11px] text-sky-800/70 dark:text-sky-400">
-                            البطاقات الائتمانية والبنكية (فيزا، ماستركارد، ميزة) والمحافظ الرقمية
-                          </p>
-                        </div>
-                      </div>
-
-                      <label className="flex items-center gap-2 text-xs font-bold text-sky-900 dark:text-sky-200 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={adminPaymentSettings.isOnlinePaymentActive}
-                          onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, isOnlinePaymentActive: e.target.checked })}
-                          className="w-4 h-4 text-sky-600 rounded"
-                        />
-                        <span>مفعل للعملاء</span>
-                      </label>
-                    </div>
-                  </div>
-
-                  {/* Cash on Delivery Section */}
-                  <div className="p-5 sm:p-6 rounded-2xl border border-emerald-200 dark:border-emerald-800/40 bg-emerald-50/30 dark:bg-emerald-950/20 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-black text-xs shadow-sm">
-                          <Truck className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <h4 className="font-bold text-sm text-emerald-950 dark:text-emerald-200">
-                            الدفع نقداً عند الاستلام (Cash on Delivery - COD)
-                          </h4>
-                          <p className="text-[11px] text-emerald-800/70 dark:text-emerald-300">
-                            إتاحة خيار دفع ثمن الأوردر نقداً لمندوب الشحن عند استلام الطرد وفحصه
-                          </p>
-                        </div>
-                      </div>
-
-                      <label className="flex items-center gap-2 text-xs font-bold text-emerald-900 dark:text-emerald-200 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={adminPaymentSettings.isCashOnDeliveryActive}
-                          onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, isCashOnDeliveryActive: e.target.checked })}
-                          className="w-4 h-4 text-emerald-600 rounded"
-                        />
-                        <span>مفعل للزبائن</span>
-                      </label>
-                    </div>
-                  </div>
-
-                  {/* Vodafone Cash & Wallets Section */}
-                  <div className="p-5 sm:p-6 rounded-2xl border border-border bg-surface space-y-4">
-                    <div className="flex items-center justify-between border-b border-border pb-3">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-xl bg-red-600 text-white flex items-center justify-center font-black text-xs shadow-sm">
-                          <Wallet className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <h4 className="font-bold text-sm text-foreground">
-                            فودافون كاش والمحافظ الإلكترونية
-                          </h4>
-                          <p className="text-[11px] text-black/60 dark:text-white/60">
-                            التحويل المباشر لمحفظة المنصة مع إرفاق رقم العملية لتأكيد الدفع
-                          </p>
-                        </div>
-                      </div>
-
-                      <label className="flex items-center gap-2 text-xs font-bold cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={Boolean(adminPaymentSettings.isVodafoneCashActive)}
-                          onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, isVodafoneCashActive: e.target.checked })}
-                          className="w-4 h-4 rounded text-red-600"
-                        />
-                        <span>تفعيل المحفظة</span>
-                      </label>
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
-                        رقم محفظة الكاش الرسمي:
-                      </label>
-                      <input
-                        type="text"
-                        value={adminPaymentSettings.vodafoneCashNumber || ''}
-                        onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, vodafoneCashNumber: e.target.value })}
-                        placeholder="01158969931"
-                        className="w-full px-3.5 py-2.5 bg-surface border border-border rounded-xl text-xs font-black font-bold text-gray-900 dark:text-foreground outline-none"
-                      />
-                    </div>
-                  </div>
-
-                  {/* InstaPay Section */}
-                  <div className="p-5 sm:p-6 rounded-2xl border border-border bg-surface space-y-4">
-                    <div className="flex items-center justify-between border-b border-border pb-3">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-xs shadow-sm">
-                          <CreditCard className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <h4 className="font-bold text-sm text-foreground">
-                            حساب إنستاباي (InstaPay)
-                          </h4>
-                          <p className="text-[11px] text-black/60 dark:text-white/60">
-                            التحويل اللحظي عبر شبكة المدفوعات اللحظية IPN
-                          </p>
-                        </div>
-                      </div>
-
-                      <label className="flex items-center gap-2 text-xs font-bold cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={Boolean(adminPaymentSettings.isInstaPayActive)}
-                          onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, isInstaPayActive: e.target.checked })}
-                          className="w-4 h-4 rounded text-blue-600"
-                        />
-                        <span>تفعيل إنستاباي</span>
-                      </label>
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
-                        معرف إنستاباي (IPA Address):
-                      </label>
-                      <input
-                        type="text"
-                        value={adminPaymentSettings.instaPayAccount || ''}
-                        onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, instaPayAccount: e.target.value })}
-                        placeholder="username@instapay"
-                        className="w-full px-3.5 py-2.5 bg-surface border border-border rounded-xl text-xs font-black font-bold text-gray-900 dark:text-foreground outline-none"
-                      />
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={isSavingPaymentSettings}
-                    className="px-8 py-3.5 bg-primary text-foreground hover:bg-primary-hover font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer flex items-center gap-2"
-                  >
-                    {isSavingPaymentSettings ? (
-                      <span>بنحفظ الإعدادات...</span>
-                    ) : (
-                      <>
-                        <Check className="w-4 h-4" />
-                        <span>حفظ وتطبيق إعدادات طرق الدفع</span>
-                      </>
-                    )}
-                  </button>
-                </form>
-              </div>
-            )}
-
-            {/* TAB: SHIPPING SETTINGS */}
-            {activeTab === 'shipping-settings' && (
-              <div className="bg-surface rounded-3xl border border-border p-6 sm:p-8 shadow-xs space-y-6">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
-                  <div>
-                    <h3 className="font-bold text-base sm:text-lg text-foreground flex items-center gap-2">
-                      <Truck className="w-5 h-5 text-orange-600 dark:text-orange-400" />
-                      <span>إعدادات الشحن والتوصيل</span>
-                    </h3>
-                    <p className="text-xs text-black/60 dark:text-white/60 mt-1">
-                      إدارة أسعار وتكاليف التوصيل للعملاء، وحد الشحن المجاني للطلبات، مع تنسيق الشحن مباشرة بين الورشة والمشتري.
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <RefreshDataButton
-                      onRefresh={fetchAdminShippingSettings}
-                      label="تحديث الإعدادات"
-                    />
-                  </div>
-                </div>
-
-                <form onSubmit={handleSaveAdminShippingSettings} className="space-y-6 max-w-3xl">
-                  {/* Shipping Rates & Thresholds */}
-                  <div className="p-5 sm:p-6 rounded-2xl border border-border bg-surface space-y-5">
-                    <div className="flex items-center gap-2 border-b border-border pb-3">
-                      <DollarSign className="w-5 h-5 text-emerald-600" />
-                      <div>
-                        <h4 className="font-bold text-sm text-foreground">
-                          تسعير التوصيل للمشترين (Delivery Rates & Thresholds)
-                        </h4>
-                        <p className="text-[11px] text-black/60 dark:text-white/60">
-                          تحديد تكلفة التوصيل التي تظهر للعميل في السلة وصفحة إتمام الطلب
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <div className="space-y-1.5">
-                        <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
-                          محافظات الصعيد (ج.م):
-                        </label>
-                        <input
-                          type="number"
-                          min="0"
-                          value={adminShippingSettings.upperEgyptShippingFee ?? 45}
-                          onChange={(e) => setAdminShippingSettings({ ...adminShippingSettings, upperEgyptShippingFee: Number(e.target.value) })}
-                          className="w-full px-4 py-2.5 bg-surface border border-border rounded-xl text-xs font-black font-bold text-gray-800 dark:text-gray-100 outline-none"
-                        />
-                        <span className="text-[10px] text-gray-500">قنا، الأقصر، أسوان، أسيوط، سوهاج...</span>
-                      </div>
-
-                      <div className="space-y-1.5">
-                        <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
-                          باقي المحافظات (ج.م):
-                        </label>
-                        <input
-                          type="number"
-                          min="0"
-                          value={adminShippingSettings.otherGovernoratesShippingFee ?? 55}
-                          onChange={(e) => setAdminShippingSettings({ ...adminShippingSettings, otherGovernoratesShippingFee: Number(e.target.value) })}
-                          className="w-full px-4 py-2.5 bg-surface border border-border rounded-xl text-xs font-black font-bold text-gray-800 dark:text-gray-100 outline-none"
-                        />
-                        <span className="text-[10px] text-gray-500">القاهرة، الجيزة، الإسكندرية، الدلتا...</span>
-                      </div>
-
-                      <div className="space-y-1.5">
-                        <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
-                          حد الشحن المجاني (ج.م):
-                        </label>
-                        <input
-                          type="number"
-                          min="0"
-                          value={adminShippingSettings.freeShippingThreshold ?? 1000}
-                          onChange={(e) => setAdminShippingSettings({ ...adminShippingSettings, freeShippingThreshold: Number(e.target.value) })}
-                          className="w-full px-4 py-2.5 bg-surface border border-border rounded-xl text-xs font-black font-bold text-gray-800 dark:text-gray-100 outline-none"
-                        />
-                        <span className="text-[10px] text-emerald-600 font-bold">توصيل مجاني للطلبات فوق هذا المبلغ</span>
-                      </div>
-                    </div>
-
-                    <div className="space-y-1.5 pt-3 border-t border-border">
-                      <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
-                        الحجم القياسي الافتراضي للطرد (Default Package Type):
-                      </label>
-                      <select
-                        value={adminShippingSettings.defaultPackageType || 'Small'}
-                        onChange={(e) => setAdminShippingSettings({ ...adminShippingSettings, defaultPackageType: e.target.value as any })}
-                        className="w-full px-4 py-2.5 bg-surface border border-border rounded-xl text-xs font-bold text-gray-800 dark:text-gray-100 outline-none cursor-pointer"
-                      >
-                        <option value="Small">طرد صغير Small (حتى 2 كجم - فخار ومجسمات وتحف يدوية)</option>
-                        <option value="Medium">طرد متوسط Medium (حتى 5 كجم - كليم وسجاد ومنسوجات)</option>
-                        <option value="Large">طرد كبير Large (أكثر من 5 كجم - مشغولات أخشاب خوص ونخيل)</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* Submit button */}
-                  <button
-                    type="submit"
-                    disabled={isSavingShippingSettings}
-                    className="px-8 py-3.5 bg-primary text-white hover:bg-primary-hover font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer flex items-center gap-2"
-                  >
-                    {isSavingShippingSettings ? (
-                      <span>بنحفظ الإعدادات...</span>
-                    ) : (
-                      <>
-                        <Check className="w-4 h-4" />
-                        <span>حفظ وتطبيق إعدادات تسعير التوصيل</span>
-                      </>
-                    )}
-                  </button>
-                </form>
               </div>
             )}
 
@@ -6198,172 +5662,6 @@ export const AdminDashboard: React.FC = () => {
               </div>
             )}
 
-            {/* TAB 10: PASSWORD RESET REQUESTS */}
-            {activeTab === 'password-resets' && (
-              <div className="space-y-6 animate-in fade-in">
-                {/* Header & Metrics Bar */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface backdrop-blur-xl p-5 rounded-2xl border border-border shadow-sm text-foreground">
-                  <div>
-                    <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
-                      <KeyRound className="w-5 h-5 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover" />
-                      <span>طلبات تغيير كلمات السر</span>
-                    </h2>
-                    <p className="text-xs text-black/60 dark:text-white/60 mt-1">
-                      متابعة طلبات الناس اللي نسيت الباسورد، وتعملهم باسورد مؤقت عشان يعرفوا يسجلوا دخول.
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-2.5 flex-wrap">
-                    <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 px-3.5 py-2 rounded-xl text-xs font-bold text-amber-800">
-                      <Clock className="w-4 h-4 text-amber-600" />
-                      <span>طلبات مستنية: {passwordResets.filter((r) => r.status === 'pending').length}</span>
-                    </div>
-
-                    <div className="flex items-center gap-1.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl px-2 py-1">
-                      <Filter className="w-3.5 h-3.5 text-gray-400" />
-                      <select
-                        id="admin-password-resets-filter"
-                        value={passwordResetFilter}
-                        onChange={(e) => setPasswordResetFilter(e.target.value as any)}
-                        className="bg-transparent text-xs font-medium outline-none py-1.5 cursor-pointer text-foreground"
-                      >
-                        <option value="all">كل الطلبات ({passwordResets.length})</option>
-                        <option value="pending">طلبات مستنية ({passwordResets.filter((r) => r.status === 'pending').length})</option>
-                        <option value="completed">اتنفذت خلاص ({passwordResets.filter((r) => r.status === 'completed').length})</option>
-                        <option value="rejected">مرفوضة ({passwordResets.filter((r) => r.status === 'rejected').length})</option>
-                      </select>
-                    </div>
-
-                    <RefreshDataButton
-                      id="admin-password-resets-refresh-btn"
-                      onRefresh={fetchPasswordResets}
-                      isLoading={isLoadingPasswordResets}
-                      label="تحديث الطلبات"
-                    />
-                  </div>
-                </div>
-
-                {/* Table */}
-                <div className="bg-surface backdrop-blur-xl rounded-2xl border border-border shadow-sm overflow-hidden text-foreground">
-                  <div className="wah-table-container overflow-x-auto">
-                    <table className="w-full text-right text-xs">
-                      <thead className="bg-black/5 dark:bg-cream/5 border-b border-border text-black/60 dark:text-white/60">
-                        <tr>
-                          <th className="py-3.5 px-4 font-bold">اسم المستخدم</th>
-                          <th className="py-3.5 px-4 font-bold">رقم الموبايل</th>
-                          <th className="py-3.5 px-4 font-bold">تاريخ الطلب</th>
-                          <th className="py-3.5 px-4 font-bold">الحالة</th>
-                          <th className="py-3.5 px-4 font-bold">المسؤول اللي نفذ</th>
-                          <th className="py-3.5 px-4 font-bold">تاريخ التنفيذ</th>
-                          <th className="py-3.5 px-4 font-bold text-center">الإجراءات</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-black/10 dark:divide-white/10">
-                        {isLoadingPasswordResets ? (
-                          <tr>
-                            <td colSpan={7} className="py-12 text-center text-gray-500">
-                              <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover" />
-                              <span>بنحمّل طلبات تغيير الباسورد...</span>
-                            </td>
-                          </tr>
-                        ) : passwordResets.length === 0 ? (
-                          <tr>
-                            <td colSpan={7} className="py-12 text-center text-gray-500">
-                              مفيش طلبات تغيير باسورد متطابقة مع الفلتر.
-                            </td>
-                          </tr>
-                        ) : (
-                          passwordResets.map((r) => {
-                            const isPending = r.status === 'pending';
-                            const isCompleted = r.status === 'completed';
-                            return (
-                              <tr key={r.id} className="hover:bg-black/5 dark:bg-cream/5/60 transition-colors">
-                                <td className="py-3 px-4">
-                                  <div>
-                                    <span className="font-bold text-foreground block">
-                                      {r.name || r.username}
-                                    </span>
-                                    <span className="text-[11px] text-gray-500 font-black">
-                                      @{r.username}
-                                    </span>
-                                  </div>
-                                </td>
-                                <td className="py-3 px-4 font-black">
-                                  {r.phone || 'مش متسجل'}
-                                </td>
-                                <td className="py-3 px-4 text-gray-600">
-                                  {r.createdAt ? new Date(r.createdAt).toLocaleString('ar-EG') : '-'}
-                                </td>
-                                <td className="py-3 px-4">
-                                  {isPending ? (
-                                    <span className="inline-flex items-center gap-1 bg-amber-100 text-amber-900 border border-amber-200 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                                      <Clock className="w-3 h-3 text-amber-600" />
-                                      <span>مستني المعالجة</span>
-                                    </span>
-                                  ) : isCompleted ? (
-                                    <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-900 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                                      <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                                      <span>اتنفذ خلاص</span>
-                                    </span>
-                                  ) : (
-                                    <span className="inline-flex items-center gap-1 bg-rose-100 text-rose-900 border border-rose-200 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                                      <XCircle className="w-3 h-3 text-rose-600" />
-                                      <span>مرفوض</span>
-                                    </span>
-                                  )}
-                                </td>
-                                <td className="py-3 px-4 font-medium text-foreground">
-                                  {r.handledByAdminName ? (
-                                    <span className="inline-flex items-center gap-1">
-                                      <ShieldCheck className="w-3.5 h-3.5 text-purple-600" />
-                                      <span>{r.handledByAdminName}</span>
-                                    </span>
-                                  ) : (
-                                    <span className="text-gray-400">-</span>
-                                  )}
-                                </td>
-                                <td className="py-3 px-4 text-gray-500">
-                                  {r.handledAt ? new Date(r.handledAt).toLocaleString('ar-EG') : '-'}
-                                </td>
-                                <td className="py-3 px-4">
-                                  <div className="flex items-center justify-center gap-2">
-                                    {isPending ? (
-                                      <>
-                                        <button
-                                          type="button"
-                                          id={`complete-reset-btn-${r.id}`}
-                                          onClick={() => openCreateTempPasswordModal(r)}
-                                          className="px-3 py-1.5 bg-primary hover:bg-primary-hover text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1 cursor-pointer"
-                                        >
-                                          <Key className="w-3.5 h-3.5" />
-                                          <span>عمل باسورد جديد</span>
-                                        </button>
-                                        <button
-                                          type="button"
-                                          onClick={() => handleRejectReset(r)}
-                                          className="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
-                                          title="رفض الطلب"
-                                        >
-                                          <X className="w-3.5 h-3.5" />
-                                          <span>رفض</span>
-                                        </button>
-                                      </>
-                                    ) : (
-                                      <span className="text-xs text-gray-400 font-medium">اتنفذ خلاص</span>
-                                    )}
-                                  </div>
-                                </td>
-                              </tr>
-                            );
-                          })
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            )}
-
             {/* TAB 11: SELLER PAYOUT REQUESTS (طلبات صرف المستحقات) */}
             {activeTab === 'payouts' && <AdminPayouts user={currentUser} />}
 
@@ -6386,7 +5684,6 @@ export const AdminDashboard: React.FC = () => {
                   else if (tab === 'payouts') handleSelectTab('payouts');
                   else if (tab === 'sellers') handleSelectTab('sellers');
                   else if (tab === 'users') handleSelectTab('users');
-                  else if (tab === 'password-resets') handleSelectTab('password-resets');
                 }}
               />
             )}
@@ -6567,6 +5864,65 @@ export const AdminDashboard: React.FC = () => {
         )}
 
 
+
+        {/* Payment Rejection Modal */}
+        {paymentRejection && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs overflow-y-auto"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="payment-rejection-title"
+          >
+            <div className="bg-surface backdrop-blur-2xl rounded-[2rem] border border-border max-w-lg w-full p-4 sm:p-6 space-y-4 shadow-2xl my-auto text-foreground">
+              <div className="flex items-center justify-between border-b border-border pb-3">
+                <h3 id="payment-rejection-title" className="font-bold text-base text-rose-900 flex items-center gap-2">
+                  <AlertCircle className="w-5 h-5 text-rose-600" />
+                  <span>رفض تحويل الدفع</span>
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => setPaymentRejection(null)}
+                  className="p-1 rounded-lg text-gray-400 hover:text-gray-600 cursor-pointer"
+                  aria-label="إغلاق نافذة رفض التحويل"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="payment-rejection-reason" className="block text-xs font-bold text-foreground">
+                  سبب الرفض (اختياري وسيظهر للمشتري)
+                </label>
+                <textarea
+                  id="payment-rejection-reason"
+                  rows={4}
+                  value={paymentRejection.reason}
+                  onChange={(e) => setPaymentRejection({ ...paymentRejection, reason: e.target.value })}
+                  placeholder="مثال: رقم العملية غير صحيح أو المبلغ لا يطابق قيمة الطلب..."
+                  className="w-full p-3 bg-black/5 dark:bg-cream/5 border border-rose-200 rounded-xl text-xs outline-none focus:border-rose-500"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-border">
+                <button
+                  type="button"
+                  onClick={() => setPaymentRejection(null)}
+                  className="px-4 py-2 text-xs font-bold text-black/60 dark:text-white/60 cursor-pointer"
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="button"
+                  onClick={confirmAdminRejectPayment}
+                  disabled={rejectingOrderId === paymentRejection.orderId}
+                  className="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl shadow-md disabled:opacity-50 cursor-pointer"
+                >
+                  {rejectingOrderId === paymentRejection.orderId ? 'جارٍ الرفض...' : 'تأكيد الرفض وإشعار المشتري'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Reject Product Modal with Reason Requirement */}
         {rejectingProductId && (
@@ -7513,201 +6869,6 @@ export const AdminDashboard: React.FC = () => {
                       <span>تأكيد مسح الحساب</span>
                     </>
                   )}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Modal 1: Create New Temporary Password Modal */}
-        {isCreateTempPasswordModalOpen && selectedResetForAction && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in overflow-y-auto">
-            <div className="bg-surface rounded-3xl border border-border max-w-md w-full p-5 sm:p-6 space-y-4 shadow-2xl overflow-y-auto my-auto">
-              <div className="flex items-center justify-between border-b border-border pb-3">
-                <h3 className="font-bold text-base text-foreground flex items-center gap-2">
-                  <KeyRound className="w-5 h-5 text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover" />
-                  <span>عمل باسورد مؤقت جديد</span>
-                </h3>
-                <button
-                  type="button"
-                  onClick={() => setIsCreateTempPasswordModalOpen(false)}
-                  className="p-1 rounded-lg text-gray-400 hover:text-gray-600 cursor-pointer"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Target User Info */}
-              <div className="p-3 bg-black/5 dark:bg-cream/5 rounded-2xl border border-border text-xs space-y-1">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-500">اسم المستخدم:</span>
-                  <span className="font-bold font-black text-foreground">@{selectedResetForAction.username}</span>
-                </div>
-                {selectedResetForAction.name && (
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-500">الاسم بالكامل:</span>
-                    <span className="font-bold text-foreground">{selectedResetForAction.name}</span>
-                  </div>
-                )}
-                {selectedResetForAction.phone && (
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-500">رقم الموبايل:</span>
-                    <span className="font-bold font-black text-foreground">{selectedResetForAction.phone}</span>
-                  </div>
-                )}
-              </div>
-
-              <form onSubmit={handleConfirmCompleteReset} className="space-y-4 text-xs">
-                <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <label className="font-bold text-foreground">
-                      الباسورد المؤقت *
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$';
-                        let generated = '';
-                        for (let i = 0; i < 10; i++) {
-                          generated += chars.charAt(Math.floor(Math.random() * chars.length));
-                        }
-                        setTempPasswordInput(generated);
-                      }}
-                      className="text-[11px] text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover hover:underline font-bold cursor-pointer"
-                    >
-                      ⚡ ولّد باسورد قوي وسريع تلقائياً
-                    </button>
-                  </div>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      required
-                      value={tempPasswordInput}
-                      onChange={(e) => setTempPasswordInput(e.target.value)}
-                      placeholder="اكتب أو ولّد الباسورد المؤقت"
-                      className="w-full pl-3 pr-10 py-2.5 bg-black/5 dark:bg-cream/5 border border-border rounded-xl outline-none focus:border-primary font-black text-left"
-                      dir="ltr"
-                    />
-                    <Lock className="w-4 h-4 text-gray-400 absolute right-3 top-3" />
-                  </div>
-                </div>
-
-                <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-900 text-[11px] leading-relaxed">
-                  ℹ️ الباسورد المؤقت هيظهرلك في الخطوة الجاية عشان تنسخه وتبعتوا للمستخدم. وهيطلب منه إجباري يغيره أول ما يدخل الحساب.
-                </div>
-
-                <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-border">
-                  <button
-                    type="button"
-                    onClick={() => setIsCreateTempPasswordModalOpen(false)}
-                    className="px-4 py-2 text-xs font-bold text-black/60 dark:text-white/60 hover:bg-gray-100 rounded-xl"
-                  >
-                    إلغاء
-                  </button>
-
-                  <button
-                    type="submit"
-                    disabled={isSubmittingTempPassword}
-                    id="confirm-submit-temp-password-btn"
-                    className="px-5 py-2.5 bg-primary hover:bg-primary-hover disabled:opacity-60 text-white font-bold rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
-                  >
-                    {isSubmittingTempPassword ? (
-                      <>
-                        <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                        <span>بنحفظ ونشفّر الباسورد...</span>
-                      </>
-                    ) : (
-                      <span>تأكيد وعمل الباسورد</span>
-                    )}
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
-
-        {/* Modal 2: "Show Once" Temporary Password Display */}
-        {completedTempPasswordInfo && (
-          <div className="fixed inset-0 z-[60] flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-xs animate-in fade-in overflow-y-auto">
-            <div className="bg-surface rounded-3xl border border-border max-w-md w-full p-5 sm:p-6 space-y-4 shadow-2xl overflow-y-auto my-auto">
-              {/* Header */}
-              <div className="flex items-center gap-3 border-b border-border pb-3">
-                <div className="w-10 h-10 rounded-2xl bg-emerald-100 flex items-center justify-center shrink-0">
-                  <CheckCircle2 className="w-6 h-6 text-emerald-600" />
-                </div>
-                <div>
-                  <h3 className="font-black text-base text-foreground">تم عمل الباسورد المؤقت بنجاح</h3>
-                  <p className="text-xs text-emerald-700 font-medium">اتحدث الحساب واتشفر الباسورد الجديد في السجلات</p>
-                </div>
-              </div>
-
-              {/* Security Alert Banner */}
-              <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl text-rose-900 text-xs space-y-1">
-                <div className="flex items-center gap-1.5 font-bold">
-                  <ShieldAlert className="w-4 h-4 text-rose-600 shrink-0" />
-                  <span>تنبيه أمني مهم: الباسورد ده هيظهرلك مرة واحدة بس!</span>
-                </div>
-                <p className="text-[11px] text-rose-800 leading-relaxed">
-                  مش هتقدر تشوف الباسورد المؤقت تاني بعد ما تقفل الشاشة دي عشان نحافظ على أمان الحساب. انسخه دلوقتي وبلّغ بيه المستخدم في الموبايل أو وسيلة التواصل المناسبة.
-                </p>
-              </div>
-
-              {/* User & Password Box */}
-              <div className="p-4 bg-black/5 dark:bg-cream/5 rounded-2xl border border-border space-y-2.5 text-xs">
-                <div className="flex items-center justify-between border-b border-gray-200 pb-2">
-                  <span className="text-gray-500">اسم المستخدم:</span>
-                  <span className="font-bold font-black text-base text-foreground">@{completedTempPasswordInfo.username}</span>
-                </div>
-
-                {completedTempPasswordInfo.phone && (
-                  <div className="flex items-center justify-between border-b border-gray-200 pb-2">
-                    <span className="text-gray-500">رقم الموبايل للتواصل:</span>
-                    <span className="font-bold font-black text-sm text-foreground">{completedTempPasswordInfo.phone}</span>
-                  </div>
-                )}
-
-                <div>
-                  <span className="text-gray-500 block mb-1">الباسورد المؤقت الجديد:</span>
-                  <div className="flex items-center gap-2">
-                    <div
-                      className="flex-1 p-3 bg-white border-2 border-dashed border-primary rounded-xl font-black text-center text-base sm:text-lg font-black tracking-wider text-foreground select-all select-text"
-                      dir="ltr"
-                    >
-                      {completedTempPasswordInfo.temporaryPassword}
-                    </div>
-                    <button
-                      type="button"
-                      id="copy-temp-password-btn"
-                      onClick={copyTempPassword}
-                      className={`p-3 rounded-xl border transition-all flex items-center justify-center shrink-0 cursor-pointer ${isCopiedTempPassword
-                        ? 'bg-emerald-600 border-emerald-600 text-white'
-                        : 'bg-primary hover:bg-primary-hover border-primary text-white'
-                        }`}
-                      title="نسخ الباسورد"
-                    >
-                      {isCopiedTempPassword ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Force change note */}
-              <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl text-blue-900 text-[11px] leading-relaxed flex items-start gap-2">
-                <KeyRound className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-                <span>
-                  أول ما المستخدم يسجل دخوله بالباسورد ده، هتظهرله شاشة تطلب منه تعيين باسورد جديد وخاص بيه ومش هيعرف يكمل غير لما يغيره.
-                </span>
-              </div>
-
-              {/* Action buttons */}
-              <div className="pt-2">
-                <button
-                  type="button"
-                  id="close-temp-password-modal-btn"
-                  onClick={() => setCompletedTempPasswordInfo(null)}
-                  className="w-full py-3 bg-primary text-foreground hover:bg-primary-hover font-bold rounded-xl text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <span>نسخت الباسورد خلاص - اقفل الشاشة</span>
                 </button>
               </div>
             </div>

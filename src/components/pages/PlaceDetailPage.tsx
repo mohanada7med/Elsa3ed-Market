@@ -5,6 +5,7 @@ import { HeritagePlace } from '../../types';
 import { VisitorMediaGallery } from '../common/VisitorMediaGallery';
 import { PageNavigationBar } from '../layout/PageNavigationBar';
 import { updatePageSEO, generatePlaceSchema } from '../../utils/seo';
+import { formatArabicNumber } from '../../utils/arabicNumbers';
 
 import {
   Landmark,
@@ -1240,7 +1241,7 @@ export const PlaceDetailPage: React.FC = () => {
                         <span>الإحداثيات الجغرافية الموثقة</span>
                       </div>
                       <span className="text-xs font-black text-black/60 dark:text-white/60">
-                        {place.coordinates.lat.toFixed(5)}, {place.coordinates.lng.toFixed(5)}
+                        {formatArabicNumber(place.coordinates.lat, { minimumFractionDigits: 5, maximumFractionDigits: 5 })}, {formatArabicNumber(place.coordinates.lng, { minimumFractionDigits: 5, maximumFractionDigits: 5 })}
                       </span>
                     </div>
                     <a

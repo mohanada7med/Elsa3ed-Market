@@ -1477,20 +1477,22 @@ h6 {
   }
 }
 
-@media (min-width: 1536px) {
-  #wah-app-shell [class~="max-w-7xl"],
-  #wah-app-shell [class~="max-w-[1200px]"],
-  #wah-app-shell [class~="max-w-[1360px]"],
-  #wah-app-shell [class~="max-w-[1400px]"],
-  #wah-app-shell [class~="max-w-[1440px]"],
-  #wah-app-shell [class~="max-w-[1500px]"],
-  #wah-app-shell [class~="max-w-[1550px]"],
-  #wah-app-shell [class~="max-w-[1600px]"],
-  #wah-app-shell [class~="max-w-[1650px]"],
-  #wah-app-shell [class~="max-w-[1680px]"],
-  #wah-app-shell [class~="max-w-[1700px]"],
-  #wah-app-shell [class~="max-w-[1720px]"],
-  #wah-app-shell [class~="max-w-[1800px]"] {
-    max-width: min(calc(100% - clamp(2rem, 5vw, 6rem)), 3200px) !important;
-  }
+/* All public route containers use the available viewport width.
+  Keep the padding on each page so content is not pressed against the edges. */
+#main-route-container [class~="max-w-[1200px]"],
+#main-route-container [class~="max-w-[1360px]"],
+#main-route-container [class~="max-w-[1400px]"],
+#main-route-container [class~="max-w-[1440px]"],
+#main-route-container [class~="max-w-[1500px]"],
+#main-route-container [class~="max-w-[1550px]"],
+#main-route-container [class~="max-w-[1600px]"],
+#main-route-container [class~="max-w-[1650px]"],
+#main-route-container [class~="max-w-[1680px]"],
+#main-route-container [class~="max-w-[1700px]"],
+#main-route-container [class~="max-w-[1720px]"],
+#main-route-container [class~="max-w-[1800px]"],
+#main-route-container [class~="max-w-7xl"],
+#main-route-container [class~="max-w-6xl"],
+#main-route-container [class~="max-w-5xl"] {
+ max-width: 100% !important;
 }

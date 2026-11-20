@@ -91,13 +91,13 @@ export const SellersDirectoryPage: React.FC = () => {
       {/* =========================================================
           PAGE CONTAINER
       ========================================================= */}
-      <div className="w-full max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-14 py-6 sm:py-8 lg:py-10">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-10 xl:px-14 py-6 sm:py-8 lg:py-10">
         {/* UNCLE WAH HERO BANNER - MASTER OF SELLERS & WORKSHOPS */}
 
         {/* =========================================================
             TOP INTRO
         ========================================================= */}
-      <section className="relative z-10 mx-auto max-w-[1700px] px-4 pb-8 pt-8 sm:px-8 sm:pb-14 sm:pt-14 lg:px-12 lg:pb-16 lg:pt-20 xl:px-16">
+      <section className="relative z-10 mx-auto w-full px-0 pb-8 pt-8 sm:pb-14 sm:pt-14 lg:pb-16 lg:pt-20">
         <div className="grid gap-14 lg:grid-cols-[1fr_420px] lg:items-end lg:gap-20">
           <div>
 

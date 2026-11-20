@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext.tsx';
 import { api } from '../../services/api.ts';
 import type { MediaItem } from '../../types.ts';
 import { AdminMediaUploader } from '../common/AdminMediaUploader.tsx';
+import { formatArabicNumber } from '../../utils/arabicNumbers.ts';
 import {
   Image as ImageIcon,
   Search,
@@ -148,7 +149,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
     const k = 1024;
     const sizes = ['بايت', 'ك.ب', 'م.ب', 'ج.ب'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    return `${formatArabicNumber(Number((bytes / Math.pow(k, i)).toFixed(1)))} ${sizes[i]}`;
   };
 
   return (

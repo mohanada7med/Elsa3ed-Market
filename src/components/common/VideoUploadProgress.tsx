@@ -17,6 +17,7 @@ import {
 import { api } from '../../services/api.ts';
 import { useApp } from '../../context/AppContext.tsx';
 import { getOptimizedVideoUrl, captureVideoFrame } from '../../utils/cloudinaryMedia.ts';
+import { formatArabicNumber } from '../../utils/arabicNumbers.ts';
 
 export type VideoUploadState =
   | 'idle'
@@ -122,11 +123,11 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
   }, [initialVideoUrl, initialCloudinaryPublicId]);
 
   const formatFileSize = (bytes: number): string => {
-    if (!bytes || bytes <= 0) return '0 B';
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-    return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+    if (!bytes || bytes <= 0) return '٠ بايت';
+    if (bytes < 1024) return `${formatArabicNumber(bytes)} بايت`;
+    if (bytes < 1024 * 1024) return `${formatArabicNumber(bytes / 1024, { maximumFractionDigits: 1 })} ك.ب`;
+    if (bytes < 1024 * 1024 * 1024) return `${formatArabicNumber(bytes / (1024 * 1024), { maximumFractionDigits: 1 })} م.ب`;
+    return `${formatArabicNumber(bytes / (1024 * 1024 * 1024), { maximumFractionDigits: 2 })} ج.ب`;
   };
 
   const handleFileSelect = (file: File) => {

@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { wahApi } from '../../services/api';
 import { MapGovernorateData, MapMarkerItem, MapMarkerType, MapPayload } from '../../types';
 import { PageNavigationBar } from '../layout/PageNavigationBar';
+import { formatArabicNumber } from '../../utils/arabicNumbers';
 import {
   MapPin,
   Compass,
@@ -322,10 +323,10 @@ export const AdminMapEditorPage: React.FC = () => {
                   <div className="flex items-center justify-between gap-2 pt-1 border-t border-[#F5EFE6] dark:border-[#26201B]">
                     <div className="font-black text-xs text-black/60 dark:text-white/60 dark:text-[#D6C6B1] flex items-center gap-2">
                       <span className="bg-black/5 dark:bg-cream/5 px-2 py-1 rounded-lg border border-black/10 dark:border-white/10">
-                        {item.lat.toFixed(4)}° N
+                        {formatArabicNumber(item.lat, { minimumFractionDigits: 4, maximumFractionDigits: 4 })}° N
                       </span>
                       <span className="bg-black/5 dark:bg-cream/5 px-2 py-1 rounded-lg border border-black/10 dark:border-white/10">
-                        {item.lng.toFixed(4)}° E
+                        {formatArabicNumber(item.lng, { minimumFractionDigits: 4, maximumFractionDigits: 4 })}° E
                       </span>
                     </div>
 
@@ -400,10 +401,10 @@ export const AdminMapEditorPage: React.FC = () => {
                         {item.governorateName}
                       </td>
                       <td className="p-3.5 font-black text-[#3B1E0E] dark:text-[#FFF9EE]">
-                        {item.lat.toFixed(4)}° N
+                        {formatArabicNumber(item.lat, { minimumFractionDigits: 4, maximumFractionDigits: 4 })}° N
                       </td>
                       <td className="p-3.5 font-black text-[#3B1E0E] dark:text-[#FFF9EE]">
-                        {item.lng.toFixed(4)}° E
+                        {formatArabicNumber(item.lng, { minimumFractionDigits: 4, maximumFractionDigits: 4 })}° E
                       </td>
                       <td className="p-3.5">
                         {item.isFeatured ? (

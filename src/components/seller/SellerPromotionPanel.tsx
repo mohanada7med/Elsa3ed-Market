@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { api } from '../../services/api';
 import type { HomePromotionPosition, PaidPromotionRequest, Product, Seller, UserProfile } from '../../types';
+import { toArabicDigits } from '../../utils/arabicNumbers';
 
 interface SellerPromotionPanelProps {
   user: UserProfile;
@@ -36,30 +37,30 @@ interface SellerPromotionPanelProps {
 const PROMOTION_PACKAGES = [
   {
     id: 7,
-    name: 'باقة الأسبوع (7 أيام)',
+    name: 'باقة الأسبوع (٧ أيام)',
     days: 7,
     popular: false,
-    estimatedPrice: '150 ج.م',
+    estimatedPrice: '١٥٠ ج.م',
     description: 'انطلاقة سريعة لتسليط الضوء على قطعة مميزة أو عروض العطلة والمواسم.',
-    features: ['ظهور متواصل 7 أيام كاملة', 'تثبيت في الموضع المفضل', 'شارة ترشيح وه التراثية']
+    features: ['ظهور متواصل ٧ أيام كاملة', 'تثبيت في الموضع المفضل', 'شارة ترشيح وه التراثية']
   },
   {
     id: 14,
-    name: 'باقة الأسبوعين (14 يوماً)',
+    name: 'باقة الأسبوعين (١٤ يوماً)',
     days: 14,
     popular: true,
-    estimatedPrice: '280 ج.م',
+    estimatedPrice: '٢٨٠ ج.م',
     description: 'الخيار الأكثر طلباً لمضاعفة المشاهدات واستقبال طلبات ومبيعات متواصلة.',
-    features: ['ظهور مميز لمدة 14 يوماً', 'وفر 20 ج.م مقارنة بالأسبوعي', 'أولوية الظهور في دليل الورش', 'دعم تسويقي مخصص']
+    features: ['ظهور مميز لمدة ١٤ يوماً', 'وفر ٢٠ ج.م مقارنة بالأسبوعي', 'أولوية الظهور في دليل الورش', 'دعم تسويقي مخصص']
   },
   {
     id: 30,
-    name: 'باقة الشهر الترويجي (30 يوماً)',
+    name: 'باقة الشهر الترويجي (٣٠ يوماً)',
     days: 30,
     popular: false,
-    estimatedPrice: '500 ج.م',
+    estimatedPrice: '٥٠٠ ج.م',
     description: 'تصدر دائم للصفحة الرئيسية لأعلى عائد استثماري وبناء شهرة ورشتك.',
-    features: ['ظهور كامل لمدة شهر (30 يوم)', 'وفر 100 ج.م', 'أعلى معدل نقرات ومبيعات', 'تقرير أداء الحملة الترويجية']
+    features: ['ظهور كامل لمدة شهر (٣٠ يوم)', 'وفر ١٠٠ ج.م', 'أعلى معدل نقرات ومبيعات', 'تقرير أداء الحملة الترويجية']
   }
 ];
 
@@ -296,8 +297,8 @@ export const SellerPromotionPanel: React.FC<SellerPromotionPanelProps> = ({
               <Clock3 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
               <div>
                 <span className="block text-[10px] text-foreground-secondary">الوقت المتبقي</span>
-                <span className="text-sm font-black text-emerald-700 dark:text-emerald-300">
-                  {remainingDays > 0 ? `${remainingDays} يوم متبقي` : 'ينتهي اليوم'}
+                <span className="text-base font-black text-emerald-700 dark:text-emerald-300">
+                  {remainingDays > 0 ? `${remainingDays.toLocaleString('ar-EG')} يوم متبقي` : 'ينتهي اليوم'}
                 </span>
               </div>
             </div>
@@ -324,7 +325,7 @@ export const SellerPromotionPanel: React.FC<SellerPromotionPanelProps> = ({
               <span className="text-[11px] text-foreground-secondary block mb-1">مدة الحملة</span>
               <span className="font-bold text-sm text-foreground flex items-center gap-1.5">
                 <Calendar className="h-4 w-4 text-blue-500" />
-                {request.durationDays || 7} يوم
+                {(request.durationDays || 7).toLocaleString('ar-EG')} يوم
               </span>
             </div>
 
@@ -380,25 +381,25 @@ export const SellerPromotionPanel: React.FC<SellerPromotionPanelProps> = ({
           {/* Stepper Timeline */}
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-2">
             <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-3.5">
-              <span className="text-[10px] font-bold text-emerald-600 block mb-1">الخطوة 1</span>
+              <span className="text-xs font-bold text-emerald-600 block mb-1">الخطوة ١</span>
               <span className="text-xs font-black text-foreground flex items-center gap-1">
                 <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
                 تم استلام الطلب
               </span>
             </div>
             <div className="rounded-2xl border-2 border-amber-500 bg-amber-500/10 p-3.5">
-              <span className="text-[10px] font-bold text-amber-600 block mb-1">الخطوة 2</span>
+              <span className="text-xs font-bold text-amber-600 block mb-1">الخطوة ٢</span>
               <span className="text-xs font-black text-foreground flex items-center gap-1">
                 <Clock3 className="h-3.5 w-3.5 text-amber-500" />
                 مراجعة الإدارة
               </span>
             </div>
             <div className="rounded-2xl border border-border bg-surface p-3.5 opacity-60">
-              <span className="text-[10px] font-bold text-foreground-secondary block mb-1">الخطوة 3</span>
+              <span className="text-xs font-bold text-foreground-secondary block mb-1">الخطوة ٣</span>
               <span className="text-xs font-bold text-foreground">تأكيد الدفع والتنسيق</span>
             </div>
             <div className="rounded-2xl border border-border bg-surface p-3.5 opacity-60">
-              <span className="text-[10px] font-bold text-foreground-secondary block mb-1">الخطوة 4</span>
+              <span className="text-xs font-bold text-foreground-secondary block mb-1">الخطوة ٤</span>
               <span className="text-xs font-bold text-foreground">إطلاق الحملة على الرئيسية</span>
             </div>
           </div>
@@ -414,7 +415,7 @@ export const SellerPromotionPanel: React.FC<SellerPromotionPanelProps> = ({
               </div>
               <div>
                 <span className="text-foreground-secondary">المدة المقترحة: </span>
-                <span className="font-bold text-foreground">{request.durationDays || 7} يوماً</span>
+                <span className="text-sm font-black text-foreground">{(request.durationDays || 7).toLocaleString('ar-EG')} يوماً</span>
               </div>
               <div>
                 <span className="text-foreground-secondary">الموضع المفضل: </span>
@@ -567,13 +568,13 @@ export const SellerPromotionPanel: React.FC<SellerPromotionPanelProps> = ({
                             >
                               <img
                                 src={prod.images?.[0] || '/mascot/welcoming.webp'}
-                                alt={prod.title}
+                                alt={toArabicDigits(prod.title)}
                                 className="h-12 w-12 rounded-lg object-cover flex-shrink-0 border border-border"
                               />
                               <div className="overflow-hidden flex-1">
-                                <h5 className="font-bold text-xs text-foreground truncate">{prod.title}</h5>
-                                <span className="text-[11px] font-black text-primary dark:text-primary-hover font-mono block">
-                                  {prod.price} ج.م
+                                <h5 className="font-bold text-xs text-foreground truncate">{toArabicDigits(prod.title)}</h5>
+                                <span className="block text-sm font-black text-primary dark:text-primary-hover">
+                                  {prod.price.toLocaleString('ar-EG')} ج.م
                                 </span>
                               </div>
                               {isSelected && <CheckCircle2 className="h-4 w-4 text-primary dark:text-primary-hover flex-shrink-0" />}
@@ -619,14 +620,14 @@ export const SellerPromotionPanel: React.FC<SellerPromotionPanelProps> = ({
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
                           <h4 className="font-black text-sm text-foreground">{pkg.name}</h4>
-                          <span className="font-mono text-xs font-black text-primary dark:text-primary-hover">{pkg.estimatedPrice}</span>
+                          <span className="text-sm font-black text-primary dark:text-primary-hover">{pkg.estimatedPrice}</span>
                         </div>
                         <p className="text-[11px] text-foreground-secondary leading-relaxed">{pkg.description}</p>
                       </div>
 
                       <div className="pt-4 border-t border-border mt-4 space-y-1.5 w-full">
                         {pkg.features.map((feat, idx) => (
-                          <div key={idx} className="flex items-center gap-1.5 text-[10px] font-bold text-foreground">
+                          <div key={idx} className="flex items-center gap-1.5 text-xs font-bold text-foreground">
                             <CheckCircle2 className="h-3 w-3 text-emerald-500 flex-shrink-0" />
                             <span>{feat}</span>
                           </div>
@@ -729,13 +730,13 @@ export const SellerPromotionPanel: React.FC<SellerPromotionPanelProps> = ({
                       </div>
                       <h4 className="font-black text-base sm:text-lg text-foreground truncate">
                         {contentType === 'product' && selectedProduct
-                          ? selectedProduct.title
-                          : workshopName}
+                          ? toArabicDigits(selectedProduct.title)
+                          : toArabicDigits(workshopName)}
                       </h4>
                       <div className="flex flex-wrap items-center gap-2 text-xs text-foreground-secondary">
                         <span className="font-bold flex items-center gap-1">
                           <Store className="h-3.5 w-3.5 text-primary dark:text-primary-hover" />
-                          {workshopName}
+                          {toArabicDigits(workshopName)}
                         </span>
                         <span>•</span>
                         <span className="flex items-center gap-1">
@@ -748,8 +749,8 @@ export const SellerPromotionPanel: React.FC<SellerPromotionPanelProps> = ({
 
                   <div className="flex flex-col items-center sm:items-end gap-2 flex-shrink-0">
                     {contentType === 'product' && selectedProduct && (
-                      <span className="font-black text-xl text-primary dark:text-primary-hover font-mono">
-                        {selectedProduct.price} ج.م
+                      <span className="text-2xl font-black text-primary dark:text-primary-hover">
+                        {selectedProduct.price.toLocaleString('ar-EG')} ج.م
                       </span>
                     )}
                     <div className="inline-flex items-center gap-1.5 rounded-xl bg-primary text-white px-5 py-2.5 text-xs font-black shadow-md">
@@ -795,7 +796,7 @@ export const SellerPromotionPanel: React.FC<SellerPromotionPanelProps> = ({
           },
           {
             q: 'متى يبدأ إعلاني في الظهور على الموقع؟',
-            a: 'يبدأ الإعلان في الظهور مباشرة خلال 24 ساعة من تأكيد السداد واعتماد الموضع، ويستمر طوال المدة المحددة (7، 14، أو 30 يوماً) على مدار الساعة.'
+            a: 'يبدأ الإعلان في الظهور مباشرة خلال ٢٤ ساعة من تأكيد السداد واعتماد الموضع، ويستمر طوال المدة المحددة (٧، ١٤، أو ٣٠ يوماً) على مدار الساعة.'
           },
           {
             q: 'هل يمكنني تغيير القطعة المعروضة أثناء سريان الحملة؟',

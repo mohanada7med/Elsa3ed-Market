@@ -1,3 +1,5 @@
+import { formatArabicNumber, toArabicDigits } from '../utils/arabicNumbers.ts';
+
 /**
  * Browser Web Push & Native Notification Service for Souq El-Saeed
  * Handles browser notification permissions, background notifications, audio chimes, and notification settings.
@@ -259,10 +261,10 @@ class BrowserNotificationService {
    */
   public notifyNewOrder(orderNumber: string, amount: number, isSeller: boolean) {
     this.sendNotification({
-      title: isSeller ? `طلب شراء جديد لورشة عملك! 📦 (#${orderNumber})` : `تم تأكيد طلبك بنجاح! 🛍️ (#${orderNumber})`,
+      title: isSeller ? `طلب شراء جديد لورشة عملك! 📦 (#${toArabicDigits(orderNumber)})` : `تم تأكيد طلبك بنجاح! 🛍️ (#${toArabicDigits(orderNumber)})`,
       body: isSeller
-        ? `لديك طلب جديد بإجمالي ${amount.toLocaleString()} ج.م. يرجى مراجعة تفاصيل الطرد وبدء التجهيز.`
-        : `شكراً لدعمك الحرف التراثية. طلبك رقم #${orderNumber} قيد المراجعة والإعداد.`,
+        ? `لديك طلب جديد بإجمالي ${formatArabicNumber(amount)} ج.م. يرجى مراجعة تفاصيل الطرد وبدء التجهيز.`
+        : `شكراً لدعمك الحرف التراثية. طلبك رقم #${toArabicDigits(orderNumber)} قيد المراجعة والإعداد.`,
       type: 'order',
       actionPage: isSeller ? 'seller-dashboard' : 'buyer-account',
       actionTab: 'orders',

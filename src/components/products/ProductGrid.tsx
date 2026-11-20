@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { formatArabicNumber } from '../../utils/arabicNumbers';
 
 import {
   BadgeCheck,
@@ -401,8 +402,8 @@ const ProductCard: React.FC<{
           {rating !== null && (
             <span className="flex items-center gap-1 text-espresso dark:text-cream">
               <Star size={12} fill="currentColor" className="text-[#C99444]" />
-              {rating.toFixed(1)}
-              {reviews !== null && <span className="font-medium text-[#8C6F53] dark:text-[#D6C6B1]">({reviews})</span>}
+              {formatArabicNumber(rating, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
+              {reviews !== null && <span className="text-sm font-bold text-[#8C6F53] dark:text-[#D6C6B1]">({formatArabicNumber(reviews)})</span>}
             </span>
           )}
           {oldPrice !== null && price !== null && oldPrice > price && (

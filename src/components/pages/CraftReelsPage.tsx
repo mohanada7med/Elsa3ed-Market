@@ -852,8 +852,8 @@ export const CraftReelsPage: React.FC = () => {
         </button>
       </PageNavigationBar>
 
-      <div className="relative z-10 mx-auto max-w-[1600px] px-4 sm:px-8 lg:px-12 pt-6 sm:pt-8 pb-28 lg:pb-16 space-y-8 sm:space-y-10">
-      <section className="relative z-10 mx-auto max-w-[1700px] px-4 pb-8 pt-0 sm:px-8 sm:pb-14 sm:pt-0 lg:px-12 lg:pb-16 lg:pt-0 xl:px-16">
+      <div className="relative z-10 mx-auto w-full px-4 sm:px-8 lg:px-12 pt-6 sm:pt-8 pb-28 lg:pb-16 space-y-8 sm:space-y-10">
+      <section className="relative z-10 mx-auto w-full px-0 pb-8 pt-0 sm:px-0 sm:pb-14 sm:pt-0 lg:pb-16 lg:pt-0">
   <div className="grid gap-14 lg:grid-cols-[1fr_420px] lg:items-end lg:gap-20">
     <div>
             <h1 className="max-w-6xl text-5xl font-black leading-[0.92] tracking-tight sm:text-7xl lg:text-[8rem] xl:text-[9.5rem]">

@@ -31,6 +31,7 @@ import {
 } from '../../constants/orderFulfillmentStages.ts';
 import { api } from '../../services/api.ts';
 import { RefreshDataButton } from '../common/RefreshDataButton.tsx';
+import { toArabicDigits, toWesternDigits } from '../../utils/arabicNumbers.ts';
 
 function getWhatsAppUrl(phone?: string): string | null {
   if (!phone) return null;
@@ -190,7 +191,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
       addToast('تنبيه', 'خدمة المراسلة قيد التهيئة، انتقل إلى تبويب المراسلات.', 'info');
       return;
     }
-    const greeting = `السلام عليكم ${buyerName || ''}، بخصوص شحن وتوصيل طلبك رقم #${orderNumber || orderId || ''}، أود التنسيق معك على موعد ومكان التسليم المناسب لك.`;
+    const greeting = `السلام عليكم ${buyerName || ''}، بخصوص شحن وتوصيل طلبك رقم #${toArabicDigits(orderNumber || orderId || '')}، أود التنسيق معك على موعد ومكان التسليم المناسب لك.`;
     openChatWithBuyer({
       buyerId,
       orderId,
@@ -234,7 +235,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
 
       addToast(
         'تم تسجيل الشحن المباشر',
-        `تم تجهيز الشحنة بكود المتابعة ${created.trackingNumber} وإشعار المشتري.`,
+        `تم تجهيز الشحنة بكود المتابعة ${toArabicDigits(created.trackingNumber)} وإشعار المشتري.`,
         'success'
       );
 
@@ -322,7 +323,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
       const stage = ORDER_FULFILLMENT_STAGES.find((item) => item.status === status);
       addToast(
         'تم تحديث مرحلة الطلب',
-        `الطلب #${order.orderNumber || order.id} أصبح في مرحلة «${stage?.label || status}» وتم إشعار المشتري.`,
+        `الطلب #${toArabicDigits(order.orderNumber || order.id)} أصبح في مرحلة «${stage?.label || status}» وتم إشعار المشتري.`,
         'success'
       );
     } catch (err: any) {
@@ -412,7 +413,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
         .filter((order) => !['review', 'cancelled', 'delivered'].includes(order.status))
         .filter((order) => {
           if (!searchQuery.trim()) return true;
-          const query = searchQuery.trim().toLowerCase();
+          const query = toWesternDigits(searchQuery.trim()).toLowerCase();
           return (
             order.orderNumber.toLowerCase().includes(query) ||
             order.buyerName.toLowerCase().includes(query)
@@ -466,8 +467,8 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
               <span>جاهز للتنسيق</span>
               <Clock className="w-3.5 h-3.5" />
             </div>
-            <div className="text-xl font-black font-black text-espresso dark:text-cream">
-              {stats.readyForBookingCount}
+            <div className="text-2xl font-black text-espresso dark:text-cream">
+              {stats.readyForBookingCount.toLocaleString('ar-EG')}
             </div>
             <span className="text-[10px] text-black/50 dark:text-white/50">طلبات جديدة ومؤكدة</span>
           </button>
@@ -486,8 +487,8 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
               <span>تم التجهيز</span>
               <FileText className="w-3.5 h-3.5" />
             </div>
-            <div className="text-xl font-black font-black text-espresso dark:text-cream">
-              {stats.bookedCount}
+            <div className="text-2xl font-black text-espresso dark:text-cream">
+              {stats.bookedCount.toLocaleString('ar-EG')}
             </div>
             <span className="text-[10px] text-black/50 dark:text-white/50">شحنات مسجلة</span>
           </button>
@@ -506,8 +507,8 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
               <span>قيد التنسيق</span>
               <Package className="w-3.5 h-3.5" />
             </div>
-            <div className="text-xl font-black font-black text-espresso dark:text-cream">
-              {stats.awaitingPickupCount}
+            <div className="text-2xl font-black text-espresso dark:text-cream">
+              {stats.awaitingPickupCount.toLocaleString('ar-EG')}
             </div>
             <span className="text-[10px] text-black/50 dark:text-white/50">بانتظار التسليم</span>
           </button>
@@ -526,8 +527,8 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
               <span>قيد الشحن والتوصيل</span>
               <Truck className="w-3.5 h-3.5" />
             </div>
-            <div className="text-xl font-black font-black text-espresso dark:text-cream">
-              {stats.inTransitCount}
+            <div className="text-2xl font-black text-espresso dark:text-cream">
+              {stats.inTransitCount.toLocaleString('ar-EG')}
             </div>
             <span className="text-[10px] text-black/50 dark:text-white/50">في الطريق للعميل</span>
           </button>
@@ -546,8 +547,8 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
               <span>تم التسليم</span>
               <CheckCircle2 className="w-3.5 h-3.5" />
             </div>
-            <div className="text-xl font-black font-black text-espresso dark:text-cream">
-              {stats.deliveredCount}
+            <div className="text-2xl font-black text-espresso dark:text-cream">
+              {stats.deliveredCount.toLocaleString('ar-EG')}
             </div>
             <span className="text-[10px] text-black/50 dark:text-white/50">تسليم موثق بنجاح</span>
           </button>
@@ -566,8 +567,8 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
               <span>تعذر أو مرتجع</span>
               <AlertTriangle className="w-3.5 h-3.5" />
             </div>
-            <div className="text-xl font-black font-black text-espresso dark:text-cream">
-              {stats.failedOrReturnedCount}
+            <div className="text-2xl font-black text-espresso dark:text-cream">
+              {stats.failedOrReturnedCount.toLocaleString('ar-EG')}
             </div>
             <span className="text-[10px] text-black/50 dark:text-white/50">تتطلب متابعة الورشة</span>
           </button>
@@ -588,7 +589,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
           <span>مراحل الطلبات</span>
           {ordersInProgress.length > 0 && (
             <span className="px-1.5 py-0.2 bg-amber-500 text-white rounded-full text-[10px] font-black">
-              {ordersInProgress.length}
+              {ordersInProgress.length.toLocaleString('ar-EG')}
             </span>
           )}
         </button>
@@ -602,7 +603,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
               : 'bg-white/60 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/5'
           }`}
         >
-          كل الشحنات المسجلة ({shipments.length})
+          كل الشحنات المسجلة (<strong className="text-sm font-black">{shipments.length.toLocaleString('ar-EG')}</strong>)
         </button>
 
         <button
@@ -617,7 +618,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
           <span>طلبات جاهزة للتنسيق والشحن</span>
           {readyOrders.length > 0 && (
             <span className="px-1.5 py-0.2 bg-amber-500 text-white rounded-full text-[10px] font-black">
-              {readyOrders.length}
+              {readyOrders.length.toLocaleString('ar-EG')}
             </span>
           )}
         </button>
@@ -630,8 +631,8 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
           <Search className="w-4 h-4 text-black/40 dark:text-white/40 absolute right-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            value={toArabicDigits(searchQuery)}
+            onChange={(e) => setSearchQuery(toWesternDigits(e.target.value))}
             placeholder="بحث برقم الطلب، مرجع الشحنة، أو اسم المشتري..."
             className="w-full pl-3 pr-9 py-2 bg-white/80 dark:bg-cream/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary text-espresso dark:text-cream"
           />
@@ -672,7 +673,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <h4 className="text-sm font-bold text-espresso dark:text-cream flex items-center gap-2">
               <Package className="w-4 h-4 text-primary dark:text-primary-hover" />
-              <span>مراحل تجهيز وتوصيل الطلبات ({ordersInProgress.length})</span>
+              <span>مراحل تجهيز وتوصيل الطلبات (<strong className="text-sm font-black">{ordersInProgress.length.toLocaleString('ar-EG')}</strong>)</span>
             </h4>
             <span className="text-xs text-black/50 dark:text-white/50">
               تغيير المرحلة يُحدّث مسار المشتري ويرسل له إشعاراً
@@ -698,13 +699,13 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="font-black font-bold text-sm text-primary dark:text-primary-hover">
-                          #{order.orderNumber || order.id}
+                          #{toArabicDigits(order.orderNumber || order.id)}
                         </span>
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${getOrderStatusBadge(order.status).color}`}>
                           {currentStage?.label || getOrderStatusBadge(order.status).label}
                         </span>
                         <span className="text-xs text-black/60 dark:text-white/60">
-                          المشتري: {order.shippingAddress?.fullName || order.buyerName}
+                          المشتري: {toArabicDigits(order.shippingAddress?.fullName || order.buyerName)}
                         </span>
                       </div>
                       {currentStage && (
@@ -721,16 +722,16 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                           >
                             <img
                               src={item.product.images?.[0] || '/mascot/empty-search.png'}
-                              alt={item.product.title}
+                              alt={toArabicDigits(item.product.title)}
                               className="h-10 w-10 rounded-lg object-cover"
                               loading="lazy"
                             />
                             <div className="min-w-0">
                               <p className="max-w-[200px] truncate text-[11px] font-bold text-espresso dark:text-cream">
-                                {item.product.title}
+                                {toArabicDigits(item.product.title)}
                               </p>
                               <p className="text-[10px] text-black/55 dark:text-white/55">
-                                كود المنتج: #{item.product.id.slice(0, 8)} • الكمية: {item.quantity}
+                                كود المنتج: #{toArabicDigits(item.product.id.slice(0, 8))} • الكمية: <strong className="text-sm font-black">{item.quantity.toLocaleString('ar-EG')}</strong>
                               </p>
                             </div>
                           </div>
@@ -771,7 +772,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <h4 className="text-sm font-bold text-espresso dark:text-cream flex items-center gap-2">
               <Clock className="w-4 h-4 text-amber-500" />
-              <span>طلبات مؤكدة جاهزة للتواصل مع المشتري والشحن ({readyOrders.length})</span>
+              <span>طلبات مؤكدة جاهزة للتواصل مع المشتري والشحن (<strong className="text-sm font-black">{readyOrders.length.toLocaleString('ar-EG')}</strong>)</span>
             </h4>
             <span className="text-xs text-black/50 dark:text-white/50">
               تواصل مع المشتري لتنسيق التسليم ثم اضغط «تسجيل الشحن المباشر»
@@ -805,7 +806,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                       <div>
                         <div className="flex items-center gap-2">
                           <span className="font-black font-bold text-sm text-primary dark:text-primary-hover">
-                            #{ord.orderNumber || ord.id}
+                            #{toArabicDigits(ord.orderNumber || ord.id)}
                           </span>
                           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${getOrderStatusBadge(ord.status).color}`}>
                             {getOrderStatusBadge(ord.status).label}
@@ -887,7 +888,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                             <div className="min-w-0">
                               <p className="truncate text-xs font-bold text-espresso dark:text-cream">{productTitle}</p>
                               <p className="text-[10px] text-black/55 dark:text-white/55">
-                                كود المنتج: #{String(productId).slice(0, 8)} • الكمية: {item.quantity || 1}
+                                كود المنتج: #{toArabicDigits(String(productId).slice(0, 8))} • الكمية: <strong className="text-sm font-black">{(item.quantity || 1).toLocaleString('ar-EG')}</strong>
                               </p>
                             </div>
                           </div>
@@ -916,8 +917,8 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                         <p className="text-black/70 dark:text-white/70 flex items-start gap-1">
                           <MapPin className="w-3.5 h-3.5 text-primary dark:text-primary-hover shrink-0 mt-0.5" />
                           <span>
-                            {ord.shippingAddress?.governorate} - {ord.shippingAddress?.city}
-                            {ord.shippingAddress?.streetAddress ? `، ${ord.shippingAddress.streetAddress}` : ''}
+                            {toArabicDigits(`${ord.shippingAddress?.governorate || ''} - ${ord.shippingAddress?.city || ''}`)}
+                            {ord.shippingAddress?.streetAddress ? `، ${toArabicDigits(ord.shippingAddress.streetAddress)}` : ''}
                           </span>
                         </p>
                       </div>
@@ -957,7 +958,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
           <div className="flex items-center justify-between">
             <h4 className="text-sm font-bold text-espresso dark:text-cream flex items-center gap-2">
               <Truck className="w-4 h-4 text-primary dark:text-primary-hover" />
-              <span>الشحنات المباشرة المسجلة ({displayedShipments.length})</span>
+              <span>الشحنات المباشرة المسجلة (<strong className="text-sm font-black">{displayedShipments.length.toLocaleString('ar-EG')}</strong>)</span>
             </h4>
           </div>
 
@@ -997,11 +998,11 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                       <div>
                         <div className="flex flex-wrap items-center gap-2">
                           <span className="font-black font-bold text-sm text-primary dark:text-primary-hover">
-                            مرجع الشحنة: {shipment.trackingNumber}
+                            مرجع الشحنة: {toArabicDigits(shipment.trackingNumber)}
                           </span>
 
                           <span className="text-xs text-black/60 dark:text-white/60">
-                            (طلب #{shipment.orderNumber})
+                            (طلب #{toArabicDigits(shipment.orderNumber)})
                           </span>
 
                           {/* Shipment Status Badge */}
@@ -1069,7 +1070,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                           className="px-3 py-1.5 text-xs font-bold text-black/70 dark:text-white/70 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 rounded-xl flex items-center gap-1 cursor-pointer transition-colors whitespace-nowrap shrink-0"
                         >
                           <Eye className="w-3 h-3" />
-                          <span>سجل المسار ({shipment.events?.length || 1})</span>
+                          <span>سجل المسار (<strong className="text-sm font-black">{(shipment.events?.length || 1).toLocaleString('ar-EG')}</strong>)</span>
                         </button>
 
                         {/* Update Status Button */}
@@ -1094,16 +1095,16 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                           المستلم والعنوان:
                         </span>
                         <p className="font-medium text-black/80 dark:text-white/80">
-                          {shipment.buyerName}
+                          {toArabicDigits(shipment.buyerName)}
                         </p>
                         <p className="font-black text-black/60 dark:text-white/60 mb-1">
-                          {shipment.buyerPhone}
+                          {toArabicDigits(shipment.buyerPhone)}
                         </p>
                         <p className="text-black/60 dark:text-white/60 flex items-start gap-1">
                           <MapPin className="w-3.5 h-3.5 text-primary dark:text-primary-hover shrink-0 mt-0.5" />
                           <span>
-                            {shipment.shippingAddress?.governorate} - {shipment.shippingAddress?.city}
-                            {shipment.shippingAddress?.streetAddress ? `، ${shipment.shippingAddress.streetAddress}` : ''}
+                            {toArabicDigits(`${shipment.shippingAddress?.governorate || ''} - ${shipment.shippingAddress?.city || ''}`)}
+                            {shipment.shippingAddress?.streetAddress ? `، ${toArabicDigits(shipment.shippingAddress.streetAddress)}` : ''}
                           </span>
                         </p>
                       </div>
@@ -1114,7 +1115,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                           تفاصيل المحتويات وتكلفة الشحن:
                         </span>
                         <p className="text-black/70 dark:text-white/70 line-clamp-2 mb-1">
-                          {shipment.itemsSummary}
+                          {toArabicDigits(shipment.itemsSummary)}
                         </p>
                         <div className="flex items-center gap-2 text-black/60 dark:text-white/60">
                           <span>تكلفة الشحن المسجلة:</span>
@@ -1184,7 +1185,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                         <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
                         <div>
                           <strong>سبب تعذر التسليم أو الارتجاع: </strong>
-                          {shipment.failureReason}
+                          {toArabicDigits(shipment.failureReason)}
                         </div>
                       </div>
                     )}
@@ -1194,7 +1195,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                         <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                         <div>
                           <strong>تأكيد التسليم للمشتري: </strong>
-                          {shipment.proofOfDeliveryNote}
+                          {toArabicDigits(shipment.proofOfDeliveryNote)}
                         </div>
                       </div>
                     )}
@@ -1202,7 +1203,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                     {/* Footer Report Issue Button */}
                     <div className="flex items-center justify-between pt-2 border-t border-black/5 dark:border-white/5 text-xs">
                       <span className="text-[11px] text-black/50 dark:text-white/50">
-                        {shipment.notes ? `ملاحظات: ${shipment.notes}` : 'لا توجد ملاحظات إضافية'}
+                        {shipment.notes ? `ملاحظات: ${toArabicDigits(shipment.notes)}` : 'لا توجد ملاحظات إضافية'}
                       </span>
 
                       <button
@@ -1212,7 +1213,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                             category: 'shipping_issue',
                             orderId: shipment.orderId,
                             orderNumber: shipment.orderNumber,
-                            initialSubject: `مشكلة في شحنة الطلب #${shipment.orderNumber} (${shipment.trackingNumber})`
+                            initialSubject: toArabicDigits(`مشكلة في شحنة الطلب #${shipment.orderNumber} (${shipment.trackingNumber})`)
                           })
                         }
                         className="text-amber-700 dark:text-amber-300 hover:underline flex items-center gap-1 font-bold text-[11px] cursor-pointer"
@@ -1242,7 +1243,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                   تسجيل وتنسيق الشحن المباشر
                 </h4>
                 <p className="text-xs text-black/60 dark:text-white/60 mt-0.5">
-                  طلب #{selectedOrderForBooking.orderNumber || selectedOrderForBooking.id}
+                  طلب #{toArabicDigits(selectedOrderForBooking.orderNumber || selectedOrderForBooking.id)}
                 </p>
               </div>
 
@@ -1299,8 +1300,8 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                 </label>
                 <input
                   type="text"
-                  value={bookingFormData.trackingNumber}
-                  onChange={(e) => setBookingFormData({ ...bookingFormData, trackingNumber: e.target.value })}
+                  value={toArabicDigits(bookingFormData.trackingNumber)}
+                  onChange={(e) => setBookingFormData({ ...bookingFormData, trackingNumber: toWesternDigits(e.target.value) })}
                   placeholder="اختياري — يُولّد كود تلقائي (WAH-...) لو تركته فارغاً"
                   className="w-full px-3.5 py-2.5 bg-white/90 dark:bg-espresso-800 border border-black/15 dark:border-white/15 rounded-xl text-xs font-black font-bold text-espresso dark:text-cream outline-none focus:border-primary"
                 />
@@ -1314,12 +1315,13 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                   </label>
                   <input
                     type="number"
+                    lang="ar-EG"
                     min="0"
                     step="1"
                     value={bookingFormData.actualShippingCost}
                     onChange={(e) => setBookingFormData({ ...bookingFormData, actualShippingCost: Number(e.target.value) })}
                     required
-                    className="w-full px-3.5 py-2.5 bg-white/90 dark:bg-espresso-800 border border-black/15 dark:border-white/15 rounded-xl text-xs font-black font-bold text-espresso dark:text-cream outline-none focus:border-primary"
+                    className="w-full px-3.5 py-2.5 bg-white/90 dark:bg-espresso-800 border border-black/15 dark:border-white/15 rounded-xl text-base font-black text-espresso dark:text-cream outline-none focus:border-primary"
                   />
                 </div>
 
@@ -1329,6 +1331,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                   </label>
                   <input
                     type="date"
+                    lang="ar-EG"
                     value={bookingFormData.bookingDate}
                     onChange={(e) => setBookingFormData({ ...bookingFormData, bookingDate: e.target.value })}
                     required
@@ -1344,6 +1347,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                 </label>
                 <input
                   type="date"
+                  lang="ar-EG"
                   value={bookingFormData.handoverDate}
                   onChange={(e) => setBookingFormData({ ...bookingFormData, handoverDate: e.target.value })}
                   className="w-full px-3.5 py-2.5 bg-white/90 dark:bg-espresso-800 border border-black/15 dark:border-white/15 rounded-xl text-xs font-bold text-espresso dark:text-cream outline-none focus:border-primary"
@@ -1359,7 +1363,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                   rows={2}
                   value={bookingFormData.notes}
                   onChange={(e) => setBookingFormData({ ...bookingFormData, notes: e.target.value })}
-                  placeholder="مثال: تم الاتفاق مع المشتري على التوصيل غداً الساعة 5 مساءً..."
+                  placeholder="مثال: تم الاتفاق مع المشتري على التوصيل غداً الساعة ٥ مساءً..."
                   className="w-full px-3.5 py-2.5 bg-white/90 dark:bg-espresso-800 border border-black/15 dark:border-white/15 rounded-xl text-xs text-espresso dark:text-cream outline-none focus:border-primary resize-none"
                 />
               </div>
@@ -1410,7 +1414,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                   تحديث مسار وحالة الشحنة
                 </h4>
                 <p className="text-xs text-black/60 dark:text-white/60 mt-0.5">
-                  مرجع الشحنة: {selectedShipmentForUpdate.trackingNumber} • شحن مباشر
+                  مرجع الشحنة: {toArabicDigits(selectedShipmentForUpdate.trackingNumber)} • شحن مباشر
                 </p>
               </div>
 
@@ -1454,6 +1458,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                   </label>
                   <input
                     type="date"
+                    lang="ar-EG"
                     value={updateFormData.handoverDate}
                     onChange={(e) => setUpdateFormData({ ...updateFormData, handoverDate: e.target.value })}
                     required
@@ -1561,7 +1566,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                   سجل ومسار التوصيل
                 </h4>
                 <p className="text-xs text-black/60 dark:text-white/60 mt-0.5">
-                  مرجع الشحنة: {selectedShipmentForHistory.trackingNumber} • شحن مباشر
+                  مرجع الشحنة: {toArabicDigits(selectedShipmentForHistory.trackingNumber)} • شحن مباشر
                 </p>
               </div>
 
@@ -1586,7 +1591,7 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                     <div className="bg-black/[0.02] dark:bg-white/[0.02] p-3 rounded-2xl border border-black/5 dark:border-white/5 space-y-1">
                       <div className="flex items-center justify-between gap-2">
                         <span className="font-bold text-xs text-espresso dark:text-cream">
-                          {evt.title}
+                          {toArabicDigits(evt.title)}
                         </span>
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${statusMeta.color}`}>
                           {statusMeta.label}
@@ -1594,17 +1599,17 @@ export const SellerShippingManager: React.FC<SellerShippingManagerProps> = ({
                       </div>
 
                       <p className="text-xs text-black/70 dark:text-white/70 leading-relaxed">
-                        {evt.description}
+                        {toArabicDigits(evt.description)}
                       </p>
 
                       {evt.proofNote && (
                         <p className="text-[11px] text-emerald-700 dark:text-emerald-400 font-bold bg-emerald-500/10 p-1.5 rounded-lg mt-1">
-                          إثبات / توثيق: {evt.proofNote}
+                          إثبات / توثيق: {toArabicDigits(evt.proofNote)}
                         </p>
                       )}
 
                       <div className="flex items-center justify-between text-[10px] text-black/50 dark:text-white/50 pt-1 border-t border-black/5 dark:border-white/5 mt-2">
-                        <span>بواسطة: {evt.actorName} ({evt.source || 'النظام'})</span>
+                        <span>بواسطة: {toArabicDigits(evt.actorName)} ({toArabicDigits(evt.source || 'النظام')})</span>
                         <span className="font-black">{new Date(evt.timestamp).toLocaleString('ar-EG')}</span>
                       </div>
                     </div>

@@ -25,7 +25,6 @@ export const HomePage: React.FC = () => {
       "
     >
       <div className="relative z-10 space-y-3 sm:space-y-6 [&_section]:bg-transparent">
-
         {/* Hero Section (تحميل فوري مباشر) */}
         <HeroSection />
         <PaidPromotionSection position="after-hero" />

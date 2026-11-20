@@ -242,10 +242,10 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
       }
 
       const count = res.recipientsCount || 1;
-      setBroadcastSuccessMessage(`تم بنجاح حفظ الإشعار في MongoDB وتسليمه لـ ${count} مستخدم في الوقت الفعلي!`);
+      setBroadcastSuccessMessage(`تم بنجاح حفظ الإشعار في MongoDB وتسليمه لـ ${count.toLocaleString('ar-EG')} مستخدم في الوقت الفعلي!`);
       addToast(
         'تم إرسال الإشعار بنجاح',
-        `تم تسليم الإشعار لـ ${count} مستخدم وتسجيله في قاعدة البيانات`,
+        `تم تسليم الإشعار لـ ${count.toLocaleString('ar-EG')} مستخدم وتسجيله في قاعدة البيانات`,
         'success'
       );
 
@@ -300,9 +300,9 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
       const diffDays = Math.floor(diffHours / 24);
 
       if (diffMins < 1) return 'الآن';
-      if (diffMins < 60) return `منذ ${diffMins} دقيقة`;
-      if (diffHours < 24) return `منذ ${diffHours} ساعة`;
-      return `منذ ${diffDays} يوم`;
+      if (diffMins < 60) return `منذ ${diffMins.toLocaleString('ar-EG')} دقيقة`;
+      if (diffHours < 24) return `منذ ${diffHours.toLocaleString('ar-EG')} ساعة`;
+      return `منذ ${diffDays.toLocaleString('ar-EG')} يوم`;
     } catch {
       return '';
     }
@@ -634,8 +634,8 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
             <Bell className="w-4 h-4" />
             <span>الإشعارات الواردة</span>
             {unreadCount > 0 && (
-              <span className="px-2 py-0.5 rounded-full text-[10px] bg-primary text-white font-bold">
-                {unreadCount}
+              <span className="px-2 py-0.5 rounded-full text-xs bg-primary text-white font-black">
+                {unreadCount.toLocaleString('ar-EG')}
               </span>
             )}
           </button>
@@ -654,8 +654,8 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
           >
             <History className="w-4 h-4" />
             <span>سجل التنبيهات والإعلانات المرسلة</span>
-            <span className="px-2 py-0.5 rounded-full text-[10px] bg-black/10 dark:bg-cream/10 font-bold">
-              {broadcastHistory.length}
+            <span className="px-2 py-0.5 rounded-full text-xs bg-black/10 dark:bg-cream/10 font-black">
+              {broadcastHistory.length.toLocaleString('ar-EG')}
             </span>
           </button>
         </div>
@@ -753,11 +753,11 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                       <div className="flex items-center gap-4 flex-wrap">
                         <span className="flex items-center gap-1.5">
                           <Users className="w-3.5 h-3.5 text-primary dark:text-primary-hover" />
-                          <span>عدد المستلمين الفعلي: <strong>{recipientsCount}</strong></span>
+                          <span>عدد المستلمين الفعلي: <strong className="text-sm font-black">{recipientsCount.toLocaleString('ar-EG')}</strong></span>
                         </span>
                         <span className="flex items-center gap-1.5">
                           <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
-                          <span>تمت القراءة: <strong>{readCount}</strong> ({readPercentage}%)</span>
+                          <span>تمت القراءة: <strong className="text-sm font-black">{readCount.toLocaleString('ar-EG')}</strong> ({readPercentage.toLocaleString('ar-EG')}٪)</span>
                         </span>
                         {bc.senderName && (
                           <span className="flex items-center gap-1.5">
@@ -806,7 +806,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                 <Bell className="w-4 h-4 text-primary dark:text-primary-hover" />
               </div>
               <span className="text-2xl font-black text-espresso dark:text-cream">
-                {notifications.length} إشعار
+                {notifications.length.toLocaleString('ar-EG')} إشعار
               </span>
               <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">
                 سجل حي محدث تلقائياً
@@ -819,7 +819,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                 <AlertTriangle className="w-4 h-4 text-amber-500" />
               </div>
               <span className="text-2xl font-black text-espresso dark:text-cream">
-                {unreadCount} جديد
+                {unreadCount.toLocaleString('ar-EG')} جديد
               </span>
               <span className="text-[10px] text-black/50 dark:text-white/50 block mt-1 font-medium">
                 تحتاج إلى مراجعة وتدقيق
@@ -832,7 +832,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                 <Package className="w-4 h-4 text-emerald-600" />
               </div>
               <span className="text-2xl font-black text-espresso dark:text-cream">
-                {notifications.filter((n) => n.type === 'new_order').length}
+                {notifications.filter((n) => n.type === 'new_order').length.toLocaleString('ar-EG')}
               </span>
               <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">
                 حركة البيع المباشر
@@ -845,7 +845,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                 <Wallet className="w-4 h-4 text-purple-600" />
               </div>
               <span className="text-2xl font-black text-espresso dark:text-cream">
-                {notifications.filter((n) => n.type.startsWith('payout')).length}
+                {notifications.filter((n) => n.type.startsWith('payout')).length.toLocaleString('ar-EG')}
               </span>
               <span className="text-[10px] text-purple-700 dark:text-purple-400 font-bold block mt-1">
                 حسابات وسحوبات الورش
@@ -866,7 +866,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                     : 'bg-black/5 dark:bg-cream/5 text-black/70 dark:text-white/70 hover:bg-black/10'
                     }`}
                 >
-                  كافة الإشعارات ({notifications.length})
+                  كافة الإشعارات (<strong className="text-sm font-black">{notifications.length.toLocaleString('ar-EG')}</strong>)
                 </button>
                 <button
                   type="button"
@@ -876,7 +876,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                     : 'bg-black/5 dark:bg-cream/5 text-black/70 dark:text-white/70 hover:bg-black/10'
                     }`}
                 >
-                  غير المقروءة ({unreadCount})
+                  غير المقروءة (<strong className="text-sm font-black">{unreadCount.toLocaleString('ar-EG')}</strong>)
                 </button>
                 <button
                   type="button"
@@ -886,7 +886,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                     : 'bg-black/5 dark:bg-cream/5 text-black/70 dark:text-white/70 hover:bg-black/10'
                     }`}
                 >
-                  المقروءة ({notifications.length - unreadCount})
+                  المقروءة (<strong className="text-sm font-black">{(notifications.length - unreadCount).toLocaleString('ar-EG')}</strong>)
                 </button>
               </div>
 
@@ -1044,7 +1044,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                                   {item.productId && (
                                     <p className="text-[10px] text-black/55 dark:text-white/55 font-black">
                                       كود المنتج: #{String(item.productId).slice(0, 8)}
-                                      {item.quantity ? ` • الكمية: ${item.quantity}` : ''}
+                                      {item.quantity ? ` • الكمية: ${item.quantity.toLocaleString('ar-EG')}` : ''}
                                     </p>
                                   )}
                                 </div>
@@ -1407,7 +1407,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                     عنوان الإشعار والتنبيه *
                   </label>
                   <span className="text-[10px] text-black/40 dark:text-white/40 font-black">
-                    {broadcastTitle.length}/150
+                    {broadcastTitle.length.toLocaleString('ar-EG')}/١٥٠
                   </span>
                 </div>
                 <input
@@ -1428,7 +1428,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                     نص الرسالة والتنبيه المفصل *
                   </label>
                   <span className="text-[10px] text-black/40 dark:text-white/40 font-black">
-                    {broadcastMessage.length}/2000
+                    {broadcastMessage.length.toLocaleString('ar-EG')}/٢٠٠٠
                   </span>
                 </div>
                 <textarea

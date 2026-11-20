@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext.tsx';
 import { api } from '../../services/api.ts';
 import type { MediaItem } from '../../types.ts';
 import { getOptimizedVideoUrl, getOptimizedVideoPoster } from '../../utils/cloudinaryMedia.ts';
+import { formatArabicNumber } from '../../utils/arabicNumbers.ts';
 import {
   Upload,
   Link as LinkIcon,
@@ -938,7 +939,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                     </div>
 
                     <p className="text-[10px] text-black/60 dark:text-white/60">
-                      الحجم: {(sf.sizeBytes / (1024 * 1024)).toFixed(2)} ميجابايت • {sf.isVideo ? 'فيديو' : 'صورة'}
+                      الحجم: {formatArabicNumber(sf.sizeBytes / (1024 * 1024), { maximumFractionDigits: 2 })} ميجابايت • {sf.isVideo ? 'فيديو' : 'صورة'}
                     </p>
 
                     <input

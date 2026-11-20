@@ -1,6 +1,7 @@
 import React from 'react';
 import { useApp } from '../../../context/AppContext.tsx';
 import { CraftReel } from '../../../types.ts';
+import { formatArabicNumber } from '../../../utils/arabicNumbers.ts';
 import {
   Heart,
   MessageCircle,
@@ -46,9 +47,9 @@ export const ReelActionButtons: React.FC<ReelActionButtonsProps> = ({
   onRequestDelete
 }) => {
   const formatCount = (count: number) => {
-    if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
-    if (count >= 1000) return `${(count / 1000).toFixed(1)}k`;
-    return count.toString();
+    if (count >= 1000000) return `${formatArabicNumber(count / 1000000, { maximumFractionDigits: 1 })} مليون`;
+    if (count >= 1000) return `${formatArabicNumber(count / 1000, { maximumFractionDigits: 1 })} ألف`;
+    return formatArabicNumber(count);
   };
 
   return (

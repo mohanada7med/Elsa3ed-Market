@@ -23,6 +23,7 @@ import {
 import { api } from '../../services/api.ts';
 import { useApp } from '../../context/AppContext.tsx';
 import type { PayoutRequest, SellerPayoutSummary, PayoutMethod } from '../../types.ts';
+import { toArabicDigits } from '../../utils/arabicNumbers.ts';
 
 interface SellerPayoutsProps {
   user: { id: string; role: string; name?: string; sellerId?: string };
@@ -319,8 +320,8 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
                 `${(summary?.totalEarnings || 0).toLocaleString('ar-EG')} ج.م`
               )}
             </div>
-            <p className="text-xs text-gray-400 dark:text-stone-400 mt-1">
-              إجمالي مبيعات الطلبات المؤكدة ({summary?.totalSalesCount || 0} قطعة)
+            <p className="text-sm font-bold text-gray-400 dark:text-stone-400 mt-1">
+              إجمالي مبيعات الطلبات المؤكدة ({(summary?.totalSalesCount || 0).toLocaleString('ar-EG')} قطعة)
             </p>
           </div>
         </div>
@@ -404,7 +405,7 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
               <div className="text-base font-bold text-gray-900 dark:text-[#FAF6F2] flex items-center gap-2 mt-0.5">
                 <span>{getMethodLabel(summary.payoutInfo.method)}</span>
                 <span className="font-black text-sm bg-gray-100 dark:bg-[#110E0C] border border-gray-200 dark:border-[#352B24] px-2 py-0.5 rounded text-gray-700 dark:text-[#FAF6F2]">
-                  {summary.payoutInfo.account}
+                  {toArabicDigits(summary.payoutInfo.account)}
                 </span>
               </div>
             </div>
@@ -428,7 +429,7 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
             <h2 className="text-lg font-bold text-gray-900 dark:text-[#FAF6F2]">آخر طلبات الصرف</h2>
           </div>
           <span className="text-xs text-gray-400 dark:text-[#A89C90] bg-gray-50 dark:bg-[#110E0C] border border-gray-100 dark:border-[#352B24] px-2.5 py-1 rounded-full">
-            {payouts.length} طلب
+            <span className="text-sm font-black">{payouts.length.toLocaleString('ar-EG')}</span> طلب
           </span>
         </div>
 
@@ -473,7 +474,7 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
                 {payouts.map((payout) => (
                   <tr key={payout.id} className="hover:bg-gray-50/50 dark:hover:bg-[#26201B]/50 transition">
                     <td className="py-3.5 px-4 font-black text-xs font-bold text-gray-700 dark:text-stone-300">
-                      {payout.id}
+                      {toArabicDigits(payout.id)}
                     </td>
                     <td className="py-3.5 px-4 font-bold text-gray-900 dark:text-[#FAF6F2]">
                       {payout.requestedAmount.toLocaleString('ar-EG')} ج.م
@@ -590,14 +591,15 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
                   <div className="relative">
                     <input
                       type="number"
+                      lang="ar-EG"
                       min="1"
                       step="any"
                       max={summary?.availableBalance}
                       value={requestAmount}
                       onChange={(e) => setRequestAmount(e.target.value)}
-                      placeholder="0.00"
+                      placeholder="٠٫٠٠"
                       required
-                      className="w-full px-4 py-2.5 bg-gray-50 dark:bg-[#110E0C] border border-gray-200 dark:border-[#352B24] rounded-xl text-gray-900 dark:text-[#FAF6F2] font-bold focus:ring-2 focus:ring-amber-500 focus:bg-white dark:focus:bg-[#161210] focus:outline-hidden transition"
+                      className="w-full px-4 py-2.5 bg-gray-50 dark:bg-[#110E0C] border border-gray-200 dark:border-[#352B24] rounded-xl text-base text-gray-900 dark:text-[#FAF6F2] font-black focus:ring-2 focus:ring-amber-500 focus:bg-white dark:focus:bg-[#161210] focus:outline-hidden transition"
                     />
                     <span className="absolute left-3 top-2.5 text-xs text-gray-400 dark:text-stone-400 font-medium">ج.م</span>
                   </div>
@@ -608,30 +610,30 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
                     <button
                       type="button"
                       onClick={() => handlePercentageClick(0.25)}
-                      className="text-xs px-2 py-1 bg-gray-100 dark:bg-[#2C2420] hover:bg-gray-200 dark:hover:bg-[#352B24] rounded-lg text-gray-700 dark:text-stone-300 transition font-medium cursor-pointer"
+                      className="text-sm px-2 py-1 bg-gray-100 dark:bg-[#2C2420] hover:bg-gray-200 dark:hover:bg-[#352B24] rounded-lg text-gray-700 dark:text-stone-300 transition font-bold cursor-pointer"
                     >
-                      25%
+                      ٢٥٪
                     </button>
                     <button
                       type="button"
                       onClick={() => handlePercentageClick(0.5)}
-                      className="text-xs px-2 py-1 bg-gray-100 dark:bg-[#2C2420] hover:bg-gray-200 dark:hover:bg-[#352B24] rounded-lg text-gray-700 dark:text-stone-300 transition font-medium cursor-pointer"
+                      className="text-sm px-2 py-1 bg-gray-100 dark:bg-[#2C2420] hover:bg-gray-200 dark:hover:bg-[#352B24] rounded-lg text-gray-700 dark:text-stone-300 transition font-bold cursor-pointer"
                     >
-                      50%
+                      ٥٠٪
                     </button>
                     <button
                       type="button"
                       onClick={() => handlePercentageClick(0.75)}
-                      className="text-xs px-2 py-1 bg-gray-100 dark:bg-[#2C2420] hover:bg-gray-200 dark:hover:bg-[#352B24] rounded-lg text-gray-700 dark:text-stone-300 transition font-medium cursor-pointer"
+                      className="text-sm px-2 py-1 bg-gray-100 dark:bg-[#2C2420] hover:bg-gray-200 dark:hover:bg-[#352B24] rounded-lg text-gray-700 dark:text-stone-300 transition font-bold cursor-pointer"
                     >
-                      75%
+                      ٧٥٪
                     </button>
                     <button
                       type="button"
                       onClick={() => handlePercentageClick(1.0)}
-                      className="text-xs px-2 py-1 bg-amber-100 dark:bg-amber-950/60 hover:bg-amber-200 dark:hover:bg-amber-900/60 rounded-lg text-amber-900 dark:text-amber-300 transition font-medium cursor-pointer"
+                      className="text-sm px-2 py-1 bg-amber-100 dark:bg-amber-950/60 hover:bg-amber-200 dark:hover:bg-amber-900/60 rounded-lg text-amber-900 dark:text-amber-300 transition font-bold cursor-pointer"
                     >
-                      الكل (100%)
+                      الكل (١٠٠٪)
                     </button>
                   </div>
                 </div>
@@ -643,7 +645,7 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
                     {getMethodIcon(summary.payoutInfo?.method)}
                     <span>{getMethodLabel(summary.payoutInfo?.method)}</span>
                     <span className="font-black bg-white dark:bg-[#110E0C] px-2 py-0.5 rounded border border-gray-200 dark:border-[#352B24] text-gray-800 dark:text-[#FAF6F2]">
-                      {summary.payoutInfo?.account}
+                      {summary.payoutInfo?.account ? toArabicDigits(summary.payoutInfo.account) : ''}
                     </span>
                   </div>
                 </div>
@@ -713,7 +715,7 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
             <div className="flex items-center justify-between border-b border-gray-100 dark:border-[#352B24] pb-3">
               <div className="flex items-center gap-2 font-bold text-gray-900 dark:text-[#FAF6F2] text-base">
                 <FileText className="w-5 h-5 text-amber-600" />
-                <span>تفاصيل طلب الصرف #{selectedPayout.id}</span>
+                <span>تفاصيل طلب الصرف #{toArabicDigits(selectedPayout.id)}</span>
               </div>
               <button
                 onClick={() => setSelectedPayout(null)}
