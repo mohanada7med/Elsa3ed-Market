@@ -44,7 +44,7 @@ export const WAHBadge: React.FC<WAHBadgeProps> = ({
 
   return (
     <span
-      className={`inline-flex items-center font-bold tracking-tight rounded-md select-none ${sizeClasses} ${variantClasses[variant]} ${className}`}
+      className={`inline-flex items-center font-bold rounded-md select-none ${sizeClasses} ${variantClasses[variant]} ${className}`}
     >
       {renderedIcon && <span className="shrink-0">{renderedIcon}</span>}
       <span>{children}</span>

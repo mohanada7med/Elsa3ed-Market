@@ -24,16 +24,22 @@ export interface VideoOptimizationOptions {
 /**
  * Check if a URL or filename points to a video
  */
+const IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.avif', '.gif'];
+
 export function isVideoUrl(url?: string | null): boolean {
   if (!url || typeof url !== 'string') return false;
   const lower = url.trim().toLowerCase();
-  
+  const cleanPath = lower.split('?')[0].split('#')[0];
+
+  // Cloudinary video-frame posters live under /video/upload/...jpg — never misclassify images as videos
+  if (IMAGE_EXTENSIONS.some((ext) => cleanPath.endsWith(ext))) {
+    return false;
+  }
+
   if (lower.includes('/video/upload/') || lower.includes('resource_type=video')) {
     return true;
   }
-  
-  // Strip query parameters and hashes before checking extension
-  const cleanPath = lower.split('?')[0].split('#')[0];
+
   return VIDEO_EXTENSIONS.some((ext) => cleanPath.endsWith(ext));
 }
 
@@ -71,16 +77,17 @@ export function getOptimizedVideoUrl(
 
   try {
     let result = trimmed;
+    const forceMp4 = options?.forceMp4 !== false;
+    const isMovOrQuicktime = /\.(mov|m4v|mkv|avi)(\?.*)?$/i.test(result);
 
     // Normalize QuickTime / raw mobile video extensions to .mp4 for universal browser playback
-    const forceMp4 = options?.forceMp4 !== false;
-    if (forceMp4 && (result.endsWith('.mov') || result.endsWith('.MOV') || result.endsWith('.webm') || result.endsWith('.m4v'))) {
-      result = result.replace(/\.[a-zA-Z0-9]+$/, '.mp4');
+    if (forceMp4 && /\.(mov|webm|m4v|mkv|avi)(\?.*)?$/i.test(result)) {
+      result = result.replace(/\.[a-zA-Z0-9]+(\?.*)?$/, '.mp4');
     }
 
-    // Prepare transformation string (f_auto, q_auto with responsive dimensions)
+    // Prepare transformation string (use explicit H.264 MP4 when transcoding .mov or forceMp4 is requested)
     // Note: fl_faststart is intentionally excluded as it triggers 'Invalid flag in transformation: faststart' on this Cloudinary configuration
-    const parts: string[] = ['f_auto'];
+    const parts: string[] = isMovOrQuicktime ? ['f_mp4', 'vc_h264'] : ['f_auto'];
     if (options?.qualityMode === 'eco') {
       parts.push('q_auto:eco');
     } else {
@@ -102,8 +109,14 @@ export function getOptimizedVideoUrl(
       // Strip any invalid or legacy fl_faststart flags
       suffix = suffix.replace(/,?fl_faststart,?/g, '').replace(/\/+/g, '/');
 
-      // Check if already transformed with f_auto or q_auto
-      if (suffix.startsWith('f_auto') || suffix.includes('/f_auto') || suffix.includes('q_auto')) {
+      // Check if already transformed with f_auto, f_mp4, or q_auto
+      if (
+        suffix.startsWith('f_auto') ||
+        suffix.startsWith('f_mp4') ||
+        suffix.includes('/f_auto') ||
+        suffix.includes('/f_mp4') ||
+        suffix.includes('q_auto')
+      ) {
         result = `${prefix}${suffix}`;
         videoUrlCache.set(cacheKey, result);
         return result;
@@ -171,7 +184,7 @@ export function getOptimizedVideoPoster(
         let suffix = derivedPoster.substring(uploadIndex + '/video/upload/'.length);
 
         // Remove any existing transformations in suffix if starting with parameters
-        if (suffix.startsWith('f_auto') || suffix.startsWith('so_') || suffix.startsWith('w_') || suffix.startsWith('q_')) {
+        if (/^(f_|vc_|so_|w_|h_|q_|c_|t_)/.test(suffix)) {
           const nextSlash = suffix.indexOf('/');
           if (nextSlash !== -1) {
             suffix = suffix.substring(nextSlash + 1);
@@ -179,7 +192,7 @@ export function getOptimizedVideoPoster(
         }
 
         // Change video extension (.mov, .mp4, etc.) to .jpg
-        suffix = suffix.replace(/\.[a-zA-Z0-9]+$/, '.jpg');
+        suffix = suffix.replace(/\.[a-zA-Z0-9]+(\?.*)?$/, '.jpg');
 
         derivedPoster = `${prefix}so_1.0,f_auto,q_auto,w_${width},c_limit/${suffix}`;
         posterUrlCache.set(cacheKey, derivedPoster);

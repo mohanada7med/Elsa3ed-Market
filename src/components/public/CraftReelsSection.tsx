@@ -156,8 +156,9 @@ export const CraftReelsSection: React.FC = () => {
       craftReelsService
         .fetchReelsFromDb()
         .then((fresh) => {
-          if (Array.isArray(fresh) && fresh.length > 0) {
+          if (Array.isArray(fresh)) {
             setReels(fresh);
+            setActiveIndex((prev) => (fresh.length > 0 ? Math.min(prev, fresh.length - 1) : 0));
           }
         })
         .catch(() => { });
@@ -189,9 +190,8 @@ export const CraftReelsSection: React.FC = () => {
   /* ================= MEDIA GETTERS ================= */
 
   const getVideo = useCallback((reel: CraftReel) => {
-    const raw =
-      reel.videoUrl ||
-      'https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-potter-shaping-a-clay-vase-41717-large.mp4';
+    const raw = reel.videoUrl || '';
+    if (!raw) return '';
     return (
       getOptimizedVideoUrl(raw, {
         maxDimension: 720,

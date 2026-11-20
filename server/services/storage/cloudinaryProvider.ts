@@ -175,7 +175,18 @@ export class CloudinaryStorageProvider implements IStorageProvider {
     let publicId: string;
     let shouldOverwrite = false;
 
-    if (isVideo || (folder as string) === 'reels' || (folder as string) === 'videos') {
+    if ((folder as string) === 'reels') {
+      // All Reels uploads (Reels page, Sellers, Admin) are stored centrally in WAH/reels
+      cloudinaryFolder = 'WAH/reels';
+      const cleanFilename = filename.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_');
+      const uniqueSuffix = `${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+      const sellerTag =
+        options.role === 'seller' && options.sellerId
+          ? `${options.sellerId.replace(/[^a-zA-Z0-9_-]/g, '_')}_`
+          : '';
+      publicId = `${sellerTag}${cleanFilename}_${uniqueSuffix}`;
+      shouldOverwrite = false;
+    } else if (isVideo || (folder as string) === 'videos') {
       if (options.role === 'admin' && !options.sellerId) {
         // Admin video uploads go to dedicated WAH videos folder
         cloudinaryFolder = 'WAH/videos';
@@ -224,6 +235,7 @@ export class CloudinaryStorageProvider implements IStorageProvider {
     try {
       const uploadOptions: any = {
         folder: cloudinaryFolder,
+        asset_folder: cloudinaryFolder,
         public_id: publicId,
         overwrite: shouldOverwrite,
         invalidate: true
@@ -298,6 +310,7 @@ export class CloudinaryStorageProvider implements IStorageProvider {
 
     const isVideo =
       fileKey.includes('/reels/') ||
+      fileKey.startsWith('WAH/reels/') ||
       fileKey.includes('/videos/') ||
       fileKey.startsWith('WAH/videos/') ||
       fileKey.includes('video') ||
@@ -380,10 +393,14 @@ export class CloudinaryStorageProvider implements IStorageProvider {
       folder = 'WAH/videos';
     }
 
-    const rawFilename = options.filename || 'place_video';
+    const rawFilename = options.filename || 'reel_video';
     const cleanFilename = sanitizeSlug(rawFilename.replace(/\.[^/.]+$/, '')) || 'video';
     const uniqueSuffix = `${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
-    const publicId = `${cleanFilename}_${uniqueSuffix}`;
+    const sellerPrefix =
+      folder === 'WAH/reels' && options.role === 'seller' && options.sellerId
+        ? `${options.sellerId.replace(/[^a-zA-Z0-9_-]/g, '_')}_`
+        : '';
+    const publicId = `${sellerPrefix}${cleanFilename}_${uniqueSuffix}`;
 
     const timestamp = Math.round(new Date().getTime() / 1000);
 

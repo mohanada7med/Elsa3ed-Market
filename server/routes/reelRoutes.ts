@@ -50,26 +50,67 @@ const videoMulter = multer({
   }
 });
 
+function isNonPlayableVideoUrl(url?: string | null): boolean {
+  if (!url || typeof url !== 'string') return true;
+  const trimmed = url.trim().toLowerCase();
+  if (!trimmed || trimmed.startsWith('blob:')) return true;
+  // Reject HTML video pages (YouTube / Vimeo / Facebook / TikTok) that cannot play in HTML5 <video>
+  if (
+    trimmed.includes('youtube.com/watch') ||
+    trimmed.includes('youtu.be/') ||
+    trimmed.includes('youtube.com/embed/') ||
+    trimmed.includes('youtube.com/shorts/')
+  ) {
+    return true;
+  }
+  return false;
+}
+
 /**
- * Normalizes reel video and poster URLs for optimal delivery.
- * Automatically fixes historical database records where posterUrl mistakenly pointed to raw .mov video.
+ * Normalizes reel video and poster URLs for universal mobile/desktop playback.
+ * - Transcodes raw Cloudinary .mov / .m4v / .webm uploads into H.264 MP4 (f_mp4,vc_h264,q_auto,w_720,c_limit).
+ * - Safely derives JPEG poster frames without duplicating transformation segments.
  */
 function normalizeReelMedia(reel: CraftReelDocument): CraftReelDocument {
   if (!reel) return reel;
-  const videoUrl = reel.videoUrl || '';
-  let posterUrl = reel.posterUrl || '';
+  let videoUrl = (reel.videoUrl || '').trim();
+  let posterUrl = (reel.posterUrl || '').trim();
+
+  if (videoUrl.includes('res.cloudinary.com') && videoUrl.includes('/video/upload/')) {
+    const uploadIdx = videoUrl.indexOf('/video/upload/');
+    const prefix = videoUrl.slice(0, uploadIdx + '/video/upload/'.length);
+    let rest = videoUrl.slice(uploadIdx + '/video/upload/'.length);
+
+    // Strip invalid legacy fl_faststart flag if present
+    rest = rest.replace(/,?fl_faststart,?/g, '').replace(/\/+/g, '/');
+
+    const hasTransform = /^(f_|q_|w_|h_|c_|vc_|so_|t_)/.test(rest);
+    const isRawMovOrUnsupported = /\.(mov|m4v|mkv|avi)(\?.*)?$/i.test(rest);
+
+    if (isRawMovOrUnsupported) {
+      const cleanRest = hasTransform && rest.includes('/') ? rest.slice(rest.indexOf('/') + 1) : rest;
+      const mp4Rest = cleanRest.replace(/\.[a-zA-Z0-9]+(\?.*)?$/, '.mp4');
+      videoUrl = `${prefix}f_mp4,vc_h264,q_auto,w_720,c_limit/${mp4Rest}`;
+    } else if (!hasTransform) {
+      videoUrl = `${prefix}f_auto,q_auto,w_720,c_limit/${rest}`;
+    } else {
+      videoUrl = `${prefix}${rest}`;
+    }
+  }
 
   const isPosterVideo =
     posterUrl &&
-    (posterUrl.endsWith('.mov') ||
-      posterUrl.endsWith('.MOV') ||
-      posterUrl.endsWith('.mp4') ||
-      posterUrl.endsWith('.webm'));
+    /\.(mov|mp4|webm|m4v)(\?.*)?$/i.test(posterUrl);
 
-  if ((!posterUrl || isPosterVideo) && videoUrl && videoUrl.includes('/video/upload/')) {
-    posterUrl = videoUrl
-      .replace('/video/upload/', '/video/upload/so_0,f_auto,q_auto,w_800,c_limit/')
-      .replace(/\.[^/.]+$/, '.jpg');
+  if ((!posterUrl || isPosterVideo) && videoUrl.includes('res.cloudinary.com') && videoUrl.includes('/video/upload/')) {
+    const uploadIdx = videoUrl.indexOf('/video/upload/');
+    const prefix = videoUrl.slice(0, uploadIdx + '/video/upload/'.length);
+    let rest = videoUrl.slice(uploadIdx + '/video/upload/'.length);
+    // Strip existing video transformation segment before injecting poster transform
+    if (/^(f_|q_|w_|h_|c_|vc_|so_|t_)/.test(rest) && rest.includes('/')) {
+      rest = rest.slice(rest.indexOf('/') + 1);
+    }
+    posterUrl = `${prefix}so_1.0,f_auto,q_auto,w_720,c_limit/${rest.replace(/\.[^/.?]+(\?.*)?$/, '.jpg')}`;
   }
 
   return {
@@ -230,72 +271,14 @@ router.get('/', async (req, res: Response) => {
       reels = memoryList;
     }
 
-    // تضمين فيديوهات الأماكن التراثية فقط في خلاصة الريلز الشاملة عند عدم وجود فلتر لبائع محدد
-    if (!rawSellerId) {
-      try {
-        let placeVideosList: any[] = [];
-        if (isMongo && db) {
-          placeVideosList = await db.collection('wah_heritage_places').find({
-            $or: [
-              { videoUrl: { $exists: true, $ne: null, $nin: ['', 'null'] } },
-              { videos: { $exists: true, $not: { $size: 0 } } }
-            ]
-          }).toArray();
-        } else {
-          placeVideosList = memoryDb.heritagePlaces.filter((p) => p.videoUrl || (p.videos && p.videos.length > 0));
-        }
-
-        for (const place of placeVideosList) {
-          const vUrl = place.videoUrl || place.videos?.[0];
-          if (!vUrl || !vUrl.trim()) continue;
-
-          const cleanVUrl = vUrl.trim();
-          const normKey = cleanVUrl.split('?')[0].toLowerCase();
-          const alreadyExists = reels.some((r) => (r.videoUrl || '').split('?')[0].toLowerCase() === normKey);
-
-          if (!alreadyExists) {
-            let poster = place.coverImage || place.imageUrl || '';
-            if ((!poster || poster.endsWith('.mp4') || poster.endsWith('.mov')) && cleanVUrl.includes('/video/upload/')) {
-              poster = cleanVUrl
-                .replace('/video/upload/', '/video/upload/so_0,f_auto,q_auto,w_800,c_limit/')
-                .replace(/\.[^/.]+$/, '.jpg');
-            }
-            const placeReel: CraftReelDocument = {
-              id: `reel-place-${place.id || place.slug}`,
-              title: place.title || place.name || 'معلم أثري وتراثي',
-              contentType: 'heritage_site',
-              location: place.location || place.city || place.governorate || 'مصر',
-              artisanName: 'توثيق تراثي',
-              artisanAvatar: poster || undefined,
-              workshopName: place.title || place.name || '',
-              governorate: place.governorate || 'الصعيد',
-              craftType: 'معلم أثري وتراثي',
-              videoUrl: cleanVUrl,
-              posterUrl: poster || '',
-              duration: '0:30',
-              likesCount: place.likesCount || 15,
-              viewsCount: place.viewsCount || 120,
-              sharesCount: 6,
-              description: place.description || place.shortDescription || `جولة توثيقية في رحاب ${place.title || place.name}`,
-              hashtags: ['#تراث_الصعيد', '#معالم_مصر', `#${(place.governorate || 'مصر').replace(/\s+/g, '_')}`],
-              isFeatured: true,
-              createdAt: place.createdAt || new Date().toISOString()
-            };
-            reels.push(placeReel);
-          }
-        }
-      } catch (placeReelErr) {
-        Logger.warn('[Reels] Error integrating place videos:', placeReelErr);
-      }
-    }
-
-    // تنقية وفلترة الريلز لمنع أي تكرار للفيديوهات نهائياً
+    // تنقية وفلترة الريلز: استبعاد أي روابط غير قابلة للتشغيل أو أي ريلز قديمة مرتبطة بالمعالم ومنع التكرار نهائياً
     const seenVideoUrls = new Set<string>();
     const seenReelIds = new Set<string>();
     const uniqueReels: CraftReelDocument[] = [];
 
     for (const r of reels) {
-      if (!r || !r.videoUrl || !r.videoUrl.trim()) continue;
+      if (!r || isNonPlayableVideoUrl(r.videoUrl)) continue;
+      if (r.id && r.id.startsWith('reel-place-')) continue;
       if (rawSellerId && (!r.sellerId || !sellerTargetIds.includes(r.sellerId))) {
         continue;
       }
@@ -388,7 +371,8 @@ const handleUploadSignature = async (req: AuthenticatedRequest, res: Response) =
     const signatureData = cloudinaryStorage.generateVideoUploadSignature({
       role: user.role,
       sellerId: effectiveSellerId,
-      filename: rawFilename
+      filename: rawFilename,
+      folder: 'WAH/reels'
     });
 
     Logger.info(`[Reels] Generated direct upload signature for ${user.role} (Owner: ${effectiveSellerId || 'admin'}, Folder: ${signatureData.folder})`);
@@ -535,7 +519,7 @@ router.post(
         data: uploadData,
         filename,
         mimeType,
-        folder: 'videos',
+        folder: 'reels',
         resourceType: 'video',
         sellerId: effectiveSellerId,
         role: user.role,
@@ -546,7 +530,7 @@ router.post(
 
       res.status(201).json({
         success: true,
-        message: `تم رفع الفيديو بنجاح وحفظه (${user.role === 'seller' ? 'مجلد الحرفي' : 'مجلد الإدارة'})`,
+        message: 'تم رفع الفيديو بنجاح وحفظه في مجلد الريلز السحابي',
         data: {
           url: uploadResult.url,
           fileKey: uploadResult.fileKey,
@@ -771,12 +755,12 @@ router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =
       });
     }
 
-    // Critical: strictly forbid saving temporary blob URLs in MongoDB or DB
-    if (videoUrl.trim().startsWith('blob:')) {
+    // Critical: strictly forbid saving temporary blob URLs or non-playable webpage URLs (e.g. YouTube)
+    if (isNonPlayableVideoUrl(videoUrl)) {
       return res.status(400).json({
         success: false,
-        error: 'مينفعش نحفظ رابط فيديو مؤقت، اتأكد إن الفيديو ارفع مظبوط على السحابة الأول',
-        code: 'INVALID_BLOB_URL'
+        error: 'مينفعش نحفظ رابط فيديو مؤقت أو رابط صفحة خارجية، ارفع ملف الفيديو الحقيقي نفسه على السحابة',
+        code: 'INVALID_VIDEO_URL'
       });
     }
 
@@ -939,11 +923,11 @@ router.put('/:id', requireAuth, async (req: AuthenticatedRequest, res: Response)
     // Check videoUrl update and clean up old Cloudinary asset if replaced
     if (updates.videoUrl !== undefined) {
       const newVideoUrl = updates.videoUrl.trim();
-      if (newVideoUrl.startsWith('blob:')) {
+      if (isNonPlayableVideoUrl(newVideoUrl)) {
         return res.status(400).json({
           success: false,
-          error: 'لا يمكن حفظ رابط blob مؤقت في قاعدة البيانات',
-          code: 'INVALID_BLOB_URL'
+          error: 'لا يمكن حفظ رابط مؤقت أو غير قابل للتشغيل في قاعدة البيانات',
+          code: 'INVALID_VIDEO_URL'
         });
       }
       sanitizedUpdates.videoUrl = newVideoUrl;
@@ -1307,13 +1291,8 @@ router.post('/:id/like', requireAuth, async (req: AuthenticatedRequest, res: Res
           { id: reelId },
           { $inc: { likesCount: 1 } }
         );
-        await db.collection('wah_heritage_places').updateOne(
-          { id: reelId },
-          { $inc: { likesCount: 1 } }
-        );
 
-        const doc = await db.collection('reels').findOne({ id: reelId }) ||
-                    await db.collection('wah_heritage_places').findOne({ id: reelId });
+        const doc = await db.collection('reels').findOne({ id: reelId });
         newLikesCount = doc?.likesCount || 1;
       }
 
@@ -1337,13 +1316,8 @@ router.post('/:id/like', requireAuth, async (req: AuthenticatedRequest, res: Res
           { id: reelId, likesCount: { $gt: 0 } },
           { $inc: { likesCount: -1 } }
         );
-        await db.collection('wah_heritage_places').updateOne(
-          { id: reelId, likesCount: { $gt: 0 } },
-          { $inc: { likesCount: -1 } }
-        );
 
-        const doc = await db.collection('reels').findOne({ id: reelId }) ||
-                    await db.collection('wah_heritage_places').findOne({ id: reelId });
+        const doc = await db.collection('reels').findOne({ id: reelId });
         newLikesCount = Math.max(0, doc?.likesCount || 0);
       }
 
@@ -1363,8 +1337,7 @@ router.post('/:id/like', requireAuth, async (req: AuthenticatedRequest, res: Res
     } else {
       // No-op / Idempotent
       if (isMongo && db) {
-        const doc = await db.collection('reels').findOne({ id: reelId }) ||
-                    await db.collection('wah_heritage_places').findOne({ id: reelId });
+        const doc = await db.collection('reels').findOne({ id: reelId });
         newLikesCount = Math.max(0, doc?.likesCount || 0);
       } else {
         const memReel = memoryDb.reels.find((r) => r.id === reelId);

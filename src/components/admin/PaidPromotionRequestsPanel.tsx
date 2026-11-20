@@ -402,7 +402,7 @@ const PromotionRequestCard: React.FC<PromotionRequestCardProps> = ({
                 {sellerGov}
               </span>
             )}
-            <span className="text-[11px] text-foreground-secondary font-mono">
+            <span className="text-[11px] text-foreground-secondary wah-num">
               تاريخ الطلب: {new Date(request.createdAt).toLocaleDateString('ar-EG')}
             </span>
           </div>

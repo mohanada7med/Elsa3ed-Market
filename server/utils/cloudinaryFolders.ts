@@ -26,6 +26,7 @@ export const WAH_TOP_LEVEL_FOLDERS = [
   'people',
   'events',
   'heritage-places',
+  'reels',
   'videos',
   'galleries',
   'general'
@@ -119,11 +120,11 @@ export const CLOUDINARY_ENTITY_FOLDER_MAP: Record<string, WahTopLevelFolder> = {
   place: 'heritage-places',
   places: 'heritage-places',
 
-  // Videos
+  // Reels & Videos
   video: 'videos',
   videos: 'videos',
-  reel: 'videos',
-  reels: 'videos',
+  reel: 'reels',
+  reels: 'reels',
 
   // Galleries
   gallery: 'galleries',
@@ -240,7 +241,12 @@ export function getCloudinaryFolder(
   const cleanSlug = sanitizeSlug(entitySlug);
   const cleanSubfolder = sanitizeSlug(subfolder);
 
-  // If this is a video or explicitly requested as video, route into WAH/videos folder tree (d03b8e1b5e8938e80e3e4205e905206b0e)
+  // Reels live in their own dedicated top-level folder: WAH/reels
+  if (folderName === 'reels') {
+    return `${WAH_ROOT_FOLDER}/reels`;
+  }
+
+  // If this is a video or explicitly requested as video, route into WAH/videos folder tree
   if (resourceType === 'video' || folderName === 'videos') {
     const videoParts = [WAH_ROOT_FOLDER, 'videos'];
     if (folderName !== 'videos') {

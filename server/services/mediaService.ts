@@ -356,9 +356,6 @@ export async function unbindMediaFromOtherEntities(
           updateDoc.$set.imageUrl = remainingGallery[0] || null;
         }
         await db.collection('wah_heritage_places').updateOne({ _id: p._id }, updateDoc);
-        if (targets.includes(p.videoUrl)) {
-          await removeEntityReel({ entityId: p.id, videoUrl: p.videoUrl });
-        }
       }
     }
 
@@ -387,12 +384,6 @@ export async function unbindMediaFromOtherEntities(
       if (p.coverImage && targets.includes(p.coverImage)) {
         p.coverImage = p.gallery?.[0] || '';
         (p as any).imageUrl = p.coverImage;
-        modified = true;
-      }
-      if (modified) {
-        memoryDb.reels = memoryDb.reels.filter(
-          (r) => r.id !== `reel-place-${p.id}` && !targets.includes(r.videoUrl)
-        );
       }
     }
   } catch (err) {
@@ -401,10 +392,10 @@ export async function unbindMediaFromOtherEntities(
 }
 
 /**
- * Synchronizes a place video with the global Reels feed.
- * Ensures the video appears in Reels without duplicates.
+ * Reels are intentionally independent from heritage places, people, events, and cultural entities.
+ * Kept as a safe no-op to preserve export compatibility without coupling entity videos to Reels.
  */
-export async function syncEntityReel(params: {
+export async function syncEntityReel(_params: {
   entityType?: string;
   entityId?: string;
   entitySlug?: string;
@@ -415,126 +406,18 @@ export async function syncEntityReel(params: {
   description?: string;
   coverImage?: string;
 }): Promise<void> {
-  try {
-    const { videoUrl, entityType, entityId, entitySlug } = params;
-    if (!videoUrl || !videoUrl.trim()) return;
-    const cleanUrl = videoUrl.trim();
-    const publicId = params.publicId || extractCloudinaryPublicId(cleanUrl) || undefined;
-
-    const { db, isMongo } = await getDatabase();
-    let entityDoc: any = null;
-    const targetKey = entityId || entitySlug;
-
-    if (entityType === 'heritage-place' || !entityType || entityType === 'place') {
-      if (isMongo && db && targetKey) {
-        entityDoc = await db.collection('wah_heritage_places').findOne(buildEntityFilter(targetKey, entitySlug));
-      }
-      if (!entityDoc && targetKey) {
-        entityDoc = memoryDb.heritagePlaces.find((p) => p.id === targetKey || p.slug === targetKey);
-      }
-    } else if (entityType === 'cultural-craft' || entityType === 'craft') {
-      if (isMongo && db && targetKey) {
-        entityDoc = await db.collection('wah_cultural_crafts').findOne(buildEntityFilter(targetKey, entitySlug));
-      }
-      if (!entityDoc && targetKey) {
-        entityDoc = memoryDb.culturalCrafts.find((c) => c.id === targetKey || c.slug === targetKey);
-      }
-    }
-
-    const placeId = entityDoc?.id || entityId || entitySlug || 'place';
-    const reelId = `reel-place-${placeId}`;
-    const placeTitle = entityDoc?.title || entityDoc?.name || params.title || 'معلم أثري وتراثي';
-    const placeCover = entityDoc?.coverImage || entityDoc?.imageUrl || params.coverImage || '';
-    const placeGov = entityDoc?.governorate || 'الصعيد';
-    const placeLoc = entityDoc?.location || entityDoc?.city || placeGov || 'مصر';
-
-    let poster = placeCover;
-    if ((!poster || poster.endsWith('.mp4') || poster.endsWith('.mov')) && cleanUrl.includes('/video/upload/')) {
-      poster = cleanUrl
-        .replace('/video/upload/', '/video/upload/so_0,f_auto,q_auto,w_800,c_limit/')
-        .replace(/\.[^/.]+$/, '.jpg');
-    }
-
-    const reelDoc: any = {
-      id: reelId,
-      title: placeTitle,
-      contentType: 'heritage_site',
-      location: placeLoc,
-      artisanName: 'توثيق تراثي',
-      artisanAvatar: poster || undefined,
-      workshopName: placeTitle,
-      governorate: placeGov,
-      craftType: 'معلم أثري وتراثي',
-      videoUrl: cleanUrl,
-      cloudinaryPublicId: publicId,
-      posterUrl: poster || '',
-      duration:
-        typeof params.duration === 'string'
-          ? params.duration
-          : params.duration
-            ? `${Math.floor(params.duration / 60)}:${Math.floor(params.duration % 60).toString().padStart(2, '0')}`
-            : '0:30',
-      likesCount: entityDoc?.likesCount || 15,
-      viewsCount: entityDoc?.viewsCount || 120,
-      sharesCount: 6,
-      description:
-        entityDoc?.description || entityDoc?.shortDescription || params.description || `جولة توثيقية في رحاب ${placeTitle}`,
-      hashtags: ['#تراث_الصعيد', '#معالم_مصر', `#${placeGov.replace(/\s+/g, '_')}`],
-      isFeatured: true,
-      createdAt: entityDoc?.createdAt || new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-
-    if (isMongo && db) {
-      // Delete any reel already matching this videoUrl or reelId to avoid duplicates
-      await db.collection('reels').deleteMany({
-        $or: [{ id: reelId }, { videoUrl: cleanUrl }]
-      });
-      await db.collection('reels').insertOne(reelDoc);
-    }
-
-    // Memory DB sync without duplicates
-    memoryDb.reels = memoryDb.reels.filter((r) => r.id !== reelId && r.videoUrl !== cleanUrl);
-    memoryDb.reels.unshift(reelDoc);
-
-    Logger.info(`[MediaSync] Reel successfully synced for place: ${placeTitle} (${reelId})`);
-  } catch (err) {
-    Logger.error('[MediaSync] Failed to sync entity reel:', err);
-  }
+  return;
 }
 
 /**
- * Removes the place reel from the Reels feed and database when a video is removed or deleted.
+ * Kept as a safe no-op: entity video removal does not modify the independent Reels collection.
  */
-export async function removeEntityReel(params: {
+export async function removeEntityReel(_params: {
   entityId?: string;
   entitySlug?: string;
   videoUrl?: string;
 }): Promise<void> {
-  try {
-    const { entityId, videoUrl } = params;
-    const { db, isMongo } = await getDatabase();
-    const reelId = entityId ? `reel-place-${entityId}` : undefined;
-    const cleanUrl = videoUrl?.trim();
-
-    const orConditions: any[] = [];
-    if (reelId) orConditions.push({ id: reelId });
-    if (cleanUrl) orConditions.push({ videoUrl: cleanUrl });
-
-    if (orConditions.length > 0) {
-      if (isMongo && db) {
-        await db.collection('reels').deleteMany({ $or: orConditions });
-      }
-      memoryDb.reels = memoryDb.reels.filter((r) => {
-        if (reelId && r.id === reelId) return false;
-        if (cleanUrl && r.videoUrl === cleanUrl) return false;
-        return true;
-      });
-    }
-    Logger.info(`[MediaSync] Reel removed for entity: ${entityId || videoUrl}`);
-  } catch (err) {
-    Logger.error('[MediaSync] Failed to remove entity reel:', err);
-  }
+  return;
 }
 
 export async function uploadAdminMedia(options: UploadAdminMediaOptions): Promise<MediaAssetDoc> {
@@ -649,7 +532,7 @@ export async function uploadAdminMedia(options: UploadAdminMediaOptions): Promis
         }
         Object.assign(existingDoc, updateFields);
 
-        // مزامنة مع الكيان الجديد ومع الريلز
+        // مزامنة مع الكيان الجديد فقط (الريلز مستقلة تماماً عن المعالم والشخصيات)
         if (entityId || entitySlug) {
           await syncMediaWithEntity(
             entityType,
@@ -659,17 +542,6 @@ export async function uploadAdminMedia(options: UploadAdminMediaOptions): Promis
             addToGallery,
             isVideo ? 'video' : 'image'
           );
-        }
-        if (isVideo) {
-          await syncEntityReel({
-            entityType,
-            entityId: entityId || entitySlug,
-            entitySlug,
-            videoUrl: trimmedUrl,
-            publicId: targetPublicId,
-            duration: (existingDoc as any).duration,
-            title: alt || caption
-          });
         }
 
         return existingDoc;
@@ -724,16 +596,6 @@ export async function uploadAdminMedia(options: UploadAdminMediaOptions): Promis
           addToGallery,
           isVideo ? 'video' : 'image'
         );
-      }
-      if (isVideo) {
-        await syncEntityReel({
-          entityType,
-          entityId: entityId || entitySlug,
-          entitySlug,
-          videoUrl: trimmedUrl,
-          publicId: targetPublicId,
-          title: alt || caption
-        });
       }
 
       return newMediaDoc;
@@ -997,18 +859,6 @@ export async function confirmAdminVideo(options: ConfirmAdminVideoOptions): Prom
     await syncMediaWithEntity(entityType, targetEntity, secureUrl, false, false, 'video');
   }
 
-  // مزامنة فورية وحصرية مع فيديوهات الريلز
-  await syncEntityReel({
-    entityType,
-    entityId: targetEntity,
-    entitySlug,
-    videoUrl: secureUrl,
-    publicId,
-    duration,
-    title: suggestedAlt,
-    description: caption
-  });
-
   return mediaDoc;
 }
 
@@ -1203,21 +1053,10 @@ export async function deleteAdminMedia(
   }
 
   if (isMongo && db) {
-    // 1. Delete from wah_media
+    // 1. Delete from wah_media (Reels remain completely independent from entity media)
     await db.collection('wah_media').deleteMany(buildMediaIdFilter(mediaIdOrPublicId));
 
-    // 2. Cascade delete from reels if it's a video
-    if (urlsToPurge.length > 0 || targetPublicId) {
-      const reelFilter: any = {
-        $or: [
-          ...urlsToPurge.map((u) => ({ videoUrl: u })),
-          ...(targetPublicId ? [{ cloudinaryPublicId: targetPublicId }] : [])
-        ]
-      };
-      await db.collection('reels').deleteMany(reelFilter);
-    }
-
-    // 3. Cascade update in heritage places (pull from videos, gallery, galleryImages)
+    // 2. Cascade update in heritage places (pull from videos, gallery, galleryImages)
     if (urlsToPurge.length > 0) {
       const placesWithMedia = await db.collection('wah_heritage_places').find({
         $or: [
@@ -1295,21 +1134,13 @@ export async function deleteAdminMedia(
     }
   }
 
-  // Cascade clean memoryDb
+  // Cascade clean memoryDb (Reels remain completely independent)
   memoryDb.media = memoryDb.media.filter(
     (m) =>
       m.id !== mediaIdOrPublicId &&
       m.publicId !== targetPublicId &&
       (!targetUrl || (m.url !== targetUrl && m.secureUrl !== targetUrl))
   );
-
-  if (urlsToPurge.length > 0 || targetPublicId) {
-    memoryDb.reels = memoryDb.reels.filter(
-      (r) =>
-        (!r.videoUrl || !urlsToPurge.includes(r.videoUrl)) &&
-        (!targetPublicId || r.cloudinaryPublicId !== targetPublicId)
-    );
-  }
 
   for (const place of memoryDb.heritagePlaces) {
     if (urlsToPurge.includes(place.videoUrl || '')) {
@@ -1572,15 +1403,7 @@ export async function manageEntityGallery(options: {
       if (!memEntity.videos.includes(targetVideo)) memEntity.videos.push(targetVideo);
     }
 
-    // مزامنة فورية مع خلاصة الريلز الشاملة
-    await syncEntityReel({
-      entityType,
-      entityId: entityId || entitySlug,
-      entitySlug,
-      videoUrl: targetVideo
-    });
-
-    return { success: true, message: 'تم حفظ مقطع الفيديو التوثيقي ومزامنته مع الريلز بنجاح', videoUrl: targetVideo };
+    return { success: true, message: 'تم حفظ مقطع الفيديو التوثيقي بنجاح', videoUrl: targetVideo };
   }
 
   // 3. REMOVE VIDEO
@@ -1593,11 +1416,6 @@ export async function manageEntityGallery(options: {
       } catch (delErr) {
         Logger.warn('[manageEntityGallery] Notice during video deletion:', delErr);
       }
-      // إزالة الفيديو من خلاصة الريلز
-      await removeEntityReel({
-        entityId: entityId || entitySlug,
-        videoUrl: targetVideo
-      });
     }
 
     if (isMongo && db) {

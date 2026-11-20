@@ -363,14 +363,16 @@ export const WahEcosystemPortalSection: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex flex-col items-center gap-2">
-                  <h3 className="select-none text-base font-bold tracking-wide text-white [writing-mode:vertical-rl] rotate-180">
-                    {portal.title}
-                  </h3>
+                <div className="flex flex-1 items-center justify-center">
+                  <div className="flex flex-col items-center gap-1 -rotate-90 whitespace-nowrap">
+                    <h3 className="select-none text-base font-bold text-white">
+                      {portal.title}
+                    </h3>
 
-                  <span className="text-[10px] text-primary dark:text-primary-hover opacity-70 [writing-mode:vertical-rl] rotate-180">
-                    {portal.mascot.role}
-                  </span>
+                    <span className="text-[10px] text-primary dark:text-primary-hover opacity-70">
+                      {portal.mascot.role}
+                    </span>
+                  </div>
                 </div>
 
                 <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-primary/70" />

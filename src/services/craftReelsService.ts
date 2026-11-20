@@ -26,6 +26,22 @@ export const HERITAGE_VIDEO_PRESETS: Array<{
   emoji?: string;
 }> = [];
 
+const isValidPlayableReel = (reel: any): reel is CraftReel => {
+  if (!reel || typeof reel !== 'object') return false;
+  if (typeof reel.id === 'string' && reel.id.startsWith('reel-place-')) return false;
+  const vUrl = typeof reel.videoUrl === 'string' ? reel.videoUrl.trim().toLowerCase() : '';
+  if (!vUrl || vUrl.startsWith('blob:')) return false;
+  if (
+    vUrl.includes('youtube.com/watch') ||
+    vUrl.includes('youtu.be/') ||
+    vUrl.includes('youtube.com/embed/') ||
+    vUrl.includes('youtube.com/shorts/')
+  ) {
+    return false;
+  }
+  return true;
+};
+
 export const craftReelsService = {
   /*
    * ============================================================
@@ -51,7 +67,7 @@ export const craftReelsService = {
       const parsed = JSON.parse(stored);
 
       return Array.isArray(parsed)
-        ? parsed
+        ? parsed.filter(isValidPlayableReel)
         : [];
     } catch (error) {
       console.warn(
@@ -71,9 +87,10 @@ export const craftReelsService = {
     }
 
     try {
+      const cleanReels = Array.isArray(reels) ? reels.filter(isValidPlayableReel) : [];
       localStorage.setItem(
         REELS_STORAGE_KEY,
-        JSON.stringify(reels)
+        JSON.stringify(cleanReels)
       );
     } catch (error) {
       console.warn(

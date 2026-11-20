@@ -929,15 +929,15 @@ if (isLoading) {
                                 whileHover={{ x: -4 }}
                                 whileTap={{ scale: 0.94 }}
                                 aria-label={tab.label}
-                                className={`relative flex shrink-0 items-center gap-2 rounded-t-xl px-3.5 py-2.5 text-xs font-black whitespace-nowrap transition-colors cursor-pointer md:w-[58px] md:flex-col md:rounded-l-xl md:rounded-r-none md:px-0 md:py-4 ${active
+                                className={`relative flex shrink-0 items-center gap-2 rounded-t-xl px-3.5 py-2.5 text-xs font-black whitespace-nowrap transition-colors cursor-pointer md:w-[76px] md:flex-col md:rounded-l-xl md:rounded-r-none md:px-1.5 md:py-3.5 ${active
                                   ? 'bg-primary text-white shadow-lg md:-translate-x-1'
                                   : 'bg-espresso/10 text-espresso hover:bg-espresso/20 dark:bg-white/10 dark:text-cream dark:hover:bg-white/20'
                                   }`}
                               >
                                 <Icon size={17} />
-                                <span className="md:[writing-mode:vertical-rl]">{tab.label}</span>
+                                <span className="whitespace-nowrap text-[11px]">{tab.label}</span>
                                 {count !== null && (
-                                  <span className={`rounded-full px-1.5 text-[10px] ${active ? 'bg-white/25' : 'bg-primary/20 text-primary dark:text-primary-hover'}`}>{count}</span>
+                                  <span className={`rounded-full px-1.5 text-[10px] wah-num ${active ? 'bg-white/25' : 'bg-primary/20 text-primary dark:text-primary-hover'}`}>{count}</span>
                                 )}
                               </motion.button>
                             );

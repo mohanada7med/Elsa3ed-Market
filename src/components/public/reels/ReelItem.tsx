@@ -103,7 +103,7 @@ export const ReelItem: React.FC<ReelItemProps> = ({
         forceMp4: true
       }) ||
       reel.videoUrl ||
-      'https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-potter-shaping-a-clay-vase-41717-large.mp4',
+      '',
     [reel.videoUrl, isMobileScreen]
   );
 
@@ -361,7 +361,6 @@ export const ReelItem: React.FC<ReelItemProps> = ({
     };
   }, [
     isActive,
-    isMuted,
     currentVideoSrc,
     reel.id
   ]);

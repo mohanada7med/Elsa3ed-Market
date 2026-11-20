@@ -19,41 +19,9 @@
 }
 
 @font-face {
-  font-family: 'MainFont';
-  src: url('/fonts/alfont_com_Amira-Typo.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'MainFont';
-  src: url('/fonts/alfont_com_Amira-Typo.ttf') format('truetype');
-  font-weight: bold;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
   font-family: 'AdobeArabic';
   src: url('/fonts/AdobeArabic-Regular.otf') format('opentype');
   font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'AdobeArabic';
-  src: url('/fonts/AdobeArabic-Regular.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'AdobeArabic';
-  src: url('/fonts/AdobeArabic-Regular.otf') format('opentype');
-  font-weight: bold;
   font-style: normal;
   font-display: swap;
 }
@@ -105,6 +73,14 @@
   --font-wah-heading: 'WahArabicDigits', 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
   --font-wah-heritage: 'WahArabicDigits', 'Amiri', 'Cairo', serif;
   --font-wah-body: 'WahArabicDigits', 'Cairo', system-ui, -apple-system, sans-serif;
+
+  /* Zero letter-spacing tokens so Arabic cursive letters never break or disconnect */
+  --tracking-tighter: 0;
+  --tracking-tight: 0;
+  --tracking-normal: 0;
+  --tracking-wide: 0;
+  --tracking-wider: 0;
+  --tracking-widest: 0;
 
   /* Brand Primitive Colors */
   --color-primary: var(--primary);
@@ -379,9 +355,8 @@
 .wah-num {
   font-family: 'WahArabicDigits', 'Cairo', system-ui, -apple-system, sans-serif;
   font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum" 1;
   font-weight: 800;
-  letter-spacing: 0.01em;
+  letter-spacing: 0;
 }
 
 .font-secondary {
@@ -478,7 +453,10 @@ h6 {
       Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     font-size: 0.98rem;
     line-height: 1.7;
-    letter-spacing: normal;
+    letter-spacing: 0;
+    font-kerning: normal;
+    font-variant-ligatures: normal;
+    text-rendering: optimizeLegibility;
     background-color: var(--background);
     color: var(--foreground);
     transition: background-color 0.25s ease, color 0.25s ease;
@@ -1303,7 +1281,7 @@ h6 {
   color: #A97732;
   font-size: 11px;
   font-weight: 800;
-  letter-spacing: 0.12em;
+  letter-spacing: 0;
 }
 
 .dark .wah-loader-kicker {
@@ -1378,7 +1356,7 @@ h6 {
   color: #A97732;
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0;
 }
 
 .dark .wah-loader-footnote {
@@ -1519,4 +1497,41 @@ h6 {
 #main-route-container [class~="max-w-6xl"],
 #main-route-container [class~="max-w-5xl"] {
  max-width: 100% !important;
+}
+
+/* =========================================================================
+   ARABIC CURSIVE SHAPING & ZERO LETTER-SPACING PROTECTION (MOBILE + PC)
+   Prevents Arabic letters from breaking apart or disconnecting in iOS Safari,
+   Android Chrome/WebView, Firefox, and Desktop browsers.
+   ========================================================================= */
+html[lang="ar"],
+html[lang="ar"] body,
+[dir="rtl"],
+[dir="rtl"] * {
+  letter-spacing: 0 !important;
+  font-kerning: normal;
+  font-variant-ligatures: normal;
+  text-rendering: optimizeLegibility;
+}
+
+/* Preserve normal/explicit spacing only on LTR Latin codes & technical elements */
+[dir="rtl"] [dir="ltr"],
+[dir="rtl"] [dir="ltr"] *,
+[dir="rtl"] [data-western-digits="true"],
+[dir="rtl"] [data-western-digits="true"] *,
+[dir="rtl"] code,
+[dir="rtl"] pre,
+[dir="rtl"] kbd,
+[dir="rtl"] samp {
+  letter-spacing: normal !important;
+}
+
+[dir="rtl"] [dir="ltr"].tracking-wide,
+[dir="rtl"] [data-western-digits="true"].tracking-wide {
+  letter-spacing: 0.025em !important;
+}
+
+[dir="rtl"] [dir="ltr"].tracking-wider,
+[dir="rtl"] [data-western-digits="true"].tracking-wider {
+  letter-spacing: 0.05em !important;
 }

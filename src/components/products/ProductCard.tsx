@@ -179,7 +179,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <div className="pt-2.5 sm:pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between gap-1.5 sm:gap-2 mt-auto">
           <div>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-lg sm:text-xl font-black font-price text-primary dark:text-primary-hover tracking-wide whitespace-nowrap">
+              <span className="text-lg sm:text-xl font-black font-price text-primary dark:text-primary-hover whitespace-nowrap">
                 {formatArabicNumber(product.price)} ج.م
               </span>
               {product.originalPrice && product.originalPrice > product.price && (
