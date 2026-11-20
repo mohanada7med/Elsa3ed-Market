@@ -33,6 +33,7 @@ import {
 import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner';
 import { PageNavigationBar } from '../layout/PageNavigationBar';
 import { BrandPatternBackground } from '../layout/BrandPatternBackground';
+import { formatArabicNumber, toArabicDigits } from '../../utils/arabicNumbers';
 
 interface QuizQuestion {
   id: string;
@@ -547,7 +548,7 @@ export const DialectDictionaryPage: React.FC = () => {
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    return toArabicDigits(`${mins}:${secs < 10 ? '0' : ''}${secs}`);
   };
 
   const result = useMemo(() => {
@@ -734,9 +735,9 @@ export const DialectDictionaryPage: React.FC = () => {
 
             <div
               key={countdown}
-              className="text-[8rem] sm:text-[13rem] leading-none font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover select-none"
+              className="text-[8.5rem] sm:text-[13.5rem] leading-none font-black wah-num text-primary dark:text-primary-hover select-none"
             >
-              {countdown}
+              {formatArabicNumber(countdown)}
             </div>
 
             <p className="mt-6 text-sm sm:text-base font-medium text-black/60 dark:text-white/60">
@@ -767,8 +768,8 @@ export const DialectDictionaryPage: React.FC = () => {
                   </div>
 
                   <p className="max-w-2xl text-sm font-medium leading-7 text-black/60 dark:text-white/60 sm:text-base sm:leading-8">
-                    10 أسئلة سريعة تقيس فهمك الحقيقي لمفردات وكلام أهل الصعيد.
-                    معاك {TOTAL_QUIZ_TIME} ثانية للجولة كاملة. لو خلص الوقت هيتم
+                    <span className="wah-num font-black text-foreground">{formatArabicNumber(10)}</span> أسئلة سريعة تقيس فهمك الحقيقي لمفردات وكلام أهل الصعيد.
+                    معاك <span className="wah-num font-black text-foreground">{formatArabicNumber(TOTAL_QUIZ_TIME)}</span> ثانية للجولة كاملة. لو خلص الوقت هيتم
                     اعتماد درجتك فوري!
                   </p>
                 </div>
@@ -797,28 +798,28 @@ export const DialectDictionaryPage: React.FC = () => {
 
                     <div className="grid grid-cols-3 gap-3">
                       <div>
-                        <div className="text-3xl sm:text-4xl font-black tracking-tighter">
-                          10
+                        <div className="text-3xl sm:text-4xl font-black wah-num">
+                          {formatArabicNumber(10)}
                         </div>
-                        <div className="mt-1 text-[10px] font-medium text-black/50 dark:text-white/40">
+                        <div className="mt-1 text-[11px] font-medium text-black/50 dark:text-white/40">
                           أسئلة
                         </div>
                       </div>
 
                       <div>
-                        <div className="text-3xl sm:text-4xl font-black tracking-tighter">
+                        <div className="text-3xl sm:text-4xl font-black wah-num">
                           {formatTime(TOTAL_QUIZ_TIME)}
                         </div>
-                        <div className="mt-1 text-[10px] font-medium text-black/50 dark:text-white/40">
+                        <div className="mt-1 text-[11px] font-medium text-black/50 dark:text-white/40">
                           وقت الجولة
                         </div>
                       </div>
 
                       <div>
-                        <div className="text-3xl sm:text-4xl font-black tracking-tighter">
-                          50
+                        <div className="text-3xl sm:text-4xl font-black wah-num">
+                          {formatArabicNumber(50)}
                         </div>
-                        <div className="mt-1 text-[10px] font-medium text-black/50 dark:text-white/40">
+                        <div className="mt-1 text-[11px] font-medium text-black/50 dark:text-white/40">
                           كلمة بالبنك
                         </div>
                       </div>
@@ -876,25 +877,25 @@ export const DialectDictionaryPage: React.FC = () => {
       {!completed && currentQuestion && gameStarted && (
         <section className="relative z-20 mx-auto max-w-[1000px] px-4 pt-6 pb-20 sm:px-8 sm:pt-10">
           <div className="mb-5 flex items-center justify-between">
-            <div className="flex items-center gap-2 text-xs font-black">
-              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10 text-primary dark:text-primary-hover dark:bg-[#d6aa72]/15 dark:text-primary dark:text-primary-hover">
+            <div className="flex items-center gap-2 text-sm font-black">
+              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10 text-primary dark:text-primary-hover dark:bg-[#d6aa72]/15">
                 <Flame size={15} />
               </span>
-              سؤال {currentIndex + 1} من {questions.length}
+              سؤال <span className="wah-num text-base text-primary dark:text-primary-hover">{formatArabicNumber(currentIndex + 1)}</span> من <span className="wah-num text-base">{formatArabicNumber(questions.length)}</span>
             </div>
 
             <div
-              className={`flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-black ${timeLeft <= 15
+              className={`flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-black wah-num ${timeLeft <= 15
                 ? 'bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30'
                 : 'bg-[#e8e0d2] text-espresso dark:bg-[#121210] dark:text-[#f4eee5] border border-black/5 dark:border-white/10'
                 }`}
             >
-              <Clock size={14} />
+              <Clock size={15} />
               <span>{formatTime(timeLeft)}</span>
             </div>
 
-            <div className="rounded-full bg-primary/10 dark:bg-[#d6aa72]/10 border border-primary/20 dark:border-[#d6aa72]/20 px-3 py-1.5 text-xs font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
-              النقاط: {score}
+            <div className="rounded-full bg-primary/10 dark:bg-[#d6aa72]/10 border border-primary/20 dark:border-[#d6aa72]/20 px-3.5 py-1.5 text-sm font-black text-primary dark:text-primary-hover">
+              النقاط: <span className="wah-num text-base">{formatArabicNumber(score)}</span>
             </div>
           </div>
 
@@ -1028,10 +1029,10 @@ export const DialectDictionaryPage: React.FC = () => {
                 <div className="text-[9px] font-black tracking-[0.25em] text-black/40 dark:text-white/40 mb-1">
                   YOUR FINAL SCORE
                 </div>
-                <div className="text-6xl sm:text-8xl font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover tracking-tight">
-                  {score}
-                  <span className="text-xl sm:text-3xl text-black/40 dark:text-white/40 font-bold">
-                    /10
+                <div className="text-6xl sm:text-8xl font-black wah-num text-primary dark:text-primary-hover">
+                  {formatArabicNumber(score)}
+                  <span className="text-2xl sm:text-4xl text-black/40 dark:text-white/40 font-black wah-num">
+                    /{formatArabicNumber(10)}
                   </span>
                 </div>
               </div>
@@ -1064,16 +1065,16 @@ export const DialectDictionaryPage: React.FC = () => {
                     <span>هدية عم وه لعمدة الصعيد! 🎁</span>
                   </div>
                   <p className="text-xs text-black/70 dark:text-white/80 font-bold mb-3">
-                    عشانك صعيدي أصيل وودنك واعية للكلام، ليك خصم 10% على أي قطعة تختارها من شيوخ الصنعة:
+                    عشانك صعيدي أصيل وودنك واعية للكلام، ليك خصم <span className="wah-num font-black text-sm">{formatArabicNumber(10)}%</span> على أي قطعة تختارها من شيوخ الصنعة:
                   </p>
                   <div className="inline-flex items-center gap-3 px-4 py-2 bg-white dark:bg-[#1a1815] border border-[#C99444] rounded-xl shadow-xs">
                     <Tag size={16} className="text-[#C99444]" />
-                    <span className="font-mono text-sm font-black tracking-wider text-primary dark:text-primary-hover dark:text-[#C99444]">OMDA10</span>
+                    <span data-western-digits="true" dir="ltr" className="font-mono text-sm font-black tracking-wider text-primary dark:text-primary-hover dark:text-[#C99444]">OMDA10</span>
                     <button
                       type="button"
                       onClick={() => {
                         navigator.clipboard?.writeText('OMDA10');
-                        addToast('تم نسخ الكوبون!', 'استخدم كود OMDA10 في صفحة الدفع للحصول على خصم 10%', 'success');
+                        addToast('تم نسخ الكوبون!', 'استخدم كود OMDA10 في صفحة الدفع للحصول على خصم ١٠%', 'success');
                       }}
                       className="text-[11px] font-bold text-[#C99444] hover:underline px-2 py-0.5 rounded-md hover:bg-[#C99444]/10 cursor-pointer"
                     >
@@ -1095,8 +1096,8 @@ export const DialectDictionaryPage: React.FC = () => {
                 </div>
 
                 <div className="py-2 text-center">
-                  <div className="text-3xl sm:text-4xl font-black text-primary dark:text-primary-hover mb-1">
-                    {score} / 10
+                  <div className="text-4xl sm:text-5xl font-black wah-num text-primary dark:text-primary-hover mb-1">
+                    {formatArabicNumber(score)} / {formatArabicNumber(10)}
                   </div>
                   <div className="text-sm font-bold text-white/90">
                     {result.title}

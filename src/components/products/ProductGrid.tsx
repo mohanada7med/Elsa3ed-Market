@@ -223,8 +223,8 @@ const ProductCard: React.FC<{
             {image}
           </a>
           {discount !== null && (
-            <span className="absolute right-2 top-2 rounded-lg bg-[#a74a32] px-2 py-1 text-[10px] font-black text-white">
-              -{discount}%
+            <span className="absolute right-2 top-2 rounded-lg bg-[#a74a32] px-2.5 py-1 text-xs font-black wah-num text-white">
+              -{formatArabicNumber(discount)}%
             </span>
           )}
           <button
@@ -243,8 +243,8 @@ const ProductCard: React.FC<{
           </a>
         </h3>
         <div className="mt-1.5 flex items-center justify-between gap-2">
-          <span className="text-base font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
-            {formatPrice(price)} <span className="text-[10px] font-bold">جنيه</span>
+          <span className="text-lg sm:text-xl font-black font-price text-primary dark:text-primary-hover">
+            {formatPrice(price)} <span className="text-xs font-bold">جنيه</span>
           </span>
           <button
             type="button"
@@ -325,8 +325,8 @@ const ProductCard: React.FC<{
 
             <div className="absolute right-0 top-3 flex flex-col items-end gap-1.5">
               {discount !== null && (
-                <span className="rounded-l-md bg-[#a74a32] py-1 pl-3 pr-2.5 text-[11px] font-black text-white shadow-md">
-                  خصم {discount}%
+                <span className="rounded-l-md bg-[#a74a32] py-1 pl-3 pr-2.5 text-xs font-black wah-num text-white shadow-md">
+                  خصم {formatArabicNumber(discount)}%
                 </span>
               )}
               {featured && (
@@ -362,12 +362,12 @@ const ProductCard: React.FC<{
 
           {/* price seal */}
           <div
-            className="absolute -bottom-7 left-3 z-10 flex h-[4.5rem] w-[4.5rem] rotate-12 flex-col items-center justify-center rounded-full bg-[#6B3A1F] text-[#FFF9EE] shadow-lg transition-transform duration-500 group-hover:rotate-0"
+            className="absolute -bottom-7 left-3 z-10 flex h-[4.85rem] w-[4.85rem] rotate-12 flex-col items-center justify-center rounded-full bg-[#6B3A1F] text-[#FFF9EE] shadow-lg transition-transform duration-500 group-hover:rotate-0"
             aria-label={`السعر ${priceLabel} جنيه`}
           >
             <span className="absolute inset-1 rounded-full border border-dashed border-[#FFF9EE]/50" />
-            <span className={`relative font-black leading-none ${sealSmall ? 'text-xs' : 'text-base'}`}>{priceLabel}</span>
-            <span className="relative mt-0.5 text-[9px] font-bold opacity-80">جنيه</span>
+            <span className={`relative font-black font-price leading-none ${sealSmall ? 'text-sm' : 'text-lg'}`}>{priceLabel}</span>
+            <span className="relative mt-0.5 text-[10px] font-bold opacity-85">جنيه</span>
           </div>
         </div>
 
@@ -400,16 +400,16 @@ const ProductCard: React.FC<{
             </span>
           )}
           {rating !== null && (
-            <span className="flex items-center gap-1 text-espresso dark:text-cream">
-              <Star size={12} fill="currentColor" className="text-[#C99444]" />
+            <span className="flex items-center gap-1 text-sm font-black wah-num text-espresso dark:text-cream">
+              <Star size={13} fill="currentColor" className="text-[#C99444]" />
               {formatArabicNumber(rating, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
-              {reviews !== null && <span className="text-sm font-bold text-[#8C6F53] dark:text-[#D6C6B1]">({formatArabicNumber(reviews)})</span>}
+              {reviews !== null && <span className="text-xs font-bold wah-num text-[#8C6F53] dark:text-[#D6C6B1]">({formatArabicNumber(reviews)})</span>}
             </span>
           )}
           {oldPrice !== null && price !== null && oldPrice > price && (
-            <span className="line-through opacity-70">{formatPrice(oldPrice)} جنيه</span>
+            <span className="text-xs font-bold wah-num line-through opacity-75">{formatPrice(oldPrice)} جنيه</span>
           )}
-          {lowStock && <span className="font-black text-[#a74a32]">باقي {formatPrice(stock)} قطع بس</span>}
+          {lowStock && <span className="text-xs font-black wah-num text-[#a74a32]">باقي {formatPrice(stock)} قطع بس</span>}
         </div>
 
         {canShop ? (
@@ -553,12 +553,12 @@ const QuickView: React.FC<{
             )}
 
             <div className="mt-6 flex items-baseline gap-3">
-              <span className="text-4xl font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
+              <span className="text-4xl sm:text-5xl font-black font-price text-primary dark:text-primary-hover">
                 {formatPrice(price)}
-                <span className="mr-1 text-sm">جنيه</span>
+                <span className="mr-1.5 text-base font-bold">جنيه</span>
               </span>
               {oldPrice !== null && price !== null && oldPrice > price && (
-                <span className="text-sm text-black/40 line-through dark:text-white/35">
+                <span className="text-base font-bold wah-num text-black/45 line-through dark:text-white/40">
                   {formatPrice(oldPrice)} جنيه
                 </span>
               )}
@@ -779,7 +779,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
   return (
     <>
       <p className="mb-6 text-sm font-bold text-[#8C6F53] dark:text-[#D6C6B1]">
-        <span className="text-lg font-black text-espresso dark:text-cream">{visibleProducts.length}</span> قطعة متاحة
+        <span className="text-xl font-black wah-num text-espresso dark:text-cream">{formatArabicNumber(visibleProducts.length)}</span> قطعة متاحة
       </p>
 
       <div

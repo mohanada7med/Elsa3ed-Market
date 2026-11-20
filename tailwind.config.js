@@ -208,6 +208,7 @@ export default {
         // =========================================
 
         sans: [
+          "'WahArabicDigits'",
           "'Cairo'",
           "system-ui",
           "-apple-system",
@@ -215,6 +216,7 @@ export default {
         ],
 
         main: [
+          "'WahArabicDigits'",
           "'MainFont'",
           "'Cairo'",
           "system-ui",
@@ -223,6 +225,7 @@ export default {
         ],
 
         heading: [
+          "'WahArabicDigits'",
           "'MainFont'",
           "'Cairo'",
           "system-ui",
@@ -231,6 +234,7 @@ export default {
         ],
 
         display: [
+          "'WahArabicDigits'",
           "'MainFont'",
           "'Cairo'",
           "system-ui",
@@ -239,6 +243,7 @@ export default {
         ],
 
         price: [
+          "'WahArabicDigits'",
           "'Cairo'",
           "system-ui",
           "-apple-system",
@@ -246,6 +251,7 @@ export default {
         ],
 
         cairo: [
+          "'WahArabicDigits'",
           "'Cairo'",
           "system-ui",
           "-apple-system",
@@ -253,6 +259,7 @@ export default {
         ],
 
         body: [
+          "'WahArabicDigits'",
           "'Cairo'",
           "system-ui",
           "-apple-system",
@@ -260,6 +267,7 @@ export default {
         ],
 
         secondary: [
+          "'WahArabicDigits'",
           "'Cairo'",
           "system-ui",
           "-apple-system",
@@ -267,6 +275,7 @@ export default {
         ],
 
         editorial: [
+          "'WahArabicDigits'",
           "'Cairo'",
           "system-ui",
           "-apple-system",
@@ -274,6 +283,7 @@ export default {
         ],
 
         heritage: [
+          "'WahArabicDigits'",
           "'MainFont'",
           "'Cairo'",
           "system-ui",
@@ -281,12 +291,14 @@ export default {
         ],
 
         amiri: [
+          "'WahArabicDigits'",
           "'Amiri'",
           "'Cairo'",
           "serif",
         ],
 
         serif: [
+          "'WahArabicDigits'",
           "'Amiri'",
           "'Cairo'",
           "serif",
@@ -294,12 +306,14 @@ export default {
 
         // Legacy aliases
         shin: [
+          "'WahArabicDigits'",
           "'MainFont'",
           "'Cairo'",
           "sans-serif",
         ],
 
         eskorte: [
+          "'WahArabicDigits'",
           "'AdobeArabic'",
           "'Amiri'",
           "'Cairo'",
@@ -307,6 +321,7 @@ export default {
         ],
 
         effra: [
+          "'WahArabicDigits'",
           "'Cairo'",
           "sans-serif",
         ],

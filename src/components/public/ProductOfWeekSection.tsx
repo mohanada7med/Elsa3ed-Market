@@ -266,7 +266,7 @@ export const ProductOfWeekSection: React.FC = () => {
                 <p className="text-[9px] font-bold text-foreground-secondary sm:text-[10px]">
                   {product.inStock ? 'متاح من ورشة الصانع' : 'غير متاح حاليًا'}
                 </p>
-                <p className="mt-0.5 text-base font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover sm:mt-1 sm:text-xl">
+                <p className="mt-0.5 text-xl font-black font-price text-primary dark:text-primary-hover sm:mt-1 sm:text-3xl">
                   {product.price.toLocaleString('ar-EG')} ج.م
                 </p>
               </div>

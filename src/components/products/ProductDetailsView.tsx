@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { ProductCard } from './ProductCard';
 import { updatePageSEO, generateProductSchema } from '../../utils/seo';
 import { getOptimizedImageUrl } from '../../utils/cloudinaryMedia';
+import { formatArabicNumber, toArabicDigits } from '../../utils/arabicNumbers';
 
 import {
   Heart,
@@ -662,16 +663,16 @@ export const ProductDetailsView: React.FC = () => {
                 dark:bg-black/40
               "
             >
-              <span>
-                {String(selectedImageIndex + 1).padStart(2, '0')}
+              <span className="text-xs sm:text-sm font-black wah-num">
+                {toArabicDigits(String(selectedImageIndex + 1).padStart(2, '0'))}
               </span>
 
               <span className="text-black/30 dark:text-white/30">
                 /
               </span>
 
-              <span className="text-black/40 dark:text-white/40">
-                {String(productImages.length).padStart(2, '0')}
+              <span className="text-xs sm:text-sm font-black text-black/45 dark:text-white/45 wah-num">
+                {toArabicDigits(String(productImages.length).padStart(2, '0'))}
               </span>
             </div>
 
@@ -750,15 +751,16 @@ export const ProductDetailsView: React.FC = () => {
                       <span
                         className="
                           rounded-full
-                          bg-white/15
+                          bg-white/20
                           px-3
                           py-1
-                          text-[9px]
+                          text-xs
                           font-black
                           backdrop-blur-md
+                          wah-num
                         "
                       >
-                        -{product.discountPercent}%
+                        -{formatArabicNumber(product.discountPercent)}%
                       </span>
                     ) : null}
                   </div>
@@ -1170,12 +1172,12 @@ export const ProductDetailsView: React.FC = () => {
                 ))}
               </div>
 
-              <span className="text-sm font-black">
-                {product.rating}
+              <span className="text-base sm:text-lg font-black wah-num">
+                {formatArabicNumber(product.rating)}
               </span>
 
-              <span className="text-[10px] text-black/40 dark:text-white/40">
-                {product.reviewCount} تقييم
+              <span className="text-xs font-bold text-black/50 dark:text-white/50 wah-num">
+                {formatArabicNumber(product.reviewCount)} تقييم
               </span>
             </div>
 
@@ -1275,9 +1277,9 @@ export const ProductDetailsView: React.FC = () => {
                   المخزون
                 </div>
 
-                <div className="mt-2 text-xs font-black">
+                <div className="mt-2 text-sm font-black wah-num">
                   {product.inStock
-                    ? `${stockCount} قطعة`
+                    ? `${formatArabicNumber(stockCount)} قطعة`
                     : 'خلصان دلوقتي'}
                 </div>
               </div>
@@ -1295,17 +1297,17 @@ export const ProductDetailsView: React.FC = () => {
                   <div className="mt-1 flex items-baseline gap-2">
                     <span
                       className="
-                        text-3xl
+                        text-4xl
+                        sm:text-5xl
                         font-black
-                        tracking-[-0.06em]
+                        font-price
                         text-primary dark:text-primary-hover
-                        dark:text-primary dark:text-primary-hover
                       "
                     >
-                      {product.price}
+                      {formatArabicNumber(product.price)}
                     </span>
 
-                    <span className="text-xs font-bold">
+                    <span className="text-sm font-bold">
                       جنيه مصري
                     </span>
                   </div>
@@ -1314,16 +1316,16 @@ export const ProductDetailsView: React.FC = () => {
                 {product.originalPrice &&
                   product.originalPrice > product.price ? (
                   <div className="text-left">
-                    <div className="text-[10px] text-black/35 dark:text-white/30">
+                    <div className="text-[11px] text-black/45 dark:text-white/40">
                       السعر قبل الخصم
                     </div>
 
-                    <div className="mt-1 text-sm font-bold text-black/35 line-through dark:text-white/30">
-                      {product.originalPrice} ج.م
+                    <div className="mt-1 text-base font-bold font-price text-black/40 line-through dark:text-white/35">
+                      {formatArabicNumber(product.originalPrice)} ج.م
                     </div>
 
-                    <div className="mt-1 text-[9px] font-black text-emerald-600 dark:text-emerald-400">
-                      وفّرت {discountAmount} ج.م
+                    <div className="mt-1 text-xs font-black text-emerald-600 dark:text-emerald-400 wah-num">
+                      وفّرت {formatArabicNumber(discountAmount)} ج.م
                     </div>
                   </div>
                 ) : null}
@@ -1369,8 +1371,8 @@ export const ProductDetailsView: React.FC = () => {
               </div>
 
               {product.inStock && (
-                <span className="text-[9px] font-bold text-black/35 dark:text-white/30">
-                  {stockCount} متاح حالياً
+                <span className="text-xs font-bold text-black/45 dark:text-white/45 wah-num">
+                  {formatArabicNumber(stockCount)} متاح حالياً
                 </span>
               )}
             </div>
@@ -1390,7 +1392,7 @@ export const ProductDetailsView: React.FC = () => {
                       >
                         <Minus size={15} />
                       </button>
-                      <span className="w-8 text-center text-sm font-black">{quantity}</span>
+                      <span className="w-10 text-center text-base font-black wah-num">{formatArabicNumber(quantity)}</span>
                       <button
                         type="button"
                         disabled={quantity >= stockCount}
@@ -1406,11 +1408,11 @@ export const ProductDetailsView: React.FC = () => {
                       type="button"
                       disabled={!product.inStock}
                       onClick={() => addToCart(product, quantity)}
-                      className="flex min-h-14 flex-1 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-primary px-4 text-xs font-black text-white shadow-[0_12px_28px_-12px_rgba(59,30,14,0.75)] transition hover:-translate-y-0.5 hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-40"
+                      className="flex min-h-14 flex-1 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-primary px-4 text-sm font-black text-white shadow-[0_12px_28px_-12px_rgba(59,30,14,0.75)] transition hover:-translate-y-0.5 hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-40"
                     >
                       <ShoppingBag size={18} />
                       <span>حط في السلة</span>
-                      <span className="hidden sm:inline">• {totalPrice} ج.م</span>
+                      <span className="hidden sm:inline font-price">• {formatArabicNumber(totalPrice)} ج.م</span>
                     </button>
                   </div>
 
@@ -1487,7 +1489,7 @@ export const ProductDetailsView: React.FC = () => {
                     className="flex min-h-14 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#6B3A1F] px-4 text-xs font-black text-[#FFF9EE] shadow-lg transition hover:bg-[#3B1E0E] dark:bg-[#6B3A1F] dark:text-[#FFF9EE] dark:hover:bg-[#4A2715]"
                   >
                     <ShoppingBag size={18} />
-                    <span>شراء القطعة ({totalPrice} ج.م)</span>
+                    <span>شراء القطعة (<span className="font-price text-sm">{formatArabicNumber(totalPrice)} ج.م</span>)</span>
                   </button>
                 </div>
               )}
@@ -1925,7 +1927,7 @@ export const ProductDetailsView: React.FC = () => {
                         <Package size={17} />,
                         'المخزون',
                         product.inStock
-                          ? `${stockCount} قطعة`
+                          ? `${formatArabicNumber(stockCount)} قطعة`
                           : 'خلصان دلوقتي',
                       ],
                     ].map(
@@ -1998,8 +2000,8 @@ export const ProductDetailsView: React.FC = () => {
                     </div>
 
                     <div className="mt-7 flex items-end gap-3">
-                      <span className="text-6xl font-black tracking-[-0.08em]">
-                        {product.rating}
+                      <span className="text-6xl sm:text-7xl font-black wah-num">
+                        {formatArabicNumber(product.rating)}
                       </span>
 
                       <div className="pb-2">
@@ -2022,8 +2024,8 @@ export const ProductDetailsView: React.FC = () => {
                           )}
                         </div>
 
-                        <div className="mt-1 text-[9px] text-white/40">
-                          {product.reviewCount} تقييم
+                        <div className="mt-1 text-xs font-bold text-white/55 wah-num">
+                          {formatArabicNumber(product.reviewCount)} تقييم
                         </div>
                       </div>
                     </div>
@@ -2336,13 +2338,13 @@ export const ProductDetailsView: React.FC = () => {
                       </h4>
 
                       <ul className="mt-3 space-y-2 text-xs leading-7 text-black/50 dark:text-white/40">
-                        <li>
+                        <li className="wah-num">
                           • القاهرة والجيزة والإسكندرية:
-                          48–72 ساعة.
+                          ٤٨–٧٢ ساعة.
                         </li>
 
-                        <li>
-                          • باقي المحافظات: 3–4 أيام عمل
+                        <li className="wah-num">
+                          • باقي المحافظات: ٣–٤ أيام عمل
                           تقريباً.
                         </li>
 
@@ -2377,8 +2379,8 @@ export const ProductDetailsView: React.FC = () => {
                   <h2 className="text-2xl font-black sm:text-3xl text-espresso dark:text-cream">
                     قطع من نفس الحكاية
                   </h2>
-                  <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-black/5 dark:bg-cream/10 text-espresso/70 dark:text-cream/70 border border-black/5 dark:border-white/5">
-                    {displayedRelatedProducts.length} قطع
+                  <span className="text-xs font-black px-2.5 py-1 rounded-full bg-black/5 dark:bg-cream/10 text-espresso/75 dark:text-cream/75 border border-black/5 dark:border-white/5 wah-num">
+                    {formatArabicNumber(displayedRelatedProducts.length)} قطع
                   </span>
                 </div>
 
@@ -2432,12 +2434,12 @@ export const ProductDetailsView: React.FC = () => {
               >
                 <span>كل الحكاية</span>
                 <span
-                  className={`text-[10px] px-1.5 py-0.2 rounded-full ${relatedFilter === 'all'
+                  className={`text-xs font-black px-2 py-0.5 rounded-full wah-num ${relatedFilter === 'all'
                     ? 'bg-white/20 text-[#FFF9EE] dark:bg-white/20 dark:text-[#FFF9EE]'
                     : 'bg-black/10 text-[#8C6F53] dark:bg-white/10 dark:text-[#D6C6B1]'
                     }`}
                 >
-                  {allStoryProducts.length}
+                  {formatArabicNumber(allStoryProducts.length)}
                 </span>
               </button>
 
@@ -2453,12 +2455,12 @@ export const ProductDetailsView: React.FC = () => {
                   <Store size={14} />
                   <span>من ورشة {product.sellerName || 'الحرفي'}</span>
                   <span
-                    className={`text-[10px] px-1.5 py-0.2 rounded-full ${relatedFilter === 'artisan'
+                    className={`text-xs font-black px-2 py-0.5 rounded-full wah-num ${relatedFilter === 'artisan'
                       ? 'bg-white/25 text-white dark:bg-black/20 dark:text-[#1B1009]'
                       : 'bg-black/10 text-[#8C6F53] dark:bg-white/10 dark:text-[#D6C6B1]'
                       }`}
                   >
-                    {relatedArtisanProducts.length}
+                    {formatArabicNumber(relatedArtisanProducts.length)}
                   </span>
                 </button>
               )}
@@ -2475,12 +2477,12 @@ export const ProductDetailsView: React.FC = () => {
                   <Layers3 size={14} />
                   <span>من نفس الحرفة</span>
                   <span
-                    className={`text-[10px] px-1.5 py-0.2 rounded-full ${relatedFilter === 'category'
+                    className={`text-xs font-black px-2 py-0.5 rounded-full wah-num ${relatedFilter === 'category'
                       ? 'bg-white/20 text-[#FFF9EE] dark:bg-white/20 dark:text-[#FFF9EE]'
                       : 'bg-black/10 text-[#8C6F53] dark:bg-white/10 dark:text-[#D6C6B1]'
                       }`}
                   >
-                    {relatedCategoryProducts.length}
+                    {formatArabicNumber(relatedCategoryProducts.length)}
                   </span>
                 </button>
               )}
@@ -2497,12 +2499,12 @@ export const ProductDetailsView: React.FC = () => {
                   <MapPin size={14} />
                   <span>من أرض {product.sellerGovernorate}</span>
                   <span
-                    className={`text-[10px] px-1.5 py-0.2 rounded-full ${relatedFilter === 'governorate'
+                    className={`text-xs font-black px-2 py-0.5 rounded-full wah-num ${relatedFilter === 'governorate'
                       ? 'bg-white/20 text-[#FFF9EE] dark:bg-white/20 dark:text-[#FFF9EE]'
                       : 'bg-black/10 text-[#8C6F53] dark:bg-white/10 dark:text-[#D6C6B1]'
                       }`}
                   >
-                    {relatedGovernorateProducts.length}
+                    {formatArabicNumber(relatedGovernorateProducts.length)}
                   </span>
                 </button>
               )}
@@ -2631,8 +2633,8 @@ export const ProductDetailsView: React.FC = () => {
         <div className="fixed inset-x-0 bottom-0 z-[60] border-t border-primary/15 bg-[#FFF9EE]/95 px-3 pt-2.5 pb-[calc(10px+env(safe-area-inset-bottom))] shadow-[0_-12px_35px_-24px_rgba(59,30,14,0.65)] backdrop-blur-xl dark:bg-[#1B1009]/95 sm:px-6 sm:pt-3 lg:hidden">
           <div className="mx-auto flex max-w-xl items-center gap-3">
             <div className="min-w-0 flex-1">
-              <div className="text-[10px] font-bold text-espresso/55 dark:text-cream/55">الإجمالي · {quantity} قطعة</div>
-              <div className="truncate text-base font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">{totalPrice} ج.م</div>
+              <div className="text-xs font-bold text-espresso/60 dark:text-cream/60 wah-num">الإجمالي · {formatArabicNumber(quantity)} قطعة</div>
+              <div className="truncate text-xl font-black font-price text-primary dark:text-primary-hover">{formatArabicNumber(totalPrice)} ج.م</div>
             </div>
             <button
               type="button"

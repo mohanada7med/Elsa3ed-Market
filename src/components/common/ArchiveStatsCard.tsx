@@ -26,13 +26,13 @@ export const ArchiveStatsCard: React.FC<ArchiveStatsCardProps> = ({
   <div className="mx-auto grid w-full max-w-md grid-cols-2 items-start gap-3">
     {/* بلاطة 1 */}
     <div className="flex aspect-square flex-col justify-end rounded-[2rem] rounded-br-lg bg-primary p-5 text-white transition-transform duration-300 hover:-translate-y-1 rtl:rounded-br-[2rem] rtl:rounded-bl-lg">
-      <div className="text-6xl font-black leading-none sm:text-7xl">{stats[0].value}</div>
+      <div className="text-6xl font-black leading-none sm:text-7xl wah-num">{stats[0].value}</div>
       <div className="mt-3 text-sm leading-6 text-white/85">{stats[0].label}</div>
     </div>
 
     {/* بلاطة 2 (نازلة شوية) */}
     <div className="mt-8 flex aspect-square flex-col justify-end rounded-[2rem] rounded-tl-lg bg-[#C99444] p-5 text-espresso transition-transform duration-300 hover:-translate-y-1 rtl:rounded-tl-[2rem] rtl:rounded-tr-lg">
-      <div className="text-6xl font-black leading-none sm:text-7xl">{stats[1].value}</div>
+      <div className="text-6xl font-black leading-none sm:text-7xl wah-num">{stats[1].value}</div>
       <div className="mt-3 text-sm leading-6 text-espresso/80">{stats[1].label}</div>
     </div>
 

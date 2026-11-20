@@ -4548,7 +4548,7 @@ export const AdminDashboard: React.FC = () => {
                                 {/* Top Line: Code & Status Badges */}
                                 <div className="flex flex-wrap items-center justify-between gap-2">
                                   <div className="flex items-center gap-2">
-                                    <span className="font-mono font-black text-sm text-primary dark:text-primary-hover tracking-wider px-2.5 py-1 bg-primary/10 rounded-lg select-all">
+                                    <span data-western-digits="true" dir="ltr" className="font-mono font-black text-sm text-primary dark:text-primary-hover tracking-wider px-2.5 py-1 bg-primary/10 rounded-lg select-all">
                                       {c.code}
                                     </span>
                                     <button
@@ -4559,7 +4559,7 @@ export const AdminDashboard: React.FC = () => {
                                     >
                                       <Copy className="w-3.5 h-3.5" />
                                     </button>
-                                    <span className="px-2 py-0.5 bg-primary/10 text-primary dark:text-primary-hover border border-primary/20 rounded-md text-xs font-black">
+                                    <span className="px-2.5 py-0.5 bg-primary/10 text-primary dark:text-primary-hover border border-primary/20 rounded-md text-xs font-black wah-num">
                                       خصم {c.discountPercent}%
                                     </span>
                                   </div>

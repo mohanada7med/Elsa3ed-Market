@@ -22,6 +22,7 @@ import {
   Leaf,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { formatArabicNumber } from '../../utils/arabicNumbers';
 export const CartPage: React.FC = () => {
   const {
     cart,
@@ -176,8 +177,8 @@ export const CartPage: React.FC = () => {
                   <ShoppingBag className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-lg font-black leading-tight">
-                    {cartCount}
+                  <p className="text-2xl font-black wah-num leading-tight">
+                    {formatArabicNumber(cartCount)}
                   </p>
                   <p className={`mt-1 text-[11px] ${muted}`}>
                     قطعة في سلتك
@@ -270,8 +271,8 @@ export const CartPage: React.FC = () => {
                     </p>
                   </div>
 
-                  <span className={`text-xs font-bold ${muted}`}>
-                    {cartCount} قطع
+                  <span className={`text-sm font-black wah-num ${muted}`}>
+                    {formatArabicNumber(cartCount)} قطع
                   </span>
                 </div>
 
@@ -373,7 +374,7 @@ export const CartPage: React.FC = () => {
                                     ? `${formatPrice(price)} للقطعة`
                                     : 'سعر القطعة'}
                                 </p>
-                                <p className="text-xl font-black text-[#8C5428] dark:text-[#DDA654]">
+                                <p className="text-2xl font-black font-price text-[#8C5428] dark:text-[#DDA654]">
                                   {formatPrice(subtotal)}
                                 </p>
                               </div>
@@ -395,8 +396,8 @@ export const CartPage: React.FC = () => {
                                     <Minus className="h-3.5 w-3.5" />
                                   </button>
 
-                                  <span className="min-w-9 text-center text-sm font-black">
-                                    {qty}
+                                  <span className="min-w-10 text-center text-base font-black wah-num">
+                                    {formatArabicNumber(qty)}
                                   </span>
 
                                   <button
@@ -415,9 +416,9 @@ export const CartPage: React.FC = () => {
                             </div>
 
                             {stockCount < 5 && stockCount > 0 && (
-                              <p className="mt-3 flex items-center gap-1.5 text-[11px] font-bold text-amber-700 dark:text-amber-400">
+                              <p className="mt-3 flex items-center gap-1.5 text-xs font-bold text-amber-700 dark:text-amber-400">
                                 <AlertCircle className="h-3.5 w-3.5" />
-                                متبقي {stockCount} قطع بس
+                                متبقي <span className="wah-num font-black">{formatArabicNumber(stockCount)}</span> قطع بس
                               </p>
                             )}
 
@@ -486,8 +487,8 @@ export const CartPage: React.FC = () => {
                               <p className="text-xs font-black text-emerald-700 dark:text-emerald-400">
                                 الكوبون اتفعّل بنجاح
                               </p>
-                              <p className={`mt-1 text-[11px] ${muted}`}>
-                                {appliedDiscount.code} · خصم {appliedDiscount.discountPercent}%
+                              <p className={`mt-1 text-xs ${muted}`}>
+                                <span data-western-digits="true" dir="ltr" className="font-mono font-bold">{appliedDiscount.code}</span> · خصم <span className="wah-num font-black">{formatArabicNumber(appliedDiscount.discountPercent)}%</span>
                               </p>
                             </div>
                           </div>
@@ -547,8 +548,8 @@ export const CartPage: React.FC = () => {
                     {/* Price breakdown */}
                     <div className="space-y-4 text-sm">
                       <div className="flex items-center justify-between gap-3">
-                        <span className={muted}>قيمة المنتجات ({cartCount})</span>
-                        <span className="font-bold">
+                        <span className={muted}>قيمة المنتجات (<span className="wah-num font-black">{formatArabicNumber(cartCount)}</span>)</span>
+                        <span className="text-base font-black font-price">
                           {formatPrice(cartSubtotal)}
                         </span>
                       </div>
@@ -564,7 +565,7 @@ export const CartPage: React.FC = () => {
                             شحن مجاني
                           </span>
                         ) : (
-                          <span className="font-bold">
+                          <span className="text-base font-black font-price">
                             {formatPrice(shippingFee)}
                           </span>
                         )}
@@ -576,7 +577,7 @@ export const CartPage: React.FC = () => {
                             <Tag className="h-4 w-4" />
                             الخصم
                           </span>
-                          <span className="font-black">
+                          <span className="text-base font-black font-price">
                             -{formatPrice(cartDiscountAmount)}
                           </span>
                         </div>
@@ -590,9 +591,9 @@ export const CartPage: React.FC = () => {
                           قرّبت على الشحن المجاني!
                         </div>
 
-                        <p className={`text-[11px] leading-6 ${muted}`}>
+                        <p className={`text-xs leading-6 ${muted}`}>
                           زوّد منتجات بقيمة{' '}
-                          <strong className="text-[#8C5A24] dark:text-[#E2B66F]">
+                          <strong className="font-price font-black text-sm text-[#8C5A24] dark:text-[#E2B66F]">
                             {formatPrice(1000 - cartSubtotal)}
                           </strong>{' '}
                           عشان توصل للحد المطلوب للشحن المجاني.
@@ -617,7 +618,7 @@ export const CartPage: React.FC = () => {
                         <span className="text-sm font-bold">
                           الإجمالي النهائي
                         </span>
-                        <span className="text-2xl font-black tracking-tight text-[#8C5428] dark:text-[#DDA654]">
+                        <span className="text-2xl sm:text-3xl font-black font-price text-[#8C5428] dark:text-[#DDA654]">
                           {formatPrice(cartTotal)}
                         </span>
                       </div>

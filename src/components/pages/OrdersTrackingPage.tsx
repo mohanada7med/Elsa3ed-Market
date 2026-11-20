@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { Order, OrderStatus } from '../../types';
 import { api, initiatePaymobPayment, getPaymentStatus } from '../../services/api';
 import { ORDER_FULFILLMENT_STAGES } from '../../constants/orderFulfillmentStages';
+import { formatArabicNumber, toArabicDigits } from '../../utils/arabicNumbers';
 import {
   Truck,
   CheckCircle2,
@@ -184,8 +185,8 @@ export const OrdersTrackingPage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Orders List Column */}
           <div className="lg:col-span-5 space-y-4">
-            <h3 className="font-cairo font-bold text-sm text-espresso dark:text-cream px-1">
-              كل طلباتك ({orders.length})
+            <h3 className="font-cairo font-bold text-base text-espresso dark:text-cream px-1">
+              كل طلباتك (<span className="text-lg font-black wah-num text-primary dark:text-[#C99444]">{formatArabicNumber(orders.length)}</span>)
             </h3>
 
             <div className="space-y-3">
@@ -248,13 +249,13 @@ export const OrdersTrackingPage: React.FC = () => {
                           );
                         })}
                       </div>
-                      <span className="text-xs text-espresso/70 dark:text-cream/70 font-medium">
-                        {(ord.items || []).length} منتجات • {ord.total + (ord.paymentFee || 0)} ج.م
+                      <span className="text-sm text-espresso/85 dark:text-cream/85 font-bold">
+                        {formatArabicNumber((ord.items || []).length)} منتجات • <strong className="text-base font-black font-price text-primary dark:text-primary-hover">{formatArabicNumber(ord.total + (ord.paymentFee || 0))} ج.م</strong>
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between text-[11px] text-espresso/50 dark:text-cream/50 pt-2 border-t border-black/5 dark:border-white/5">
-                      <span>تاريخ الطلب: {ord.createdAt ? ord.createdAt.substring(0, 10) : 'اليوم'}</span>
+                    <div className="flex items-center justify-between text-xs text-espresso/65 dark:text-cream/65 pt-2 border-t border-black/5 dark:border-white/5">
+                      <span>تاريخ الطلب: {ord.createdAt ? toArabicDigits(ord.createdAt.substring(0, 10)) : 'اليوم'}</span>
                       {ord.paymentStatus === 'paid' ? (
                         <span className="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
                           <ShieldCheck className="w-3 h-3" />

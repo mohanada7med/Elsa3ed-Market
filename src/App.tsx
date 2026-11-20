@@ -13,6 +13,7 @@ import { CartDrawer } from './components/cart/CartDrawer';
 import { AuthModal } from './components/auth/AuthModal';
 import { ForceChangePasswordModal } from './components/auth/ForceChangePasswordModal';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { ArabicNumeralsGuard } from './components/common/ArabicNumeralsGuard';
 import { updatePageSEO, generateBreadcrumbSchema } from './utils/seo';
 import { MobileBottomBar } from './components/layout/MobileBottomBar';
 
@@ -851,6 +852,7 @@ const MainContent: React.FC = () => {
 export function App() {
   return (
     <AppProvider>
+      <ArabicNumeralsGuard />
       <InitialLoaderReadySignal />
       <ErrorBoundary>
         <MainContent />

@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatArabicNumber } from '../../utils/arabicNumbers';
 
 interface FloatingDockProps {
     count?: number;
@@ -18,10 +19,20 @@ export const FloatingDock: React.FC<FloatingDockProps> = ({
     return (
         <div className="pointer-events-none fixed inset-x-0 bottom-6 z-40 hidden justify-center px-4 sm:flex">
             <div className="pointer-events-auto flex items-center gap-4 rounded-full border border-black/10 bg-cream/90 px-6 py-3 shadow-[0_10px_35px_rgba(0,0,0,0.12)] backdrop-blur-2xl transition-colors dark:border-white/10 dark:bg-espresso-900/90 dark:shadow-[0_10px_35px_rgba(0,0,0,0.6)]">
-                <div className="flex items-center gap-2 text-xs font-bold text-espresso dark:text-cream">
+                <div className="flex items-center gap-2 text-xs sm:text-sm font-bold text-espresso dark:text-cream">
                     <span className="flex h-2 w-2 animate-pulse rounded-full bg-primary dark:bg-[#C99444]" />
                     <span>
-                        {customText ? customText : `موجود ${count ?? 0} ${label}`}
+                        {customText ? (
+                            customText
+                        ) : (
+                            <>
+                                موجود{' '}
+                                <strong className="text-base font-black wah-num text-primary dark:text-[#C99444]">
+                                    {formatArabicNumber(count ?? 0)}
+                                </strong>{' '}
+                                {label}
+                            </>
+                        )}
                     </span>
                 </div>
 

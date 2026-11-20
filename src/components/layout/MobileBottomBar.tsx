@@ -1,5 +1,6 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
+import { formatArabicBadgeCount } from '../../utils/arabicNumbers';
 import {
   Compass,
   ShoppingBag,
@@ -405,8 +406,8 @@ export const MobileBottomBar: React.FC = () => {
                   -top-2
                   -right-3
 
-                  min-w-[16px]
-                  h-[16px]
+                  min-w-[20px]
+                  h-[20px]
 
                   px-1
 
@@ -419,8 +420,10 @@ export const MobileBottomBar: React.FC = () => {
                   bg-[#B43B2F]
                   text-white
 
-                  text-[8px]
+                  text-[11px]
                   font-black
+                  leading-none
+                  wah-num
 
                   border-2
                   border-white/90
@@ -429,9 +432,7 @@ export const MobileBottomBar: React.FC = () => {
                   shadow-[0_3px_10px_rgba(0,0,0,0.2)]
                 "
               >
-                {item.badge > 99
-                  ? '99+'
-                  : item.badge}
+                {formatArabicBadgeCount(item.badge)}
               </motion.span>
             )}
         </motion.div>

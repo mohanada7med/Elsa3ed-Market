@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../../../context/AppContext.tsx';
 import { CraftReel } from '../../../types.ts';
 import { ShoppingBag, Check, ArrowUpLeft, Sparkles } from 'lucide-react';
+import { formatArabicNumber } from '../../../utils/arabicNumbers';
 
 interface ReelProductPillProps {
   reel: CraftReel;
@@ -102,12 +103,12 @@ export const ReelProductPill: React.FC<ReelProductPillProps> = ({
           </span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="text-[11px] font-extrabold text-primary dark:text-primary-hover">
-            {productPrice} ج.م
+          <span className="text-sm font-black font-price text-amber-300">
+            {formatArabicNumber(productPrice)} ج.م
           </span>
           {reel.productOriginalPrice && reel.productOriginalPrice > productPrice && (
-            <span className="text-[9px] text-gray-400 line-through">
-              {reel.productOriginalPrice}
+            <span className="text-xs text-gray-300 line-through font-price">
+              {formatArabicNumber(reel.productOriginalPrice)}
             </span>
           )}
         </div>

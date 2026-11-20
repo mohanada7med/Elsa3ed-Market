@@ -58,6 +58,27 @@
   font-display: swap;
 }
 
+/* Dedicated High-Legibility Eastern Arabic Numerals (٠-٩) with optical boost */
+@font-face {
+  font-family: 'WahArabicDigits';
+  src: url('/fonts/wah-arabic-digits-bold.woff2') format('woff2');
+  font-weight: 100 599;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0660-066C;
+  size-adjust: 124%;
+}
+
+@font-face {
+  font-family: 'WahArabicDigits';
+  src: url('/fonts/wah-arabic-digits-extrabold.woff2') format('woff2');
+  font-weight: 600 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0660-066C;
+  size-adjust: 128%;
+}
+
 @theme {
   /* =========================================================================
      OFFICIAL WAH BRAND DESIGN SYSTEM TOKENS
@@ -78,12 +99,12 @@
   --color-wahDark-elevated: #4A2715;
 
   /* WAH Brand Identity Typography - MainFont for headings/display, Cairo for body/UI, Amiri for heritage */
-  --font-wah-main: 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
-  --font-wah-secondary: 'Cairo', system-ui, -apple-system, sans-serif;
-  --font-wah-display: 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
-  --font-wah-heading: 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
-  --font-wah-heritage: 'Amiri', 'Cairo', serif;
-  --font-wah-body: 'Cairo', system-ui, -apple-system, sans-serif;
+  --font-wah-main: 'WahArabicDigits', 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
+  --font-wah-secondary: 'WahArabicDigits', 'Cairo', system-ui, -apple-system, sans-serif;
+  --font-wah-display: 'WahArabicDigits', 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
+  --font-wah-heading: 'WahArabicDigits', 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
+  --font-wah-heritage: 'WahArabicDigits', 'Amiri', 'Cairo', serif;
+  --font-wah-body: 'WahArabicDigits', 'Cairo', system-ui, -apple-system, sans-serif;
 
   /* Brand Primitive Colors */
   --color-primary: var(--primary);
@@ -342,73 +363,76 @@
 
 /* WAH Typography Hierarchy */
 .font-main {
-  font-family: 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
+  font-family: 'WahArabicDigits', 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
 }
 
 .font-heading {
-  font-family: 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
+  font-family: 'WahArabicDigits', 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
 }
 
 .font-display {
-  font-family: 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
+  font-family: 'WahArabicDigits', 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
 }
 
 .font-price,
-.price-tag {
-  font-family: 'MainFont', system-ui, sans-serif;
+.price-tag,
+.wah-num {
+  font-family: 'WahArabicDigits', 'Cairo', system-ui, -apple-system, sans-serif;
+  font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum" 1;
-  letter-spacing: 0.02em;
+  font-weight: 800;
+  letter-spacing: 0.01em;
 }
 
 .font-secondary {
-  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+  font-family: 'WahArabicDigits', 'Cairo', system-ui, -apple-system, sans-serif;
 }
 
 .font-body {
-  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+  font-family: 'WahArabicDigits', 'Cairo', system-ui, -apple-system, sans-serif;
 }
 
 .font-heritage {
-  font-family: 'Amiri', 'Cairo', serif;
+  font-family: 'WahArabicDigits', 'Amiri', 'Cairo', serif;
 }
 
 .font-editorial {
-  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+  font-family: 'WahArabicDigits', 'Cairo', system-ui, -apple-system, sans-serif;
 }
 
 .font-serif {
-  font-family: 'Amiri', 'Cairo', serif;
+  font-family: 'WahArabicDigits', 'Amiri', 'Cairo', serif;
 }
 
 .font-cairo {
-  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+  font-family: 'WahArabicDigits', 'Cairo', system-ui, -apple-system, sans-serif;
 }
 
 .font-amiri {
-  font-family: 'Amiri', 'AdobeArabic', 'Cairo', serif;
+  font-family: 'WahArabicDigits', 'Amiri', 'AdobeArabic', 'Cairo', serif;
 }
 
 .font-shin {
-  font-family: 'MainFont', 'Cairo', sans-serif;
+  font-family: 'WahArabicDigits', 'MainFont', 'Cairo', sans-serif;
 }
 
 .font-wah-display {
-  font-family: var(--font-wah-display, 'MainFont', 'Cairo', system-ui, sans-serif);
+  font-family: var(--font-wah-display, 'WahArabicDigits', 'MainFont', 'Cairo', system-ui, sans-serif);
   letter-spacing: normal;
 }
 
 .font-wah-heading {
-  font-family: var(--font-wah-heading, 'MainFont', 'Cairo', system-ui, sans-serif);
+  font-family: var(--font-wah-heading, 'WahArabicDigits', 'MainFont', 'Cairo', system-ui, sans-serif);
   letter-spacing: normal;
 }
 
 .font-wah-body {
-  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+  font-family: 'WahArabicDigits', 'Cairo', system-ui, -apple-system, sans-serif;
 }
 
 h1,
 h2 {
-  font-family: 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
+  font-family: 'WahArabicDigits', 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
   letter-spacing: normal;
   line-height: 1.3;
   text-wrap: balance;
@@ -418,7 +442,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+  font-family: 'WahArabicDigits', 'Cairo', system-ui, -apple-system, sans-serif;
   letter-spacing: normal;
   line-height: 1.4;
   text-wrap: balance;
@@ -450,7 +474,7 @@ h6 {
   }
 
   body {
-    font-family: 'Cairo', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    font-family: 'WahArabicDigits', 'Cairo', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
       Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     font-size: 0.98rem;
     line-height: 1.7;
@@ -479,7 +503,7 @@ h6 {
 
   h1,
   h2 {
-    font-family: 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
+    font-family: 'WahArabicDigits', 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
     letter-spacing: normal;
     line-height: 1.3;
     text-wrap: balance;
@@ -489,26 +513,26 @@ h6 {
   h4,
   h5,
   h6 {
-    font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+    font-family: 'WahArabicDigits', 'Cairo', system-ui, -apple-system, sans-serif;
     letter-spacing: normal;
     line-height: 1.4;
     text-wrap: balance;
   }
 
   .font-heritage {
-    font-family: 'Amiri', 'Cairo', system-ui, -apple-system, sans-serif;
+    font-family: 'WahArabicDigits', 'Amiri', 'Cairo', system-ui, -apple-system, sans-serif;
     letter-spacing: normal;
   }
 
   .font-secondary,
   .font-editorial,
   .font-body {
-    font-family: 'Amiri', system-ui, -apple-system, sans-serif;
+    font-family: 'WahArabicDigits', 'Amiri', system-ui, -apple-system, sans-serif;
     letter-spacing: normal;
   }
 
   .font-serif {
-    font-family: 'Amiri', 'Cairo', serif;
+    font-family: 'WahArabicDigits', 'Amiri', 'Cairo', serif;
     letter-spacing: normal;
   }
 }

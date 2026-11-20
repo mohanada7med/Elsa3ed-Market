@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { X, Trash2, Plus, Minus, ShoppingBag, ArrowLeft, Tag, ShieldCheck, Truck } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Product } from '../../types';
+import { formatArabicNumber } from '../../utils/arabicNumbers';
 
 export const CartDrawer: React.FC = () => {
   const {
@@ -137,7 +138,7 @@ export const CartDrawer: React.FC = () => {
                   </div>
                   <div>
                     <h3 className="font-cairo font-bold text-espresso dark:text-cream text-base">سلة الشراء بتاعتك</h3>
-                    <p className="text-xs text-black/50 dark:text-white/50">{cart.length} منتجات مختارة</p>
+                    <p className="text-xs font-bold text-black/55 dark:text-white/55"><span className="wah-num text-sm font-black text-primary dark:text-primary-hover">{formatArabicNumber(cart.length)}</span> منتجات مختارة</p>
                   </div>
                 </div>
 
@@ -244,13 +245,13 @@ export const CartDrawer: React.FC = () => {
                           </div>
 
                           <div className="flex items-center justify-between mt-2.5">
-                            <div className="flex items-center gap-1">
-                              <span className="text-sm font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
-                                {price * qty} ج.م
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className="text-base sm:text-lg font-black font-price text-primary dark:text-primary-hover">
+                                {formatArabicNumber(price * qty)} ج.م
                               </span>
                               {qty > 1 && (
-                                <span className="text-[10px] text-black/40 dark:text-white/40">
-                                  ({price} ج.م للقطعة)
+                                <span className="text-xs font-bold text-black/45 dark:text-white/45 wah-num">
+                                  ({formatArabicNumber(price)} ج.م للقطعة)
                                 </span>
                               )}
                             </div>
@@ -266,8 +267,8 @@ export const CartDrawer: React.FC = () => {
                               >
                                 <Minus className="w-3.5 h-3.5" />
                               </button>
-                              <span className="px-2 text-xs font-bold text-espresso dark:text-cream" aria-label={`الكمية ${qty}`}>
-                                {qty}
+                              <span className="px-2.5 text-sm sm:text-base font-black wah-num text-espresso dark:text-cream" aria-label={`الكمية ${qty}`}>
+                                {formatArabicNumber(qty)}
                               </span>
                               <button
                                 type="button"
@@ -306,7 +307,7 @@ export const CartDrawer: React.FC = () => {
                     <div className="flex items-center justify-between p-2.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs">
                       <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 font-bold">
                         <Tag className="w-4 h-4" />
-                        <span>تم تطبيق الكوبون ({appliedDiscount.code}) - خصم {appliedDiscount.discountPercent}%</span>
+                        <span>تم تطبيق الكوبون (<span data-western-digits="true" dir="ltr" className="font-mono">{appliedDiscount.code}</span>) - خصم <span className="wah-num font-black">{formatArabicNumber(appliedDiscount.discountPercent)}%</span></span>
                       </div>
                       <button
                         type="button"
@@ -339,27 +340,27 @@ export const CartDrawer: React.FC = () => {
 
                   {/* Price breakdown */}
                   <div className="space-y-1.5 text-xs text-espresso/70 dark:text-cream/70 pt-1">
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center">
                       <span>المجموع الفرعي للمنتجات:</span>
-                      <span className="font-bold text-espresso dark:text-cream">{cartSubtotal} ج.م</span>
+                      <span className="text-sm font-black font-price text-espresso dark:text-cream">{formatArabicNumber(cartSubtotal)} ج.م</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center">
                       <span>الشحن إلى باب المنزل:</span>
                       {shippingFee === 0 ? (
-                        <span className="font-bold text-emerald-600 dark:text-emerald-400">مجاني (للطلبات +1000 ج)</span>
+                        <span className="font-bold text-emerald-600 dark:text-emerald-400">مجاني (للطلبات +{formatArabicNumber(1000)} ج)</span>
                       ) : (
-                        <span className="font-bold text-espresso dark:text-cream">{shippingFee} ج.م</span>
+                        <span className="text-sm font-black font-price text-espresso dark:text-cream">{formatArabicNumber(shippingFee)} ج.م</span>
                       )}
                     </div>
                     {cartDiscountAmount > 0 && (
-                      <div className="flex justify-between text-emerald-700 dark:text-emerald-400">
+                      <div className="flex justify-between items-center text-emerald-700 dark:text-emerald-400">
                         <span>قيمة الخصم:</span>
-                        <span className="font-bold">- {cartDiscountAmount} ج.م</span>
+                        <span className="text-sm font-black font-price">- {formatArabicNumber(cartDiscountAmount)} ج.م</span>
                       </div>
                     )}
-                    <div className="border-t border-black/10 dark:border-white/10 pt-2 flex justify-between text-sm font-black text-espresso dark:text-cream">
+                    <div className="border-t border-black/10 dark:border-white/10 pt-2.5 flex justify-between items-center text-sm font-black text-espresso dark:text-cream">
                       <span>الإجمالي النهائي:</span>
-                      <span className="text-base text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover font-black">{cartTotal} ج.م</span>
+                      <span className="text-xl sm:text-2xl text-primary dark:text-primary-hover font-black font-price">{formatArabicNumber(cartTotal)} ج.م</span>
                     </div>
                   </div>
 

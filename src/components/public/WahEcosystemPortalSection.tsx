@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { PAGE_ROUTES, useApp } from '../../context/AppContext';
 import type { ActivePage } from '../../types';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { formatArabicNumber } from '../../utils/arabicNumbers';
 
 interface PortalMascot {
   src: string;
@@ -59,7 +60,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
       id: 'marketplace',
       title: '"سوق وه" من إيد الصانع لدارك',
       tagline: 'حاجة أصلية من الورشة لحد عندك',
-      desc: 'سوق مليان خير الصعيد وشغل الورش الأصيل 100%، اشترِ اللي يعجبك والدفع أمان وشحن واصل لحد باب بيتك.',
+      desc: 'سوق مليان خير الصعيد وشغل الورش الأصيل ١٠٠%، اشترِ اللي يعجبك والدفع أمان وشحن واصل لحد باب بيتك.',
       badge: 'دكان وه',
       page: 'products',
       image:
@@ -118,7 +119,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
       tagline: 'حيطان عتيقة وحكاوي من سنين',
       desc: 'من عظمة الكرنك ودندرة وإدفو لحد الأديرة القديمة، وقصور المنيا، وبيوت النوبة الملونة على البحر.',
       badge: wahStats?.placesCount
-        ? `${wahStats.placesCount} مكان متوثق`
+        ? `${formatArabicNumber(wahStats.placesCount)} مكان متوثق`
         : 'أماكن متوثقة',
       page: 'places',
       image:

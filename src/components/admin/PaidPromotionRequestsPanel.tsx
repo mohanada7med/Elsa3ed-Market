@@ -20,6 +20,7 @@ import {
   X
 } from 'lucide-react';
 import { api } from '../../services/api';
+import { formatArabicNumber } from '../../utils/arabicNumbers';
 import type {
   HomePromotionPosition,
   PaidPromotion,
@@ -127,7 +128,7 @@ export const PaidPromotionRequestsPanel: React.FC<PaidPromotionRequestsPanelProp
         <div className="rounded-2xl border border-border bg-background p-4 shadow-2xs">
           <span className="text-[11px] font-bold text-foreground-secondary block mb-1">طلبات بانتظار التأكيد</span>
           <div className="flex items-center justify-between">
-            <span className="text-2xl font-black text-amber-600 dark:text-amber-400 font-mono">{stats.pending}</span>
+            <span className="text-3xl font-black text-amber-600 dark:text-amber-400 wah-num">{formatArabicNumber(stats.pending)}</span>
             <span className="h-8 w-8 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center">
               <Clock3 className="h-4 w-4" />
             </span>
@@ -149,7 +150,7 @@ export const PaidPromotionRequestsPanel: React.FC<PaidPromotionRequestsPanelProp
         <div className="rounded-2xl border border-border bg-background p-4 shadow-2xs">
           <span className="text-[11px] font-bold text-foreground-secondary block mb-1">إجمالي طلبات الورش</span>
           <div className="flex items-center justify-between">
-            <span className="text-2xl font-black text-foreground font-mono">{stats.total}</span>
+            <span className="text-3xl font-black text-foreground wah-num">{formatArabicNumber(stats.total)}</span>
             <span className="h-8 w-8 rounded-xl bg-primary/10 text-primary dark:text-primary-hover flex items-center justify-center">
               <TrendingUp className="h-4 w-4" />
             </span>
@@ -159,8 +160,8 @@ export const PaidPromotionRequestsPanel: React.FC<PaidPromotionRequestsPanelProp
         <div className="rounded-2xl border border-border bg-background p-4 shadow-2xs">
           <span className="text-[11px] font-bold text-foreground-secondary block mb-1">عوائد الترويج المحصلة</span>
           <div className="flex items-center justify-between">
-            <span className="text-xl font-black text-emerald-600 dark:text-emerald-400 font-mono">
-              {stats.totalRevenue.toLocaleString('ar-EG')} ج.م
+            <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400 font-price">
+              {formatArabicNumber(stats.totalRevenue)} ج.م
             </span>
             <span className="h-8 w-8 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
               <DollarSign className="h-4 w-4" />
@@ -197,7 +198,7 @@ export const PaidPromotionRequestsPanel: React.FC<PaidPromotionRequestsPanelProp
                 : 'bg-black/5 dark:bg-white/5 text-foreground-secondary hover:text-foreground'
             }`}
           >
-            قيد المراجعة ({stats.pending})
+            قيد المراجعة (<span className="wah-num">{formatArabicNumber(stats.pending)}</span>)
           </button>
           <button
             type="button"
@@ -208,7 +209,7 @@ export const PaidPromotionRequestsPanel: React.FC<PaidPromotionRequestsPanelProp
                 : 'bg-black/5 dark:bg-white/5 text-foreground-secondary hover:text-foreground'
             }`}
           >
-            المفعّلة ({stats.active})
+            المفعّلة (<span className="wah-num">{formatArabicNumber(stats.active)}</span>)
           </button>
           <button
             type="button"
@@ -219,7 +220,7 @@ export const PaidPromotionRequestsPanel: React.FC<PaidPromotionRequestsPanelProp
                 : 'bg-black/5 dark:bg-white/5 text-foreground-secondary hover:text-foreground'
             }`}
           >
-            الأرشيف والسجل ({stats.archived})
+            الأرشيف والسجل (<span className="wah-num">{formatArabicNumber(stats.archived)}</span>)
           </button>
           <button
             type="button"
@@ -230,12 +231,12 @@ export const PaidPromotionRequestsPanel: React.FC<PaidPromotionRequestsPanelProp
                 : 'bg-black/5 dark:bg-white/5 text-foreground-secondary hover:text-foreground'
             }`}
           >
-            كافة الطلبات ({stats.total})
+            كافة الطلبات (<span className="wah-num">{formatArabicNumber(stats.total)}</span>)
           </button>
         </div>
 
-        <span className="text-xs text-foreground-secondary">
-          عرض {filteredRequests.length} طلب
+        <span className="text-xs font-bold text-foreground-secondary">
+          عرض <span className="wah-num text-sm font-black text-foreground">{formatArabicNumber(filteredRequests.length)}</span> طلب
         </span>
       </div>
 

@@ -76,7 +76,7 @@ export const ReelActionButtons: React.FC<ReelActionButtonsProps> = ({
               }`}
           />
         </div>
-        <span className="text-[11px] font-bold text-white drop-shadow-md tabular-nums leading-none">
+        <span className="text-sm font-black text-white drop-shadow-md tabular-nums leading-none wah-num">
           {formatCount(likesCount)}
         </span>
       </button>
@@ -92,7 +92,7 @@ export const ReelActionButtons: React.FC<ReelActionButtonsProps> = ({
         <div className="w-11 h-11 rounded-full bg-black/60 hover:bg-black/80 sm:backdrop-blur-md border border-white/20 text-white flex items-center justify-center transition-all duration-200 active:scale-75">
           <MessageCircle className="w-5 h-5 group-hover:scale-110 text-white group-hover:text-amber-300 transition-all" />
         </div>
-        <span className="text-[11px] font-bold text-white drop-shadow-md tabular-nums leading-none">
+        <span className="text-sm font-black text-white drop-shadow-md tabular-nums leading-none wah-num">
           {formatCount(reel.comments?.length || 0)}
         </span>
       </button>
@@ -112,7 +112,7 @@ export const ReelActionButtons: React.FC<ReelActionButtonsProps> = ({
             <Share2 className="w-5 h-5 group-hover:scale-110 text-white group-hover:text-sky-300 transition-all" />
           )}
         </div>
-        <span className="text-[11px] font-bold text-white drop-shadow-md tabular-nums leading-none">
+        <span className="text-sm font-black text-white drop-shadow-md tabular-nums leading-none wah-num">
           {copiedLink ? 'تم النسخ' : formatCount(reel.sharesCount || 0)}
         </span>
       </button>

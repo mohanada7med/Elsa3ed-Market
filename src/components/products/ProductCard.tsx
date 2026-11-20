@@ -5,6 +5,7 @@ import { Heart, ShoppingBag, Star, Sparkles, MapPin, Eye, Settings } from 'lucid
 import { motion } from 'motion/react';
 import { WAHBadge } from '../../design-system/WAHBadge';
 import { getOptimizedImageUrl } from '../../utils/cloudinaryMedia';
+import { formatArabicNumber } from '../../utils/arabicNumbers';
 
 interface ProductCardProps {
   product: Product;
@@ -67,8 +68,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         {/* Heritage & Handmade Badges */}
         <div className="absolute top-2.5 right-2.5 flex flex-col gap-1.5 z-10 pointer-events-none">
           {product.discountPercent && product.discountPercent > 0 && (
-            <span className="bg-primary text-white text-[11px] font-black px-2.5 py-0.5 rounded-md shadow-xs self-start">
-              خصم {product.discountPercent}%
+            <span className="bg-primary text-white text-xs sm:text-sm font-black px-2.5 py-0.5 rounded-md shadow-xs self-start wah-num">
+              خصم {formatArabicNumber(product.discountPercent)}%
             </span>
           )}
           {product.isHandmade && (
@@ -156,12 +157,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               className="flex items-center gap-0.5 text-[10px] sm:text-xs shrink-0"
               aria-label={`التقييم ${product.rating} من 5 نجوم بناء على ${product.reviewCount} تقييم`}
             >
-              <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-500 fill-amber-500" />
-              <span className="font-bold text-espresso dark:text-cream text-xs">
-                {product.rating}
+              <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500 fill-amber-500" />
+              <span className="font-black text-espresso dark:text-cream text-sm wah-num">
+                {formatArabicNumber(product.rating)}
               </span>
-              <span className="hidden min-[420px]:inline text-[10px] text-black/40 dark:text-white/40">
-                ({product.reviewCount})
+              <span className="hidden min-[420px]:inline text-xs font-bold text-black/45 dark:text-white/45 wah-num">
+                ({formatArabicNumber(product.reviewCount)})
               </span>
             </div>
           </div>
@@ -178,17 +179,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <div className="pt-2.5 sm:pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between gap-1.5 sm:gap-2 mt-auto">
           <div>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-sm sm:text-base font-normal font-price text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover tracking-wide whitespace-nowrap">
-                {product.price} ج.م
+              <span className="text-lg sm:text-xl font-black font-price text-primary dark:text-primary-hover tracking-wide whitespace-nowrap">
+                {formatArabicNumber(product.price)} ج.م
               </span>
               {product.originalPrice && product.originalPrice > product.price && (
-                <span className="hidden sm:inline text-xs text-black/40 dark:text-white/40 line-through">
-                  {product.originalPrice} ج.م
+                <span className="hidden sm:inline text-sm font-bold font-price text-black/45 dark:text-white/45 line-through">
+                  {formatArabicNumber(product.originalPrice)} ج.م
                 </span>
               )}
             </div>
-            <span className="text-[9px] sm:text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold block truncate">
-              {product.inStock ? `موجود (${product.stockCount} قطعة)` : 'خلصان دلوقتي'}
+            <span className="text-xs text-emerald-600 dark:text-emerald-400 font-bold block truncate wah-num">
+              {product.inStock ? `موجود (${formatArabicNumber(product.stockCount)} قطعة)` : 'خلصان دلوقتي'}
             </span>
           </div>
 

@@ -3,6 +3,7 @@ import { PAGE_ROUTES, useApp } from '../../context/AppContext';
 import type { ActivePage, GlobalSearchResult } from '../../types';
 import { wahApi } from '../../services/api';
 import { resolveNotificationNavigation } from '../../utils/notificationRouter';
+import { formatArabicNumber, formatArabicBadgeCount } from '../../utils/arabicNumbers';
 import {
   Menu,
   X,
@@ -112,12 +113,12 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
       const diff = Date.now() - new Date(isoString).getTime();
       const mins = Math.floor(diff / 60000);
       if (mins < 1) return 'دلوقتي';
-      if (mins < 60) return `من ${mins} دقيقة`;
+      if (mins < 60) return `من ${formatArabicNumber(mins)} دقيقة`;
       const hours = Math.floor(mins / 60);
-      if (hours < 24) return `من ${hours} ساعة`;
+      if (hours < 24) return `من ${formatArabicNumber(hours)} ساعة`;
       const days = Math.floor(hours / 24);
       if (days === 1) return 'إمبارح';
-      return `من ${days} أيام`;
+      return `من ${formatArabicNumber(days)} أيام`;
     } catch {
       return 'من مدة';
     }
@@ -158,13 +159,13 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
       <Bell size={17} className="sm:size-[18px]" />
       {displayCount > 0 && (
         <span
-          className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold"
+          className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[11px] font-black leading-none wah-num"
           style={{
             backgroundColor: '#E66A2E',
             color: '#fff',
           }}
         >
-          {displayCount > 99 ? '99+' : displayCount}
+          {formatArabicBadgeCount(displayCount)}
         </span>
       )}
     </button>
@@ -201,10 +202,10 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                   <span className="text-sm font-bold">الإشعارات</span>
                   {displayCount > 0 && (
                     <span
-                      className="rounded-full px-2 py-0.5 text-[10px] font-bold text-white"
+                      className="rounded-full px-2.5 py-0.5 text-xs font-black text-white wah-num"
                       style={{ backgroundColor: '#E66A2E' }}
                     >
-                      {displayCount} جديد
+                      {formatArabicNumber(displayCount)} جديد
                     </span>
                   )}
                 </div>
@@ -929,7 +930,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
           id: 'notifications',
           label: 'مركز الإشعارات',
           icon: Bell,
-          badge: unreadNotificationsCount > 0 ? (unreadNotificationsCount > 99 ? '99+' : unreadNotificationsCount) : null,
+          badge: unreadNotificationsCount > 0 ? formatArabicBadgeCount(unreadNotificationsCount) : null,
         },
         {
           id: 'buyer-account',
@@ -976,13 +977,13 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
           id: 'messages',
           label: 'الدعم الفنى',
           icon: MessageCircle,
-          badge: chatUnreadCount > 0 ? (chatUnreadCount > 99 ? '99+' : chatUnreadCount) : null,
+          badge: chatUnreadCount > 0 ? formatArabicBadgeCount(chatUnreadCount) : null,
         },
         {
           id: 'notifications',
           label: 'الإشعارات',
           icon: Bell,
-          badge: unreadNotificationsCount > 0 ? (unreadNotificationsCount > 99 ? '99+' : unreadNotificationsCount) : null,
+          badge: unreadNotificationsCount > 0 ? formatArabicBadgeCount(unreadNotificationsCount) : null,
         },
         {
           id: 'buyer-account',
@@ -1011,19 +1012,19 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
         id: 'favorites',
         label: 'المفضلة',
         icon: Heart,
-        badge: favorites.length > 0 ? (favorites.length > 99 ? '99+' : favorites.length) : null,
+        badge: favorites.length > 0 ? formatArabicBadgeCount(favorites.length) : null,
       },
       {
         id: 'messages',
         label: ' الدعم الفنى',
         icon: MessageCircle,
-        badge: chatUnreadCount > 0 ? (chatUnreadCount > 99 ? '99+' : chatUnreadCount) : null,
+        badge: chatUnreadCount > 0 ? formatArabicBadgeCount(chatUnreadCount) : null,
       },
       {
         id: 'notifications',
         label: 'الإشعارات',
         icon: Bell,
-        badge: unreadNotificationsCount > 0 ? (unreadNotificationsCount > 99 ? '99+' : unreadNotificationsCount) : null,
+        badge: unreadNotificationsCount > 0 ? formatArabicBadgeCount(unreadNotificationsCount) : null,
       },
     ];
   }, [isAdmin, isSeller, unreadNotificationsCount, chatUnreadCount, favorites.length]);
@@ -1371,8 +1372,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               >
                 <Heart size={18} />
                 {favorites.length > 0 && (
-                  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold bg-primary text-white">
-                    {favorites.length > 99 ? '99+' : favorites.length}
+                  <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[11px] font-black leading-none bg-primary text-white wah-num">
+                    {formatArabicBadgeCount(favorites.length)}
                   </span>
                 )}
               </button>
@@ -1388,8 +1389,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               >
                 <MessageCircle size={18} />
                 {chatUnreadCount > 0 && (
-                  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold bg-primary text-white">
-                    {chatUnreadCount > 99 ? '99+' : chatUnreadCount}
+                  <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[11px] font-black leading-none bg-primary text-white wah-num">
+                    {formatArabicBadgeCount(chatUnreadCount)}
                   </span>
                 )}
               </button>
@@ -1415,8 +1416,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               >
                 <ShoppingBag size={18} />
                 {cartCount > 0 && (
-                  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold bg-primary text-white">
-                    {cartCount > 99 ? '99+' : cartCount}
+                  <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[11px] font-black leading-none bg-primary text-white wah-num">
+                    {formatArabicBadgeCount(cartCount)}
                   </span>
                 )}
               </button>
@@ -1506,7 +1507,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                 <span>{item.label}</span>
                               </div>
                               {item.badge && (
-                                <span className="flex h-4.5 min-w-4.5 items-center justify-center rounded-full px-1.5 text-[10px] font-bold bg-primary text-white">
+                                <span className="flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-black bg-primary text-white wah-num">
                                   {item.badge}
                                 </span>
                               )}
@@ -1642,8 +1643,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 <Heart size={18} />
 
                 {favorites.length > 0 && (
-                  <span className="absolute -right-0.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full px-1 text-[8px] font-bold bg-primary text-white">
-                    {favorites.length > 99 ? '99+' : favorites.length}
+                  <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[11px] font-black leading-none bg-primary text-white wah-num">
+                    {formatArabicBadgeCount(favorites.length)}
                   </span>
                 )}
               </button>
@@ -1736,7 +1737,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                 <span>{item.label}</span>
                               </div>
                               {item.badge && (
-                                <span className="flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold bg-primary text-white">
+                                <span className="flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-black bg-primary text-white wah-num">
                                   {item.badge}
                                 </span>
                               )}
@@ -1935,7 +1936,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   {/* Category Filter Chips */}
                   <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
                     {[
-                      { id: 'all', label: `الكل (${liveResults.length})` },
+                      { id: 'all', label: `الكل (${formatArabicNumber(liveResults.length)})` },
                       { id: 'product', label: 'منتجات', icon: ShoppingBag },
                       { id: 'seller', label: 'ورش وصناع', icon: Store },
                       { id: 'food', label: 'أكلات', icon: UtensilsCrossed },
@@ -2015,7 +2016,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                             }}
                             className="text-xs font-bold text-primary dark:text-primary-hover hover:underline inline-flex items-center gap-1 cursor-pointer"
                           >
-                            <span>عرض كل النتائج في صفحة البحث الشامل ({liveResults.length} نتيجة)</span>
+                            <span>عرض كل النتائج في صفحة البحث الشامل ({formatArabicNumber(liveResults.length)} نتيجة)</span>
                             <ArrowLeft size={13} />
                           </button>
                         </div>
@@ -2292,7 +2293,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   </div>
 
                   <span
-                    className="rounded-lg px-3 py-1.5 text-[10px] font-black"
+                    className="rounded-lg px-3 py-1.5 text-xs font-black wah-num"
                     style={{
                       backgroundColor: isDark
                         ? 'rgba(201,148,68,0.13)'
@@ -2300,7 +2301,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       color: '#C99444',
                     }}
                   >
-                    {mobileNavCategories.length} أقسام
+                    {formatArabicNumber(mobileNavCategories.length)} أقسام
                   </span>
                 </div>
 
@@ -2382,10 +2383,10 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                             </p>
 
                             <p
-                              className="mt-1 text-[9px] font-medium"
+                              className="mt-1 text-[11px] font-bold wah-num"
                               style={{ color: secondaryText }}
                             >
-                              {category.links.length} روابط
+                              {formatArabicNumber(category.links.length)} روابط
                             </p>
                           </div>
 

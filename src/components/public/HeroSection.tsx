@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import {
   Sparkles,
@@ -11,6 +11,7 @@ import {
 import { motion, useReducedMotion } from 'motion/react';
 import { WAHBadge } from '../../design-system/WAHBadge';
 import { HOME_PATTERN_CONFIG, getHomePatternOpacity } from '../../config/homePatternConfig';
+import { formatArabicNumber } from '../../utils/arabicNumbers';
 
 export const HeroSection: React.FC = () => {
   const { setActivePage, wahStats } = useApp();
@@ -336,32 +337,32 @@ export const HeroSection: React.FC = () => {
           {/* MOBILE STATS */}
           <div className="flex items-center justify-between border-t border-foreground/15 pt-2 sm:pt-2.5 max-[380px]:pt-1.5 text-center text-foreground">
             <div>
-              <span className="block text-sm font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
-                {wahStats?.governoratesCount || 10}
+              <span className="block text-xl sm:text-2xl font-black wah-num text-primary dark:text-primary-hover">
+                {formatArabicNumber(wahStats?.governoratesCount || 10)}
               </span>
-              <span className="text-[10px] text-foreground-muted">
+              <span className="text-[11px] font-bold text-foreground-muted">
                 محافظة
               </span>
             </div>
 
-            <div className="h-3.5 w-px bg-foreground/15" />
+            <div className="h-4 w-px bg-foreground/15" />
 
             <div>
-              <span className="block text-sm font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
-                +{wahStats?.placesCount || 45}
+              <span className="block text-xl sm:text-2xl font-black wah-num text-primary dark:text-primary-hover">
+                +{formatArabicNumber(wahStats?.placesCount || 45)}
               </span>
-              <span className="text-[10px] text-foreground-muted">
+              <span className="text-[11px] font-bold text-foreground-muted">
                 مكان وأثر
               </span>
             </div>
 
-            <div className="h-3.5 w-px bg-foreground/15" />
+            <div className="h-4 w-px bg-foreground/15" />
 
             <div>
-              <span className="block text-sm font-black text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover">
-                {wahStats?.productsCount || 250}
+              <span className="block text-xl sm:text-2xl font-black wah-num text-primary dark:text-primary-hover">
+                {formatArabicNumber(wahStats?.productsCount || 250)}
               </span>
-              <span className="text-[10px] text-foreground-muted">
+              <span className="text-[11px] font-bold text-foreground-muted">
                 منتجات صعيدية
               </span>
             </div>
@@ -981,12 +982,14 @@ export const HeroSection: React.FC = () => {
                 <span
                   className="
                     block
-                    text-2xl
+                    text-3xl
+                    xl:text-4xl
                     font-black
-                    text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover
+                    wah-num
+                    text-primary dark:text-primary-hover
                   "
                 >
-                  {wahStats?.governoratesCount}
+                  {formatArabicNumber(wahStats?.governoratesCount || 0)}
                 </span>
 
                 <span
@@ -1012,12 +1015,14 @@ export const HeroSection: React.FC = () => {
                 <span
                   className="
                     block
-                    text-2xl
+                    text-3xl
+                    xl:text-4xl
                     font-black
-                    text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover
+                    wah-num
+                    text-primary dark:text-primary-hover
                   "
                 >
-                  {wahStats?.placesCount}+
+                  {formatArabicNumber(wahStats?.placesCount || 0)}+
                 </span>
 
                 <span
@@ -1042,12 +1047,14 @@ export const HeroSection: React.FC = () => {
                 <span
                   className="
                     block
-                    text-2xl
+                    text-3xl
+                    xl:text-4xl
                     font-black
-                    text-primary dark:text-primary-hover dark:text-primary dark:text-primary-hover
+                    wah-num
+                    text-primary dark:text-primary-hover
                   "
                 >
-                  {wahStats?.productsCount}
+                  {formatArabicNumber(wahStats?.productsCount || 0)}
                 </span>
 
                 <span
